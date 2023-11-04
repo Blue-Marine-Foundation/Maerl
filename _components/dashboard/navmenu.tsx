@@ -15,6 +15,10 @@ export default function NavMenu() {
       name: 'Project Overview',
       href: '/dashboard/projectoverview',
     },
+    {
+      name: 'Impact Indicators',
+      href: '/dashboard/impactindicators',
+    },
   ];
 
   const adminNav = [
