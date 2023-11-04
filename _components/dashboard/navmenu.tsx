@@ -29,7 +29,7 @@ export default function NavMenu() {
   ];
 
   const navStyle =
-    'inline-block py-4 text-foreground/60 border-b border-transparent hover:border-foreground/80 group-[.active]:text-foreground group-[.active]:border-b group-[.active]:border-foreground/80';
+    'inline-block py-4 text-foreground/50 border-b border-transparent hover:border-foreground/80 group-[.active]:text-foreground group-[.active]:border-b group-[.active]:border-foreground/80';
 
   return (
     <div className='w-full border-b border-foreground/10'>
