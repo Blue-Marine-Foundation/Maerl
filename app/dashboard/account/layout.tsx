@@ -1,8 +1,8 @@
 import SideMenu from '@/components/account/sidemenu';
 
 export const metadata = {
-  title: 'Meteor: Account',
-  description: 'Meteor user account home',
+  title: 'Maerl: Account',
+  description: 'Maerl user account home',
 };
 
 export default async function AccountLayout({

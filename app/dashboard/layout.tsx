@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Meteor Dashboard',
-  description: 'The home of all your social media analytics',
+  title: 'Maerl Dashboard',
+  description: 'The home of all your impact reporting',
 };
 
 export default async function DashboardLayout({

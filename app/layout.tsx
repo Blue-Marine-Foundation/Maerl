@@ -3,8 +3,8 @@ import Footer from '@/_components/footer/footer';
 import './globals.css';
 
 export const metadata = {
-  title: 'Battenhall Meteor',
-  description: 'Unique insight',
+  title: 'Mearl',
+  description: 'Impact reporting',
 };
 
 export default function RootLayout({
