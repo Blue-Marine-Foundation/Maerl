@@ -3,18 +3,22 @@
 import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
 
-interface Group {
+interface Organisation {
   name: string;
-  group_logo: string;
+  logo: string;
 }
 
 export default function OrgPicker() {
   const supabase = createClient();
 
-  const [userGroups, setUserGroups] = useState<Group[] | undefined>();
+  const [userOgranisations, setUserOrganisations] = useState<
+    Organisation[] | undefined
+  >();
 
-  async function fetchUsers() {
-    const { data: groups, error } = await supabase.from('groups').select('*');
+  async function fetchOrganisations() {
+    const { data: organisations, error } = await supabase
+      .from('organisations')
+      .select('*');
 
     if (error) {
       // eslint-disable-next-line no-console
@@ -22,28 +26,30 @@ export default function OrgPicker() {
       return;
     }
 
-    if (groups) {
-      setUserGroups(groups);
+    if (organisations) {
+      setUserOrganisations(organisations);
     }
   }
 
   useEffect(() => {
-    fetchUsers();
+    fetchOrganisations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      {userGroups &&
-        userGroups.map(({ name, group_logo }) => (
+      {userOgranisations &&
+        userOgranisations.map(({ name, logo }) => (
           <div className='flex items-center justify-start gap-2' key={name}>
-            <span className='pr-3 text-neutral-400'>//</span>
+            <span className='pr-3 text-neutral-400 dark:text-neutral-600'>
+              //
+            </span>
             <img
               className='inline-block'
-              src={`/img/brandAssets/${group_logo}`}
+              src={`/img/organisationLogos/${logo}`}
               alt={`${name} logo`}
-              width={20}
-              height={20}
+              width={25}
+              height={25}
             />
             <h2 className='inline-block' key={name}>
               {name}
