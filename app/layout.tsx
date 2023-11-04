@@ -3,7 +3,7 @@ import Footer from '@/_components/footer/footer';
 import './globals.css';
 
 export const metadata = {
-  title: 'Mearl',
+  title: 'Maerl',
   description: 'Impact reporting',
 };
 
