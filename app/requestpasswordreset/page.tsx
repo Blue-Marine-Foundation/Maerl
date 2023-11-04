@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import FormMessages from '@/_components/FormMessages';
+import FormMessages from '@/components/FormMessages';
 
 export default function RequestPasswordReset() {
   return (

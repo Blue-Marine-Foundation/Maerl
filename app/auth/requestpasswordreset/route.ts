@@ -1,15 +1,13 @@
-import { createClient } from '@/_utils/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { PRODUCTION_URL } from '@/_lib/constants';
+import { PRODUCTION_URL } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
   const email = String(formData.get('email'));
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${PRODUCTION_URL}/auth/callback?next=/dashboard/account/passwordreset`,

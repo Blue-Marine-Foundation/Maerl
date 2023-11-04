@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 'use client';
 
 import { createClient } from '@/utils/supabase/client';
@@ -10,7 +12,7 @@ interface User {
   role: string;
 }
 
-export default function Account() {
+export default function UserProfile() {
   const supabase = createClient();
 
   const [userProfile, setUserProfile] = useState<User[] | undefined>();
@@ -38,23 +40,33 @@ export default function Account() {
   }, []);
 
   return (
-    <div className='w-full px-8 pt-8 pb-16 border rounded-md'>
+    <div className='py-4 border border-zinc-500 rounded-md p-4'>
+      <div className='flex justify-between items-center mb-4'>
+        <h4 className='text-lg font-bold'>User profile</h4>
+        {isError ? (
+          <span className='bg-red-300 dark:bg-red-400 text-foreground dark:text-background'>
+            RLS fail
+          </span>
+        ) : (
+          <span className='bg-green-300 dark:bg-green-400 text-foreground dark:text-background py-1 px-2 rounded-md'>
+            RLS pass
+          </span>
+        )}
+      </div>
+      <hr className='mb-4' />
+      {!userProfile && <p>No users found, possible RLS failure</p>}
       {userProfile &&
         userProfile.map(({ display_name, first_name, last_name, role }) => (
-          <div key={display_name} className='mb-4'>
-            <h2 className='text-2xl font-bold mb-8'>
+          <p key={display_name}>
+            <strong>
               {first_name} {last_name}
-            </h2>
-
-            <dl className='w-[400px] mb-2 flex justify-start items-center gap-2'>
-              <dt className='font-medium w-[100px]'>Username:</dt>
-              <dd>@{display_name}</dd>
-            </dl>
-            <dl className='w-[400px] flex justify-start items-center gap-2'>
-              <dt className='font-medium w-[100px]'>Role:</dt>
-              <dd>{role}</dd>
-            </dl>
-          </div>
+            </strong>
+            <br />
+            <span className='text-sm'>
+              @{display_name}
+              <br /> {role}
+            </span>
+          </p>
         ))}
     </div>
   );

@@ -11,13 +11,13 @@ export default function NavMenu() {
       name: 'Home',
       href: '/dashboard',
     },
+    {
+      name: 'Project Overview',
+      href: '/dashboard/projectoverview',
+    },
   ];
 
   const adminNav = [
-    // {
-    //   name: 'RLS Tests',
-    //   href: '/dashboard/rls',
-    // },
     {
       name: 'Admin',
       href: '/dashboard/admin',

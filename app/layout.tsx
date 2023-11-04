@@ -3,8 +3,8 @@ import Footer from '@/_components/footer/footer';
 import './globals.css';
 
 export const metadata = {
-  title: 'Project Maerl',
-  description: 'Blue Marine Foundation Impact Reporting',
+  title: 'Battenhall Meteor',
+  description: 'Unique insight',
 };
 
 export default function RootLayout({
