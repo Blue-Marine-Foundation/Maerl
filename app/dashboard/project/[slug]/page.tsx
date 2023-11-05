@@ -1,6 +1,6 @@
 import { supabase } from '@/utils/supabase/servicerole';
 import { notFound } from 'next/navigation';
-import { Params } from '@/lib/types';
+import { Params, Measurable } from '@/lib/types';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase.from('projects').select('*');
@@ -27,11 +27,11 @@ async function Project({ params }: { params: Params }) {
     .eq('name', params.slug)
     .limit(1);
 
-  const project = projects[0];
-
   if (!projects) {
     notFound();
   }
+
+  const project = projects[0];
 
   return (
     <>
@@ -68,7 +68,7 @@ async function Project({ params }: { params: Params }) {
                 </tr>
               </thead>
               <tbody>
-                {project.outcome_measurables.map((measurable) => {
+                {project.outcome_measurables.map((measurable: Measurable) => {
                   return (
                     <tr key={measurable.code} className='border-t'>
                       <td className='p-2 align-top'>{measurable.code}</td>

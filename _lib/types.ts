@@ -7,3 +7,9 @@ export interface ProjectDetails {
   title: string;
   date: string;
 }
+
+export interface Measurable {
+  code: string;
+  description: string;
+  verification: string;
+}

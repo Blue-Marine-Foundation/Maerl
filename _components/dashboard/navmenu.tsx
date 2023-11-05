@@ -11,17 +11,13 @@ export default function NavMenu() {
       name: 'Home',
       href: '/dashboard',
     },
-    {
-      name: 'Project Overview',
-      href: '/dashboard/projectoverview',
-    },
+  ];
+
+  const adminNav = [
     {
       name: 'Impact Indicators',
       href: '/dashboard/impactindicators',
     },
-  ];
-
-  const adminNav = [
     {
       name: 'Admin',
       href: '/dashboard/admin',
