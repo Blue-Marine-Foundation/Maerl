@@ -8,6 +8,13 @@ export interface ProjectDetails {
   date: string;
 }
 
+export interface Project {
+  id: number;
+  created_at: string;
+  name: string;
+  operator: string;
+}
+
 export interface Measurable {
   code: string;
   description: string;

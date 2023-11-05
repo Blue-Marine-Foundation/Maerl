@@ -1,9 +1,9 @@
-import { createClient } from '@/_utils/supabase/server';
+import { supabase } from '@/_utils/supabase/servicerole';
 
 export async function getProjectList() {
-  const supabase = createClient();
-
-  const { data: projects, error } = await supabase.from('projects').select('*');
+  const { data: projects, error } = await supabase
+    .from('projects')
+    .select('*, outputs (*), updates (*)');
 
   if (error) {
     throw new Error(`Failed to fetch projects: ${error.message}`);

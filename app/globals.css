@@ -40,3 +40,7 @@
     transform: translateY(0);
   }
 }
+
+svg[class^='plot-'] {
+  background: transparent;
+}
