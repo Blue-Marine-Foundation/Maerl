@@ -1,6 +1,7 @@
 import { supabase } from '@/_utils/supabase/servicerole';
+import { Project } from './types';
 
-export async function getProjectList() {
+export async function getProjectList(): Promise<Project[]> {
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*, outputs (*), updates (*)');

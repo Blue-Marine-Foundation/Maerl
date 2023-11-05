@@ -1,6 +1,6 @@
 import { getProjectList } from '@/lib/databasehelpers';
 import { PRODUCTION_URL } from '@/lib/constants';
-// import { Project } from '@/lib/types';
+import { Project, Update, Output } from '@/lib/types';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
 import PlotFigure from '@/components/PlotFigure';
@@ -11,10 +11,12 @@ export default async function Page() {
 
   return (
     <div className='max-w-3xl flex flex-col justify-start items-stretch gap-4'>
-      {projects.map((project) => {
-        const completeProjects = project.outputs.filter(
-          (output) => output.status === 'Complete'
-        );
+      {projects.map((project: Project) => {
+        const completeProjects =
+          project.outputs?.filter(
+            (output: Output) => output.status === 'Complete'
+          ) || [];
+        const numberCompleteProjects = completeProjects.length;
         return (
           <Link
             key={project.name}
@@ -26,7 +28,9 @@ export default async function Page() {
               <div className='text-sm flex justify-start items-start gap-4'>
                 <p>{project.operator}</p>
                 <p>
-                  {`${completeProjects.length}/${project.outputs.length} outputs complete`}
+                  {`${completeProjects.length}/${
+                    project.outputs ? project.outputs.length : 'N/A'
+                  } outputs complete`}
                 </p>
               </div>
             </div>
@@ -44,6 +48,8 @@ export default async function Page() {
                   },
                   y: {
                     ticks: 0,
+                    label: 'No. Updates',
+                    labelArrow: 'up',
                   },
                   marks: [
                     Plot.line(
@@ -52,10 +58,7 @@ export default async function Page() {
                         { y: 'sum' },
                         {
                           x: (d) => new Date(d.date),
-                          y: 1,
                           interval: d3.utcMonth,
-                          curve: 'catmull-rom',
-                          strokeWidth: 2.5,
                         }
                       )
                     ),
