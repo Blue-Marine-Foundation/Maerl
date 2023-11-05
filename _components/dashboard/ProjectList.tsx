@@ -1,4 +1,6 @@
-import { FetchProjectList } from '@/_utils/FetchProjectList';
+import { getProjectList } from '@/lib/databasehelpers';
+import { PRODUCTION_URL } from '@/lib/constants';
+import Link from 'next/link';
 
 interface Project {
   id: number;
@@ -7,17 +9,18 @@ interface Project {
 }
 
 export default async function Page() {
-  const projects = await FetchProjectList();
+  const projects = await getProjectList();
 
   return (
     <div className='flex justify-start items-stretch gap-4'>
       {projects.map((project: Project) => (
-        <div
+        <Link
           key={project.name}
-          className='p-8 border rounded-lg min-h-[150px] min-w-[150px] flex flex-col justify-end items-end bg-gray-100 text-gray-500 text-sm dark:bg-gray-800 dark:text-slate-300'
+          href={`${PRODUCTION_URL}/dashboard/project/${project.name}`}
+          className='p-8 font-bold border rounded-lg min-h-[200px] min-w-[250px] flex flex-col justify-end items-end bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-slate-100'
         >
-          <p>{project.name}</p>
-        </div>
+          <p>{project.name} &nbsp; &rarr;</p>
+        </Link>
       ))}
     </div>
   );

@@ -1,6 +1,6 @@
 import { createClient } from '@/_utils/supabase/server';
 
-export async function FetchProjectList() {
+export async function getProjectList() {
   const supabase = createClient();
 
   const { data: projects, error } = await supabase.from('projects').select('*');
