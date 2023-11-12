@@ -1,4 +1,5 @@
 import { supabase } from '@/utils/supabase/servicerole';
+import { createClient } from '@/_utils/supabase/server';
 import { notFound } from 'next/navigation';
 import { Params, Measurable } from '@/lib/types';
 
@@ -21,9 +22,12 @@ export async function generateMetadata({ params }: { params: Params }) {
 }
 
 async function Project({ params }: { params: Params }) {
-  const { data: projects, error } = await supabase
+  const supabaseClient = createClient();
+  const { data: projects, error } = await supabaseClient
     .from('projects')
-    .select(`*,impacts (*),outcomes (*),outcome_measurables (*)`)
+    .select(
+      `*,impacts (*),outcomes (*),outcome_measurables (*), outputs (*), output_measurables (*)`
+    )
     .eq('name', params.slug)
     .limit(1);
 
@@ -45,7 +49,7 @@ async function Project({ params }: { params: Params }) {
 
           <div className='max-w-lg'>
             <p className='text-foreground/90 pt-1'>
-              {project.impacts[0].title}
+              {project.impacts[0] && project.impacts[0].title}
             </p>
           </div>
         </div>
@@ -56,7 +60,7 @@ async function Project({ params }: { params: Params }) {
 
           <div className='max-w-4xl'>
             <p className='text-foreground/90 pt-1 max-w-lg mb-6'>
-              {project.outcomes[0].description}
+              {project.outcomes[0] && project.outcomes[0].description}
             </p>
             <table className='table-auto text-sm'>
               <thead>
@@ -83,6 +87,28 @@ async function Project({ params }: { params: Params }) {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+        <div className='mb-8 flex justify-start items-start gap-8'>
+          <div className='w-[200px]'>
+            <h3 className='text-xl font-medium'>Outputs</h3>
+          </div>
+
+          <div className='max-w-4xl'>
+            {project.outputs.map((output) => (
+              <div key={output.code}>
+                <p className='text-foreground/90 pt-1 max-w-lg text-sm mb-4'>
+                  {output.description}
+                </p>
+                <ul className='pl-8'>
+                  {project.output_measurables.map((om) => (
+                    <li key={om.id} className='text-xs mb-4 list-disc max-w-lg'>
+                      {om.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>

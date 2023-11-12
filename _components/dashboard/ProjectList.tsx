@@ -1,4 +1,4 @@
-import { getProjectList } from '@/lib/databasehelpers';
+import { createClient } from '@/_utils/supabase/server';
 import { PRODUCTION_URL } from '@/lib/constants';
 import { Project, Update, Output } from '@/lib/types';
 import * as Plot from '@observablehq/plot';
@@ -7,7 +7,15 @@ import PlotFigure from '@/components/PlotFigure';
 import Link from 'next/link';
 
 export default async function Page() {
-  const projects = await getProjectList();
+  const supabase = createClient();
+
+  const { data: projects, error } = await supabase
+    .from('projects')
+    .select('*, outputs (*), updates (*)');
+
+  if (error) {
+    throw new Error(`Failed to fetch projects: ${error.message}`);
+  }
 
   return (
     <div className='max-w-3xl flex flex-col justify-start items-stretch gap-4'>
@@ -20,7 +28,7 @@ export default async function Page() {
         return (
           <Link
             key={project.name}
-            href={`${PRODUCTION_URL}/dashboard/project/${project.name}`}
+            href={`${PRODUCTION_URL}/dashboard/projects/${project.name}`}
             className='p-8 border rounded-lg flex justify-between items-center bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-slate-100'
           >
             <div>
