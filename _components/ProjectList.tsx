@@ -18,7 +18,7 @@ export default async function Page() {
   }
 
   return (
-    <div className='max-w-3xl flex flex-col justify-start items-stretch gap-4'>
+    <div className='w-full flex flex-col justify-start items-stretch gap-4'>
       {projects.map((project: Project) => {
         const completeProjects =
           project.outputs?.filter(
@@ -28,7 +28,7 @@ export default async function Page() {
         return (
           <Link
             key={project.name}
-            href={`${PRODUCTION_URL}/dashboard/projects/${project.name}`}
+            href={`${PRODUCTION_URL}/app/projects/${project.name}`}
             className='p-8 border rounded-lg flex justify-between items-center bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-slate-100'
           >
             <div>
