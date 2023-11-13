@@ -1,4 +1,4 @@
-import SideMenu from '@/components/account/sidemenu';
+import SideMenu from '@/_components/sidenav';
 
 export const metadata = {
   title: 'Maerl: Account',

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Breadcrumbs from '../breadcrumbs';
+import Breadcrumbs from './breadcrumbs';
 
 export default function NavMenu() {
   const pathname = usePathname();
@@ -11,10 +11,6 @@ export default function NavMenu() {
     {
       name: 'Impact Indicators',
       href: '/dashboard/impactindicators',
-    },
-    {
-      name: 'Admin',
-      href: '/dashboard/admin',
     },
   ];
 

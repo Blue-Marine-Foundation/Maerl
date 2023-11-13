@@ -1,4 +1,4 @@
-import ProjectList from '@/components/dashboard/ProjectList';
+import ProjectList from '@/_components/ProjectList';
 
 export default function Projects() {
   return (

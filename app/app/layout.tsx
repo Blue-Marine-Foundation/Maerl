@@ -1,4 +1,4 @@
-import NavMenu from '@/_components/dashboard/navmenu';
+import Sidenav from '@/components/sidenav';
 import { createClient } from '@/_utils/supabase/server';
 import { redirect } from 'next/navigation';
 
@@ -21,10 +21,10 @@ export default async function DashboardLayout({
 
   if (session) {
     return (
-      <>
-        <NavMenu />
-        <div className='max-w-6xl mx-auto pt-12 pb-24'>{children}</div>
-      </>
+      <div className='max-w-6xl mx-auto flex justify-between items-stretch'>
+        <Sidenav />
+        <div className='min-h-[500px] basis-full pl-12 py-12'>{children}</div>
+      </div>
     );
   }
 

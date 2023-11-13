@@ -1,7 +1,7 @@
 import { supabase } from '@/utils/supabase/servicerole';
 import { createClient } from '@/_utils/supabase/server';
 import { notFound } from 'next/navigation';
-import { Params, Measurable } from '@/lib/types';
+import { Params, Measurable, Output } from '@/lib/types';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase.from('projects').select('*');
@@ -95,18 +95,11 @@ async function Project({ params }: { params: Params }) {
           </div>
 
           <div className='max-w-4xl'>
-            {project.outputs.map((output) => (
+            {project.outputs.map((output: Output) => (
               <div key={output.code}>
                 <p className='text-foreground/90 pt-1 max-w-lg text-sm mb-4'>
                   {output.description}
                 </p>
-                <ul className='pl-8'>
-                  {project.output_measurables.map((om) => (
-                    <li key={om.id} className='text-xs mb-4 list-disc max-w-lg'>
-                      {om.description}
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
