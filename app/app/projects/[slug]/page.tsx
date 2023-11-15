@@ -2,6 +2,8 @@ import { supabase } from '@/utils/supabase/servicerole';
 import { createClient } from '@/_utils/supabase/server';
 import { notFound } from 'next/navigation';
 import { Params, Measurable, Output } from '@/lib/types';
+import Link from 'next/link';
+import { PRODUCTION_URL } from '@/_lib/constants';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase.from('projects').select('*');
@@ -41,6 +43,16 @@ async function Project({ params }: { params: Params }) {
     <>
       <div className='max-w-6xl mx-auto'>
         <h2 className='text-2xl font-bold mb-8'>{`${project.name} (${project.id}) `}</h2>
+
+        <p className='mb-8'>
+          <Link
+            href={`${PRODUCTION_URL}/app/projects/${project.name}/updates`}
+            className='underline'
+          >
+            View updates
+          </Link>{' '}
+          &rarr;
+        </p>
 
         <div className='mb-8 flex justify-start items-start gap-8'>
           <div className='w-[200px]'>

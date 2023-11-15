@@ -8,7 +8,7 @@ export default function Breadcrumbs() {
   const crumbs = pathname.split('/').filter((crumb) => crumb); // filter out empty strings
 
   return (
-    <p>
+    <div className='mb-8 px-4 py-2 text-sm inline-flex justify-start items-center border border-foreground/10 rounded-lg'>
       {crumbs.map((crumb, idx) => {
         const pathToCrumb = `/${crumbs.slice(0, idx + 1).join('/')}`;
         const isLast = idx === crumbs.length - 1;
@@ -16,18 +16,20 @@ export default function Breadcrumbs() {
         const formattedCrumb = crumb.charAt(0).toUpperCase() + crumb.slice(1);
 
         return (
-          <span key={crumb}>
+          <p key={crumb} className='inline-block'>
             {!isLast ? (
               <>
-                <Link href={pathToCrumb}>{formattedCrumb}</Link>
-                <span> / </span>
+                <Link href={pathToCrumb} className='underline'>
+                  {formattedCrumb}
+                </Link>
+                <span className='px-4'>&rarr;</span>
               </>
             ) : (
               formattedCrumb
             )}
-          </span>
+          </p>
         );
       })}
-    </p>
+    </div>
   );
 }

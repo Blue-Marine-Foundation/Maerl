@@ -14,7 +14,6 @@ export default async function AccountLayout({
     <div className='max-w-6xl mx-auto'>
       <h2 className='text-2xl font-bold mb-8'>Your Account</h2>
       <div className='w-full pt-8 border-t min-h-[300px] flex justify-start items-start gap-24'>
-        <SideMenu />
         {children}
       </div>
     </div>
