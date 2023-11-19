@@ -42,8 +42,6 @@ async function Project({ params }: { params: Params }) {
   return (
     <>
       <div className='max-w-6xl mx-auto'>
-        <h2 className='text-2xl font-bold mb-8'>{`${project.name} (${project.id}) `}</h2>
-
         <p className='mb-8'>
           <Link
             href={`${PRODUCTION_URL}/app/projects/${project.name}/updates`}

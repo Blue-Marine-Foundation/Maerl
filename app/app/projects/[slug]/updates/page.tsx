@@ -1,5 +1,4 @@
 import { createClient } from '@/_utils/supabase/server';
-import { notFound } from 'next/navigation';
 import { Params, Measurable, Output } from '@/lib/types';
 import Link from 'next/link';
 
@@ -13,7 +12,7 @@ async function Page({ params }: { params: Params }) {
 
   if (!project) {
     return (
-      <div className='max-w-6xl mx-auto'>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold mb-8'>{`${params.slug} Updates`}</h2>
 
         <p>No updates found... This is likely an error. </p>
@@ -23,8 +22,8 @@ async function Page({ params }: { params: Params }) {
 
   return (
     <>
-      <div className='max-w-6xl mx-auto'>
-        <h2 className='text-2xl font-bold mb-8'>{`${params.slug} Updates`}</h2>
+      <div className='w-full'>
+        <h2 className='text-2xl font-bold mb-8'>Updates</h2>
 
         <table className='w-full'>
           <tbody>

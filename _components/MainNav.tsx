@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function SideNav() {
+export default function MainNav() {
   const pathname = usePathname();
 
   const accountNav = [
@@ -34,16 +34,20 @@ export default function SideNav() {
   ];
 
   return (
-    <ul className='text-sm border-r border-foreground/10 py-12 pr-12'>
+    <ul className='text-sm pt-4 pb-5'>
       {accountNav.map((item) => {
         return (
           <li
             key={item.name}
-            className={pathname === item.href ? 'group active' : 'group'}
+            className={
+              pathname === item.href
+                ? 'inline-block mr-2 group active'
+                : 'inline-block mr-2 group'
+            }
           >
             <Link
               href={item.href}
-              className='inline-block w-[200px] mb-2 px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-gray-100 group-[.active]:border-gray-300 dark:group-[.active]:bg-slate-800 dark:group-[.active]:border-slate-800'
+              className='inline-block px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-gray-100 group-[.active]:border-gray-300 dark:group-[.active]:bg-slate-800 dark:group-[.active]:border-slate-800'
             >
               {item.name}
             </Link>

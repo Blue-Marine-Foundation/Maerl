@@ -3,38 +3,30 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function SideNav() {
+interface Project {
+  project: string;
+}
+
+export default function ProjectSideNav(project: Project) {
   const pathname = usePathname();
 
   const accountNav = [
     {
-      name: 'Overview',
-      href: '/app',
-    },
-    {
-      name: 'Projects',
-      href: '/app/projects',
-    },
-    {
       name: 'Updates',
-      href: '/app/updates',
+      href: `/app/projects/${project.project}/updates`,
     },
     {
-      name: 'Impact Indicators',
-      href: '/app/impactindicators',
+      name: 'Outputs',
+      href: `/app/projects/${project.project}/outputs`,
     },
     {
-      name: 'User Profile',
-      href: '/app/account',
-    },
-    {
-      name: 'Password Reset',
-      href: '/app/account/passwordreset',
+      name: 'Logframe',
+      href: `/app/projects/${project.project}/logframe`,
     },
   ];
 
   return (
-    <ul className='text-sm border-r border-foreground/10 py-12 pr-12'>
+    <ul className='text-sm border-r border-foreground/10 pb-12 pr-8'>
       {accountNav.map((item) => {
         return (
           <li

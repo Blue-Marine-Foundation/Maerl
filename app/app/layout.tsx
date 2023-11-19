@@ -1,7 +1,6 @@
-import Sidenav from '@/components/sidenav';
+import MainNav from '@/_components/MainNav';
 import { createClient } from '@/_utils/supabase/server';
 import { redirect } from 'next/navigation';
-import Breadcrumbs from '@/_components/breadcrumbs';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,13 +21,17 @@ export default async function DashboardLayout({
 
   if (session) {
     return (
-      <div className='max-w-6xl mx-auto flex justify-between items-stretch'>
-        <Sidenav />
-        <div className='min-h-[500px] basis-full pl-12 py-12'>
-          <Breadcrumbs />
+      <>
+        <div className='w-full border-b border-foreground/10'>
+          <div className='max-w-6xl mx-auto'>
+            <MainNav />
+          </div>
+        </div>
+
+        <div className='max-w-6xl mx-auto min-h-[500px] basis-full pt-6 pb-12'>
           {children}
         </div>
-      </div>
+      </>
     );
   }
 
