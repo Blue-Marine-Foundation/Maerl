@@ -1,5 +1,5 @@
 import { createClient } from '@/_utils/supabase/server';
-import { Params, Measurable, Output } from '@/lib/types';
+import { Params, Update } from '@/lib/types';
 import Link from 'next/link';
 
 async function Page({ params }: { params: Params }) {
@@ -28,7 +28,7 @@ async function Page({ params }: { params: Params }) {
         <table className='w-full'>
           <tbody>
             {project[0].updates &&
-              project[0].updates.map((update) => {
+              project[0].updates.map((update: Update) => {
                 return (
                   <tr key={update.id} className='border-t border-foreground/20'>
                     <td className='py-4'>{update.date}</td>
