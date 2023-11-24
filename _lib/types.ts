@@ -17,6 +17,7 @@ export interface Output {
   description: string;
   percentage_complete: string;
   status: string;
+  output_measurables?: Measurable[];
 }
 
 export interface Update {
@@ -30,17 +31,20 @@ export interface Update {
   link: string;
 }
 
+export interface Measurable {
+  id: number;
+  code: string;
+  description: string;
+  verification: string;
+  unit: string;
+}
+
 export interface Project {
   id: number;
   created_at: string;
   name: string;
   operator: string;
   outputs?: Output[];
+  output_measurables?: Measurable[];
   updates?: Update[];
-}
-
-export interface Measurable {
-  code: string;
-  description: string;
-  verification: string;
 }
