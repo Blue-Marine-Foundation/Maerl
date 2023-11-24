@@ -32,6 +32,7 @@ export interface Update {
 }
 
 export interface Measurable {
+  [x: string]: any; // Index signature
   id: number;
   code: string;
   description: string;
