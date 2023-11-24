@@ -1,19 +1,24 @@
 import { createClient } from '@/_utils/supabase/server';
 import UpdateForm from './updateform';
+import { Output, Project } from '@/_lib/types';
 
-function createNestedOutputList(data) {
-  let outputsMap = {};
+function createNestedOutputList(data: Project) {
+  let outputsMap: { [key: number]: Output } = {};
 
-  data.outputs.forEach((output) => {
-    outputsMap[output.id] = output;
-    output.output_measurables = []; // Initialize the output_measurables array
-  });
+  if (data.outputs) {
+    data.outputs.forEach((output) => {
+      outputsMap[output.id] = output;
+      output.output_measurables = []; // Initialize the output_measurables array
+    });
+  }
 
-  data.output_measurables.forEach((measurable) => {
-    if (outputsMap[measurable.output_id]) {
-      outputsMap[measurable.output_id].output_measurables.push(measurable);
-    }
-  });
+  if (data.output_measurables) {
+    data.output_measurables.forEach((measurable) => {
+      if (outputsMap[measurable.output_id]) {
+        outputsMap[measurable.output_id].output_measurables!.push(measurable);
+      }
+    });
+  }
 
   return data;
 }
@@ -37,7 +42,7 @@ export default async function NewUpdate() {
   return (
     <div>
       <h1 className='mb-8 text-xl font-medium'>Add an update</h1>
-      <UpdateForm data={parsedData} />
+      {parsedData && <UpdateForm data={parsedData} />}
     </div>
   );
 }
