@@ -1,4 +1,4 @@
-import ProjectSideNav from '@/_components/ProjectSideNav';
+import ProjectSideNav from '@/_components/SideNav/ProjectSideNav';
 import { Params } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -22,7 +22,7 @@ export default async function ProjectLayout({
         <div className='pt-8 basis-1/5 border-r border-foreground/10'>
           <ProjectSideNav project={params.slug} />
         </div>
-        <div className='pt-8 pl-8 basis-4/5'>{children}</div>
+        <div className='pt-8 pb-16 pl-8 basis-4/5'>{children}</div>
       </div>
     </>
   );

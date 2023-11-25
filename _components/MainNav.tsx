@@ -16,20 +16,16 @@ export default function MainNav() {
       href: '/app/projects',
     },
     {
+      name: 'Add Update',
+      href: '/app/newupdate',
+    },
+    {
       name: 'Updates',
       href: '/app/updates',
     },
     {
       name: 'Impact Indicators',
       href: '/app/impactindicators',
-    },
-    {
-      name: 'User Profile',
-      href: '/app/account',
-    },
-    {
-      name: 'Password Reset',
-      href: '/app/account/passwordreset',
     },
   ];
 

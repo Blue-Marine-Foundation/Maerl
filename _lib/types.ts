@@ -24,11 +24,11 @@ export interface Update {
   id: number;
   project_id: number;
   date: string;
-  output_measurable_id: string;
+  output_measurable_id: string | number | undefined;
   type: string;
   description: string;
-  value: number;
-  link: string;
+  value: number | null;
+  link: string | null;
 }
 
 export interface Measurable {

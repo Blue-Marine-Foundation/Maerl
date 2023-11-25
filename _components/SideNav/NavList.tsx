@@ -1,33 +1,17 @@
-'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-interface Project {
-  project: string;
+interface NavItem {
+  name: string;
+  href: string;
 }
 
-export default function ProjectSideNav(project: Project) {
+export default function NavList({ data }: { data: NavItem[] }) {
   const pathname = usePathname();
 
-  const accountNav = [
-    {
-      name: 'Updates',
-      href: `/app/projects/${project.project}/updates`,
-    },
-    {
-      name: 'Outputs',
-      href: `/app/projects/${project.project}/outputs`,
-    },
-    {
-      name: 'Logframe',
-      href: `/app/projects/${project.project}/logframe`,
-    },
-  ];
-
   return (
-    <ul className='text-sm border-r border-foreground/10 pb-12 pr-8'>
-      {accountNav.map((item) => {
+    <ul className='text-sm'>
+      {data.map((item) => {
         return (
           <li
             key={item.name}
