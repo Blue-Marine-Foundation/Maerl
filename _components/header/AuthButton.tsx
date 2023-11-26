@@ -14,7 +14,7 @@ export default async function AuthButton() {
         <Link href='/app/account'> {user.email}</Link>
       </p>
       <form action='/auth/sign-out' method='post'>
-        <button className='py-1.5 px-3 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-sm'>
+        <button className='py-1.5 px-3 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-sm transition-all duration-300'>
           Logout
         </button>
       </form>

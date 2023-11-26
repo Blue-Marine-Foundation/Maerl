@@ -22,7 +22,7 @@ export default async function DashboardLayout({
   if (session) {
     return (
       <>
-        <div className='w-full border-b border-foreground/10'>
+        <div className='w-full bg-[#2e3648] border-b border-foreground/10'>
           <div className='max-w-6xl mx-auto'>
             <MainNav />
           </div>

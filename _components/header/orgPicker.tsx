@@ -45,11 +45,11 @@ export default function OrgPicker() {
               //
             </span>
             <img
-              className='inline-block'
+              className='inline-block rounded'
               src={`/img/organisationLogos/${logo}`}
               alt={`${name} logo`}
-              width={25}
-              height={25}
+              width={22}
+              height={22}
             />
             <h2 className='inline-block' key={name}>
               {name}
