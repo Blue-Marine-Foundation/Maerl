@@ -40,82 +40,78 @@ async function Project({ params }: { params: Params }) {
   const project = projects[0];
 
   return (
-    <>
-      <div className='max-w-6xl mx-auto'>
-        <p className='mb-8'>
-          <Link
-            href={`${PRODUCTION_URL}/app/projects/${project.name}/updates`}
-            className='underline'
-          >
-            View updates
-          </Link>{' '}
-          &rarr;
-        </p>
+    <div className='animate-in'>
+      <p className='mb-8'>
+        <Link
+          href={`${PRODUCTION_URL}/app/projects/${project.name}/updates`}
+          className='underline'
+        >
+          View updates
+        </Link>{' '}
+        &rarr;
+      </p>
 
-        <div className='mb-8 flex justify-start items-start gap-8'>
-          <div className='w-[200px]'>
-            <h3 className='text-xl font-medium'>Impact</h3>
-          </div>
-
-          <div className='max-w-lg'>
-            <p className='text-foreground/90 pt-1'>
-              {project.impacts[0] && project.impacts[0].title}
-            </p>
-          </div>
+      <div className='mb-8 flex justify-start items-start gap-8'>
+        <div className='w-[200px]'>
+          <h3 className='text-xl font-medium'>Impact</h3>
         </div>
-        <div className='mb-8 flex justify-start items-start gap-8'>
-          <div className='w-[200px]'>
-            <h3 className='text-xl font-medium'>Outcome</h3>
-          </div>
 
-          <div className='max-w-4xl'>
-            <p className='text-foreground/90 pt-1 max-w-lg mb-6'>
-              {project.outcomes[0] && project.outcomes[0].description}
-            </p>
-            <table className='table-auto text-sm'>
-              <thead>
-                <tr className='border-t'>
-                  <th colSpan={2} className='text-left p-2'>
-                    Measured by
-                  </th>
-                  <th className='text-left p-2 pl-4'>Verified by</th>
-                </tr>
-              </thead>
-              <tbody>
-                {project.outcome_measurables.map((measurable: Measurable) => {
-                  return (
-                    <tr key={measurable.code} className='border-t'>
-                      <td className='p-2 align-top'>{measurable.code}</td>
-                      <td className='p-2 align-top'>
-                        {measurable.description}
-                      </td>
-                      <td className='p-2 pl-4 align-top'>
-                        {measurable.verification}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className='mb-8 flex justify-start items-start gap-8'>
-          <div className='w-[200px]'>
-            <h3 className='text-xl font-medium'>Outputs</h3>
-          </div>
-
-          <div className='max-w-4xl'>
-            {project.outputs.map((output: Output) => (
-              <div key={output.code}>
-                <p className='text-foreground/90 pt-1 max-w-lg text-sm mb-4'>
-                  {output.description}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div className='max-w-lg'>
+          <p className='text-foreground/90 pt-1'>
+            {project.impacts[0] && project.impacts[0].title}
+          </p>
         </div>
       </div>
-    </>
+      <div className='mb-8 flex justify-start items-start gap-8'>
+        <div className='w-[200px]'>
+          <h3 className='text-xl font-medium'>Outcome</h3>
+        </div>
+
+        <div className='max-w-4xl'>
+          <p className='text-foreground/90 pt-1 max-w-lg mb-6'>
+            {project.outcomes[0] && project.outcomes[0].description}
+          </p>
+          <table className='table-auto text-sm'>
+            <thead>
+              <tr className='border-t'>
+                <th colSpan={2} className='text-left p-2'>
+                  Measured by
+                </th>
+                <th className='text-left p-2 pl-4'>Verified by</th>
+              </tr>
+            </thead>
+            <tbody>
+              {project.outcome_measurables.map((measurable: Measurable) => {
+                return (
+                  <tr key={measurable.code} className='border-t'>
+                    <td className='p-2 align-top'>{measurable.code}</td>
+                    <td className='p-2 align-top'>{measurable.description}</td>
+                    <td className='p-2 pl-4 align-top'>
+                      {measurable.verification}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className='mb-8 flex justify-start items-start gap-8'>
+        <div className='w-[200px]'>
+          <h3 className='text-xl font-medium'>Outputs</h3>
+        </div>
+
+        <div className='max-w-4xl'>
+          {project.outputs.map((output: Output) => (
+            <div key={output.code}>
+              <p className='text-foreground/90 pt-1 max-w-lg text-sm mb-4'>
+                {output.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

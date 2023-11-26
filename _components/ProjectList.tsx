@@ -1,9 +1,7 @@
 import { createClient } from '@/_utils/supabase/server';
 import { PRODUCTION_URL } from '@/lib/constants';
-import { Project, Update, Output } from '@/lib/types';
-import * as Plot from '@observablehq/plot';
-import * as d3 from 'd3';
-import PlotFigure from '@/components/PlotFigure';
+import { Project, Output } from '@/lib/types';
+import Tooltip from './Tooltip';
 import Link from 'next/link';
 
 export default async function Page() {
@@ -18,65 +16,50 @@ export default async function Page() {
   }
 
   return (
-    <div className='w-full flex flex-col justify-start items-stretch gap-4'>
-      {projects.map((project: Project) => {
-        const completeProjects =
-          project.outputs?.filter(
-            (output: Output) => output.status === 'Complete'
-          ) || [];
-        const numberCompleteProjects = completeProjects.length;
-        return (
-          <Link
-            key={project.name}
-            href={`${PRODUCTION_URL}/app/projects/${project.name}`}
-            className='p-8 border rounded-lg flex justify-between items-center bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-slate-100'
-          >
-            <div>
-              <h3 className='text-lg font-bold mb-2'>{project.name}</h3>
-              <div className='text-sm flex justify-start items-start gap-4'>
-                <p>{project.operator}</p>
-                <p>
-                  {`${completeProjects.length}/${
-                    project.outputs ? project.outputs.length : 'N/A'
-                  } outputs complete`}
-                </p>
+    <div className='flex gap-8'>
+      <div className='py-4 border-t basis-4/6'>
+        <h3 className='text-lg font-bold mb-6'>Your projects</h3>
+
+        {projects.map((project: Project) => {
+          const completeProjects =
+            project.outputs?.filter(
+              (output: Output) => output.status === 'Complete'
+            ) || [];
+          const numberCompleteProjects = completeProjects.length;
+          return (
+            <Link
+              key={project.name}
+              href={`${PRODUCTION_URL}/app/projects/${project.name}`}
+              className='mb-4 px-4 pt-4 pb-5 bg-card-bg rounded-lg flex justify-start items-center group border border-transparent hover:border-foreground/30 transition-all'
+            >
+              <div className='w-32'>
+                <span
+                  style={{ background: project.highlight_color }}
+                  className='flex justify-center items-center w-20 h-20 text-lg text-background rounded-md'
+                >
+                  {project.id}
+                </span>
               </div>
-            </div>
-            <div>
-              <PlotFigure
-                options={{
-                  height: 100,
-                  width: 350,
-                  style: {
-                    backgound: 'blue',
-                  },
-                  x: {
-                    domain: [new Date('2023-01-01'), new Date('2023-12-31')],
-                    ticks: 0,
-                  },
-                  y: {
-                    ticks: 0,
-                    label: 'No. Updates',
-                    labelArrow: 'up',
-                  },
-                  marks: [
-                    Plot.line(
-                      project.updates,
-                      Plot.binX(
-                        { y: 'sum' },
-                        {
-                          x: (d) => new Date(d.date),
-                          interval: d3.utcMonth,
-                        }
-                      )
-                    ),
-                  ],
-                }}
-              />
-            </div>
-          </Link>
-        );
-      })}
+              <div>
+                <h3 className='text-xl font-bold mb-4'>{project.name}</h3>
+                <div>
+                  <div className='text-xs text-foreground/80 font-mono flex justify-start items-center gap-8'>
+                    <p>{project.operator}</p>
+                    <p>{`${completeProjects.length}/${
+                      project.outputs ? project.outputs.length : 'N/A'
+                    } outputs complete`}</p>
+                  </div>
+                </div>
+              </div>
+              <div className='grow text-2xl text-right rounded-md'>
+                <span className='pr-16 group-hover:pr-12 transition-all'>
+                  &rarr;
+                </span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

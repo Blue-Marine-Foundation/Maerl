@@ -45,6 +45,7 @@ export interface Project {
   created_at: string;
   name: string;
   operator: string;
+  highlight_color: string;
   outputs?: Output[];
   output_measurables?: Measurable[];
   updates?: Update[];

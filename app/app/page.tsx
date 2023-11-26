@@ -73,6 +73,11 @@ export default async function Overview() {
                     >
                       Output {u.output_measurables.code}
                     </Tooltip>
+                    {/* {u.output_measurables.impact_indicators && (
+                      <p>
+                        {u.value} {u.output_measurables.unit}
+                      </p>
+                    )} */}
                     {u.output_measurables.impact_indicators ? (
                       <Tooltip
                         tooltipContent={
