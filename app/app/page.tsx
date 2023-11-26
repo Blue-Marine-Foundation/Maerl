@@ -39,6 +39,17 @@ export default async function Overview() {
     },
   ];
 
+  // @ts-ignore
+  const project_list = [
+    ...new Set(
+      updates.map((u) => ({
+        name: u.projects.name,
+        id: u.projects.id,
+        color: u.projects.highlight_color,
+      }))
+    ),
+  ];
+
   return (
     <div className='animate-in'>
       <h2 className='text-2xl font-bold mb-4'>Home</h2>
@@ -57,12 +68,13 @@ export default async function Overview() {
                 className='mb-4 px-4 pt-4 pb-5 bg-card-bg rounded-md flex justify-start'
               >
                 <div className='w-20'>
-                  <span
+                  <Link
                     style={{ background: u.projects.highlight_color }}
+                    href={`/app/projects/${u.projects.name}`}
                     className='py-1 px-2 text-xs text-background rounded-md'
                   >
                     {u.projects.name}
-                  </span>
+                  </Link>
                 </div>
                 <div>
                   <div className='text-xs text-foreground/80 font-mono flex justify-start items-center gap-8 mb-4 pt-1.5'>
@@ -110,6 +122,26 @@ export default async function Overview() {
               >
                 <p>{description} </p>
                 <p className='transition-all duration-300 pr-4 group-hover:pr-1'>
+                  &rarr;
+                </p>
+              </Link>
+            );
+          })}
+          {project_list.map((project) => {
+            return (
+              <Link
+                href={`/app/projects/${project.name}`}
+                key={project.name}
+                className='flex justify-between items-center group rounded-md p-3 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
+              >
+                <span
+                  style={{ background: project.color }}
+                  className='mr-4 flex justify-center items-center w-8 h-8 text-sm text-background rounded-md'
+                >
+                  {project.id}
+                </span>
+                <p className='grow'>{project.name}</p>
+                <p className='w-12 text-right transition-all duration-300 pr-4 group-hover:pr-1'>
                   &rarr;
                 </p>
               </Link>
