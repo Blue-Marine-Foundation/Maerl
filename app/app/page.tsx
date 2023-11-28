@@ -40,15 +40,27 @@ export default async function Overview() {
   ];
 
   // @ts-ignore
-  const project_list = [
-    ...new Set(
-      updates.map((u) => ({
-        name: u.projects.name,
-        id: u.projects.id,
-        color: u.projects.highlight_color,
-      }))
-    ),
-  ];
+  const project_list = updates
+    .reduce((acc, u) => {
+      const projectKey = u.projects.id; // Assuming id is unique for each project
+      if (!acc.has(projectKey)) {
+        acc.set(projectKey, {
+          name: u.projects.name,
+          id: projectKey,
+          color: u.projects.highlight_color,
+        });
+      }
+      return acc;
+    }, new Map())
+    .values();
+
+  interface Project {
+    name: string;
+    id: number;
+    color: string;
+  }
+
+  const uniqueProjectsArray: Project[] = Array.from(project_list);
 
   return (
     <div className='animate-in'>
@@ -56,8 +68,31 @@ export default async function Overview() {
       <p className='mb-8'>
         Welcome back{user ? `, ${user[0].first_name}!` : '!'}
       </p>
-      <div className='flex justify-between gap-20'>
-        <div className='py-4 border-t basis-4/6'>
+      <div className='flex justify-between gap-16'>
+        <div className='py-4 border-t basis-1/4'>
+          <h3 className='text-lg font-bold mb-6'>Projects</h3>
+          {uniqueProjectsArray.map((project) => {
+            return (
+              <Link
+                href={`/app/projects/${project.name}`}
+                key={project.name}
+                className='flex justify-between items-center group rounded-md p-3 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
+              >
+                <span
+                  style={{ background: project.color }}
+                  className='mr-4 flex justify-center items-center w-8 h-8 text-sm text-background rounded-md'
+                >
+                  {project.id}
+                </span>
+                <p className='grow'>{project.name}</p>
+                <p className='w-12 text-right transition-all duration-300 pr-4 group-hover:pr-1'>
+                  &rarr;
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+        <div className='py-4 border-t basis-1/2'>
           <h3 className='text-lg font-bold mb-6'>Latest updates</h3>
           {updates.map((u) => {
             // @ts-ignore
@@ -105,43 +140,23 @@ export default async function Overview() {
                     )}
                   </div>
 
-                  <p className='text-sm leading-7 max-w-xl'>{u.description}</p>
+                  <p className='text-sm leading-7 max-w-md'>{u.description}</p>
                 </div>
               </div>
             );
           })}
         </div>
-        <div className='py-4 border-t basis-2/6'>
+        <div className='py-4 border-t basis-1/4'>
           <h3 className='text-lg font-bold mb-6'>Shortcuts</h3>
           {shortcuts.map(({ name, description, link }) => {
             return (
               <Link
                 href={link}
                 key={name}
-                className='flex justify-between group rounded-md p-4 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
+                className='flex justify-between group rounded-md p-4 mb-6 text-sm bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
               >
                 <p>{description} </p>
                 <p className='transition-all duration-300 pr-4 group-hover:pr-1'>
-                  &rarr;
-                </p>
-              </Link>
-            );
-          })}
-          {project_list.map((project) => {
-            return (
-              <Link
-                href={`/app/projects/${project.name}`}
-                key={project.name}
-                className='flex justify-between items-center group rounded-md p-3 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
-              >
-                <span
-                  style={{ background: project.color }}
-                  className='mr-4 flex justify-center items-center w-8 h-8 text-sm text-background rounded-md'
-                >
-                  {project.id}
-                </span>
-                <p className='grow'>{project.name}</p>
-                <p className='w-12 text-right transition-all duration-300 pr-4 group-hover:pr-1'>
                   &rarr;
                 </p>
               </Link>

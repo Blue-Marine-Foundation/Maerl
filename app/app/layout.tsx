@@ -23,12 +23,12 @@ export default async function DashboardLayout({
     return (
       <>
         <div className='w-full bg-[#2e3648] border-b border-foreground/10'>
-          <div className='max-w-6xl mx-auto'>
+          <div className='max-w-7xl mx-auto'>
             <MainNav />
           </div>
         </div>
 
-        <div className='max-w-6xl mx-auto min-h-[500px] basis-full pt-6'>
+        <div className='max-w-7xl mx-auto min-h-[500px] basis-full pt-6 pb-24'>
           {children}
         </div>
       </>
