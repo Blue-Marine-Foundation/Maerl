@@ -12,21 +12,25 @@ export default function ProjectSideNav(project: Project) {
 
   const accountNav = [
     {
-      name: 'Updates',
-      href: `/app/projects/${project.project}/updates`,
+      name: 'Project Home',
+      href: `/app/projects/${project.project}`,
+    },
+    {
+      name: 'Logframe',
+      href: `/app/projects/${project.project}/logframe`,
     },
     {
       name: 'Outputs',
       href: `/app/projects/${project.project}/outputs`,
     },
     {
-      name: 'Logframe',
-      href: `/app/projects/${project.project}/logframe`,
+      name: 'Updates',
+      href: `/app/projects/${project.project}/updates`,
     },
   ];
 
   return (
-    <ul className='text-sm pb-12 pr-8'>
+    <ul className='text-sm pb-12'>
       {accountNav.map((item) => {
         return (
           <li
@@ -35,7 +39,7 @@ export default function ProjectSideNav(project: Project) {
           >
             <Link
               href={item.href}
-              className='inline-block w-[200px] mb-2 px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-gray-100 group-[.active]:border-gray-300 dark:group-[.active]:bg-slate-800 dark:group-[.active]:border-slate-800'
+              className='inline-block w-full mb-2 px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-gray-100 dark:group-[.active]:bg-[#2B3246]'
             >
               {item.name}
             </Link>
