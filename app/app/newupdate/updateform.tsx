@@ -129,7 +129,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
 
   return (
     <form
-      className='px-8 pt-8 pb-4 shadow dark:bg-[#1f252e] rounded-md'
+      className='p-8 mb-24 shadow bg-card-bg rounded-md'
       onSubmit={handleSubmit}
       id='newUpdateForm'
     >
@@ -143,14 +143,14 @@ export default function UpdateForm({ data }: { data: Project[] }) {
               id='type'
               name='type'
               onChange={handleTypeSelection}
-              className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+              className='block appearance-none w-full px-4 py-2 text-foreground bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight'
             >
               <option value='Progress'>Progress update</option>
               <option value='Impact'>Impact update</option>
             </select>
             <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
               <svg
-                className='fill-current h-4 w-4'
+                className='fill-foreground h-4 w-4'
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 20 20'
               >
@@ -169,7 +169,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
             onChange={updateData}
             id='date'
             name='date'
-            className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+            className='block appearance-none w-full px-4 py-2 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
             required
           />
         </div>
@@ -186,7 +186,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
               id='project_id'
               name='project_id'
               onChange={handleProjectSelection}
-              className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+              className='block appearance-none w-full text-foreground px-4 py-2 pr-8 bg-[#313B4F] border border-foreground/10 hover:border-btn-background  rounded shadow leading-tight focus:outline-none focus:shadow-outline'
             >
               {data.map((d) => {
                 return (
@@ -202,7 +202,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
             </select>
             <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
               <svg
-                className='fill-current h-4 w-4'
+                className='fill-foreground h-4 w-4'
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 20 20'
               >
@@ -221,7 +221,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
               id='output'
               name='output_measurable_id'
               onChange={handleOutputSelection}
-              className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+              className='block appearance-none w-full px-4 py-2 pr-8 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
             >
               {projectOutputs &&
                 projectOutputs.map((d) => {
@@ -258,7 +258,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
             </select>
             <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
               <svg
-                className='fill-current h-4 w-4'
+                className='fill-foreground h-4 w-4'
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 20 20'
               >
@@ -280,7 +280,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
           name='description'
           onChange={updateData}
           rows={3}
-          className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+          className='block appearance-none w-full px-4 py-2 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
           placeholder='Add your update description here...'
           required
         />
@@ -294,10 +294,10 @@ export default function UpdateForm({ data }: { data: Project[] }) {
                 id='impact'
                 name='value'
                 onChange={updateData}
-                className='block appearance-none w-32 text-gray-700 bg-white border-l border-t border-b border-gray-400 hover:border-gray-500 pl-4 pr-2 py-2 rounded-l  leading-tight focus:outline-none focus:shadow-outline'
+                className='block appearance-none w-32 pl-4 pr-2 py-2  bg-[#313B4F] border-l border-t border-b border-foreground/10 hover:border-btn-background rounded-l  leading-tight focus:outline-none focus:shadow-outline'
                 required
               />
-              <p className='mr-2 block appearance-none text-gray-400 bg-white border-t border-b border-r border-gray-400 py-2 pl-2 pr-4 rounded-r leading-tight'>
+              <p className='mr-2 block appearance-none py-2 pl-2 pr-4 border-t border-b border-r bg-[#313B4F] border-foreground/10 rounded-r leading-tight'>
                 {selectedOutputUnit}
               </p>
             </div>
@@ -314,7 +314,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
             name='link'
             onChange={updateData}
             placeholder='Add a link to the cold hard PROOF'
-            className='block appearance-none w-full text-gray-700 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+            className='block appearance-none w-full px-4 py-2 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
           />
         </div>
       </div>
@@ -322,7 +322,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
         <p>{formMessage}</p>
         <button
           type='submit'
-          className='px-4 py-2 w-40 text-center border border-foreground/50 rounded-md hover:bg-green-800 transition-colors'
+          className='px-4 py-2 w-40 text-center border border-foreground/50 rounded-md hover:bg-btn-background transition-colors'
         >
           {isSubmitting ? <Spinner /> : 'Add update'}
         </button>
