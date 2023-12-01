@@ -35,7 +35,7 @@ export default function ProjectSideNav(project: Project) {
         return (
           <li
             key={item.name}
-            className={pathname === item.href ? 'group active' : 'group'}
+            className={pathname.endsWith(item.href) ? 'group active' : 'group'}
           >
             <Link
               href={item.href}

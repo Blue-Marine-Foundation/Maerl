@@ -242,7 +242,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
                               key={om.id}
                               value={om.id}
                               data-unit={om.unit}
-                              className='px-2 py-1 dark:text-foreground text-sm'
+                              className='px-2 py-2 dark:text-foreground text-sm'
                             >
                               {`${om.code}: ${
                                 om.description.length >= 75
