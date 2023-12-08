@@ -24,7 +24,9 @@ export default function LogframeFeatureCard({
     <div className='p-8 mb-8 bg-card-bg rounded-md'>
       <div className='flex gap-4 mb-8 text-sm font-mono'>
         <Link
-          href={`/app/projects/${project}/logframe/component?type=${type}&id=${id}&code=${code}`}
+          href={`/app/projects/${project}/logframe/${
+            code?.startsWith('OC.') ? 'outcome' : 'output'
+          }?id=${id}&code=${code}`}
           className='px-2 py-1 rounded bg-pink-300 text-card-bg'
         >
           {code}
