@@ -122,7 +122,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
         setFormMessage(`Error submitting update: ${error.message}`);
         setTimeout(() => {
           setFormMessage('');
-        }, 3000);
+        }, 10000);
       });
     }
   };
