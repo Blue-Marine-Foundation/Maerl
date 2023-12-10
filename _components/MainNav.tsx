@@ -20,10 +20,6 @@ export default function MainNav() {
       href: '/app/newupdate',
     },
     {
-      name: 'Updates',
-      href: '/app/updates',
-    },
-    {
       name: 'Impact Indicators',
       href: '/app/impactindicators',
     },
