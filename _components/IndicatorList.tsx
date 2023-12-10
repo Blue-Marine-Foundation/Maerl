@@ -62,7 +62,7 @@ export default function Dashboard() {
             type='text'
             onChange={onInputChange}
             placeholder='e.g. 1.3.2'
-            className='px-3 py-1 text-slate-800 rounded-md'
+            className='block appearance-none w-[300px] px-4 py-2 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
           />
         </div>
         <table>

@@ -20,10 +20,6 @@ export default function MainNav() {
       href: '/app/newupdate',
     },
     {
-      name: 'Updates',
-      href: '/app/updates',
-    },
-    {
       name: 'Impact Indicators',
       href: '/app/impactindicators',
     },
@@ -43,7 +39,7 @@ export default function MainNav() {
           >
             <Link
               href={item.href}
-              className='inline-block px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-gray-100 group-[.active]:border-gray-300 dark:group-[.active]:bg-[#222838] dark:group-[.active]:border-slate-800 dark:group-[.active]:shadow-md'
+              className='inline-block px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-[#222838] group-[.active]:border-slate-800 group-[.active]:shadow-md'
             >
               {item.name}
             </Link>

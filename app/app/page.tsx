@@ -1,13 +1,9 @@
-import dayjs from 'dayjs';
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
-import Tooltip from '@/_components/Tooltip';
+import Update from '@/_components/Update';
 
 export default async function Overview() {
   const supabase = createClient();
-
-  const relativeTime = require('dayjs/plugin/relativeTime');
-  dayjs.extend(relativeTime);
 
   const { data: user } = await supabase.from('users').select('*');
 
@@ -95,55 +91,7 @@ export default async function Overview() {
         <div className='py-4 border-t basis-1/2'>
           <h3 className='text-lg font-bold mb-6'>Latest updates</h3>
           {updates.map((u) => {
-            // @ts-ignore
-            const date = dayjs().to(dayjs(u.date));
-            return (
-              <div
-                key={u.id}
-                className='mb-4 px-4 pt-4 pb-5 bg-card-bg rounded-md flex justify-start'
-              >
-                <div className='w-20'>
-                  <Link
-                    style={{ background: u.projects.highlight_color }}
-                    href={`/app/projects/${u.projects.name}`}
-                    className='py-1 px-2 text-xs text-background rounded-md'
-                  >
-                    {u.projects.name}
-                  </Link>
-                </div>
-                <div>
-                  <div className='text-xs text-foreground/80 font-mono flex justify-start items-center gap-8 mb-4 pt-1.5'>
-                    <Tooltip tooltipContent={u.date}>{date}</Tooltip>
-                    <Tooltip
-                      tooltipContent={u.output_measurables.description}
-                      tooltipWidth={380}
-                    >
-                      Output {u.output_measurables.code}
-                    </Tooltip>
-                    {/* {u.output_measurables.impact_indicators && (
-                      <p>
-                        {u.value} {u.output_measurables.unit}
-                      </p>
-                    )} */}
-                    {u.output_measurables.impact_indicators ? (
-                      <Tooltip
-                        tooltipContent={
-                          u.output_measurables.impact_indicators.indicator_title
-                        }
-                        tooltipWidth={380}
-                      >
-                        Impact indicator{' '}
-                        {u.output_measurables.impact_indicators.indicator_code}
-                      </Tooltip>
-                    ) : (
-                      <p className=''>Progress</p>
-                    )}
-                  </div>
-
-                  <p className='text-sm leading-7 max-w-md'>{u.description}</p>
-                </div>
-              </div>
-            );
+            return <Update key={u.id} size='medium' update={u} />;
           })}
         </div>
         <div className='py-4 border-t basis-1/4'>
