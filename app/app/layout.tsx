@@ -1,4 +1,4 @@
-import NavMenu from '@/_components/dashboard/navmenu';
+import MainNav from '@/_components/MainNav';
 import { createClient } from '@/_utils/supabase/server';
 import { redirect } from 'next/navigation';
 
@@ -22,8 +22,13 @@ export default async function DashboardLayout({
   if (session) {
     return (
       <>
-        <NavMenu />
-        <div className='max-w-6xl mx-auto pt-12 pb-24'>{children}</div>
+        <div className='w-full bg-[#2e3648] border-b border-foreground/10'>
+          <div className='max-w-7xl mx-auto'>
+            <MainNav />
+          </div>
+        </div>
+
+        <div className='max-w-7xl mx-auto basis-full pt-6'>{children}</div>
       </>
     );
   }

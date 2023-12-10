@@ -1,4 +1,4 @@
-import IndicatorList from '@/_components/dashboard/IndicatorList';
+import IndicatorList from '@/_components/IndicatorList';
 
 export default function ProjectOverview() {
   return (

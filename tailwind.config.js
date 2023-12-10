@@ -13,6 +13,7 @@ module.exports = {
           background: 'hsl(var(--btn-background))',
           'background-hover': 'hsl(var(--btn-background-hover))',
         },
+        'card-bg': 'hsl(var(--card-bg))',
       },
     },
   },
