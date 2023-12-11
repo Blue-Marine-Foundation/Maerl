@@ -50,8 +50,6 @@ export default function Update({
 
   const flatUpdate = flattenUpdate(update) as FlatUpdate;
 
-  console.log(flatUpdate);
-
   const relativeTime = require('dayjs/plugin/relativeTime');
   dayjs.extend(relativeTime);
 

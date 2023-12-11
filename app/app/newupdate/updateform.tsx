@@ -281,7 +281,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
           onChange={updateData}
           rows={3}
           className='block appearance-none w-full px-4 py-2 bg-[#313B4F] border border-foreground/10 hover:border-btn-background rounded shadow leading-tight focus:outline-none focus:shadow-outline'
-          placeholder='Add your update description here...'
+          placeholder='A short description of your update, e.g. "Report released on The Illegality of Fishing Vessels Going Dark and Methods of Deterrence"'
           required
         />
       </div>
