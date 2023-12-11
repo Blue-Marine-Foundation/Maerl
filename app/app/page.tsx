@@ -1,11 +1,10 @@
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
 import Update from '@/_components/Update';
+import WelcomeMessage from '@/_components/WelcomeMessage';
 
 export default async function Overview() {
   const supabase = createClient();
-
-  const { data: user } = await supabase.from('users').select('*');
 
   const { data: updates, error } = await supabase
     .from('updates')
@@ -14,7 +13,7 @@ export default async function Overview() {
     .limit(15);
 
   if (error) {
-    throw new Error(`Failed to fetch projects: ${error.message}`);
+    console.log(`Failed to fetch projects: ${error.message}`);
   }
 
   const shortcuts = [
@@ -61,9 +60,7 @@ export default async function Overview() {
   return (
     <div className='animate-in'>
       <h2 className='text-2xl font-bold mb-4'>Home</h2>
-      <p className='mb-8'>
-        Welcome back{user ? `, ${user[0].first_name}!` : '!'}
-      </p>
+      <WelcomeMessage />
       <div className='flex justify-between gap-16'>
         <div className='py-4 border-t basis-1/4'>
           <h3 className='text-lg font-bold mb-6'>Projects</h3>
@@ -90,9 +87,10 @@ export default async function Overview() {
         </div>
         <div className='py-4 border-t basis-1/2'>
           <h3 className='text-lg font-bold mb-6'>Latest updates</h3>
-          {updates.map((u) => {
-            return <Update key={u.id} size='medium' update={u} />;
-          })}
+          {updates &&
+            updates.map((u) => {
+              return <Update key={u.id} size='medium' update={u} />;
+            })}
         </div>
         <div className='py-4 border-t basis-1/4'>
           <h3 className='text-lg font-bold mb-6'>Shortcuts</h3>

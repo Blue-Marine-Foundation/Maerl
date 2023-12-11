@@ -4,7 +4,7 @@ import FormMessages from '@/components/FormMessages';
 export default function Login() {
   return (
     <>
-      <div className='max-w-6xl mx-auto pt-4'>
+      <div className='max-w-7xl mx-auto pt-6'>
         <Link
           href='/'
           className='py-2 px-4 max-w-[90px] rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm'

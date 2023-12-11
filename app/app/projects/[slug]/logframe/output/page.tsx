@@ -28,7 +28,6 @@ export default function Output() {
       .eq('output_measurables.id', id);
 
     if (updates) {
-      console.log(updates);
       setProject(updates[0].projects.name);
       setOutput(updates[0].output_measurables);
       setUpdates(updates);
