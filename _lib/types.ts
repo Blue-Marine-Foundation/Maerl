@@ -95,7 +95,22 @@ export interface Project {
   id: number;
   created_at: string;
   name: string;
-  operator: string;
+  lead_partner: string;
+  delivery_partners?: [
+    {
+      name: string;
+    }
+  ];
+  funding_partner?: [
+    {
+      name: string;
+    }
+  ];
+  funders?: [
+    {
+      name: string;
+    }
+  ];
   highlight_color: string;
   outputs?: Output[];
   output_measurables?: Measurable[];
