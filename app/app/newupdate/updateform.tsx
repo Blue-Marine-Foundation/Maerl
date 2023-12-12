@@ -2,7 +2,7 @@
 
 import { Project } from '@/_lib/types';
 import { createClient } from '@/_utils/supabase/client';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Spinner from '@/_components/Spinner';
 
 function filterProjectOutputs(data: Project[], id: number) {
@@ -25,6 +25,19 @@ interface NewUpdate {
 
 export default function UpdateForm({ data }: { data: Project[] }) {
   const supabase = createClient();
+
+  const [user, setUser] = useState('');
+
+  async function fetchUser() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) setUser(user.id);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const initialOutputs = filterProjectOutputs(data, data[0].id);
   const initialUnit =
@@ -95,6 +108,7 @@ export default function UpdateForm({ data }: { data: Project[] }) {
       project_id: parseInt(formData.project_id.toString()),
       output_measurable_id: parseInt(formData.output_measurable_id?.toString()),
       value: formData.value ? parseFloat(formData.value.toString()) : null,
+      posted_by: user,
     };
 
     const { data, error } = await supabase

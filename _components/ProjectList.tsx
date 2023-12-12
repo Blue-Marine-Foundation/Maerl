@@ -16,9 +16,7 @@ export default async function Page() {
 
   return (
     <div className='flex gap-8'>
-      <div className='py-4 border-t basis-5/6'>
-        <h3 className='text-lg font-bold mb-6'>Your projects</h3>
-
+      <div className='py-4 mb-16 border-t basis-5/6'>
         {projects
           .sort((a: Project, b: Project) => a.name.localeCompare(b.name))
           .map((project: Project) => {
