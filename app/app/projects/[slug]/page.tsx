@@ -53,18 +53,50 @@ export default async function Project({ params }: { params: Params }) {
         <div className='basis-6/12'>
           <p className='mb-4'>Project Overview</p>
           <div className='mb-8 p-6 text-sm text-slate-400 bg-card-bg rounded-md shadow'>
-            <div className='flex gap-4 mb-4'>
-              <p className='w-[130px]'>Operator:</p>
-              <p className='text-white'>{project.operator}</p>
+            <div className='flex gap-4 mb-6'>
+              <p className='w-[130px]'>Lead Partner:</p>
+              <p className='text-white'>{project.lead_partner}</p>
             </div>
-            <div className='flex gap-4 mb-4'>
+            <div className='flex gap-4 mb-6'>
               <p className='w-[130px]'>Start date:</p>
               <p className='text-white'>{project.start_date}</p>
             </div>
-            <div className='flex gap-4 mb-4'>
+            <div className='flex gap-4 mb-6'>
               <p className='w-[130px]'>Project Manager:</p>
               <p className='text-white'>{`${pm.first_name} ${pm.last_name}`}</p>
             </div>
+            {project.delivery_partners && (
+              <div className='flex gap-4 mb-6'>
+                <p className='w-[130px]'>Delivery Partners:</p>
+                <ul className='text-white'>
+                  {project.delivery_partners.map(
+                    (partner: { name: String }) => (
+                      <li className='mb-2 last:mb-0'>{partner.name}</li>
+                    )
+                  )}
+                </ul>
+              </div>
+            )}
+            {project.funding_partners && (
+              <div className='flex gap-4 mb-6'>
+                <p className='w-[130px]'>Funding Partners:</p>
+                <ul className='text-white'>
+                  {project.funding_partners.map((partner: { name: String }) => (
+                    <li className='mb-2 last:mb-0'>{partner.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {project.funders && (
+              <div className='flex gap-4 mb-6'>
+                <p className='w-[130px]'>Funders:</p>
+                <ul className='text-white'>
+                  {project.funders.map((funder: { name: String }) => (
+                    <li className='mb-2 last:mb-0'>{funder.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <p className='mb-4'>Recent Updates</p>

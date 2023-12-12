@@ -34,7 +34,9 @@ export default async function ProjectLayout({
             <div className='basis-4/5 pl-8 flex justify-start items-center gap-8 text-xs font-mono text-foreground/80'>
               <p className='px-2 py-1 rounded bg-green-300 text-card-bg'>
                 Last updated{' '}
-                {projects[0].updates.at(-1).created_at.slice(0, 10)}
+                {projects[0].updates.length > 0
+                  ? projects[0].updates.at(-1).created_at.slice(0, 10)
+                  : 'never'}
               </p>
               <p className='px-2 py-1 rounded bg-pink-300 text-card-bg'>
                 {projects[0].outputs.length} outputs
