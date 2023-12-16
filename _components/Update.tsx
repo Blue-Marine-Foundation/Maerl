@@ -48,7 +48,7 @@ export default function Update({
     return flattened;
   };
 
-  const flatUpdate = flattenUpdate(update) as FlatUpdate;
+  const flatUpdate = flattenUpdate(update) as unknown as FlatUpdate;
 
   const relativeTime = require('dayjs/plugin/relativeTime');
   dayjs.extend(relativeTime);
@@ -62,7 +62,7 @@ export default function Update({
         <div className='w-20'>
           <Link
             style={{ background: flatUpdate.project_highlight_color }}
-            href={`/app/projects/${flatUpdate.project_name}`}
+            href={`/app/projects/${flatUpdate.project_slug}`}
             className='py-1 px-2 text-xs text-background rounded-md'
           >
             {flatUpdate.project_name}

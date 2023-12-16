@@ -12,10 +12,11 @@ export default async function ProjectLayout({
   params: Params;
 }) {
   const supabase = createClient();
+
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*, outputs (*), updates (*)')
-    .eq('name', params.slug);
+    .eq('slug', params.slug);
 
   return (
     <>
@@ -24,7 +25,9 @@ export default async function ProjectLayout({
           <>
             <div className='basis-1/5 flex justify-start items-center gap-6'>
               <span
-                style={{ background: projects[0].highlight_color }}
+                style={{
+                  background: projects[0].highlight_color,
+                }}
                 className='flex justify-center items-center w-10 h-10 text-lg font-bold text-background rounded-md'
               >
                 {projects[0].id}

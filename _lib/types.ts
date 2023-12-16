@@ -23,6 +23,7 @@ export interface Output {
 export interface Update {
   id: number;
   project_id: number;
+  slug: string;
   date: string;
   output_measurable_id: string | number | undefined;
   type: string;
@@ -44,6 +45,7 @@ export interface FlatUpdate {
   value: number | null;
   link: string | null;
   project_created_at: string;
+  project_slug: string;
   project_name: string;
   project_organisation_id: number;
   project_operator: string;
@@ -94,6 +96,7 @@ export interface Measurable {
 export interface Project {
   id: number;
   created_at: string;
+  slug: string;
   name: string;
   lead_partner: string;
   delivery_partners?: [

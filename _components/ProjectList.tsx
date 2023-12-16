@@ -28,7 +28,7 @@ export default async function Page() {
             return (
               <Link
                 key={project.name}
-                href={`${PRODUCTION_URL}/app/projects/${project.name}`}
+                href={`${PRODUCTION_URL}/app/projects/${project.slug}`}
                 className='mb-4 px-4 pt-4 pb-5 bg-card-bg rounded-lg flex justify-start items-center group border border-transparent hover:border-foreground/30 transition-all'
               >
                 <div className='w-32'>
