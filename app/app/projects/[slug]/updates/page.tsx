@@ -3,6 +3,8 @@ import { createClient } from '@/_utils/supabase/server';
 import { Params } from '@/lib/types';
 
 async function Page({ params }: { params: Params }) {
+  console.log(params);
+
   const supabase = createClient();
   const { data: updates, error } = await supabase
     .from('updates')
@@ -10,7 +12,9 @@ async function Page({ params }: { params: Params }) {
       '*, projects!inner(*), output_measurables (*, impact_indicators (*))'
     )
     .order('date', { ascending: false })
-    .eq('projects.name', params.slug);
+    .eq('projects.slug', params.slug);
+
+  console.log(updates);
 
   if (!updates) {
     console.log(error);
