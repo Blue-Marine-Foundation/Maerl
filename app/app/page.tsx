@@ -30,7 +30,7 @@ export default async function Overview() {
     {
       name: 'Search impact indicators',
       description: 'Search impact indicators',
-      link: '/app/newupdate',
+      link: '/app/impactindicators',
     },
   ];
 
