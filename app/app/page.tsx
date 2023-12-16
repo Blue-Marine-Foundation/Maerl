@@ -43,6 +43,7 @@ export default async function Overview() {
           name: u.projects.name,
           id: projectKey,
           color: u.projects.highlight_color,
+          slug: u.projects.slug,
         });
       }
       return acc;
@@ -52,6 +53,7 @@ export default async function Overview() {
   interface Project {
     name: string;
     id: number;
+    slug: string;
     color: string;
   }
 
@@ -67,7 +69,7 @@ export default async function Overview() {
           {uniqueProjectsArray.map((project) => {
             return (
               <Link
-                href={`/app/projects/${project.name}`}
+                href={`/app/projects/${project.slug}`}
                 key={project.name}
                 className='flex justify-between items-center group rounded-md p-3 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
               >

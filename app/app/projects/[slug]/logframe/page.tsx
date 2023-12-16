@@ -22,7 +22,7 @@ export default async function Project({ params }: { params: Params }) {
     .select(
       `*,impacts (*),outcomes (*),outcome_measurables (*), outputs (*, output_measurables (*)), updates (*)`
     )
-    .eq('name', params.slug)
+    .eq('slug', params.slug)
     .limit(1);
 
   if (!projects) {

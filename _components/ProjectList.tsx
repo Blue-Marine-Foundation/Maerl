@@ -16,9 +16,7 @@ export default async function Page() {
 
   return (
     <div className='flex gap-8'>
-      <div className='py-4 border-t basis-5/6'>
-        <h3 className='text-lg font-bold mb-6'>Your projects</h3>
-
+      <div className='py-4 mb-16 border-t basis-5/6'>
         {projects
           .sort((a: Project, b: Project) => a.name.localeCompare(b.name))
           .map((project: Project) => {
@@ -30,7 +28,7 @@ export default async function Page() {
             return (
               <Link
                 key={project.name}
-                href={`${PRODUCTION_URL}/app/projects/${project.name}`}
+                href={`${PRODUCTION_URL}/app/projects/${project.slug}`}
                 className='mb-4 px-4 pt-4 pb-5 bg-card-bg rounded-lg flex justify-start items-center group border border-transparent hover:border-foreground/30 transition-all'
               >
                 <div className='w-32'>

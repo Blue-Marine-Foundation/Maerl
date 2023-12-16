@@ -12,7 +12,7 @@ export async function generateStaticParams() {
   }
 
   return projects.map((project) => ({
-    slug: project.name,
+    slug: project.slug,
   }));
 }
 
@@ -27,7 +27,7 @@ export default async function Project({ params }: { params: Params }) {
   const { data: projects, error: projectError } = await supabase
     .from('projects')
     .select('*, users (*), output_measurables (*)')
-    .eq('name', params.slug);
+    .eq('slug', params.slug);
 
   if (projectError) {
     throw new Error(`Failed to fetch projects: ${projectError.message}`);
