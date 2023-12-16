@@ -59,7 +59,7 @@ export default function Update({
   return (
     <div className='flex justify-start text-white mb-4 p-6 bg-card-bg rounded-md shadow '>
       {flatUpdate.project_name && size != 'small' && (
-        <div className='w-20'>
+        <div className='w-40'>
           <Link
             style={{ background: flatUpdate.project_highlight_color }}
             href={`/app/projects/${flatUpdate.project_slug}`}
