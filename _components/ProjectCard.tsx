@@ -44,7 +44,8 @@ export default async function ProjectCard({ project }: { project: Project }) {
             `${updates.length} update${updates.length != 1 ? 's' : ''}`}
         </p>
         <p className='w-[200px]'>
-          {updates && `Updated ${dayjs(updates[0].date).format("DD MMM 'YY")}`}
+          {updates &&
+            `Last updated ${dayjs(updates[0].date).format("DD MMM 'YY")}`}
         </p>
       </div>
 
