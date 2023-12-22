@@ -6,7 +6,7 @@ interface NavItem {
   href: string;
 }
 
-export default function NavList({ data }: { data: NavItem[] }) {
+export default function NavListVertical({ data }: { data: NavItem[] }) {
   const pathname = usePathname();
 
   return (

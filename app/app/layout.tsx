@@ -1,4 +1,4 @@
-import MainNav from '@/_components/MainNav';
+import MainNav from '@/_components/navigation/MainNav';
 import { createClient } from '@/_utils/supabase/server';
 import { redirect } from 'next/navigation';
 

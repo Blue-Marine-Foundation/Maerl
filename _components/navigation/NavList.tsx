@@ -1,40 +1,25 @@
 'use client';
-
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
-export default function MainNav() {
+interface NavItem {
+  name: string;
+  href: string;
+}
+
+export default function NavList({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
-  const accountNav = [
-    {
-      name: 'Overview',
-      href: '/app',
-    },
-    {
-      name: 'Projects',
-      href: '/app/projects',
-    },
-    {
-      name: 'Add Update',
-      href: '/app/newupdate',
-    },
-    {
-      name: 'Impact Indicators',
-      href: '/app/impactindicators',
-    },
-  ];
-
   return (
-    <ul className='text-sm px-4 pb-4'>
-      {accountNav.map((item) => {
+    <ul className='text-sm flex items-center gap-1'>
+      {items.map((item: NavItem) => {
         return (
           <li
             key={item.name}
             className={
               pathname === item.href
-                ? 'inline-block mr-2 group active'
-                : 'inline-block mr-2 group'
+                ? 'inline-block transition-all group active first-of-type:ml-4'
+                : 'inline-block transition-all group'
             }
           >
             <Link

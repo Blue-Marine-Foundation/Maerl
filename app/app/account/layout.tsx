@@ -1,4 +1,4 @@
-import AccountSideNav from '@/_components/SideNav/AccountSideNav';
+import AccountSideNav from '@/_components/navigation/AccountSideNav';
 
 export const metadata = {
   title: 'Maerl: Account',
