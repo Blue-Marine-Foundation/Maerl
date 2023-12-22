@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { supabase } from '@/utils/supabase/servicerole';
 import { createClient } from '@/_utils/supabase/server';
-import Update from '@/_components/Update';
+import Update from '@/_components/UpdateMedium';
 import { Params, Measurable } from '@/lib/types';
 
 export async function generateStaticParams() {
@@ -102,7 +102,7 @@ export default async function Project({ params }: { params: Params }) {
           <p className='mb-4'>Recent Updates</p>
           {updates &&
             updates.map((update) => {
-              return <Update key={update.id} size='small' update={update} />;
+              return <Update key={update.id} update={update} />;
             })}
         </div>
 

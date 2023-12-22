@@ -1,6 +1,6 @@
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
-import Update from '@/_components/Update';
+import UpdateMedium from '@/_components/UpdateMedium';
 import WelcomeMessage from '@/_components/WelcomeMessage';
 
 export default async function Overview() {
@@ -10,29 +10,11 @@ export default async function Overview() {
     .from('updates')
     .select('*, projects (*), output_measurables (*, impact_indicators (*))')
     .order('date', { ascending: false })
-    .limit(15);
+    .limit(25);
 
   if (error) {
     console.log(`Failed to fetch projects: ${error.message}`);
   }
-
-  const shortcuts = [
-    {
-      name: 'Add Update',
-      description: 'Add a new update',
-      link: '/app/newupdate',
-    },
-    {
-      name: 'View projects',
-      description: 'View project summaries',
-      link: '/app/projects',
-    },
-    {
-      name: 'Search impact indicators',
-      description: 'Search impact indicators',
-      link: '/app/impactindicators',
-    },
-  ];
 
   // @ts-ignore
   const project_list = updates
@@ -61,17 +43,15 @@ export default async function Overview() {
 
   return (
     <div className='animate-in'>
-      <h2 className='text-2xl font-bold mb-4'>Home</h2>
-      <WelcomeMessage />
       <div className='flex justify-between gap-16'>
-        <div className='py-4 border-t basis-1/4'>
+        <div className='py-4 basis-1/4'>
           <h3 className='text-lg font-bold mb-6'>Projects</h3>
           {uniqueProjectsArray.map((project) => {
             return (
               <Link
                 href={`/app/projects/${project.slug}`}
                 key={project.name}
-                className='flex justify-between items-center group rounded-md p-3 mb-6 bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
+                className='p-4 flex justify-between items-center group first-of-type:pt-5 last-of-type:pb-5 first-of-type:rounded-t-lg last-of-type:rounded-b-lg bg-card-bg hover:bg-card-bg/60 text-slate-100 border border-transparent border-b-foreground/20 last-of-type:border-b-transparent transition-all duration-300'
               >
                 <span
                   style={{ background: project.color }}
@@ -87,29 +67,12 @@ export default async function Overview() {
             );
           })}
         </div>
-        <div className='py-4 border-t basis-1/2'>
+        <div className='pt-4 pb-24 basis-3/4'>
           <h3 className='text-lg font-bold mb-6'>Latest updates</h3>
           {updates &&
             updates.map((u) => {
-              return <Update key={u.id} size='medium' update={u} />;
+              return <UpdateMedium key={u.id} update={u} />;
             })}
-        </div>
-        <div className='py-4 border-t basis-1/4'>
-          <h3 className='text-lg font-bold mb-6'>Shortcuts</h3>
-          {shortcuts.map(({ name, description, link }) => {
-            return (
-              <Link
-                href={link}
-                key={name}
-                className='flex justify-between group rounded-md p-4 mb-6 text-sm bg-card-bg text-slate-100 border border-foreground/20 hover:border-foreground/50 transition-all duration-300'
-              >
-                <p>{description} </p>
-                <p className='transition-all duration-300 pr-4 group-hover:pr-1'>
-                  &rarr;
-                </p>
-              </Link>
-            );
-          })}
         </div>
       </div>
     </div>
