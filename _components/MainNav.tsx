@@ -26,7 +26,7 @@ export default function MainNav() {
   ];
 
   return (
-    <ul className='text-sm px-4 pt-2 pb-4'>
+    <ul className='text-sm px-4 pb-4'>
       {accountNav.map((item) => {
         return (
           <li
