@@ -43,7 +43,7 @@ export default async function Overview() {
 
   return (
     <div className='animate-in'>
-      <div className='flex justify-between gap-16'>
+      <div className='flex justify-between gap-12'>
         <div className='py-4 basis-1/4'>
           <h3 className='text-lg font-bold mb-6'>Projects</h3>
           {uniqueProjectsArray.map((project) => {

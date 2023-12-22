@@ -28,7 +28,7 @@ export default async function DashboardLayout({
           </div>
         </div>
 
-        <div className='max-w-7xl px-4 mx-auto basis-full pt-6'>{children}</div>
+        <div className='max-w-7xl px-4 mx-auto basis-full pt-4'>{children}</div>
       </>
     );
   }

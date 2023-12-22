@@ -2,6 +2,11 @@ export interface Params {
   slug: string;
 }
 
+export interface User {
+  first_name: string;
+  last_name: string;
+}
+
 export interface ProjectDetails {
   slug: string;
   title: string;
@@ -58,6 +63,7 @@ export interface Project {
   slug: string;
   name: string;
   lead_partner: string;
+  start_date: string;
   delivery_partners?: [
     {
       name: string;

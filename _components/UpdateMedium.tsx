@@ -27,6 +27,7 @@ export default function UpdateMedium({ update }: { update: Update }) {
         <Tooltip
           tooltipContent={update.output_measurables?.description}
           tooltipWidth={380}
+          tooltipDirection='right'
         >
           {update.output_measurables.code}
         </Tooltip>{' '}
@@ -37,6 +38,7 @@ export default function UpdateMedium({ update }: { update: Update }) {
               update.output_measurables.impact_indicators.indicator_title
             }
             tooltipWidth={380}
+            tooltipDirection='right'
           >
             {update.output_measurables.impact_indicators.indicator_code}
           </Tooltip>
