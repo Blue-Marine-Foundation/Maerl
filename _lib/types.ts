@@ -22,7 +22,7 @@ export interface Output {
   description: string;
   percentage_complete: string;
   status: string;
-  output_measurables?: Measurable[];
+  output_measurables: Measurable[];
 }
 
 export interface Update {
@@ -83,4 +83,30 @@ export interface Project {
   outputs?: Output[];
   output_measurables?: Measurable[];
   updates?: Update[];
+}
+
+export interface Project_W_Outputs {
+  id: number;
+  created_at: string;
+  slug: string;
+  name: string;
+  lead_partner: string;
+  start_date: string;
+  delivery_partners?: [
+    {
+      name: string;
+    }
+  ];
+  funding_partner?: [
+    {
+      name: string;
+    }
+  ];
+  funders?: [
+    {
+      name: string;
+    }
+  ];
+  highlight_color: string;
+  outputs: Output[];
 }

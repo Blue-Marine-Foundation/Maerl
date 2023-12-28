@@ -24,6 +24,8 @@ interface NewUpdate {
 }
 
 export default function UpdateForm({ data }: { data: Project[] }) {
+  console.log(data);
+
   const supabase = createClient();
 
   const [user, setUser] = useState('');
