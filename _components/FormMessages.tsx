@@ -9,12 +9,12 @@ export default function FormMessages() {
   return (
     <>
       {error && (
-        <p className='mb-4 p-4 bg-red-100 border rounded-md border-red-300 text-foreground text-center dark:bg-red-300 dark:text-red-900'>
+        <p className='mb-4 p-2 bg-red-50 border rounded-md border-red-300 text-foreground text-center dark:bg-red-300 dark:text-red-900'>
           {error}
         </p>
       )}
       {message && (
-        <p className='mb-4 p-4 bg-slate-100 border rounded-md border-slate-300 text-foreground text-center dark:bg-slate-300 dark:text-slate-900'>
+        <p className='mb-4 p-2 bg-slate-50 border rounded-md border-slate-300 text-foreground text-center dark:bg-slate-300 dark:text-slate-900'>
           {message}
         </p>
       )}

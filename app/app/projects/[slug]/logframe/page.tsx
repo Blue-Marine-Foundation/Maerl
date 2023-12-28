@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className='mb-16 flex justify-start items-start gap-8'>
+    <div className='mb-10 flex justify-start items-start gap-8'>
       <div className='basis-1/6'>
         <h3 className='text-xl font-medium text-foreground/80'>{title}</h3>
       </div>
@@ -32,9 +32,9 @@ export default async function Project({ params }: { params: Params }) {
   const project = projects[0];
 
   return (
-    <div className='animate-in'>
+    <div className='animate-in pt-8'>
       <Section title='Impact'>
-        <p className='text-2xl font-medium text-gray-100 max-w-xl'>
+        <p className='text-3xl font-medium max-w-2xl'>
           {project.impacts[0] && project.impacts[0].title}
         </p>
       </Section>
@@ -48,13 +48,13 @@ export default async function Project({ params }: { params: Params }) {
             return (
               <LogframeFeatureCard
                 key={measurable.code}
-                project={project.name}
+                project={project.slug}
                 type='Outcomes'
                 id={measurable.id}
                 code={measurable.code}
                 verification={measurable.verification}
               >
-                <h4 className='text-lg mb-8'>{measurable.description}</h4>
+                <h4 className='text-base'>{measurable.description}</h4>
               </LogframeFeatureCard>
             );
           })}
@@ -72,7 +72,7 @@ export default async function Project({ params }: { params: Params }) {
               return (
                 <LogframeFeatureCard
                   key={om.code}
-                  project={project.name}
+                  project={project.slug}
                   id={om.id}
                   type='Outputs'
                   code={om.code}
@@ -80,7 +80,7 @@ export default async function Project({ params }: { params: Params }) {
                   verification={om.verification}
                   assumption={om.assumptions}
                 >
-                  <h4 className='text-white text-lg mb-8'>{om.description}</h4>
+                  <h4>{om.description}</h4>
                 </LogframeFeatureCard>
               );
             })}

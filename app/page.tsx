@@ -15,14 +15,16 @@ export default async function Index() {
   }
 
   return (
-    <div className='max-w-6xl mx-auto text-center py-24 animate-in'>
-      <p className='text-4xl mb-4'>🐬</p>
+    <div className='max-w-6xl mx-auto text-center py-32 animate-in'>
       <h1 className='mb-8 text-3xl font-bold'>Maerl</h1>
+      <p className='mb-12'>Impact reporting by Blue Marine Foundation</p>
       <p>
-        <Link href='/login' className='underline'>
+        <Link
+          href='/login'
+          className='px-8 py-2 bg-btn-background hover:bg-btn-background-hover rounded shadow transition-all duration-500'
+        >
           Log in
-        </Link>{' '}
-        to get started
+        </Link>
       </p>
     </div>
   );

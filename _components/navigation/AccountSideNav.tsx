@@ -1,6 +1,6 @@
 'use client';
 
-import NavList from './NavList';
+import NavListVertical from './NavListVertical';
 
 export default function AccountSideNav() {
   const accountNav = [
@@ -14,5 +14,5 @@ export default function AccountSideNav() {
     },
   ];
 
-  return <NavList data={accountNav} />;
+  return <NavListVertical data={accountNav} />;
 }

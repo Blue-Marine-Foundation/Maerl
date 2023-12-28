@@ -16,8 +16,6 @@ export default async function WelcomeMessage() {
     .eq('id', user.id);
 
   return (
-    <p className='mb-8'>
-      Welcome back{userDetails ? `, ${userDetails[0].first_name}!` : '!'}
-    </p>
+    <p>Welcome back{userDetails ? `, ${userDetails[0].first_name}!` : '!'}</p>
   );
 }
