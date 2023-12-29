@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-interface ControlledTextInputProps {
+interface ControlledInputProps {
   type: string;
   initialValue: string;
   label: string;
@@ -16,7 +16,7 @@ export default function ControlledTextInput({
   label,
   placeholder,
   onChange,
-}: ControlledTextInputProps) {
+}: ControlledInputProps) {
   const [value, setValue] = useState(initialValue);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

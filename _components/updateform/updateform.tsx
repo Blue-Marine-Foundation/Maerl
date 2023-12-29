@@ -1,21 +1,10 @@
 'use client';
 
-import { createClient } from '@/_utils/supabase/client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Project_W_Outputs } from '@/_lib/types';
-import ControlledTextInput from './Input';
-import Spinner from '@/_components/Spinner';
+import ControlledInput from './Input';
 import ControlledListbox from './Listbox';
-
-interface NewUpdate {
-  project_id: number | string;
-  date: string;
-  output_measurable_id: string | number;
-  type: string;
-  description: string;
-  value: number | null;
-  link: string | null;
-}
 
 export default function UpdateForm({
   data,
@@ -24,6 +13,12 @@ export default function UpdateForm({
   data: Project_W_Outputs[];
   user: string;
 }) {
+  const searchParams = useSearchParams();
+
+  const targetProject = searchParams.get('project')
+    ? parseInt(searchParams.get('project')!)
+    : null;
+
   const projects = data.map((project) => {
     return { name: project.name, value: project.id };
   });
@@ -49,12 +44,12 @@ export default function UpdateForm({
 
   const [inputValues, setInputValues] = useState({
     user: user,
-    project: projects[0].value,
+    project: targetProject ? targetProject : projects[0].value,
     // output: outputs[0].id,
     update_type: 'Impact',
-    input1: '',
     date: new Date().toISOString().split('T')[0],
-    input3: '',
+    description: '',
+    link: '',
   });
 
   const handleInputChange = (name: string) => (newValue: string | number) => {
@@ -79,40 +74,35 @@ export default function UpdateForm({
         label='Project'
         options={projects}
         onSelect={handleInputChange('project')}
+        initialValue={inputValues.project}
       />
       {/* <ControlledListbox
         label='Output'
         options={outputs}
         onSelect={handleInputChange('output')}
       /> */}
-      <ControlledListbox
+      {/* <ControlledListbox
         label='Update type'
         options={[
           { name: 'Impact', value: 'Impact' },
           { name: 'Progress', value: 'Progress' },
         ]}
         onSelect={handleInputChange('update_type')}
-      />
-      <ControlledTextInput
-        type='text'
-        label='First input:'
-        initialValue={inputValues.input1}
-        placeholder='Some text here'
-        onChange={handleInputChange('input1')}
-      />
-      <ControlledTextInput
+        initialValue={inputValues.update_type}
+      /> */}
+      <ControlledInput
         type='date'
         initialValue={inputValues.date}
-        label='Date:'
+        label='Date'
         placeholder=''
-        onChange={handleInputChange('input2')}
+        onChange={handleInputChange('date')}
       />
-      <ControlledTextInput
-        type='textarea'
-        initialValue={inputValues.input3}
-        label='Third input:'
-        placeholder='Some text here'
-        onChange={handleInputChange('input3')}
+      <ControlledInput
+        type='text'
+        initialValue={inputValues.link}
+        label='Link'
+        placeholder='Add a link'
+        onChange={handleInputChange('link')}
       />
       <button
         type='submit'

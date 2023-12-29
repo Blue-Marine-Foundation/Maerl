@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
@@ -9,14 +9,20 @@ interface ControlledListboxProps {
     value: string | number;
   }[];
   onSelect: (value: string | number) => void;
+  initialValue: string | number;
 }
 
 export default function ControlledListbox({
   label,
   options,
   onSelect,
+  initialValue,
 }: ControlledListboxProps) {
-  const [selected, setSelected] = useState(options[0]);
+  const initialOption = options.find((option) => initialValue === option.value);
+
+  const [selected, setSelected] = useState(
+    initialOption ? initialOption : options[0]
+  );
 
   return (
     <div className='mb-4'>
