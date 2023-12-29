@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Project_W_Outputs } from '@/_lib/types';
 import ControlledInput from './Input';
 import ControlledListbox from './Listbox';
+import ControlledCombobox from './Combobox';
 
 export default function UpdateForm({
   data,
@@ -13,12 +14,6 @@ export default function UpdateForm({
   data: Project_W_Outputs[];
   user: string;
 }) {
-  const searchParams = useSearchParams();
-
-  const targetProject = searchParams.get('project')
-    ? parseInt(searchParams.get('project')!)
-    : null;
-
   const projects = data.map((project) => {
     return { name: project.name, value: project.id };
   });
@@ -35,17 +30,39 @@ export default function UpdateForm({
       return {
         project_id: project.id,
         name: output.description,
-        id: output.id,
+        value: output.id,
         code: output.code,
         measurables: measurables,
       };
     });
   });
 
+  const searchParams = useSearchParams();
+  const projectParam = searchParams.get('project');
+
+  const [targetProject, setTargetProject] = useState(
+    projectParam ? parseInt(projectParam) : projects[0].value
+  );
+
+  const [filteredOutputs, setFilteredOutputs] = useState(() =>
+    outputs.filter((output) => output.project_id === targetProject)
+  );
+
+  useEffect(() => {
+    const relevantOutputs = outputs.filter(
+      (output) => output.project_id === targetProject
+    );
+    setFilteredOutputs(relevantOutputs);
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      output: relevantOutputs[0].value,
+    }));
+  }, [targetProject]);
+
   const [inputValues, setInputValues] = useState({
     user: user,
-    project: targetProject ? targetProject : projects[0].value,
-    // output: outputs[0].id,
+    project: targetProject,
+    output: filteredOutputs[0].value,
     update_type: 'Impact',
     date: new Date().toISOString().split('T')[0],
     description: '',
@@ -53,6 +70,9 @@ export default function UpdateForm({
   });
 
   const handleInputChange = (name: string) => (newValue: string | number) => {
+    if (name === 'project') {
+      setTargetProject(parseInt(newValue as string));
+    }
     setInputValues((prevValues) => ({
       ...prevValues,
       [name]: newValue,
@@ -76,12 +96,13 @@ export default function UpdateForm({
         onSelect={handleInputChange('project')}
         initialValue={inputValues.project}
       />
-      {/* <ControlledListbox
+      <ControlledCombobox
         label='Output'
-        options={outputs}
+        options={filteredOutputs}
         onSelect={handleInputChange('output')}
-      /> */}
-      {/* <ControlledListbox
+        initialValue={inputValues.output}
+      />
+      <ControlledListbox
         label='Update type'
         options={[
           { name: 'Impact', value: 'Impact' },
@@ -89,7 +110,7 @@ export default function UpdateForm({
         ]}
         onSelect={handleInputChange('update_type')}
         initialValue={inputValues.update_type}
-      /> */}
+      />
       <ControlledInput
         type='date'
         initialValue={inputValues.date}

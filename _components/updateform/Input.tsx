@@ -35,7 +35,7 @@ export default function ControlledTextInput({
         value={value}
         placeholder={placeholder}
         onChange={handleChange}
-        className='w-full p-2 rounded-md bg-foreground/10 text-foreground'
+        className='w-full p-2 rounded-md bg-foreground/10 text-foreground shadow-md'
       />
     </div>
   );
