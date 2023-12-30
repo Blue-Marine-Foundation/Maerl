@@ -62,14 +62,14 @@ export default function UpdateForm({
     setFilteredOutputs(relevantOutputs);
     setInputValues((prevValues) => ({
       ...prevValues,
-      output: relevantOutputs[1].value, // [0] will always be a higher level output
+      output: outputParam ? parseInt(outputParam) : relevantOutputs[1].value, // [0] will always be a higher level output
     }));
   }, [targetProject]);
 
   const [inputValues, setInputValues] = useState({
     user: user,
     project: targetProject,
-    output: filteredOutputs[1].value, // [0] will always be a higher level output
+    output: outputParam ? parseInt(outputParam) : filteredOutputs[1].value, // [0] will always be a higher level output
     update_type: 'Impact',
     date: new Date().toISOString().split('T')[0],
     description: '',

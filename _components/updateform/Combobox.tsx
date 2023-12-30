@@ -19,6 +19,9 @@ export default function ControlledCombobox({
   onSelect,
   initialValue,
 }: ControlledListboxProps) {
+  console.log('Initial value: ', initialValue);
+  console.log('Options: ', options);
+
   const initialOption = options.find((option) => initialValue === option.value);
 
   console.log('Initial option:', initialOption);
@@ -48,7 +51,6 @@ export default function ControlledCombobox({
       <Combobox
         value={selected}
         onChange={(value) => {
-          console.log(value);
           setSelected(value);
           onSelect(value.value);
         }}
