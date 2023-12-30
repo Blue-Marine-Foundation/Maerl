@@ -19,50 +19,57 @@ export default function UpdateForm({
   });
 
   const outputs = data.flatMap((project) => {
-    return project.outputs.map((output) => {
-      const measurables = output.output_measurables.map((measurable) => {
-        return {
-          name: `${measurable.code}: ${measurable.description}`,
-          value: measurable.id,
-        };
-      });
+    // First, map each output to an object representing the output itself
+    const outputObjects = project.outputs.map((output) => ({
+      project_id: project.id,
+      output_parent: true,
+      value: output.code,
+      name: `${output.code}: ${output.description}`,
+    }));
 
-      return {
+    // Then, map each measurable in each output to its own object
+    const measurableObjects = project.outputs.flatMap((output) =>
+      output.output_measurables.map((measurable) => ({
         project_id: project.id,
-        name: output.description,
-        value: output.id,
-        code: output.code,
-        measurables: measurables,
-      };
-    });
+        output_parent: false,
+        value: measurable.id,
+        name: `${measurable.code}: ${measurable.description}`,
+      }))
+    );
+
+    // Combine the output objects and measurable objects into a single array
+    return [...outputObjects, ...measurableObjects];
   });
 
   const searchParams = useSearchParams();
   const projectParam = searchParams.get('project');
+  const outputParam = searchParams.get('output');
 
   const [targetProject, setTargetProject] = useState(
     projectParam ? parseInt(projectParam) : projects[0].value
   );
 
   const [filteredOutputs, setFilteredOutputs] = useState(() =>
-    outputs.filter((output) => output.project_id === targetProject)
+    outputs
+      .filter((output) => output.project_id === targetProject)
+      .sort((a, b) => a.name.localeCompare(b.name))
   );
 
   useEffect(() => {
-    const relevantOutputs = outputs.filter(
-      (output) => output.project_id === targetProject
-    );
+    const relevantOutputs = outputs
+      .filter((output) => output.project_id === targetProject)
+      .sort((a, b) => a.name.localeCompare(b.name));
     setFilteredOutputs(relevantOutputs);
     setInputValues((prevValues) => ({
       ...prevValues,
-      output: relevantOutputs[0].value,
+      output: relevantOutputs[1].value, // [0] will always be a higher level output
     }));
   }, [targetProject]);
 
   const [inputValues, setInputValues] = useState({
     user: user,
     project: targetProject,
-    output: filteredOutputs[0].value,
+    output: filteredOutputs[1].value, // [0] will always be a higher level output
     update_type: 'Impact',
     date: new Date().toISOString().split('T')[0],
     description: '',

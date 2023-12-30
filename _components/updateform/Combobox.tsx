@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Combobox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
@@ -7,6 +7,7 @@ interface ControlledListboxProps {
   options: {
     name: string;
     value: string | number;
+    output_parent: boolean;
   }[];
   onSelect: (value: string | number) => void;
   initialValue: string | number;
@@ -20,9 +21,15 @@ export default function ControlledCombobox({
 }: ControlledListboxProps) {
   const initialOption = options.find((option) => initialValue === option.value);
 
+  console.log('Initial option:', initialOption);
+
   const [selected, setSelected] = useState(
-    initialOption ? initialOption : options[0]
+    initialOption ? initialOption : options[1] // [0] will always be a higher level output
   );
+
+  useEffect(() => {
+    setSelected(initialOption ? initialOption : options[1]); // [0] will always be a higher level output
+  }, [options]);
 
   const [query, setQuery] = useState('');
 
@@ -38,16 +45,17 @@ export default function ControlledCombobox({
 
   return (
     <div className='mb-4'>
-      <label className='block mb-2 pl-1 text-sm text-foreground/80'>
-        {label}
-      </label>
       <Combobox
         value={selected}
         onChange={(value) => {
+          console.log(value);
           setSelected(value);
           onSelect(value.value);
         }}
       >
+        <Combobox.Label className='block mb-2 pl-1 text-sm text-foreground/80'>
+          {label}
+        </Combobox.Label>
         <div className='relative mt-1'>
           <div className='relative w-full cursor-default overflow-hidden rounded-lg text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm'>
             <Combobox.Input
@@ -86,12 +94,17 @@ export default function ControlledCombobox({
                       }`
                     }
                     value={option}
+                    disabled={option.output_parent}
                   >
                     {({ selected, active }) => (
                       <>
                         <span
                           className={`block truncate ${
                             selected ? 'font-medium' : 'font-normal'
+                          } ${
+                            option.output_parent
+                              ? '-ml-6 text-foreground/75'
+                              : ''
                           }`}
                         >
                           {option.name}
