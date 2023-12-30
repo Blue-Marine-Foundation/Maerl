@@ -19,12 +19,7 @@ export default function ControlledCombobox({
   onSelect,
   initialValue,
 }: ControlledListboxProps) {
-  console.log('Initial value: ', initialValue);
-  console.log('Options: ', options);
-
   const initialOption = options.find((option) => initialValue === option.value);
-
-  console.log('Initial option:', initialOption);
 
   const [selected, setSelected] = useState(
     initialOption ? initialOption : options[1] // [0] will always be a higher level output
@@ -47,7 +42,7 @@ export default function ControlledCombobox({
         );
 
   return (
-    <div className='mb-4'>
+    <div>
       <Combobox
         value={selected}
         onChange={(value) => {
@@ -81,8 +76,8 @@ export default function ControlledCombobox({
           >
             <Combobox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-slate-600 py-1 text-base shadow-lg z-10 ring-1 ring-black/5 focus:outline-none sm:text-sm'>
               {filteredOptions.length === 0 && query !== '' ? (
-                <div className='relative cursor-default select-none px-4 py-2 text-gray-700'>
-                  Nothing found.
+                <div className='relative cursor-default select-none px-4 py-2 text-foregruond/90'>
+                  Nothing found
                 </div>
               ) : (
                 filteredOptions.map((option) => (

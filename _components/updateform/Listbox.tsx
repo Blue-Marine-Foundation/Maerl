@@ -25,7 +25,7 @@ export default function ControlledListbox({
   );
 
   return (
-    <div className='mb-4'>
+    <div>
       <label className='block mb-2 pl-1 text-sm text-foreground/80'>
         {label}
       </label>

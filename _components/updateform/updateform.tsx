@@ -5,7 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { Project_W_Outputs } from '@/_lib/types';
 import ControlledInput from './Input';
 import ControlledListbox from './Listbox';
+import ControlledRadio from './Radio';
 import ControlledCombobox from './Combobox';
+import ControlledTextarea from './Textarea';
 
 export default function UpdateForm({
   data,
@@ -73,6 +75,7 @@ export default function UpdateForm({
     update_type: 'Impact',
     date: new Date().toISOString().split('T')[0],
     description: '',
+    value: 0,
     link: '',
   });
 
@@ -93,7 +96,7 @@ export default function UpdateForm({
 
   return (
     <form
-      className='max-w-2xl p-8 mb-4 shadow bg-card-bg rounded-md'
+      className='max-w-3xl p-8 mb-4 flex flex-col gap-6 shadow bg-card-bg rounded-md'
       id='newUpdateForm'
       onSubmit={handleSubmit}
     >
@@ -109,15 +112,12 @@ export default function UpdateForm({
         onSelect={handleInputChange('output')}
         initialValue={inputValues.output}
       />
-      <ControlledListbox
+
+      <ControlledRadio
         label='Update type'
-        options={[
-          { name: 'Impact', value: 'Impact' },
-          { name: 'Progress', value: 'Progress' },
-        ]}
-        onSelect={handleInputChange('update_type')}
-        initialValue={inputValues.update_type}
+        onChange={handleInputChange('update_type')}
       />
+
       <ControlledInput
         type='date'
         initialValue={inputValues.date}
@@ -125,6 +125,24 @@ export default function UpdateForm({
         placeholder=''
         onChange={handleInputChange('date')}
       />
+
+      <ControlledTextarea
+        label='Update description'
+        placeholder='A short description of your update, for example, "Report released on the illegality of fishing vessels &apos;going dark&apos;"'
+        onChange={handleInputChange('description')}
+        isRequired={true}
+      />
+
+      {inputValues.update_type === 'Impact' && (
+        <ControlledInput
+          type='number'
+          initialValue={inputValues.value}
+          label='Impact stat'
+          placeholder='1'
+          onChange={handleInputChange('value')}
+        />
+      )}
+
       <ControlledInput
         type='text'
         initialValue={inputValues.link}
@@ -132,12 +150,15 @@ export default function UpdateForm({
         placeholder='Add a link'
         onChange={handleInputChange('link')}
       />
-      <button
-        type='submit'
-        className='px-4 py-2 w-40 text-center bg-btn-background hover:bg-btn-background-hover rounded-md transition-colors duration-500'
-      >
-        Submit
-      </button>
+
+      <div className='flex justify-end'>
+        <button
+          type='submit'
+          className='px-4 py-2 w-40 text-center bg-btn-background hover:bg-btn-background-hover rounded-md transition-colors duration-500'
+        >
+          Submit
+        </button>
+      </div>
     </form>
   );
 }

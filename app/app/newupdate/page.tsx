@@ -25,7 +25,7 @@ export default async function NewUpdate() {
   }
 
   return (
-    <div className='pt-4 pb-12'>
+    <div className='animate-in pt-4 pb-12'>
       <h2 className='text-2xl font-bold mb-6'>New Update</h2>
       {projects && user && <UpdateForm data={projects} user={userid} />}
     </div>

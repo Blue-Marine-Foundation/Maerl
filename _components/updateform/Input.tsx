@@ -4,9 +4,10 @@ import { useState } from 'react';
 
 interface ControlledInputProps {
   type: string;
-  initialValue: string;
+  initialValue: string | number;
   label: string;
   placeholder: string;
+  isRequired?: boolean;
   onChange: (value: string) => void;
 }
 
@@ -15,6 +16,7 @@ export default function ControlledTextInput({
   initialValue,
   label,
   placeholder,
+  isRequired,
   onChange,
 }: ControlledInputProps) {
   const [value, setValue] = useState(initialValue);
@@ -26,7 +28,7 @@ export default function ControlledTextInput({
   };
 
   return (
-    <div className='mb-4'>
+    <div>
       <label className='block mb-2 pl-1 text-sm text-foreground/80'>
         {label}
       </label>
@@ -35,7 +37,12 @@ export default function ControlledTextInput({
         value={value}
         placeholder={placeholder}
         onChange={handleChange}
-        className='w-full p-2 rounded-md bg-foreground/10 text-foreground shadow-md'
+        required={isRequired}
+        className={`w-full p-2 rounded-md bg-foreground/10 text-foreground shadow-md ${
+          type === 'number'
+            ? 'text-right pr-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+            : ''
+        }`}
       />
     </div>
   );
