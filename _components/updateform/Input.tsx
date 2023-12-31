@@ -4,10 +4,11 @@ import { useState } from 'react';
 
 interface ControlledInputProps {
   type: string;
-  initialValue: string | number;
+  initialValue: string | number | undefined;
   label: string;
   placeholder: string;
   isRequired?: boolean;
+  unit?: string | undefined;
   onChange: (value: string) => void;
 }
 
@@ -17,6 +18,7 @@ export default function ControlledTextInput({
   label,
   placeholder,
   isRequired,
+  unit,
   onChange,
 }: ControlledInputProps) {
   const [value, setValue] = useState(initialValue);
@@ -28,8 +30,8 @@ export default function ControlledTextInput({
   };
 
   return (
-    <div>
-      <label className='block mb-2 pl-1 text-sm text-foreground/80'>
+    <div className='flex justify-start items-center gap-8 text-sm'>
+      <label className='block basis-1/5 pl-1 text-sm text-foreground/80'>
         {label}
       </label>
       <input
@@ -38,12 +40,13 @@ export default function ControlledTextInput({
         placeholder={placeholder}
         onChange={handleChange}
         required={isRequired}
-        className={`w-full p-2 rounded-md bg-foreground/10 text-foreground shadow-md ${
+        className={`basis-4/5 p-2 rounded-md bg-foreground/10 text-foreground shadow-md ${
           type === 'number'
-            ? 'text-right pr-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+            ? 'max-w-[200px] -ml-2 text-right pr-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
             : ''
-        }`}
+        } ${type === 'date' ? 'max-w-[200px] -ml-2' : ''}`}
       />
+      {unit && <p className='-ml-4 text-foreground/80'>{unit}</p>}
     </div>
   );
 }

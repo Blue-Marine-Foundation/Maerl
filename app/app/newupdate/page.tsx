@@ -5,7 +5,7 @@ export default async function NewUpdate() {
   const supabase = createClient();
   const { data: projects, error } = await supabase
     .from('projects')
-    .select(`*, outputs (*, output_measurables (*))`);
+    .select(`*, outputs (*, output_measurables (*, impact_indicators (*)))`);
 
   const { data: user, error: userError } = await supabase.auth.getUser();
 

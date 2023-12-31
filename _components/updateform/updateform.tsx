@@ -27,6 +27,7 @@ export default function UpdateForm({
       output_parent: true,
       value: output.code,
       name: `${output.code}: ${output.description}`,
+      unit: undefined,
     }));
 
     // Then, map each measurable in each output to its own object
@@ -36,6 +37,8 @@ export default function UpdateForm({
         output_parent: false,
         value: measurable.id,
         name: `${measurable.code}: ${measurable.description}`,
+        impact_indicator: measurable.impact_indicators?.indicator_code,
+        unit: measurable.unit,
       }))
     );
 
@@ -75,7 +78,7 @@ export default function UpdateForm({
     update_type: 'Impact',
     date: new Date().toISOString().split('T')[0],
     description: '',
-    value: 0,
+    value: '',
     link: '',
   });
 
@@ -96,7 +99,7 @@ export default function UpdateForm({
 
   return (
     <form
-      className='max-w-3xl p-8 mb-4 flex flex-col gap-6 shadow bg-card-bg rounded-md'
+      className='max-w-4xl p-8 mb-4 flex flex-col gap-6 shadow bg-card-bg rounded-md'
       id='newUpdateForm'
       onSubmit={handleSubmit}
     >
@@ -139,6 +142,13 @@ export default function UpdateForm({
           initialValue={inputValues.value}
           label='Impact stat'
           placeholder='1'
+          unit={
+            (
+              filteredOutputs.find(
+                (output) => output.value === inputValues.output
+              ) || {}
+            ).unit
+          }
           onChange={handleInputChange('value')}
         />
       )}

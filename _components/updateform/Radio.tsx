@@ -39,42 +39,44 @@ export default function ControlledRadio({
           onChange(value.name);
         }}
       >
-        <RadioGroup.Label className='block text-sm text-foreground/80 mb-2'>
-          {label}
-        </RadioGroup.Label>
-        <div className='flex justify-start items-center gap-4'>
-          {options.map((option) => (
-            <RadioGroup.Option
-              key={option.name}
-              value={option}
-              className={({ active, checked }) =>
-                `${
-                  active
-                    ? 'ring-1 ring-white/60 ring-offset-1 ring-offset-sky-300'
-                    : ''
-                }
+        <div className='flex justify-start items-center gap-8'>
+          <RadioGroup.Label className='block basis-1/5 text-sm text-foreground/80'>
+            {label}
+          </RadioGroup.Label>
+          <div className='basis-4/5 flex justify-start items-center gap-4 text-sm'>
+            {options.map((option) => (
+              <RadioGroup.Option
+                key={option.name}
+                value={option}
+                className={({ active, checked }) =>
+                  `${
+                    active
+                      ? 'ring-1 ring-white/60 ring-offset-1 ring-offset-sky-300'
+                      : ''
+                  }
                   ${checked ? 'bg-sky-900/75 text-white' : 'bg-foreground/10'}
-                    relative flex cursor-pointer rounded-lg px-16 py-3 shadow-md focus:outline-none`
-              }
-            >
-              {({ active, checked }) => (
-                <>
-                  {checked && (
-                    <div className='absolute left-1 translate-x-1/2 text-white'>
-                      <CheckIcon className='h-5 w-5' />
+                    relative flex cursor-pointer rounded-lg px-16 py-2 shadow-md focus:outline-none`
+                }
+              >
+                {({ active, checked }) => (
+                  <>
+                    {checked && (
+                      <div className='absolute left-1 top-2.5 translate-x-1/2 text-white'>
+                        <CheckIcon className='h-4 w-4' />
+                      </div>
+                    )}
+                    <div className='flex items-center'>
+                      <div className='text-sm'>
+                        <RadioGroup.Label as='p' className='text-foreground'>
+                          {option.name}
+                        </RadioGroup.Label>
+                      </div>
                     </div>
-                  )}
-                  <div className='flex items-center'>
-                    <div className='text-sm'>
-                      <RadioGroup.Label as='p' className='text-foreground'>
-                        {option.name}
-                      </RadioGroup.Label>
-                    </div>
-                  </div>
-                </>
-              )}
-            </RadioGroup.Option>
-          ))}
+                  </>
+                )}
+              </RadioGroup.Option>
+            ))}
+          </div>
         </div>
       </RadioGroup>
     </div>

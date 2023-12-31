@@ -24,8 +24,8 @@ export default function ControlledTextarea({
   };
 
   return (
-    <div>
-      <label className='block mb-2 pl-1 text-sm text-foreground/80'>
+    <div className='flex justify-start items-start gap-8 text-sm'>
+      <label className='block basis-1/5 pt-2 pl-1 text-foreground/80'>
         {label}
       </label>
       <textarea
@@ -34,7 +34,7 @@ export default function ControlledTextarea({
         onChange={handleChange}
         required={isRequired}
         rows={3}
-        className='w-full p-2 rounded-md bg-foreground/10 text-foreground shadow-md'
+        className='basis-4/5 p-2 rounded-md bg-foreground/10 text-foreground shadow-md'
       />
     </div>
   );
