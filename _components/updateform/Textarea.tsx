@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ControlledTextareaProps {
   label: string;
   placeholder: string;
+  initialValue: string;
   isRequired?: boolean;
   onChange: (value: string) => void;
 }
@@ -12,10 +13,15 @@ interface ControlledTextareaProps {
 export default function ControlledTextarea({
   label,
   placeholder,
+  initialValue,
   isRequired,
   onChange,
 }: ControlledTextareaProps) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = event.target.value;

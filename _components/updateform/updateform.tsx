@@ -1,5 +1,6 @@
 'use client';
 
+import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Project_W_Outputs } from '@/_lib/types';
@@ -8,6 +9,7 @@ import ControlledListbox from './Listbox';
 import ControlledRadio from './Radio';
 import ControlledCombobox from './Combobox';
 import ControlledTextarea from './Textarea';
+import SuccessMessage from './SuccessMessage';
 
 export default function UpdateForm({
   data,
@@ -92,14 +94,71 @@ export default function UpdateForm({
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const supabase = createClient();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmittedSuccessfully, setHasSubmittedSuccessfully] =
+    useState(false);
+
+  const [formError, setFormError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Input Values:', inputValues);
+
+    setIsSubmitting(true);
+
+    const update = {
+      date: inputValues.date,
+      project_id: inputValues.project,
+      output_measurable_id: inputValues.output,
+      type: inputValues.update_type,
+      description: inputValues.description,
+      value: inputValues.value !== '' ? inputValues.value : null,
+      link: inputValues.link,
+      posted_by: inputValues.user,
+    };
+
+    setTimeout(async () => {
+      const { data, error } = await supabase
+        .from('updates')
+        .insert(update)
+        .select();
+
+      if (error) {
+        setIsSubmitting(false);
+        setHasSubmittedSuccessfully(false);
+        setFormError(true);
+        setErrorMessage(
+          `Error submitting update (please screenshot this error and send it to Appin): ${error.message}`
+        );
+        console.log('Tried to submit: ', update);
+      }
+
+      if (data) {
+        console.log(data);
+        setFormError(false);
+        setErrorMessage('');
+        setIsSubmitting(false);
+        setHasSubmittedSuccessfully(true);
+        setInputValues((prevValues) => ({
+          ...prevValues,
+          update_type: 'Impact',
+          date: new Date().toISOString().split('T')[0],
+          description: '',
+          value: '',
+          link: '',
+        }));
+        setTimeout(() => {
+          setHasSubmittedSuccessfully(false);
+        }, 3500);
+      }
+    }, 1000);
   };
 
   return (
     <form
-      className='max-w-4xl p-8 mb-4 flex flex-col gap-6 shadow bg-card-bg rounded-md'
+      className='relative max-w-4xl p-8 mb-4 flex flex-col gap-6 shadow bg-card-bg rounded-md'
       id='newUpdateForm'
       onSubmit={handleSubmit}
     >
@@ -132,6 +191,7 @@ export default function UpdateForm({
       <ControlledTextarea
         label='Update description'
         placeholder='A short description of your update, for example, "Report released on the illegality of fishing vessels &apos;going dark&apos;"'
+        initialValue={inputValues.description}
         onChange={handleInputChange('description')}
         isRequired={true}
       />
@@ -161,14 +221,41 @@ export default function UpdateForm({
         onChange={handleInputChange('link')}
       />
 
-      <div className='flex justify-end'>
+      <div className='flex justify-end items-start gap-8'>
+        {formError && <p className='pt-2 pl-2 max-w-md'>{errorMessage}</p>}
         <button
           type='submit'
           className='px-4 py-2 w-40 text-center bg-btn-background hover:bg-btn-background-hover rounded-md transition-colors duration-500'
         >
-          Submit
+          {isSubmitting ? (
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              width='24'
+              height='24'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              className='mx-auto animate-spin text-purple-200'
+            >
+              <line x1='12' x2='12' y1='2' y2='6' />
+              <line x1='12' x2='12' y1='18' y2='22' />
+              <line x1='4.93' x2='7.76' y1='4.93' y2='7.76' />
+              <line x1='16.24' x2='19.07' y1='16.24' y2='19.07' />
+              <line x1='2' x2='6' y1='12' y2='12' />
+              <line x1='18' x2='22' y1='12' y2='12' />
+              <line x1='4.93' x2='7.76' y1='19.07' y2='16.24' />
+              <line x1='16.24' x2='19.07' y1='7.76' y2='4.93' />
+            </svg>
+          ) : (
+            'Submit'
+          )}
         </button>
       </div>
+
+      <SuccessMessage isVisible={hasSubmittedSuccessfully} />
     </form>
   );
 }
