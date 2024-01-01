@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
-import LogframeFeatureCard from '@/_components/LogframeFeatureCard';
+import LogframeFeatureCard from '@/_components/logframe/LogframeFeatureCard';
 import Update from '@/_components/UpdateMedium';
 import { Measurable } from '@/_lib/types';
 
