@@ -45,7 +45,7 @@ export default async function Logframe({ params }: { params: Params }) {
       <h2 className='text-xl font-medium mb-8 text-white'>Logframe</h2>
 
       <div className='relative flex justify-between items-start gap-8'>
-        <ul className='basis-1/6 sticky top-8'>
+        <ul className='basis-1/5 shrink-0 sticky top-8'>
           {sidenav.map((item) => {
             return (
               <li key={item.name} className='mb-4'>
@@ -56,7 +56,7 @@ export default async function Logframe({ params }: { params: Params }) {
             );
           })}
         </ul>
-        <div className='basis-5/6 flex flex-col justify-between gap-12'>
+        <div className='grow flex flex-col justify-between gap-12'>
           <LogframeImpactSection project_slug={params.slug} />
           <LogframeOutcomeSection project_slug={params.slug} />
           <p>

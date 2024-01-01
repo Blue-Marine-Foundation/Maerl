@@ -13,8 +13,6 @@ export default async function LogframeImpactSection({
     .eq('projects.slug', project_slug)
     .single();
 
-  console.log(impact);
-
   return (
     <div id='impact' className='scroll-m-8'>
       <h3 className='text-xl font-medium text-foreground/80 mb-4'>Impact</h3>
