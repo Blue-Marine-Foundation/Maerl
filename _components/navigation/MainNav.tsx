@@ -12,7 +12,7 @@ export default function MainNav() {
       href: '/app/projects',
     },
     {
-      name: 'Updates',
+      name: 'All Updates',
       href: '/app/updates',
     },
     {
