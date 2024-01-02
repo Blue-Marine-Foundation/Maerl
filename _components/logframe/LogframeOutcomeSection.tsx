@@ -22,7 +22,7 @@ export default async function LogframeOutcomeSection({
         outcomes.map((outcome) => {
           return (
             <div key={outcome.id}>
-              <p className='text-2xl max-w-2xl text-white font-medium mb-4'>
+              <p className='text-2xl max-w-2xl text-white font-medium mb-6'>
                 {outcome.description}
               </p>
               <ul className='shadow-md max-w-4xl'>
@@ -40,7 +40,7 @@ export default async function LogframeOutcomeSection({
                           Outcome {om.code}
                         </h4>
                         <div className='grow'>
-                          <p className='mb-4 text-foreground/80'>
+                          <p className='mb-4 leading-relaxed text-foreground/80'>
                             {om.description}
                           </p>
                           <h4 className='font-medium mb-2 text-white'>
