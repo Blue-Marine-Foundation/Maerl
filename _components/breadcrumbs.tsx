@@ -25,7 +25,7 @@ export default function Breadcrumbs() {
                 <Link href={pathToCrumb} className='underline'>
                   {formattedCrumb}
                 </Link>
-                <span className='pl-4 text-foreground/40'>/</span>
+                <span className='pl-3 text-foreground/60'>&rarr;</span>
               </>
             ) : (
               formattedCrumb

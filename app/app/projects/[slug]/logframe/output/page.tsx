@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
-import LogframeFeatureCard from '@/_components/logframe/LogframeFeatureCard';
+import Breadcrumbs from '@/_components/breadcrumbs';
 import Update from '@/_components/UpdateMedium';
 import { Measurable } from '@/_lib/types';
 
@@ -43,24 +43,32 @@ export default function Output() {
   }, []);
 
   return (
-    <div className='pt-1.5'>
-      <div className='mb-16'>
-        <h2 className='mb-8 text-lg font-medium'>
-          {project} {code} Output Detail
+    <div className='animate-in pb-24'>
+      <div className='mb-8'>
+        <Breadcrumbs />
+      </div>
+
+      <div className='p-8 mb-8 bg-card-bg rounded-lg shadow'>
+        <h2 className='mb-4 text-2xl font-semibold text-white'>
+          {project && <span>{project} </span>}Output {code}
         </h2>
+
         {output && (
-          <LogframeFeatureCard
-            key={output.code}
-            project={project}
-            id={output.id}
-            type='Outputs'
-            code={output.code}
-            target={`${output.value} ${output.unit}`}
-            verification={output.verification}
-            assumption={output.assumptions}
-          >
-            <h4 className='text-white text-lg mb-8'>{output.description}</h4>
-          </LogframeFeatureCard>
+          <div>
+            <p className='mb-4 max-w-3xl text-lg'>{output.description}</p>
+            {output.verification && (
+              <div className='mb-4'>
+                <h3 className='mb-2 text-foreground/80'>Verified by</h3>
+                <p>{output.verification}</p>
+              </div>
+            )}
+            {output.assumptions && (
+              <div className='mb-4'>
+                <h3 className='mb-2 text-foreground/80'>Assumptions</h3>
+                <p>{output.assumptions}</p>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

@@ -39,6 +39,18 @@ export interface Update {
   output_measurables: Measurable;
 }
 
+export interface UpdateNested {
+  id: number;
+  project_id: number;
+  slug: string;
+  date: string;
+  output_measurable_id: string | number | undefined;
+  type: string;
+  description: string;
+  value: number | null;
+  link: string | null;
+}
+
 export interface Measurable {
   [x: string]: any; // Index signature
   id: number;
