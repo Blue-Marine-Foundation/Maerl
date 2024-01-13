@@ -6,9 +6,10 @@ import Link from 'next/link';
 import Breadcrumbs from '@/_components/breadcrumbs';
 import { useParams, useSearchParams } from 'next/navigation';
 import UpdateMediumNested from '@/_components/UpdateMediumNested';
+import { Measurable } from '@/_lib/types';
 
-function extractAllUpdates(data) {
-  let updates = [];
+function extractAllUpdates(data: Measurable) {
+  let updates: any[] = [];
 
   if (!data.outputs || !Array.isArray(data.outputs)) return updates;
 
@@ -16,7 +17,7 @@ function extractAllUpdates(data) {
     if (!output.output_measurables || !Array.isArray(output.output_measurables))
       return;
 
-    output.output_measurables.forEach((measurable) => {
+    output.output_measurables.forEach((measurable: Measurable) => {
       if (!measurable.updates || !Array.isArray(measurable.updates)) return;
 
       updates = updates.concat(measurable.updates);
@@ -27,8 +28,8 @@ function extractAllUpdates(data) {
 }
 
 export default function Outcome() {
-  const [outcomeData, setOutcomeData] = useState(null);
-  const [updates, setUpdates] = useState([]);
+  const [outcomeData, setOutcomeData] = useState<Measurable | null>(null);
+  const [updates, setUpdates] = useState<object[]>([]);
 
   const projectSlug = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
@@ -84,7 +85,7 @@ export default function Outcome() {
         <div className='basis-1/3'>
           <h3 className='text-lg font-medium mb-4'>Related Outputs</h3>
           {outcomeData &&
-            outcomeData.outputs.map((output) => {
+            outcomeData.outputs.map((output: Measurable) => {
               return (
                 <Link
                   href={`/app/projects/${projectSlug.slug}/logframe/output?id=${output.id}&code=${output.code}`}
@@ -103,6 +104,7 @@ export default function Outcome() {
           <h3 className='text-lg font-medium mb-4'>Related Updates</h3>
           {updates &&
             updates.map((update) => {
+              // @ts-ignore
               return <UpdateMediumNested key={update.id} update={update} />;
             })}
         </div>

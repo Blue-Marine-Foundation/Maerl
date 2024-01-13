@@ -63,7 +63,7 @@ export default function Output() {
               </div>
             )}
             {output.assumptions && (
-              <div className='mb-4'>
+              <div>
                 <h3 className='mb-2 text-foreground/80'>Assumptions</h3>
                 <p>{output.assumptions}</p>
               </div>
