@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import Breadcrumbs from '@/_components/breadcrumbs';
-import Update from '@/_components/UpdateMedium';
+import UpdateMedium from '@/_components/UpdateMedium';
 import { Measurable } from '@/_lib/types';
 
 export default function Output() {
@@ -75,7 +75,7 @@ export default function Output() {
       <div>
         <h2 className='mb-8 text-lg font-medium'>Relevant Updates</h2>
         {updates.map((update) => {
-          return <Update key={update.id} update={update} />;
+          return <UpdateMedium key={update.id} update={update} />;
         })}
       </div>
     </div>

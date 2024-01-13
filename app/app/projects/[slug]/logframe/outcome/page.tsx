@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Breadcrumbs from '@/_components/breadcrumbs';
 import { useParams, useSearchParams } from 'next/navigation';
 import UpdateMediumNested from '@/_components/UpdateMediumNested';
-import { Measurable } from '@/_lib/types';
+import { Measurable, Project, Update } from '@/_lib/types';
 
 function extractAllUpdates(data: Measurable) {
   let updates: any[] = [];
@@ -29,7 +29,8 @@ function extractAllUpdates(data: Measurable) {
 
 export default function Outcome() {
   const [outcomeData, setOutcomeData] = useState<Measurable | null>(null);
-  const [updates, setUpdates] = useState<object[]>([]);
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [project, setProject] = useState<Project>();
 
   const projectSlug = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
@@ -48,6 +49,7 @@ export default function Outcome() {
       if (!error) {
         console.log(data);
         setOutcomeData(data);
+        setProject(data.projects);
         setUpdates(extractAllUpdates(data));
       } else {
         console.error(error);
@@ -65,8 +67,7 @@ export default function Outcome() {
 
       <div className='p-8 mb-8 bg-card-bg rounded-lg shadow'>
         <h2 className='mb-4 text-2xl font-semibold text-white'>
-          {outcomeData && <span>{outcomeData.projects.name} </span>}Outcome{' '}
-          {code}
+          {project && <span>{project.name} </span>}Outcome {code}
         </h2>
 
         {outcomeData && (
@@ -105,7 +106,13 @@ export default function Outcome() {
           {updates &&
             updates.map((update) => {
               // @ts-ignore
-              return <UpdateMediumNested key={update.id} update={update} />;
+              return (
+                <UpdateMediumNested
+                  key={update.id}
+                  update={update}
+                  project={project}
+                />
+              );
             })}
         </div>
       </div>
