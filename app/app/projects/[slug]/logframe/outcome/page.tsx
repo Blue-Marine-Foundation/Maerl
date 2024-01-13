@@ -89,7 +89,9 @@ export default function Outcome() {
             outcomeData.outputs.map((output: Measurable) => {
               return (
                 <Link
-                  href={`/app/projects/${projectSlug.slug}/logframe/output?id=${output.id}&code=${output.code}`}
+                  href={`/app/projects/${
+                    projectSlug.slug
+                  }/logframe#output${output.code.replace('.', '')}`}
                   key={output.code}
                   className='p-4 flex justify-between items-center group first-of-type:pt-5 last-of-type:pb-5 first-of-type:rounded-t-lg last-of-type:rounded-b-lg bg-card-bg hover:bg-card-bg/60 text-slate-100 border border-transparent border-b-foreground/20 last-of-type:border-b-transparent transition-all duration-300'
                 >

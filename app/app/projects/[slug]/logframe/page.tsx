@@ -2,6 +2,7 @@ import { createClient } from '@/_utils/supabase/server';
 import { Params, Output } from '@/lib/types';
 import LogframeImpactSection from '@/_components/logframe/LogframeImpactSection';
 import LogframeOutcomeSection from '@/_components/logframe/LogframeOutcomeSection';
+import LogframeOutput from '@/_components/logframe/LogframeOutput';
 
 export default async function Logframe({ params }: { params: Params }) {
   const supabaseClient = createClient();
@@ -59,36 +60,17 @@ export default async function Logframe({ params }: { params: Params }) {
         <div className='grow flex flex-col justify-between gap-12'>
           <LogframeImpactSection project_slug={params.slug} />
           <LogframeOutcomeSection project_slug={params.slug} />
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad
-            necessitatibus delectus dolorum cupiditate atque ratione nam
-            voluptates voluptatibus voluptas, consequatur assumenda, numquam
-            alias consectetur architecto cum laboriosam temporibus quae minus?
-          </p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad
-            necessitatibus delectus dolorum cupiditate atque ratione nam
-            voluptates voluptatibus voluptas, consequatur assumenda, numquam
-            alias consectetur architecto cum laboriosam temporibus quae minus?
-          </p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad
-            necessitatibus delectus dolorum cupiditate atque ratione nam
-            voluptates voluptatibus voluptas, consequatur assumenda, numquam
-            alias consectetur architecto cum laboriosam temporibus quae minus?
-          </p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad
-            necessitatibus delectus dolorum cupiditate atque ratione nam
-            voluptates voluptatibus voluptas, consequatur assumenda, numquam
-            alias consectetur architecto cum laboriosam temporibus quae minus?
-          </p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad
-            necessitatibus delectus dolorum cupiditate atque ratione nam
-            voluptates voluptatibus voluptas, consequatur assumenda, numquam
-            alias consectetur architecto cum laboriosam temporibus quae minus?
-          </p>
+
+          {project.outputs.map((output: Output) => {
+            return (
+              <LogframeOutput
+                key={output.code}
+                outputAnchor={`output${output.code.replace('.', '')}`}
+                project_slug={params.slug}
+                output={output}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
