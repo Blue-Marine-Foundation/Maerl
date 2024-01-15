@@ -22,7 +22,7 @@ export interface Output {
   description: string;
   percentage_complete: string;
   status: string;
-  output_measurables?: Measurable[];
+  output_measurables: Measurable[];
 }
 
 export interface Update {
@@ -37,6 +37,18 @@ export interface Update {
   link: string | null;
   projects: Project;
   output_measurables: Measurable;
+}
+
+export interface UpdateNested {
+  id: number;
+  project_id: number;
+  slug: string;
+  date: string;
+  output_measurable_id: string | number | undefined;
+  type: string;
+  description: string;
+  value: number | null;
+  link: string | null;
 }
 
 export interface Measurable {
@@ -83,4 +95,30 @@ export interface Project {
   outputs?: Output[];
   output_measurables?: Measurable[];
   updates?: Update[];
+}
+
+export interface Project_W_Outputs {
+  id: number;
+  created_at: string;
+  slug: string;
+  name: string;
+  lead_partner: string;
+  start_date: string;
+  delivery_partners?: [
+    {
+      name: string;
+    }
+  ];
+  funding_partner?: [
+    {
+      name: string;
+    }
+  ];
+  funders?: [
+    {
+      name: string;
+    }
+  ];
+  highlight_color: string;
+  outputs: Output[];
 }

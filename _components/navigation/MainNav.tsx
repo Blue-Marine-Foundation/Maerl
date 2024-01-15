@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import NavList from './NavList';
 
 export default function MainNav() {
@@ -11,8 +12,8 @@ export default function MainNav() {
       href: '/app/projects',
     },
     {
-      name: 'Add Update',
-      href: '/app/newupdate',
+      name: 'All Updates',
+      href: '/app/updates',
     },
     {
       name: 'Impact Indicators',
@@ -21,8 +22,29 @@ export default function MainNav() {
   ];
 
   return (
-    <div className='pb-3'>
+    <div className='pr-4 pb-3 flex justify-between items-center'>
       <NavList items={accountNav} />
+      <Link
+        href='/app/newupdate'
+        className='px-4 py-2 flex justify-between items-center gap-2 text-sm rounded-md bg-btn-background hover:bg-btn-background-hover transition-all duration-500'
+      >
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='16'
+          height='16'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          strokeWidth='2.5'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          className=''
+        >
+          <path d='M5 12h14' />
+          <path d='M12 5v14' />
+        </svg>{' '}
+        <span>Add Update</span>
+      </Link>
     </div>
   );
 }

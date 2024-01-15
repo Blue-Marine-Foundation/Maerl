@@ -1,20 +1,123 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/_utils/supabase/client';
+import Link from 'next/link';
+import Breadcrumbs from '@/_components/breadcrumbs';
+import { useParams, useSearchParams } from 'next/navigation';
+import UpdateMediumNested from '@/_components/UpdateMediumNested';
+import { Measurable, Project, Update } from '@/_lib/types';
 
-export default function SearchBar() {
+function extractAllUpdates(data: Measurable) {
+  let updates: any[] = [];
+
+  if (!data.outputs || !Array.isArray(data.outputs)) return updates;
+
+  data.outputs.forEach((output) => {
+    if (!output.output_measurables || !Array.isArray(output.output_measurables))
+      return;
+
+    output.output_measurables.forEach((measurable: Measurable) => {
+      if (!measurable.updates || !Array.isArray(measurable.updates)) return;
+
+      updates = updates.concat(measurable.updates);
+    });
+  });
+
+  return updates;
+}
+
+export default function Outcome() {
+  const [outcomeData, setOutcomeData] = useState<Measurable | null>(null);
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [project, setProject] = useState<Project>();
+
+  const projectSlug = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
-
   const id = searchParams.get('id');
   const code = searchParams.get('code');
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchOutcome = async () => {
+      const { data, error } = await supabase
+        .from('outcome_measurables')
+        .select('*, projects(*), outputs(*, output_measurables(*, updates(*)))')
+        .eq('id', id)
+        .single();
+
+      if (!error) {
+        console.log(data);
+        setOutcomeData(data);
+        setProject(data.projects);
+        setUpdates(extractAllUpdates(data));
+      } else {
+        console.error(error);
+      }
+    };
+
+    if (id) fetchOutcome();
+  }, [id]);
 
   return (
-    <div>
-      <h2>Logframe detail: Outcome</h2>
-      <ul>
-        <li>Database ID: {id}</li>
-        <li>Outcome code: {code}</li>
-      </ul>
+    <div className='animate-in pb-24'>
+      <div className='mb-8'>
+        <Breadcrumbs />
+      </div>
+
+      <div className='p-8 mb-8 bg-card-bg rounded-lg shadow'>
+        <h2 className='mb-4 text-2xl font-semibold text-white'>
+          {project && <span>{project.name} </span>}Outcome {code}
+        </h2>
+
+        {outcomeData && (
+          <div>
+            <p className='mb-4 max-w-3xl text-lg'>{outcomeData.description}</p>
+            {outcomeData.verification && (
+              <div className='mb-4'>
+                <h3 className='mb-2 text-foreground/80'>Verified by</h3>
+                <p>{outcomeData.verification}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <div className='flex justify-between gap-8'>
+        <div className='basis-1/3'>
+          <h3 className='text-lg font-medium mb-4'>Related Outputs</h3>
+          {outcomeData &&
+            outcomeData.outputs.map((output: Measurable) => {
+              return (
+                <Link
+                  href={`/app/projects/${
+                    projectSlug.slug
+                  }/logframe#output${output.code.replace('.', '')}`}
+                  key={output.code}
+                  className='p-4 flex justify-between items-center group first-of-type:pt-5 last-of-type:pb-5 first-of-type:rounded-t-lg last-of-type:rounded-b-lg bg-card-bg hover:bg-card-bg/60 text-slate-100 border border-transparent border-b-foreground/20 last-of-type:border-b-transparent transition-all duration-300'
+                >
+                  <p className='grow'>Output {output.code}</p>
+                  <p className='w-12 text-right transition-all duration-300 pr-4 group-hover:pr-1'>
+                    &rarr;
+                  </p>
+                </Link>
+              );
+            })}
+        </div>
+        <div className='basis-2/3 shrink-0'>
+          <h3 className='text-lg font-medium mb-4'>Related Updates</h3>
+          {updates &&
+            updates.map((update) => {
+              // @ts-ignore
+              return (
+                <UpdateMediumNested
+                  key={update.id}
+                  update={update}
+                  project={project}
+                />
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 }

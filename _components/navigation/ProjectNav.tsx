@@ -11,12 +11,12 @@ export default function ProjectSideNav(project: Project) {
 
   const items = [
     {
-      name: 'Logframe',
-      href: `/app/projects/${project.slug}/logframe`,
+      name: 'Theory of Change',
+      href: `/app/projects/${project.slug}/toc`,
     },
     {
-      name: 'Outputs',
-      href: `/app/projects/${project.slug}/outputs`,
+      name: 'Logframe',
+      href: `/app/projects/${project.slug}/logframe`,
     },
     {
       name: 'Updates',
