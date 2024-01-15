@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Breadcrumbs() {
+export default function Breadcrumbs({ currentPage }: { currentPage?: string }) {
   const pathname = usePathname();
   const crumbs = pathname
     .split('/')
@@ -27,6 +27,8 @@ export default function Breadcrumbs() {
                 </Link>
                 <span className='pl-3 text-foreground/60'>&rarr;</span>
               </>
+            ) : currentPage ? (
+              currentPage
             ) : (
               formattedCrumb
             )}
