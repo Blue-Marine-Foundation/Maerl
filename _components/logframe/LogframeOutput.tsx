@@ -46,40 +46,44 @@ export default async function LogframeOutput({
               return (
                 <li
                   key={om.id}
-                  className='border-b first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg '
+                  className='text-sm border-b first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg bg-card-bg'
                 >
                   <Link
-                    href={`/app/projects/${project_slug}/logframe/outcome?id=${om.id}&code=${om.code}`}
-                    className='flex justify-between items-baseline gap-8 p-5 bg-card-bg'
+                    href={`/app/projects/${project_slug}/logframe/outputindicator?id=${om.id}&code=${om.code}`}
+                    className='p-4 flex justify-start items-baseline gap-8'
                   >
-                    <h4 className='basis-1/8 shrink-0 font-semibold mb-2 text-white'>
+                    <h4 className='basis-1/8 shrink-0 font-semibold text-white'>
                       Indicator {om.code}
                     </h4>
-                    <div className='basis 4/8 grow'>
+                    <div className='basis 4/8 max-w-lg'>
                       <p className='leading-relaxed text-foreground/80'>
                         {om.description}
                       </p>
                     </div>
-                    <p className='basis-2/8 shrink-0 text-right text-sm'>
-                      {om.unit && (
-                        <span>
-                          {om.value}/{om.target} {om.unit}
-                        </span>
-                      )}
-                    </p>
-                    <p className='basis-1/8 shrink-0 text-right'>
-                      {om.impact_indicators ? (
-                        <Tooltip
-                          tooltipContent={om.impact_indicators.indicator_title}
-                          tooltipDirection='right'
-                          tooltipWidth={320}
-                        >
-                          {om.impact_indicators.indicator_code}
-                        </Tooltip>
-                      ) : (
-                        <span className='text-xs font-mono'>Progress</span>
-                      )}
-                    </p>
+                    <div className='grow text-right flex justify-end items-baseline gap-4'>
+                      <p>
+                        {om.unit && (
+                          <span>
+                            {om.value}/{om.target} {om.unit}
+                          </span>
+                        )}
+                      </p>
+                      <p className='w-[80px]'>
+                        {om.impact_indicators ? (
+                          <Tooltip
+                            tooltipContent={
+                              om.impact_indicators.indicator_title
+                            }
+                            tooltipDirection='right'
+                            tooltipWidth={320}
+                          >
+                            {om.impact_indicators.indicator_code}
+                          </Tooltip>
+                        ) : (
+                          <span className='text-xs font-mono'>Progress</span>
+                        )}
+                      </p>
+                    </div>
                   </Link>
                 </li>
               );
