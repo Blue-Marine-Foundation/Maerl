@@ -28,7 +28,7 @@ export default function Output() {
       .order('date', { ascending: false })
       .eq('output_measurables.id', id);
 
-    if (updates) {
+    if (updates && updates.length > 0) {
       setProject(updates[0].projects);
       console.log(updates[0].output_measurables);
       setOutput(updates[0].output_measurables);

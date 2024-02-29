@@ -54,7 +54,9 @@ export default async function ProjectLayout({
           <div className='flex items-center gap-4 text-sm'>
             <p className=''>
               Last updated{' '}
-              {updates ? dayjs(updates[0].date).format("DD MMM 'YY") : 'never'}
+              {updates && updates.length > 0
+                ? dayjs(updates[0].date).format("DD MMM 'YY")
+                : 'never'}
             </p>
             <span
               style={{

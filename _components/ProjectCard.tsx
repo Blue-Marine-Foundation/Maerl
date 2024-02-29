@@ -45,6 +45,7 @@ export default async function ProjectCard({ project }: { project: Project }) {
         </p>
         <p className='w-[200px]'>
           {updates &&
+            updates.length > 0 &&
             `Last updated ${dayjs(updates[0].date).format("DD MMM 'YY")}`}
         </p>
       </div>
