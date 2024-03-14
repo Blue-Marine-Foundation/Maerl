@@ -8,21 +8,22 @@ export default function ProjectOverview({
   pm: User;
 }) {
   return (
-    <div>
-      <p className='mb-4 font-medium'>Project Overview</p>
-      <div className='p-5 flex flex-col gap-6 text-sm text-slate-400 bg-card-bg rounded-md shadow'>
+    <>
+      {/* <h2 className='mb-4 font-medium'>Overview</h2> */}
+      <div className='lg:pt-5 grid grid-cols-1 gap-8 text-sm text-slate-400 '>
         <div>
           <p className='mb-2'>Lead Partner</p>
           <p className='text-white'>{project.lead_partner}</p>
         </div>
         <div>
-          <p className='mb-2'>Start date</p>
-          <p className='text-white'>{project.start_date}</p>
-        </div>
-        <div>
           <p className='mb-2'>Project Manager</p>
           <p className='text-white'>{`${pm.first_name} ${pm.last_name}`}</p>
         </div>
+        <div>
+          <p className='mb-2'>Start date</p>
+          <p className='text-white'>{project.start_date}</p>
+        </div>
+
         {project.delivery_partners && (
           <div>
             <p className='mb-2'>Delivery Partners</p>
@@ -54,6 +55,6 @@ export default function ProjectOverview({
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
