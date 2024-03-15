@@ -202,6 +202,7 @@ export default function UpdateForm({
           initialValue={inputValues.value}
           label='Impact stat'
           placeholder='1'
+          isRequired
           unit={
             (
               filteredOutputs.find(
