@@ -1,9 +1,8 @@
 import { supabase } from '@/utils/supabase/servicerole';
 import { createClient } from '@/_utils/supabase/server';
-import UpdateSmall from '@/_components/UpdateSmall';
-import { Params, Measurable } from '@/lib/types';
+import { Params } from '@/lib/types';
 import ProjectOverview from '@/_components/projecthome/ProjectOverview';
-import ProjectProgess from '@/_components/projecthome/ProjectProgress';
+import ProjectOutputs from '@/_components/projecthome/ProjectOutputs';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase.from('projects').select('*');
@@ -27,7 +26,7 @@ export default async function Project({ params }: { params: Params }) {
   const supabase = createClient();
   const { data: project, error: projectError } = await supabase
     .from('projects')
-    .select('*, users (*), output_measurables (*)')
+    .select('*, users (*), outputs (*)')
     .eq('slug', params.slug)
     .single();
 
@@ -46,22 +45,12 @@ export default async function Project({ params }: { params: Params }) {
     .limit(10);
 
   return (
-    <div className='animate-in flex justify-between gap-8 '>
-      <div className='basis-1/4 flex flex-col gap-8'>
+    <div className='animate-in flex justify-between gap-8'>
+      <div className='basis-1/5'>
         {project && <ProjectOverview project={project} pm={pm} />}
       </div>
-      <div className='basis-3/4 flex justify-between gap-8'>
-        <div className='basis-1/2'>
-          <p className='mb-4 font-medium'>Recent Updates</p>
-          {updates &&
-            updates.map((update) => {
-              return <UpdateSmall key={update.id} update={update} />;
-            })}
-        </div>
-
-        <div className='basis-1/2'>
-          {project.output_measurables && <ProjectProgess project={project} />}
-        </div>
+      <div className='basis-4/5'>
+        {project.outputs && <ProjectOutputs project={project} />}
       </div>
     </div>
   );
