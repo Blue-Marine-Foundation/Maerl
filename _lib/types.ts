@@ -81,11 +81,7 @@ export interface Project {
       name: string;
     }
   ];
-  funding_partner?: [
-    {
-      name: string;
-    }
-  ];
+  funding_partner?: string;
   funders?: [
     {
       name: string;
