@@ -13,7 +13,7 @@ export default function Header() {
             <Link href='/'>Maerl</Link>
           </h2>
 
-          <OrgPicker />
+          {/* <OrgPicker /> */}
         </div>
 
         <AuthButton />
