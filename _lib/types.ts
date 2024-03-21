@@ -23,6 +23,7 @@ export interface Output {
   percentage_complete: string;
   status: string;
   output_measurables: Measurable[];
+  outputNumber?: number;
 }
 
 export interface Update {
@@ -81,11 +82,7 @@ export interface Project {
       name: string;
     }
   ];
-  funding_partner?: [
-    {
-      name: string;
-    }
-  ];
+  funding_partner?: string;
   funders?: [
     {
       name: string;

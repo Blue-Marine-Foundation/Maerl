@@ -10,7 +10,7 @@ export default function ProjectOverview({
   return (
     <>
       {/* <h2 className='mb-4 font-medium'>Overview</h2> */}
-      <div className='lg:pt-5 grid grid-cols-1 gap-8 text-sm text-slate-400 '>
+      <div className='lg:pt-5 grid grid-cols-1 gap-6 text-sm text-slate-400 '>
         <div>
           <p className='mb-2'>Lead Partner</p>
           <p className='text-white'>{project.lead_partner}</p>
@@ -36,12 +36,8 @@ export default function ProjectOverview({
         )}
         {project.funding_partner && (
           <div>
-            <p className='mb-2'>Funding Partners</p>
-            <ul className='text-white'>
-              {project.funding_partner.map((partner: { name: String }) => (
-                <li className='mb-2 last:mb-0'>{partner.name}</li>
-              ))}
-            </ul>
+            <p className='mb-2'>Funding Partner</p>
+            <p className='text-white'>{project.funding_partner}</p>
           </div>
         )}
         {project.funders && (
