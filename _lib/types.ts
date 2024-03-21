@@ -23,6 +23,7 @@ export interface Output {
   percentage_complete: string;
   status: string;
   output_measurables: Measurable[];
+  outputNumber?: number;
 }
 
 export interface Update {

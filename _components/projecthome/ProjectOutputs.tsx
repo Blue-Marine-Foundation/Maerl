@@ -36,7 +36,10 @@ export default function ProjectOutputs({ project }: { project: Project }) {
             >
               <div className='basis-3/8'>
                 <h3 className='text-base font-semibold'>
-                  Output {output.outputNumber > 0 ? output.outputNumber : 'U'}
+                  Output{' '}
+                  {output.outputNumber && output.outputNumber > 0
+                    ? output.outputNumber
+                    : 'U'}
                 </h3>
               </div>
               <div className='basis-4/8 grow'>
