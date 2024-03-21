@@ -28,10 +28,7 @@ export default function ProjectOutputs({ project }: { project: Project }) {
           return (
             <Link
               key={output.code}
-              href={`/app/projects/${slug}/logframe#output${output.code.replace(
-                '.',
-                ''
-              )}`}
+              href={`/app/projects/${slug}/logframe/output?id=${output.id}&code=${output.code}`}
               className='p-5 group flex justify-start items-center gap-12 text-sm border-b last:border-b-0 bg-card-bg transition-all hover:bg-card-bg/60'
             >
               <div className='basis-3/8'>
