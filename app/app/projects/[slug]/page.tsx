@@ -31,21 +31,16 @@ export default async function Project({ params }: { params: Params }) {
     .single();
 
   if (projectError) {
-    throw new Error(`Failed to fetch projects: ${projectError.message}`);
+    console.log(`Failed to fetch projects: ${projectError.message}`);
   }
 
-  const projectID = project.id;
   const pm = project.users || '';
-
-  const { data: updates } = await supabase
-    .from('updates')
-    .select('*, projects (*), output_measurables (*, impact_indicators (*))')
-    .order('date', { ascending: false })
-    .eq('project_id', projectID)
-    .limit(10);
 
   return (
     <div className='animate-in flex justify-between gap-8'>
+      {projectError && (
+        <p>Error fetching project data: ${projectError.message}</p>
+      )}
       <div className='basis-1/5'>
         {project && <ProjectOverview project={project} pm={pm} />}
       </div>

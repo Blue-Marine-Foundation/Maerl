@@ -10,10 +10,10 @@ export default function ProjectSideNav(project: Project) {
   const pathname = usePathname();
 
   const items = [
-    {
-      name: 'Theory of Change',
-      href: `/app/projects/${project.slug}/toc`,
-    },
+    // {
+    //   name: 'Theory of Change',
+    //   href: `/app/projects/${project.slug}/toc`,
+    // },
     {
       name: 'Logframe',
       href: `/app/projects/${project.slug}/logframe`,
