@@ -1,7 +1,7 @@
 export default function sortOutputs(outputs) {
   let sortedOuputs = outputs
     .map((output) => {
-      const outputNumber = parseInt(output.code.split('.')[1]);
+      const outputNumber = parseInt(output.code.split('.').at(-1));
       return {
         outputNumber,
         ...output,

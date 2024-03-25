@@ -7,8 +7,10 @@ import Breadcrumbs from '@/_components/breadcrumbs';
 import UpdateMedium from '@/_components/UpdateMedium';
 import { Output, Measurable, Project } from '@/_lib/types';
 import sortOutputs from '@/lib/sortOutputs';
+import Tooltip from '@/_components/Tooltip';
 
 import Link from 'next/link';
+import { AddUpdateButton } from '@/_components/addUpdateButton';
 
 export default function Output() {
   const supabase = createClient();
@@ -19,6 +21,7 @@ export default function Output() {
 
   const [project, setProject] = useState<Project>();
   const [output, setOutput] = useState<Output>();
+  const [outputIndicators, setOutputIndicators] = useState<Measurable[]>();
   const [thisOutput, setThisOutput] = useState<number>(0);
   const [otherOutputs, setOtherOutputs] = useState<Output[]>([]);
   const [previousOutput, setPreviousOutput] = useState<Output>();
@@ -37,7 +40,7 @@ export default function Output() {
     if (output) {
       setOutput(output);
       setProject(output.projects);
-
+      setOutputIndicators(sortOutputs(output.output_measurables));
       setOtherOutputs(sortOutputs(output.projects.outputs));
     }
 
@@ -52,7 +55,7 @@ export default function Output() {
 
   useEffect(() => {
     setThisOutput(
-      otherOutputs.findIndex((item: Output) => item.code === output.code)
+      otherOutputs.findIndex((item: Output) => item.code === output?.code)
     );
   }, [otherOutputs]);
 
@@ -79,41 +82,65 @@ export default function Output() {
         <Breadcrumbs currentPage={`Output ${code}`} />
       </div>
 
-      <div className='p-6 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
+      <div className='p-6 mb-8 flex flex-col gap-6 bg-card-bg rounded-lg shadow'>
         <div className='flex justify-between items-center gap-8'>
           <h2 className='text-xl font-semibold text-white'>
             {project && <span>{project.name} </span>}Output {code}
           </h2>
-          <div className='flex items-center'>
+          <div className='flex items-center gap-4 text-sm'>
             {previousOutput && (
               <Link
                 href={`/app/projects/${project?.slug}/logframe/output?id=${previousOutput.id}&code=${previousOutput.code}`}
-                className='px-4 py-2 border rounded-l-md'
+                className='px-4 py-1.5 rounded-md border bg-card-bg hover:bg-background/70 shadow-md transition-all'
               >
-                &larr; Output {previousOutput.outputNumber}
+                &larr;&nbsp; Output {previousOutput.outputNumber}
               </Link>
             )}
             {nextOutput && (
               <Link
                 href={`/app/projects/${project?.slug}/logframe/output?id=${nextOutput.id}&code=${nextOutput.code}`}
-                className='px-4 py-2 border rounded-r-md'
+                className='px-4 py-1.5 rounded-md border bg-card-bg hover:bg-background/70 shadow-md transition-all'
               >
-                Output {nextOutput.outputNumber} &rarr;
+                Output {nextOutput.outputNumber} &nbsp;&rarr;
               </Link>
             )}
           </div>
         </div>
 
         {output && <p className='max-w-3xl'>{output.description}</p>}
-      </div>
 
-      <div>
-        <ul className='list-disc pl-8'>
-          {output &&
-            output.output_measurables.map((om: Measurable) => {
+        <ul className='bg-card-bg text-sm'>
+          {outputIndicators &&
+            outputIndicators.map((indicator: Measurable) => {
               return (
-                <li key={om.id} className='mb-2'>
-                  {om.description.trim()}
+                <li
+                  key={indicator.id}
+                  className='px-4 py-3 flex justify-between items-center gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
+                >
+                  <div className='shrink-0 w-[50px]'>
+                    {indicator.code.trim()}
+                  </div>
+                  <div className='max-w-2xl'>
+                    {indicator.description.trim()}
+                  </div>
+                  <div className='flex-grow'></div>
+                  {indicator.impact_indicators.indicator_code ? (
+                    <Tooltip
+                      tooltipContent={
+                        indicator.impact_indicators.indicator_title
+                      }
+                      tooltipWidth={380}
+                      tooltipDirection='right'
+                    >
+                      Impact indicator{' '}
+                      {indicator.impact_indicators.indicator_code}
+                    </Tooltip>
+                  ) : (
+                    <span>Progress</span>
+                  )}
+                  <div className='ml-4'>
+                    <AddUpdateButton />
+                  </div>
                 </li>
               );
             })}
