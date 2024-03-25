@@ -4,13 +4,11 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import Breadcrumbs from '@/_components/breadcrumbs';
-import UpdateMedium from '@/_components/UpdateMedium';
-import { Output, Measurable, Project } from '@/_lib/types';
+import { Output, Measurable, Project, Update } from '@/_lib/types';
 import sortOutputs from '@/lib/sortOutputs';
 import Tooltip from '@/_components/Tooltip';
-
 import Link from 'next/link';
-import { AddUpdateButton } from '@/_components/addUpdateButton';
+import UpdateMediumNested from '@/_components/UpdateMediumNested';
 
 export default function Output() {
   const supabase = createClient();
@@ -26,13 +24,13 @@ export default function Output() {
   const [otherOutputs, setOtherOutputs] = useState<Output[]>([]);
   const [previousOutput, setPreviousOutput] = useState<Output>();
   const [nextOutput, setNextOutput] = useState<Output>();
-  const [updates, setUpdates] = useState<any[]>([]);
+  const [updates, setUpdates] = useState<Update[]>([]);
 
   const fetchOutput = async (id: string) => {
     const { data: output, error } = await supabase
       .from('outputs')
       .select(
-        '*, projects!inner(*, outputs(id, code)), output_measurables!inner(*, impact_indicators (*))'
+        '*, projects(*, outputs(id, code)), output_measurables(*, updates(*), impact_indicators (*))'
       )
       .eq('id', id)
       .single();
@@ -42,6 +40,16 @@ export default function Output() {
       setProject(output.projects);
       setOutputIndicators(sortOutputs(output.output_measurables));
       setOtherOutputs(sortOutputs(output.projects.outputs));
+
+      const flatUpdates = output.output_measurables.flatMap(
+        (om: { updates: any }) => {
+          return om.updates;
+        }
+      );
+
+      console.log(flatUpdates);
+
+      setUpdates(flatUpdates);
     }
 
     if (error) {
@@ -82,7 +90,7 @@ export default function Output() {
         <Breadcrumbs currentPage={`Output ${code}`} />
       </div>
 
-      <div className='p-6 mb-8 flex flex-col gap-6 bg-card-bg rounded-lg shadow'>
+      <div className='p-6 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
         <div className='flex justify-between items-center gap-8'>
           <h2 className='text-xl font-semibold text-white'>
             {project && <span>{project.name} </span>}Output {code}
@@ -115,7 +123,7 @@ export default function Output() {
               return (
                 <li
                   key={indicator.id}
-                  className='px-4 py-3 flex justify-between items-center gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
+                  className='px-4 py-3 flex justify-between items-baseline gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
                 >
                   <div className='shrink-0 w-[50px]'>
                     {indicator.code.trim()}
@@ -138,14 +146,21 @@ export default function Output() {
                   ) : (
                     <span>Progress</span>
                   )}
-                  <div className='ml-4'>
-                    <AddUpdateButton />
-                  </div>
+                  {/* <div className='ml-4'>Add update</div> */}
                 </li>
               );
             })}
         </ul>
       </div>
+
+      {updates &&
+        updates.map((update) => (
+          <UpdateMediumNested
+            key={update.id}
+            update={update}
+            project={project}
+          />
+        ))}
     </div>
   );
 }
