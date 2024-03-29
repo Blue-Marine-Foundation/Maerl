@@ -8,8 +8,25 @@ import os
 #
 ############################################################
 
-project_id = 62  
-file_name = './italy.xlsx' 
+project_id = 13
+file_name = './unprocessed_logframes/13_dutchcaribbean.xlsx'
+switch = 'test'
+project_name = 'Dutch Caribbean'
+project_slug = 'dutchcaribbean'
+project_organisation_id = 1
+project_highlight_color = "#ffae00"
+project_pm = "d413a15c-adc2-445f-be25-b573f47bff48"
+
+project_meta = {
+    'id': project_id, 
+    'name': project_name, 
+    'slug': project_slug,
+    'organisation_id': project_organisation_id, 
+    'highlight_color': project_highlight_color, 
+    'project_manager_id': project_pm
+}
+
+project_df = pd.DataFrame(project_meta, index=[0])
 
 ############################################################
 #
@@ -18,7 +35,10 @@ file_name = './italy.xlsx'
 ############################################################
 
 impact_df = pd.read_excel(file_name, sheet_name='Impact and Outcome', header=None)
-impact_title = impact_df.iloc[0, 1] 
+
+impact_title = impact_df.iloc[0, 1]
+if pd.isnull(impact_title):
+    impact_title = 'Impact TBC'
 
 impact_indicators_df = pd.read_excel('impactindicators.xlsx', sheet_name='impactindicators', header=0)
 impact_indicators_lookup_df = pd.read_excel('impactindicators.xlsx', sheet_name='lookup', header=0)
@@ -58,6 +78,8 @@ for index, row in read_outcome_df.iterrows():
         outcome_number = int(outcome_code_parts[-1])
         outcome_number_padded = f"{outcome_number:02d}"
         outcome_desc = row.iloc[2]
+        if pd.isnull(outcome_desc):
+            outcome_desc = 'Outcome TBC' 
         db_outcome_id = f"{project_id}{outcome_number_padded}"
         
         outcomes.append({
@@ -76,6 +98,8 @@ for index, row in read_outcome_df.iterrows():
         outcome_indicator_number_padded = f"{outcome_indicator_number:02d}"
 
         outcome_indicator_desc = row.iloc[4]
+        if pd.isnull(outcome_indicator_desc):
+            outcome_indicator_desc = 'Outcome indicator TBC' 
         outcome_indicator_verification = row.iloc[8]
         
         db_outcome_indicator_id = f"{db_outcome_id}{outcome_indicator_number_padded}"
@@ -161,15 +185,16 @@ for sheet_name in output_sheets:
             current_activity_decimal = int(current_activity_code_parts[-1]) if current_activity_code_parts[-1].isdigit() else 0
             current_activity_number_padded = f"{current_activity_number:02d}"
             current_activity_decimal_padded = f"{current_activity_decimal:02d}"
-
-            all_activities.append({
-                'id': f"{current_output_id}{99}{current_activity_number_padded}{current_activity_decimal_padded}",
-                'output_id': current_output_id,
-                'code': code,
-                'description': description,
-                'status': status,
-                'notes': notes,
-            })
+            
+            if pd.notnull(description): 
+                all_activities.append({
+                    'id': f"{current_output_id}{99}{current_activity_number_padded}{current_activity_decimal_padded}",
+                    'output_id': current_output_id,
+                    'code': code,
+                    'description': description,
+                    'status': status,
+                    'notes': notes,
+                })
             continue  # Ensure further processing for outputs/output indicators doesn't occur in activity rows
 
         # Check if the row is for a new output
@@ -193,10 +218,13 @@ for sheet_name in output_sheets:
                 if output_number in item['outcome_indicator_outputs']:
                     parent_outcome_indicator_id = item['id']
                     break
+                else: 
+                    parent_outcome_indicator_id = f"{project_id}0000"
 
-            if parent_outcome_indicator_id:
-                output_id = f"{parent_outcome_indicator_id}{current_output_number_padded}"
-                current_output_id = output_id
+            output_id = f"{parent_outcome_indicator_id}{current_output_number_padded}"
+            current_output_id = output_id
+
+            if pd.notnull(output_desc):
                 all_outputs.append({
                     'id': output_id,
                     'project_id': project_id,
@@ -234,18 +262,20 @@ for sheet_name in output_sheets:
                 ii_id = 906
 
             output_indicator_id = f"{current_output_id}{output_indicator_number_padded}"
-            all_output_indicators.append({
-                'id': output_indicator_id,
-                'project_id': project_id,
-                'output_id': current_output_id,
-                'code': output_indicator_code,
-                'description': output_indicator_desc, 
-                'unit': output_indicator_unit, 
-                'target': output_indicator_target,
-                'assumption': output_indicator_assumption,
-                'verification': output_indicator_verification,
-                'impact_indicator_id': ii_id
-            })
+
+            if pd.notnull(output_indicator_desc): 
+                all_output_indicators.append({
+                    'id': output_indicator_id,
+                    'project_id': project_id,
+                    'output_id': current_output_id,
+                    'code': output_indicator_code,
+                    'description': output_indicator_desc, 
+                    'unit': output_indicator_unit, 
+                    'target': output_indicator_target,
+                    'assumption': output_indicator_assumption,
+                    'verification': output_indicator_verification,
+                    'impact_indicator_id': ii_id
+                })
 
 ############################################################
 #
@@ -337,9 +367,10 @@ def save_or_append_to_csv(df, filename):
         df.to_csv(filename, mode='w', header=True, index=False)
 
 # Example usage with your DataFrames
-save_or_append_to_csv(impact_df, './parsed_csv_files/impact.csv')
-save_or_append_to_csv(outcomes_df, './parsed_csv_files/outcomes.csv')
-save_or_append_to_csv(outcome_indicators_df, './parsed_csv_files/outcome_indicators.csv')
-save_or_append_to_csv(outputs_df, './parsed_csv_files/outputs.csv')
-save_or_append_to_csv(output_indicators_df, './parsed_csv_files/output_indicators.csv')
-save_or_append_to_csv(activities_df, './parsed_csv_files/activities.csv')
+save_or_append_to_csv(project_df, f'./parsed_csv_files/{switch}/projects.csv')
+save_or_append_to_csv(impact_df, f'./parsed_csv_files/{switch}/impacts.csv')
+save_or_append_to_csv(outcomes_df, f'./parsed_csv_files/{switch}/outcomes.csv')
+save_or_append_to_csv(outcome_indicators_df, f'./parsed_csv_files/{switch}/outcome_indicators.csv')
+save_or_append_to_csv(outputs_df, f'./parsed_csv_files/{switch}/outputs.csv')
+save_or_append_to_csv(output_indicators_df, f'./parsed_csv_files/{switch}/output_indicators.csv')
+save_or_append_to_csv(activities_df, f'./parsed_csv_files/{switch}/activities.csv')
