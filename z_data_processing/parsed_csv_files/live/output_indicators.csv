@@ -1,0 +1,66 @@
+id,project_id,output_id,code,description,unit,target,assumption,verification,impact_indicator_id
+1000020101,10,10000201,O.1.1,Independent charity/board of trustees [number of] established,Number of boards,1,,Official CTF contracts signed and completed showing board of trustees etc.,906
+1000020102,10,10000201,O.1.2,Amount (£) invested into the fund,£,2000000,, Financial records of investment,331
+1000020201,10,10000202,O.2.1,Number of community stakeholders engaged with,Stakeholders reached,,The local community is engaged and willing to support designation,"
+Evidence of diverse stakeholder engagement (meeting minutes, correspondence, workshops)",531
+1000020202,10,10000202,O.2.2,Number of beneficiaries benefitting from community projects through fund disbursement,Number of beneficiaries,,,Contracts/project plans outlining how support from the fund will be used for conservation,522
+1000020203,10,10000202,O.2.3,Amount of funds (£) provided for the community while endowment fund is maturing,£,,,Financial documents demonstrating funds provided for community,906
+1000060301,10,10000603,O.3.1,Number of presentations/meetings/reports/discussions with relevant political stakeholders,Meetings/reports/discussions,,"HMG is open to providing support
+
+Evidence to date shows positive change due to designation","Copies of presentations, meeting minutes",906
+1000060302,10,10000603,O.3.2,Number of parliamentary briefings,Briefings,,,Copy of briefings,901
+1000060303,10,10000603,O.3.3,Number of responses to government consultations,Consultation responses,,,Copy of consultation responses,901
+1000030401,10,10000304,O.4.1,Number of changes/improvements in strategies for inshore fishing,Number of fisheries with improved management measures,,"Achieve findings to be released as part of best practice management plan
+
+Sufficient comparable management plans exist",Written evidence of change to fisheries,321
+1000030402,10,10000304,O.4.2,Number of changes/improvements in strategies for monitoring and enforcement,Number of fisheries with improved management measures,,,Written evidence of change to fisheries,321
+1000030403,10,10000304,O.4.3,"Number of analyses produced on comparable management plans, with reports/datasets provided on external scientific advice",Reports/new pieces of evidence,1,,Written evidence of reports/datasets compiled,111
+1000030404,10,10000304,O.4.4,Number of management plans produced,Number of marine management plans,1,,Copy of management plan,901
+1000040501,10,10000405,O.5.1,"Number of media assets produced (broken down by film, social media content and articles)",Outreach tools,,Social media achieves significant reach and is received positively,"Screenshots, copies of and links to media assets",532
+1000040502,10,10000405,O.5.2,"Stakeholders reached through social media by region (reach, engagement)",Stakeholders reached,,,Social media stats/video views/website visits,531
+1000050601,10,10000506,O.6.1,"Data collected the reflects learnings from establishing an MPA around Ascension [reports, data, scientific/socioeconomic evidence, anecdotal feedback",Pieces of evidence,,,Databases produced and scientific advice has guided the review of available information,111
+1000050602,10,10000506,O.6.2,Website (created by Diane Baum) is launched and is publicly accessible,Website (outreach tool),1,,Link to website,532
+1000050603,10,10000506,O.6.3,MPA manual condensing learnings is created and hosted online,Manual,1,,MPA manual can be easily accessed/downloaded,111
+1000050604,10,10000506,O.6.4,Success of distribution ,"reach, engagement, number of downloads",,,Significant reach/engagement with the website and management plan achieved ,531
+1000000001,10,10000000,U.1,Turtle hatching blog - views,Stakeholders reached,2000.0,,,531
+1000000002,10,10000000,U.2,"Jude - book published, reach",Stakeholders reached,400.0,,,531
+1000000003,10,10000000,U.3,"Jude - book published, outreach tool generated",Number of outreach tools,1.0,,,532
+1000000004,10,10000000,U.4,Y1 Barclays Impact - MPA designation,km2,445000.0,,,122
+1100010101,11,11000101,O.1.1,Evidence of Government and stakeholder liason ,(number of recommendations submitted; meetings…),,"St Helena Government is open to dialogue and updates to fisheries management practices
+
+Evidence compiled encourages improved fisheries regulations",Written copies of correspondence and meeting minutes including attendees,906
+1100010102,11,11000101,O.1.2,Number of reports/other evidence documents submitted to the Government on TACs/quotas; long lining; observer coverage; human labour etc.,Reports/ evidence documents,,,Copies of reports,111
+1100020201,11,11000202,O.2.1,"Scientific analysis conducted, identifying biodiversity hot spots that will be used to propose zonation",Number of hotspots identified under protection,,"Monitoring adequately identifies hotspots
+
+Stakeholders are open to engagement
+
+Universities and research partners are engagemend and receptive to partnerships
+
+UK Foreign Office, Government Agencies and St Helena Government receptive to meetings and policy change
+
+Local community engaged and receptive",,121
+1100020202,11,11000202,O.2.2,Number of stakeholder consultation meetings conducted,Number of consultation events,,,,532
+1100020203,11,11000202,O.2.3,Number of University/research partnerships established,Partnerships,,,,562
+1100020204,11,11000202,O.2.4,Number of management plans influenced/created/improved,Management plans,,,,312
+1100020205,11,11000202,O.2.5,Amount of evidence compiled and provided for the removal of long lining,Pieces of evidence,,,,311
+1100020206,11,11000202,O.2.6,"Number of meetings with UK Foreign Office, UK Government Agencies and St Helena Government conducted on marine management implementation",Meetings,,,,906
+1100020207,11,11000202,O.2.7,Amount of community engagement events completed [if applicable for this output?],Events,,,,532
+1100020208,11,11000202,O.2.8,"Engagement levels across educational activities [reach, attendence rates, changes in support/awareness of marine conservaiton activities]",Stakeholders reached,,,,531
+1100030301,11,11000303,O.3.1,Number of island-wide cleanups/pollution reduction programmes conducted,Outreach activites delivered,,"St Helena National Trust Marine Team remain in partnership with Blue Marine Foundation
+
+Social Media and other outputs fosters engagement with local community",,532
+1100030302,11,11000303,O.3.2,Reach/engagement and wider impact of education intiatives  4.2.1 (knowledge/awareness change compared to baseline levels),Stakeholders reached,,,,531
+1100030303,11,11000303,O.3.3,Number of ocean champions supported,Number of beneficiaries,,,,522
+1100020401,11,11000204,O.4.1,Number of whale shark hot spots identified,Number of hotspots,,"Weather conditions allow for fieldwork
+
+Planning application process takes due account of scientific findings",,901
+1100020402,11,11000204,O.4.2,Aerial and underwater footage of whale sharks collected,Pieces of evidence,,,,906
+1100020403,11,11000204,O.4.3,"Amount of evidence (report, campaigns etc.) used to lobby against proposed planning applications",Pieces of evidence,,,,111
+1100020404,11,11000204,O.4.4,Number of recommendations provided to Government in regards to whale shark protection,Pieces of evidence,,,,111
+1100020405,11,11000204,O.4.5,Number of surveys conducted,Surveys completed,,,,906
+1100020406,11,11000204,O.4.6,Number of reports produced,Reports produced,,,,111
+1100000001,11,11000000,U.1,Number of beneficiaries,Beneficiaries,1.0,,,906
+1100000002,11,11000000,U.2,Number of beneficiaries,Beneficiaries,1.0,,,906
+1100000003,11,11000000,U.3,Number of beneficiaries,Beneficiaries,1.0,,,906
+1100000004,11,11000000,U.4,Outreach activity,Outreach activities/tools deployed,1.0,,,906
+1100000005,11,11000000,U.5,Litter removed,kg litter removed,100.0,,,906
