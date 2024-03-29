@@ -8,8 +8,8 @@ import os
 #
 ############################################################
 
-project_id = 62  
-file_name = './italy.xlsx' 
+project_id = 34  
+file_name = './berwickshire.xlsx' 
 
 ############################################################
 #
@@ -107,7 +107,7 @@ for index, row in read_outcome_df.iterrows():
 #            OUTPUTS
 #
 ############################################################
-
+        
 # Load the workbook to get the sheet names
 xls = pd.ExcelFile(file_name)
 
@@ -127,54 +127,16 @@ for sheet_name in output_sheets:
     current_output_code = None
     current_output_name = None
 
-    # Flag to indicate if we are currently processing activity rows
-    processing_activities = False
-    # Counter to skip header rows immediately after "Activities" header
-    activity_header_rows_to_skip = 2
-
     # Iterate through the DataFrame rows
     for index, row in read_output_df.iterrows():
         
-        # When "Activities" header is found, start processing activities instead of breaking
+        # Stop processing if the row contains "Activity"
         if "Activities" in row.iloc[:1].values:
-            processing_activities = True
-            continue  # Move to the next iteration to skip processing the current "Activities" header row
-
-        # Skip the two header rows immediately following the "Activities" header
-        if processing_activities and activity_header_rows_to_skip > 0:
-            activity_header_rows_to_skip -= 1
-            continue  # Move to the next iteration to skip processing these header rows
-
-        if processing_activities:
-            # Process activity data here
-            code = row.iloc[3]
-            description = row.iloc[4]
-            status = row.iloc[7]
-            notes = row.iloc[8]
-
-            current_activity_code = str(row.iloc[3])
-            current_activity_code_parts = current_activity_code.split('.')
-            if len(current_activity_code_parts) >= 2:
-                current_activity_number = int(current_activity_code_parts[-2]) if current_activity_code_parts[-2].isdigit() else 0
-            else:
-                current_activity_number = 0
-            current_activity_decimal = int(current_activity_code_parts[-1]) if current_activity_code_parts[-1].isdigit() else 0
-            current_activity_number_padded = f"{current_activity_number:02d}"
-            current_activity_decimal_padded = f"{current_activity_decimal:02d}"
-
-            all_activities.append({
-                'id': f"{current_output_id}{99}{current_activity_number_padded}{current_activity_decimal_padded}",
-                'output_id': current_output_id,
-                'code': code,
-                'description': description,
-                'status': status,
-                'notes': notes,
-            })
-            continue  # Ensure further processing for outputs/output indicators doesn't occur in activity rows
+            break
 
         # Check if the row is for a new output
         if pd.notnull(row.iloc[0]):
-
+            
             output_number_match = re.search(r'Output (\d+)', sheet_name)
             if output_number_match:
                 output_number = int(output_number_match.group(1))
@@ -186,13 +148,12 @@ for sheet_name in output_sheets:
             current_output_number = int(current_output_code_parts[-1])
             current_output_number_padded = f"{current_output_number:02d}"
             output_desc = row.iloc[2]
-
+            
             # Lookup the parent outcome_indicator id
-            parent_outcome_indicator_id = None
             for item in outcome_indicator_outputs_lookup:
-                if output_number in item['outcome_indicator_outputs']:
-                    parent_outcome_indicator_id = item['id']
-                    break
+              if output_number in item['outcome_indicator_outputs']:
+                  parent_outcome_indicator_id = item['id']
+                  break
 
             if parent_outcome_indicator_id:
                 output_id = f"{parent_outcome_indicator_id}{current_output_number_padded}"
@@ -200,9 +161,9 @@ for sheet_name in output_sheets:
                 all_outputs.append({
                     'id': output_id,
                     'project_id': project_id,
-                    'outcome_measurable_id': parent_outcome_indicator_id,
+                    'outcome_indicator_id': parent_outcome_indicator_id,
                     'code': current_output_code,
-                    'description': output_desc,
+                    'description': output_desc, 
                 })
 
         # Check if the row is for an output indicator
@@ -230,7 +191,6 @@ for sheet_name in output_sheets:
                 lookup_value = impact_indicators_lookup_df.loc[impact_indicators_lookup_df['old_impact_indicator_code'] == output_indicator_old_impact_indicator, 'new_impact_indicator_code'].values[0]
                 ii_id = impact_indicators_df.loc[impact_indicators_df['ii_code'] == lookup_value, 'id'].values[0]
             except IndexError:
-                # Marks as 'progress'
                 ii_id = 906
 
             output_indicator_id = f"{current_output_id}{output_indicator_number_padded}"
@@ -247,65 +207,12 @@ for sheet_name in output_sheets:
                 'impact_indicator_id': ii_id
             })
 
-############################################################
-#
-#            UNPLANNED OUTPUTS
-#
-############################################################
-
-unplanned_output_sheet = [sheet for sheet in xls.sheet_names if sheet.startswith('Unplanned')]
-
-for sheet_name in unplanned_output_sheet:
-    read_unplanned_output_df = pd.read_excel(file_name, sheet_name=sheet_name, header=None, skiprows=3)
-
-    unplanned_output_id = f"{project_id}000000"
-
-    all_outputs.append({
-                'id': unplanned_output_id,
-                'project_id': project_id,
-                'outcome_indicator_id': None,
-                'code': "U.0",
-                'description': "Unplanned outputs",
-            })
-
-    for index, row in read_unplanned_output_df.iterrows():
-        
-        if pd.isnull(row.iloc[1]):
-            break
-
-        unplanned_output_code_parts = row.iloc[0].strip().split('.')
-        unplanned_output_number = int(unplanned_output_code_parts[-1])
-        unplanned_output_number_padded = f"{unplanned_output_number:02d}"
-
-        unplanned_old_impact_indicator = row.iloc[4]
-
-        try:
-            lookup_value = impact_indicators_lookup_df.loc[impact_indicators_lookup_df['old_impact_indicator_code'] == unplanned_old_impact_indicator, 'new_impact_indicator_code'].values[0]
-            ii_id = impact_indicators_df.loc[impact_indicators_df['ii_code'] == lookup_value, 'id'].values[0]
-        except IndexError:
-            # Marks as 'progress'
-            ii_id = 906
-
-        all_output_indicators.append({
-            'id': f"{unplanned_output_id}{unplanned_output_number_padded}",
-            'project_id': project_id,
-            'output_id': unplanned_output_id,
-            'code': row.iloc[0].strip().replace(" ", ""),
-            'description': row.iloc[1], 
-            'unit': row.iloc[3], 
-            'target': row.iloc[2],
-            'assumption': '',
-            'verification': '',
-            'impact_indicator_id': ii_id
-        })
-
 # Convert the lists into DataFrames
 outcomes_df = pd.DataFrame(outcomes)
 outcome_indicators_df = pd.DataFrame(outcome_indicators)
 outputs_df = pd.DataFrame(all_outputs)
 outputs_df = outputs_df.sort_values(by='id')
 output_indicators_df = pd.DataFrame(all_output_indicators)
-activities_df = pd.DataFrame(all_activities)
 
 ############################################################
 #
@@ -337,9 +244,8 @@ def save_or_append_to_csv(df, filename):
         df.to_csv(filename, mode='w', header=True, index=False)
 
 # Example usage with your DataFrames
-save_or_append_to_csv(impact_df, './parsed_csv_files/impact.csv')
-save_or_append_to_csv(outcomes_df, './parsed_csv_files/outcomes.csv')
-save_or_append_to_csv(outcome_indicators_df, './parsed_csv_files/outcome_indicators.csv')
-save_or_append_to_csv(outputs_df, './parsed_csv_files/outputs.csv')
-save_or_append_to_csv(output_indicators_df, './parsed_csv_files/output_indicators.csv')
-save_or_append_to_csv(activities_df, './parsed_csv_files/activities.csv')
+save_or_append_to_csv(impact_df, 'impact.csv')
+save_or_append_to_csv(outcomes_df, 'outcomes.csv')
+save_or_append_to_csv(outcome_indicators_df, 'outcome_indicators.csv')
+save_or_append_to_csv(outputs_df, 'outputs.csv')
+save_or_append_to_csv(output_indicators_df, 'output_indicators.csv')
