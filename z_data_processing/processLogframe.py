@@ -8,14 +8,14 @@ import os
 #
 ############################################################
 
-project_id = 13
-file_name = './unprocessed_logframes/13_dutchcaribbean.xlsx'
-switch = 'test'
-project_name = 'Dutch Caribbean'
-project_slug = 'dutchcaribbean'
+project_id = 14
+file_name = './unprocessed_logframes/14_stvincent.xlsx'
+switch = 'live'
+project_name = 'St. Vincent'
+project_slug = 'stvincent'
 project_organisation_id = 1
-project_highlight_color = "#ffae00"
-project_pm = "d413a15c-adc2-445f-be25-b573f47bff48"
+project_highlight_color = "#ff0d62"
+project_pm = ""
 
 project_meta = {
     'id': project_id, 
@@ -272,7 +272,7 @@ for sheet_name in output_sheets:
                     'description': output_indicator_desc, 
                     'unit': output_indicator_unit, 
                     'target': output_indicator_target,
-                    'assumption': output_indicator_assumption,
+                    'assumptions': output_indicator_assumption,
                     'verification': output_indicator_verification,
                     'impact_indicator_id': ii_id
                 })
