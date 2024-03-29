@@ -8,14 +8,14 @@ import os
 #
 ############################################################
 
-project_id = 14
-file_name = './unprocessed_logframes/14_stvincent.xlsx'
+project_id = 50
+file_name = './unprocessed_logframes/50_nationalmarineparks.xlsx'
 switch = 'live'
-project_name = 'St. Vincent'
-project_slug = 'stvincent'
+project_name = 'National Marine Parks'
+project_slug = 'nationalmarineparks'
 project_organisation_id = 1
-project_highlight_color = "#ff0d62"
-project_pm = ""
+project_highlight_color = "#70D7FF"
+project_pm = "fda8fd58-7df1-410d-957d-1cb8dbb5053a"
 
 project_meta = {
     'id': project_id, 
