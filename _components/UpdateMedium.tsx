@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 export default function UpdateMedium({ update }: { update: Update }) {
   return (
     <div className='text-white text-sm p-4 flex justify-between items-baseline gap-4 bg-card-bg border-b first-of-type:pt-5 first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg shadow'>
-      <div className='w-[150px]'>
+      <div className='w-[180px]'>
         <Link
           style={{ background: update.projects.highlight_color }}
           href={`/app/projects/${update.projects.slug}`}
