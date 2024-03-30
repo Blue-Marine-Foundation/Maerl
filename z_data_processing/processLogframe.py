@@ -8,14 +8,14 @@ import os
 #
 ############################################################
 
-project_id = 98
-file_name = './unprocessed_logframes/98_media.xlsx'
+project_id = 43
+file_name = './unprocessed_logframes/43_solentoysterrestoration.xlsx'
 switch = 'live'
-project_name = 'Media'
-project_slug = 'media'
+project_name = 'Solent Oyster Restoration'
+project_slug = 'solentoysterrestoration'
 project_organisation_id = 1
-project_highlight_color = "#E95BFF"
-project_pm = "17fd3388-fb82-4ba4-86a5-7fc53535905a"
+project_highlight_color = "#4fa0a4"
+project_pm = "fa8bf85d-8a92-4f5d-bee1-2a804187f8a5"
 
 project_meta = {
     'id': project_id, 
