@@ -28,5 +28,9 @@ export default function Page() {
     fetchData();
   }, []);
 
-  return <p>The number of posts: {data && data.length}</p>;
+  return (
+    <div className='pt-8 pb-24'>
+      <p>The number of posts: {data && data.length}</p>
+    </div>
+  );
 }
