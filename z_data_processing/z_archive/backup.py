@@ -24,7 +24,7 @@ impact_indicators_df = pd.read_excel('impactindicators.xlsx', sheet_name='impact
 impact_indicators_lookup_df = pd.read_excel('impactindicators.xlsx', sheet_name='lookup', header=0)
 
 impact_data = {
-    'projectID': project_id,
+    'project_id': project_id,
     'title': [impact_title]
 }
 
@@ -117,6 +117,7 @@ output_sheets = [sheet for sheet in xls.sheet_names if sheet.startswith('Output'
 # Define empty lists to store data for all output sheets
 all_outputs = []
 all_output_indicators = []
+all_activities = []
 
 for sheet_name in output_sheets:
     read_output_df = pd.read_excel(file_name, sheet_name=sheet_name, header=None, skiprows=3)

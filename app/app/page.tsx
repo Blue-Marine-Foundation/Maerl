@@ -1,7 +1,6 @@
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
 import UpdateMedium from '@/_components/UpdateMedium';
-import WelcomeMessage from '@/_components/WelcomeMessage';
 
 export default async function Overview() {
   const supabase = createClient();
@@ -70,7 +69,11 @@ export default async function Overview() {
                 >
                   {project.id}
                 </span>
-                <p className='grow'>{project.name}</p>
+                <p className='grow'>
+                  {`${project.name.slice(0, 18)}${
+                    project.name.length > 20 ? '...' : ''
+                  }`}
+                </p>
                 <p className='w-12 text-right transition-all duration-300 pr-4 group-hover:pr-1'>
                   &rarr;
                 </p>
