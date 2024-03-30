@@ -1,7 +1,6 @@
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
 import UpdateMedium from '@/_components/UpdateMedium';
-import WelcomeMessage from '@/_components/WelcomeMessage';
 
 export default async function Overview() {
   const supabase = createClient();
