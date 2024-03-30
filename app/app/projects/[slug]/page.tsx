@@ -45,7 +45,14 @@ export default async function Project({ params }: { params: Params }) {
         {project && <ProjectOverview project={project} pm={pm} />}
       </div>
       <div className='basis-4/5'>
-        {project.outputs && <ProjectOutputs project={project} />}
+        {project.outputs && project.outputs.length > 0 && (
+          <ProjectOutputs project={project} />
+        )}
+        {project.outputs && project.outputs.length == 0 && (
+          <div className='bg-card-bg p-20 flex flex-col items-center rounded-lg'>
+            <p>No project data uploaded yet</p>
+          </div>
+        )}
       </div>
     </div>
   );
