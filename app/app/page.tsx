@@ -9,6 +9,8 @@ export default async function Overview() {
     .from('updates')
     .select('*, projects (*), output_measurables (*, impact_indicators (*))')
     .order('date', { ascending: false })
+    .eq('valid', 'true')
+    .eq('duplicate', 'false')
     .limit(25);
 
   if (error) {
