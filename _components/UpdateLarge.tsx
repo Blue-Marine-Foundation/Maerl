@@ -3,9 +3,9 @@ import Tooltip from './Tooltip';
 import { Update } from '@/_lib/types';
 import dayjs from 'dayjs';
 
-export default function UpdateMedium({ update }: { update: Update }) {
+export default function UpdateLarge({ update }: { update: Update }) {
   return (
-    <div className='text-white text-sm p-4 flex justify-between items-baseline gap-4 bg-card-bg border-b first-of-type:pt-5 first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg shadow'>
+    <div className='text-white text-sm p-4 flex justify-between items-baseline gap-8 bg-card-bg border-b first-of-type:pt-5 first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg shadow'>
       <div className='w-[190px] shrink-0'>
         <Link
           href={`/app/projects/${update.projects.slug}`}
@@ -21,7 +21,7 @@ export default function UpdateMedium({ update }: { update: Update }) {
           {dayjs(update.date).format('DD MMM YY')}
         </p>
       </div>
-      <div className='w-[200px]'>
+      <div className='w-[150px]'>
         {update.output_measurable_id && (
           <p className='mb-1'>
             <Tooltip
@@ -52,14 +52,16 @@ export default function UpdateMedium({ update }: { update: Update }) {
         )}
       </div>
       <div className='grow'>
-        <p className='max-w-lg'>{update.description}</p>
+        <p className='max-w-lg overflow-clip'>{update.description}</p>
       </div>
       <div className='w-[200px]'>
-        <p className=''>{update.value}</p>
-        {update.output_measurables?.impact_indicators && (
-          <p className='text-xs text-foreground/70'>
-            {update.output_measurables.impact_indicators.indicator_unit}
-          </p>
+        {update.output_measurable_id && update.value && (
+          <>
+            <p className='mb-2'>{update.value}</p>
+            <p className='text-xs text-foreground/70'>
+              {update.output_measurables.impact_indicators.indicator_unit}
+            </p>
+          </>
         )}
       </div>
     </div>
