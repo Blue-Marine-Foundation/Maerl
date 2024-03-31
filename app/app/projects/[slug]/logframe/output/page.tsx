@@ -8,7 +8,7 @@ import { Output, Measurable, Project, Update } from '@/_lib/types';
 import sortOutputs from '@/lib/sortOutputs';
 import Tooltip from '@/_components/Tooltip';
 import Link from 'next/link';
-import UpdateMediumNested from '@/_components/UpdateMediumNested';
+import OutputUpdatesWrapper from '@/_components/OutputUpdatesWrapper';
 
 export default function Output() {
   const supabase = createClient();
@@ -24,13 +24,12 @@ export default function Output() {
   const [otherOutputs, setOtherOutputs] = useState<Output[]>([]);
   const [previousOutput, setPreviousOutput] = useState<Output>();
   const [nextOutput, setNextOutput] = useState<Output>();
-  const [updates, setUpdates] = useState<Update[]>([]);
 
   const fetchOutput = async (id: string) => {
     const { data: output, error } = await supabase
       .from('outputs')
       .select(
-        '*, projects(*, outputs(id, code)), output_measurables(*, updates(*), impact_indicators (*))'
+        '*, projects(*, outputs(id, code)), output_measurables(*, impact_indicators (*))'
       )
       .eq('id', id)
       .single();
@@ -40,16 +39,6 @@ export default function Output() {
       setProject(output.projects);
       setOutputIndicators(sortOutputs(output.output_measurables));
       setOtherOutputs(sortOutputs(output.projects.outputs));
-
-      const flatUpdates = output.output_measurables.flatMap(
-        (om: { updates: any }) => {
-          return om.updates;
-        }
-      );
-
-      console.log(flatUpdates);
-
-      setUpdates(flatUpdates);
     }
 
     if (error) {
@@ -90,10 +79,10 @@ export default function Output() {
         <Breadcrumbs currentPage={`Output ${code}`} />
       </div>
 
-      <div className='p-6 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
-        <div className='flex justify-between items-center gap-8'>
+      <div className='p-4 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
+        <div className='flex justify-between items-center gap-4'>
           <h2 className='text-xl font-semibold text-white'>
-            {project && <span>{project.name} </span>}Output {code}
+            Output {code?.split('.').pop()}
           </h2>
           <div className='flex items-center gap-4 text-sm'>
             {previousOutput && (
@@ -115,52 +104,68 @@ export default function Output() {
           </div>
         </div>
 
-        {output && <p className='max-w-3xl'>{output.description}</p>}
+        {output && (
+          <p className='font-medium max-w-3xl mb-2'>{output.description}</p>
+        )}
 
-        <ul className='bg-card-bg text-sm'>
+        <ul className='mb-8 bg-card-bg text-sm'>
           {outputIndicators &&
             outputIndicators.map((indicator: Measurable) => {
               return (
                 <li
                   key={indicator.id}
-                  className='px-4 py-3 flex justify-between items-baseline gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
+                  className='p-4 flex justify-between items-center gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
                 >
-                  <div className='shrink-0 w-[50px]'>
-                    {indicator.code.trim()}
+                  <div className='w-[150px] shrink-0'>
+                    <p className='mb-1.5 font-medium'>
+                      Output {indicator.code.slice(2, 6)}
+                    </p>
+                    <p className='text-xs text-foreground/80'>
+                      {indicator.impact_indicators.indicator_code &&
+                      indicator.impact_indicators.id < 900 ? (
+                        <Tooltip
+                          tooltipContent={
+                            indicator.impact_indicators.indicator_title
+                          }
+                          tooltipWidth={380}
+                          tooltipDirection='left'
+                        >
+                          Impact indicator{' '}
+                          {indicator.impact_indicators.indicator_code}
+                        </Tooltip>
+                      ) : (
+                        'Progress'
+                      )}
+                    </p>
                   </div>
-                  <div className='max-w-2xl'>
-                    {indicator.description.trim()}
+                  <div className='grow'>
+                    <p className='max-w-lg'>{indicator.description.trim()}</p>
                   </div>
-                  <div className='flex-grow'></div>
-                  {indicator.impact_indicators.indicator_code ? (
-                    <Tooltip
-                      tooltipContent={
-                        indicator.impact_indicators.indicator_title
-                      }
-                      tooltipWidth={380}
-                      tooltipDirection='right'
-                    >
-                      Impact indicator{' '}
-                      {indicator.impact_indicators.indicator_code}
-                    </Tooltip>
-                  ) : (
-                    <span>Progress</span>
-                  )}
-                  {/* <div className='ml-4'>Add update</div> */}
+                  <div className='w-[350px] text-xs flex flex-col gap-2'>
+                    {indicator.target &&
+                      indicator.impact_indicators &&
+                      indicator.impact_indicators.indicator_unit && (
+                        <p>
+                          <span className='mr-2 text-sm font-semibold'>
+                            {indicator.target}
+                          </span>
+                          <span>
+                            {indicator.impact_indicators.indicator_unit}
+                          </span>
+                        </p>
+                      )}
+                  </div>
+
+                  <div className='ml-4 flex flex-col items-center'>
+                    Add update
+                  </div>
                 </li>
               );
             })}
         </ul>
       </div>
 
-      {updates &&
-        updates.map((update) => (
-          <UpdateMediumNested
-            key={update.id}
-            update={update}
-            project={project}
-          />
-        ))}
+      {output && <OutputUpdatesWrapper output={output.id} />}
     </div>
   );
 }

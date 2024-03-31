@@ -18,7 +18,9 @@ export default function UpdateLarge({ update }: { update: Update }) {
           {update.projects.name}
         </Link>
         <p className='pl-6 text-xs text-foreground/70'>
-          {dayjs(update.date).format('DD MMM YY')}
+          {update.date
+            ? dayjs(update.date).format('DD MMM YY')
+            : 'Date unknown'}
         </p>
       </div>
       <div className='w-[150px]'>
@@ -34,8 +36,9 @@ export default function UpdateLarge({ update }: { update: Update }) {
           </p>
         )}
 
-        {update.output_measurables?.impact_indicators?.indicator_code ? (
-          <p className='text-xs text-foreground/70'>
+        <p className='text-xs text-foreground/70'>
+          {update.output_measurables?.impact_indicators?.indicator_code &&
+          update.output_measurables?.impact_indicators?.id < 900 ? (
             <Tooltip
               tooltipContent={
                 update.output_measurables.impact_indicators.indicator_title
@@ -46,10 +49,10 @@ export default function UpdateLarge({ update }: { update: Update }) {
               Impact indicator{' '}
               {update.output_measurables.impact_indicators.indicator_code}
             </Tooltip>
-          </p>
-        ) : (
-          <p>Progress update</p>
-        )}
+          ) : (
+            'Progress update'
+          )}
+        </p>
       </div>
       <div className='grow'>
         <p className='max-w-lg overflow-clip'>{update.description}</p>

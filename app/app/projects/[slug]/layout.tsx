@@ -4,8 +4,6 @@ import ProjectNav from '@/components/navigation/ProjectNav';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 
-export const dynamic = 'force-dynamic';
-
 export default async function ProjectLayout({
   children,
   params,
@@ -21,23 +19,28 @@ export default async function ProjectLayout({
     .eq('slug', params.slug)
     .single();
 
+  if (error) {
+    return (
+      <div className='pb-20 flex flex-col gap-4'>
+        <div className='flex justify-between items-center gap-12'>
+          <h2 className='text-2xl font-bold'>{params.slug}</h2>
+          <p className='px-2 py-1 text-sm bg-card-bg rounded-md'>
+            Error loading project metadata
+          </p>
+        </div>
+
+        <hr className='mb-4' />
+        {children}
+      </div>
+    );
+  }
+
   const updates = project.updates
     ? project.updates.sort(
         // @ts-ignore
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       )
     : null;
-
-  if (error) {
-    return (
-      <div>
-        <h2 className='text-2xl font-bold'>{params.slug}</h2>
-        <p>Error fetching project details from database: {error.message}</p>
-        <hr className='mb-4' />
-        {children}
-      </div>
-    );
-  }
 
   if (project) {
     return (

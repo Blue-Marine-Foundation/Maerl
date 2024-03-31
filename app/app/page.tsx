@@ -63,7 +63,7 @@ export default async function Overview() {
               <Link
                 href={`/app/projects/${project.slug}`}
                 key={project.name}
-                className='p-4 flex justify-between items-center group first-of-type:pt-5 last-of-type:pb-5 first-of-type:rounded-t-lg last-of-type:rounded-b-lg bg-card-bg hover:bg-card-bg/60 text-slate-100 border border-transparent border-b-foreground/20 last-of-type:border-b-transparent transition-all duration-300'
+                className='p-4 flex justify-between items-center group first-of-type:rounded-t-lg last-of-type:rounded-b-lg bg-card-bg hover:bg-card-bg/60 text-slate-100 border border-transparent border-b-foreground/20 last-of-type:border-b-transparent transition-all duration-300'
               >
                 <span
                   style={{ background: project.color }}
