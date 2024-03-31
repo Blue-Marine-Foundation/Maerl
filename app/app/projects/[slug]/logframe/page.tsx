@@ -3,6 +3,7 @@ import { Params, Output } from '@/lib/types';
 import LogframeImpactSection from '@/_components/logframe/LogframeImpactSection';
 import LogframeOutcomeSection from '@/_components/logframe/LogframeOutcomeSection';
 import LogframeOutput from '@/_components/logframe/LogframeOutput';
+import Link from 'next/link';
 
 export default async function Logframe({ params }: { params: Params }) {
   const supabaseClient = createClient();
@@ -40,6 +41,24 @@ export default async function Logframe({ params }: { params: Params }) {
   });
 
   const sidenav = [...sections, ...outputs];
+
+  if (project.stub) {
+    return (
+      <div className='flex flex-col items-stretch gap-4'>
+        <div className='mb-4 bg-card-bg p-16 flex flex-col items-center gap-8 rounded-lg'>
+          <p>No project logframe uploaded yet</p>
+          <p>
+            <Link
+              href={`/app/projects/${project.slug}/updates`}
+              className='underline'
+            >
+              View project updates
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='animate-in pb-24'>
