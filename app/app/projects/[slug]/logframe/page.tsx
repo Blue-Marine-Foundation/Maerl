@@ -33,14 +33,23 @@ export default async function Logframe({ params }: { params: Params }) {
     },
   ];
 
-  const outputs = project.outputs.map((output: Output) => {
+  const outputs = project.outputs
+    .sort((a: Output, b: Output) => {
+      const aNumber = parseInt(a.code.split('.').pop() || '0');
+      const bNumber = parseInt(b.code.split('.').pop() || '0');
+
+      return aNumber - bNumber;
+    })
+    .sort((a: Output, b: Output) => a.code.localeCompare(b.code));
+
+  const outputLinks = outputs.map((output: Output) => {
     return {
       name: `Output ${output.code}`,
       slug: `output${output.code.replace('.', '')}`,
     };
   });
 
-  const sidenav = [...sections, ...outputs];
+  const sidenav = [...sections, ...outputLinks];
 
   if (project.stub) {
     return (
@@ -65,7 +74,7 @@ export default async function Logframe({ params }: { params: Params }) {
       <h2 className='text-xl font-medium mb-8 text-white'>Logframe</h2>
 
       <div className='relative flex justify-between items-start gap-8'>
-        <ul className='basis-1/5 shrink-0 sticky top-8'>
+        <ul className='basis-1/6 shrink-0 sticky top-8'>
           {sidenav.map((item) => {
             return (
               <li key={item.name} className='mb-4'>
