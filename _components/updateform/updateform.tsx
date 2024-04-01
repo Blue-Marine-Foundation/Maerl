@@ -18,9 +18,11 @@ export default function UpdateForm({
   data: Project_W_Outputs[];
   user: string | null;
 }) {
-  const projects = data.map((project) => {
-    return { name: project.name, value: project.id };
-  });
+  const projects = data
+    .map((project) => {
+      return { name: project.name, value: project.id };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const outputs = data.flatMap((project) => {
     // First, map each output to an object representing the output itself
@@ -56,16 +58,45 @@ export default function UpdateForm({
     projectParam ? parseInt(projectParam) : projects[0].value
   );
 
+  const newUnplannedOutput = [
+    {
+      name: 'Other',
+      output_parent: true,
+      project_id: targetProject,
+      value: 99999999,
+      unit: '',
+      impact_indicator: null,
+    },
+    {
+      impact_indicator: null,
+      name: 'General update',
+      output_parent: false,
+      project_id: targetProject,
+      value: 9999999998,
+      unit: '',
+    },
+    {
+      impact_indicator: null,
+      name: 'New unplanned output',
+      output_parent: false,
+      project_id: targetProject,
+      value: 9999999999,
+      unit: '',
+    },
+  ];
+
   const [filteredOutputs, setFilteredOutputs] = useState(() =>
     outputs
       .filter((output) => output.project_id === targetProject)
       .sort((a, b) => a.name.localeCompare(b.name))
+      .concat(...newUnplannedOutput)
   );
 
   useEffect(() => {
     const relevantOutputs = outputs
       .filter((output) => output.project_id === targetProject)
       .sort((a, b) => a.name.localeCompare(b.name));
+    relevantOutputs.push(...newUnplannedOutput);
     setFilteredOutputs(relevantOutputs);
     setInputValues((prevValues) => ({
       ...prevValues,
@@ -111,12 +142,16 @@ export default function UpdateForm({
     const update = {
       date: inputValues.date,
       project_id: inputValues.project,
-      output_measurable_id: inputValues.output,
+      output_measurable_id:
+        // @ts-ignore
+        parseInt(inputValues.output) < 9999990000 ? inputValues.output : null,
       type: inputValues.update_type,
       description: inputValues.description,
       value: inputValues.value !== '' ? inputValues.value : null,
       link: inputValues.link,
       posted_by: inputValues.user,
+      valid: true,
+      duplicate: false,
     };
 
     setTimeout(async () => {
