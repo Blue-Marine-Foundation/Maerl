@@ -154,10 +154,10 @@ export default function Output() {
                       )}
                     </p>
                   </div>
-                  <div className='grow'>
+                  <div className='grow pr-2'>
                     <p className='max-w-lg'>{indicator.description.trim()}</p>
                   </div>
-                  <div className='w-[350px] text-xs flex flex-col gap-2'>
+                  <div className='w-[350px] shrink-0 text-xs flex flex-col gap-2'>
                     {indicator.target &&
                       indicator.impact_indicators &&
                       indicator.impact_indicators.indicator_unit && (
@@ -172,7 +172,7 @@ export default function Output() {
                       )}
                   </div>
 
-                  <div className='ml-4 w-[120px]'>
+                  <div className='ml-4 shrink-0 w-[100px]'>
                     <QuickUpdateModal
                       // @ts-ignore
                       project={project}
