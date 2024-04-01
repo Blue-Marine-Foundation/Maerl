@@ -156,9 +156,14 @@ export default function Output() {
                       )}
                   </div>
 
-                  <div className='ml-4 flex flex-col items-center'>
+                  <Link
+                    //@ts-ignore
+                    href={`/app/newupdate?project=${project.id}&output=${indicator.id}`}
+                    className='ml-4 px-2 py-1 bg-sky-950/10 flex flex-col items-center'
+                  >
                     Add update
-                  </div>
+                  </Link>
+                  {/* <FormDialogue /> */}
                 </li>
               );
             })}

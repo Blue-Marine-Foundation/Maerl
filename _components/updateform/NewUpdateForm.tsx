@@ -114,10 +114,14 @@ export default function UpdateForm({
   data,
   impactIndicators,
   user,
+  project,
+  outputIndicator,
 }: {
   data: Project_W_Outputs[];
   impactIndicators: any[];
   user: string | null;
+  project?: number;
+  outputIndicator?: number;
 }) {
   const projects = parseProjects(data);
   const outputs = parseOutputs(data);
