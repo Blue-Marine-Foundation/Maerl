@@ -19,9 +19,14 @@ export default function Indicator() {
 
   const fetchUpdates = async (id: string) => {
     const { data: updates, error } = await supabase
-      .from('updates')
-      .select('*, projects(*), output_measurables(*, impact_indicators(*))')
-      .eq('impact_indicator_id', id);
+      .from('impact_indicators')
+      .select(
+        '*, updates(*, projects(*), output_measurables(*, impact_indicators(*)))'
+      )
+      .eq('id', id)
+      .eq('updates.valid', true)
+      .eq('updates.duplicate', false)
+      .single();
 
     if (error) {
       console.log(error);
@@ -29,8 +34,8 @@ export default function Indicator() {
     }
 
     if (updates) {
-      console.log(updates);
-      setUpdates(updates);
+      console.log(updates.updates);
+      setUpdates(updates.updates);
     }
   };
 
