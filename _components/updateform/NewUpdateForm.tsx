@@ -11,37 +11,36 @@ import ControlledCombobox from './Combobox';
 import ControlledTextarea from './Textarea';
 import SuccessMessage from './SuccessMessage';
 
-export default function UpdateForm({
-  data,
-  user,
-}: {
-  data: Project_W_Outputs[];
-  user: string | null;
-}) {
-  const projects = data
+const parseProjects = (data: Project_W_Outputs[]) => {
+  return data
     .map((project) => {
       return { name: project.name, value: project.id };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
+};
 
-  const outputs = data.flatMap((project) => {
+const parseOutputs = (data: Project_W_Outputs[]) => {
+  return data.flatMap((project) => {
     // First, map each output to an object representing the output itself
     const outputObjects = project.outputs.map((output) => ({
       project_id: project.id,
-      output_parent: true,
+      parent: true,
       value: output.code,
       name: `${output.code}: ${output.description}`,
       unit: undefined,
+      impact_indicator: undefined,
+      impact_indicator_id: undefined,
     }));
 
     // Then, map each measurable in each output to its own object
     const measurableObjects = project.outputs.flatMap((output) =>
       output.output_measurables.map((measurable) => ({
         project_id: project.id,
-        output_parent: false,
+        parent: false,
         value: measurable.id,
         name: `${measurable.code}: ${measurable.description}`,
         impact_indicator: measurable.impact_indicators?.indicator_code,
+        impact_indicator_id: measurable.impact_indicators?.id,
         unit: measurable.unit,
       }))
     );
@@ -49,6 +48,79 @@ export default function UpdateForm({
     // Combine the output objects and measurable objects into a single array
     return [...outputObjects, ...measurableObjects];
   });
+};
+
+const generateNewUnplannedOutput = (targetProject: any) => {
+  return [
+    {
+      name: 'Other',
+      parent: true,
+      project_id: targetProject,
+      value: 99999999,
+      unit: '',
+      impact_indicator: null,
+      impact_indicator_id: null,
+    },
+    {
+      impact_indicator: null,
+      name: 'General update',
+      parent: false,
+      project_id: targetProject,
+      value: 9999999998,
+      unit: '',
+      impact_indicator_id: 111,
+    },
+    {
+      impact_indicator: null,
+      name: 'New unplanned output',
+      parent: false,
+      project_id: targetProject,
+      value: 9999999999,
+      unit: '',
+      impact_indicator_id: 111,
+    },
+  ];
+};
+
+const parseImpactIndicators = (impactIndicators: any) => {
+  return impactIndicators
+    .filter((indicator: any) => indicator.indicator_title)
+    .map((indicator: any) => {
+      const value = indicator.id;
+      const name = `${indicator.indicator_code} - ${indicator.indicator_title}`;
+      const parent = indicator.indicator_code.length < 4 ? true : false;
+
+      return {
+        value,
+        name,
+        parent,
+        ...indicator,
+      };
+    });
+};
+
+const filterOutputs = (
+  outputs: any[],
+  newUnplannedOutput: any[],
+  targetProject: any
+) => {
+  return outputs
+    .filter((output: any) => output.project_id === targetProject)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .concat(...newUnplannedOutput);
+};
+
+export default function UpdateForm({
+  data,
+  impactIndicators,
+  user,
+}: {
+  data: Project_W_Outputs[];
+  impactIndicators: any[];
+  user: string | null;
+}) {
+  const projects = parseProjects(data);
+  const outputs = parseOutputs(data);
 
   const searchParams = useSearchParams();
   const projectParam = searchParams.get('project');
@@ -58,45 +130,20 @@ export default function UpdateForm({
     projectParam ? parseInt(projectParam) : projects[0].value
   );
 
-  const newUnplannedOutput = [
-    {
-      name: 'Other',
-      output_parent: true,
-      project_id: targetProject,
-      value: 99999999,
-      unit: '',
-      impact_indicator: null,
-    },
-    {
-      impact_indicator: null,
-      name: 'General update',
-      output_parent: false,
-      project_id: targetProject,
-      value: 9999999998,
-      unit: '',
-    },
-    {
-      impact_indicator: null,
-      name: 'New unplanned output',
-      output_parent: false,
-      project_id: targetProject,
-      value: 9999999999,
-      unit: '',
-    },
-  ];
+  const newUnplannedOutput = generateNewUnplannedOutput(targetProject);
 
   const [filteredOutputs, setFilteredOutputs] = useState(() =>
-    outputs
-      .filter((output) => output.project_id === targetProject)
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .concat(...newUnplannedOutput)
+    filterOutputs(outputs, newUnplannedOutput, targetProject)
   );
 
+  const parsedImpactIndicators = parseImpactIndicators(impactIndicators);
+
   useEffect(() => {
-    const relevantOutputs = outputs
-      .filter((output) => output.project_id === targetProject)
-      .sort((a, b) => a.name.localeCompare(b.name));
-    relevantOutputs.push(...newUnplannedOutput);
+    const relevantOutputs = filterOutputs(
+      outputs,
+      newUnplannedOutput,
+      targetProject
+    );
     setFilteredOutputs(relevantOutputs);
     setInputValues((prevValues) => ({
       ...prevValues,
@@ -104,20 +151,38 @@ export default function UpdateForm({
     }));
   }, [targetProject]);
 
-  const [inputValues, setInputValues] = useState({
+  const initialState = {
     user: user,
     project: targetProject,
     output: outputParam ? parseInt(outputParam) : filteredOutputs[1].value, // [0] will always be a higher level output
     update_type: 'Impact',
+    impactIndicatorId:
+      outputParam && filteredOutputs
+        ? //@ts-ignore
+          filteredOutputs.find(
+            (output) => output.value === parseInt(outputParam)
+          ).impact_indicator
+        : filteredOutputs[1].impact_indicator_id,
     date: new Date().toISOString().split('T')[0],
     description: '',
     value: '',
     link: '',
-  });
+  };
+
+  const [inputValues, setInputValues] = useState(initialState);
 
   const handleInputChange = (name: string) => (newValue: string | number) => {
     if (name === 'project') {
       setTargetProject(parseInt(newValue as string));
+    }
+    if (name === 'output') {
+      setInputValues((prevValues) => ({
+        ...prevValues,
+        [name]: newValue,
+        impactIndicatorId: filteredOutputs.find(
+          (output) => output.value === parseInt(newValue.toString())
+        ).impact_indicator_id,
+      }));
     }
     setInputValues((prevValues) => ({
       ...prevValues,
@@ -143,8 +208,9 @@ export default function UpdateForm({
       date: inputValues.date,
       project_id: inputValues.project,
       output_measurable_id:
-        // @ts-ignore
-        parseInt(inputValues.output) < 9999990000 ? inputValues.output : null,
+        parseInt(inputValues.output.toString()) < 9999990000
+          ? inputValues.output
+          : null,
       type: inputValues.update_type,
       description: inputValues.description,
       value: inputValues.value !== '' ? inputValues.value : null,
@@ -152,43 +218,47 @@ export default function UpdateForm({
       posted_by: inputValues.user,
       valid: true,
       duplicate: false,
+      impact_indicator_id: inputValues.impactIndicatorId,
     };
 
-    setTimeout(async () => {
-      const { data, error } = await supabase
-        .from('updates')
-        .insert(update)
-        .select();
+    console.log(update);
+    setIsSubmitting(false);
 
-      if (error) {
-        setIsSubmitting(false);
-        setHasSubmittedSuccessfully(false);
-        setFormError(true);
-        setErrorMessage(
-          `Error submitting update (please screenshot this error and send it to Appin): ${error.message}`
-        );
-        console.log('Tried to submit: ', update);
-      }
+    // setTimeout(async () => {
+    //   const { data, error } = await supabase
+    //     .from('updates')
+    //     .insert(update)
+    //     .select();
 
-      if (data) {
-        console.log(data);
-        setFormError(false);
-        setErrorMessage('');
-        setIsSubmitting(false);
-        setHasSubmittedSuccessfully(true);
-        setInputValues((prevValues) => ({
-          ...prevValues,
-          update_type: 'Impact',
-          date: new Date().toISOString().split('T')[0],
-          description: '',
-          value: '',
-          link: '',
-        }));
-        setTimeout(() => {
-          setHasSubmittedSuccessfully(false);
-        }, 3500);
-      }
-    }, 1000);
+    //   if (error) {
+    //     setIsSubmitting(false);
+    //     setHasSubmittedSuccessfully(false);
+    //     setFormError(true);
+    //     setErrorMessage(
+    //       `Error submitting update (please screenshot this error and send it to Appin): ${error.message}`
+    //     );
+    //     console.log('Tried to submit: ', update);
+    //   }
+
+    //   if (data) {
+    //     console.log(data);
+    //     setFormError(false);
+    //     setErrorMessage('');
+    //     setIsSubmitting(false);
+    //     setHasSubmittedSuccessfully(true);
+    //     setInputValues((prevValues) => ({
+    //       ...prevValues,
+    //       update_type: 'Impact',
+    //       date: new Date().toISOString().split('T')[0],
+    //       description: '',
+    //       value: '',
+    //       link: '',
+    //     }));
+    //     setTimeout(() => {
+    //       setHasSubmittedSuccessfully(false);
+    //     }, 2500);
+    //   }
+    // }, 1000);
   };
 
   return (
@@ -203,6 +273,7 @@ export default function UpdateForm({
         onSelect={handleInputChange('project')}
         initialValue={inputValues.project}
       />
+
       <ControlledCombobox
         label='Output'
         options={filteredOutputs}
@@ -214,6 +285,16 @@ export default function UpdateForm({
         label='Update type'
         onChange={handleInputChange('update_type')}
       />
+
+      {inputValues.update_type == 'Impact' &&
+        parseInt(inputValues.output.toString()) > 9999990000 && (
+          <ControlledCombobox
+            label='Impact Indicator'
+            options={parsedImpactIndicators}
+            onSelect={handleInputChange('impactIndicatorId')}
+            initialValue={inputValues.impactIndicatorId}
+          />
+        )}
 
       <ControlledInput
         type='date'
@@ -240,10 +321,10 @@ export default function UpdateForm({
           isRequired
           unit={
             (
-              filteredOutputs.find(
-                (output) => output.value === inputValues.output
+              impactIndicators.find(
+                (ii) => ii.id === inputValues.impactIndicatorId
               ) || {}
-            ).unit
+            ).indicator_unit
           }
           onChange={handleInputChange('value')}
         />

@@ -7,7 +7,7 @@ interface ControlledListboxProps {
   options: {
     name: string;
     value: string | number;
-    output_parent: boolean;
+    parent: boolean;
     impact_indicator?: string | undefined;
   }[];
   onSelect: (value: string | number) => void;
@@ -93,7 +93,7 @@ export default function ControlledCombobox({
                         }`
                       }
                       value={option}
-                      disabled={option.output_parent}
+                      disabled={option.parent}
                     >
                       {({ selected, active }) => (
                         <>
@@ -101,9 +101,7 @@ export default function ControlledCombobox({
                             className={`block truncate ${
                               selected ? 'font-medium' : 'font-normal'
                             } ${
-                              option.output_parent
-                                ? '-ml-6 text-foreground/75'
-                                : ''
+                              option.parent ? '-ml-6 text-foreground/75' : ''
                             }`}
                           >
                             {option.name}
