@@ -1,4 +1,5 @@
-import Update from '@/_components/UpdateMedium';
+import ErrorState from '@/_components/ErrorState';
+import UpdateLarge from '@/_components/UpdateLarge';
 import { createClient } from '@/_utils/supabase/server';
 import { Params } from '@/lib/types';
 import Link from 'next/link';
@@ -11,17 +12,12 @@ async function Page({ params }: { params: Params }) {
       '*, projects!inner(*), output_measurables (*, impact_indicators (*))'
     )
     .order('date', { ascending: false })
+    .eq('duplicate', 'false')
     .eq('projects.slug', params.slug);
 
-  if (!updates) {
+  if (error) {
     console.log(error);
-    return (
-      <div className='w-full'>
-        <h2 className='text-2xl font-bold mb-8'>{`${params.slug} Updates`}</h2>
-
-        <p>No updates found... {error.message}</p>
-      </div>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   if (updates.length == 0) {
@@ -63,7 +59,7 @@ async function Page({ params }: { params: Params }) {
         </h2>
 
         {updates.map((update) => {
-          return <Update key={update.id} update={update} />;
+          return <UpdateLarge key={update.id} update={update} />;
         })}
       </div>
     </>

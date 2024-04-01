@@ -9,20 +9,29 @@ export default function ProjectOverview({
 }) {
   return (
     <>
-      {/* <h2 className='mb-4 font-medium'>Overview</h2> */}
+      <h2 className='font-medium'>Overview</h2>
+
       <div className='lg:pt-5 grid grid-cols-1 gap-6 text-sm text-slate-400 '>
         <div>
-          <p className='mb-2'>Lead Partner</p>
-          <p className='text-white'>{project.lead_partner}</p>
-        </div>
-        <div>
           <p className='mb-2'>Project Manager</p>
-          <p className='text-white'>{`${pm.first_name} ${pm.last_name}`}</p>
+          <p className='text-white'>
+            {pm ? `${pm.first_name} ${pm.last_name}` : 'TBC'}
+          </p>
         </div>
+
         <div>
-          <p className='mb-2'>Start date</p>
-          <p className='text-white'>{project.start_date}</p>
+          <p className='mb-2'>Lead Partner</p>
+          <p className='text-white'>
+            {project.lead_partner ? project.lead_partner : 'TBC'}
+          </p>
         </div>
+
+        {project.start_date && (
+          <div>
+            <p className='mb-2'>Start date</p>
+            <p className='text-white'>{project.start_date}</p>
+          </div>
+        )}
 
         {project.delivery_partners && (
           <div>

@@ -92,6 +92,7 @@ export interface Project {
   outputs?: Output[];
   output_measurables?: Measurable[];
   updates?: Update[];
+  stub: boolean;
 }
 
 export interface Project_W_Outputs {

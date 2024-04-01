@@ -1,6 +1,5 @@
 import { createClient } from '@/_utils/supabase/server';
 import { Measurable } from '@/_lib/types';
-import Link from 'next/link';
 
 export default async function LogframeOutcomeSection({
   project_slug,
@@ -22,7 +21,7 @@ export default async function LogframeOutcomeSection({
         outcomes.map((outcome) => {
           return (
             <div key={outcome.id}>
-              <p className='text-2xl max-w-2xl text-white font-medium mb-6'>
+              <p className='text-xl max-w-2xl text-white font-medium mb-6'>
                 {outcome.description}
               </p>
               <ul className='shadow-md max-w-4xl'>
@@ -32,14 +31,11 @@ export default async function LogframeOutcomeSection({
                       key={om.id}
                       className='border-b first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg overflow-hidden'
                     >
-                      <Link
-                        href={`/app/projects/${project_slug}/logframe/outcome?id=${om.id}&code=${om.code}`}
-                        className='flex justify-between items-baseline gap-8 p-6 bg-card-bg'
-                      >
-                        <h4 className='basis-1/5 shrink-0 font-semibold mb-2 text-white'>
-                          Outcome {om.code}
+                      <div className='flex justify-between items-baseline gap-8 p-4 pl-6 bg-card-bg'>
+                        <h4 className='w-[150px] shrink-0 font-semibold mb-2 text-white'>
+                          Outcome {om.code.slice(3, 6)}
                         </h4>
-                        <div className='grow'>
+                        <div className='grow text-sm'>
                           <p className='mb-4 leading-relaxed text-foreground/80'>
                             {om.description}
                           </p>
@@ -50,7 +46,7 @@ export default async function LogframeOutcomeSection({
                             {om.verification}
                           </p>
                         </div>
-                      </Link>
+                      </div>
                     </li>
                   );
                 })}

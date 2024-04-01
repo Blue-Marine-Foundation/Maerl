@@ -9,8 +9,6 @@ export default async function Projects() {
     .from('projects')
     .select('*, outputs (*), updates (*)');
 
-  console.log(projects?.length);
-
   return (
     <div className='animate-in pt-4 pb-24'>
       <h2 className='text-2xl font-bold mb-6'>Projects</h2>

@@ -1,5 +1,6 @@
 import { createClient } from '@/_utils/supabase/server';
-import UpdateMedium from '@/_components/UpdateMedium';
+import UpdateLarge from '@/_components/UpdateLarge';
+import ErrorState from '@/_components/ErrorState';
 
 export default async function Updates() {
   const supabase = createClient();
@@ -7,10 +8,14 @@ export default async function Updates() {
   const { data: updates, error } = await supabase
     .from('updates')
     .select('*, projects (*), output_measurables (*, impact_indicators (*))')
+    .eq('valid', 'true')
+    .eq('duplicate', 'false')
     .order('date', { ascending: false });
 
   if (error) {
     console.log(`Failed to fetch projects: ${error.message}`);
+
+    return <ErrorState message={error.message} />;
   }
 
   return (
@@ -19,7 +24,7 @@ export default async function Updates() {
         <h2 className='text-2xl font-bold mb-6'>Updates</h2>
         {updates &&
           updates.map((u) => {
-            return <UpdateMedium key={u.id} update={u} />;
+            return <UpdateLarge key={u.id} update={u} />;
           })}
       </div>
     </div>

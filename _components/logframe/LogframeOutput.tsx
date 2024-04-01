@@ -2,6 +2,7 @@ import { createClient } from '@/_utils/supabase/server';
 import { Measurable, Output } from '@/_lib/types';
 import Tooltip from '../Tooltip';
 import Link from 'next/link';
+import ErrorState from '../ErrorState';
 
 export default async function LogframeOutput({
   outputAnchor,
@@ -19,75 +20,76 @@ export default async function LogframeOutput({
     .select(`*, impact_indicators(*)`)
     .eq('output_id', output.id);
 
+  if (error) {
+    console.log(error);
+
+    return <ErrorState message={error.message} />;
+  }
+
   return (
     <div id={outputAnchor} className='scroll-m-8'>
-      <div className='mb-4 flex justify-start items-center gap-8'>
-        <h3 className='text-xl font-medium text-foreground/80'>
-          Output {output.code}
-        </h3>
-        <div className='flex gap-4'>
-          <span className='px-3 py-1.5 text-sm border rounded-md'>
-            {output.status}
-          </span>
-          <span className='px-3 py-1.5 text-sm border rounded-md'>
-            {output.percentage_complete}% complete
-          </span>
-        </div>
-      </div>
+      <h3 className='text-xl font-semibold mb-4'>
+        Output {output.code.slice(2, 6)}
+      </h3>
 
-      <p className='text-xl max-w-2xl text-white font-medium mb-6'>
+      <p className='text-lg max-w-2xl text-white font-medium mb-6'>
         {output.description}
       </p>
       <ul className='shadow-md'>
         {outputIndicators &&
-          outputIndicators
-            .sort((a, b) => a.code.localeCompare(b.code))
-            .map((om: Measurable) => {
-              return (
-                <li
-                  key={om.id}
-                  className='text-sm border-b first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg bg-card-bg'
+          outputIndicators.map((om: Measurable) => {
+            return (
+              <li
+                key={om.id}
+                className='text-sm border-b first-of-type:rounded-t-lg last-of-type:border-b-transparent last-of-type:rounded-b-lg bg-card-bg'
+              >
+                <Link
+                  href={`/app/projects/${project_slug}/logframe/output?id=${output.id}&code=${output.code}`}
+                  className='p-4 flex justify-start items-baseline gap-12'
                 >
-                  <Link
-                    href={`/app/projects/${project_slug}/logframe/outputindicator?id=${om.id}&code=${om.code}`}
-                    className='p-4 flex justify-start items-baseline gap-8'
-                  >
-                    <h4 className='basis-1/8 shrink-0 font-semibold text-white'>
-                      Indicator {om.code}
+                  <div className='w-[150px] shrink-0'>
+                    <h4 className='mb-2 font-semibold '>
+                      Output {om.code.slice(2, 6)}
                     </h4>
-                    <div className='basis 4/8 max-w-lg'>
-                      <p className='leading-relaxed text-foreground/80'>
-                        {om.description}
-                      </p>
-                    </div>
-                    <div className='grow text-right flex justify-end items-baseline gap-4'>
-                      <p>
-                        {om.unit && (
-                          <span>
-                            {om.value}/{om.target} {om.unit}
+
+                    <p className='text-xs text-foreground/80'>
+                      {om.impact_indicators && om.impact_indicators.id < 900 ? (
+                        <Tooltip
+                          tooltipContent={om.impact_indicators.indicator_title}
+                          tooltipDirection='right'
+                          tooltipWidth={320}
+                        >
+                          Impact indicator {om.impact_indicators.indicator_code}
+                        </Tooltip>
+                      ) : (
+                        'Progress'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className='grow'>
+                    <p className='leading-relaxed max-w-lg'>{om.description}</p>
+                  </div>
+
+                  <div className='w-[200px]'>
+                    {om.target &&
+                      om.impact_indicators &&
+                      om.impact_indicators.indicator_unit && (
+                        <p className='mt-2'>
+                          <span className='text-base font-semibold'>
+                            {om.target}
+                          </span>{' '}
+                          <br />
+                          <span className='text-xs text-foreground/80'>
+                            {om.impact_indicators.indicator_unit}
                           </span>
-                        )}
-                      </p>
-                      <p className='w-[80px]'>
-                        {om.impact_indicators ? (
-                          <Tooltip
-                            tooltipContent={
-                              om.impact_indicators.indicator_title
-                            }
-                            tooltipDirection='right'
-                            tooltipWidth={320}
-                          >
-                            {om.impact_indicators.indicator_code}
-                          </Tooltip>
-                        ) : (
-                          <span className='text-xs font-mono'>Progress</span>
-                        )}
-                      </p>
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
+                        </p>
+                      )}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
       </ul>
     </div>
   );

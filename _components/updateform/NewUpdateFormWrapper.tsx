@@ -1,9 +1,8 @@
 import { createClient } from '@/_utils/supabase/server';
 import NewUpdateForm from '@/_components/updateform/NewUpdateForm';
 import ErrorState from '@/_components/ErrorState';
-import NewUpdateWrapper from '@/_components/updateform/NewUpdateFormWrapper';
 
-export default async function NewUpdate() {
+export default async function NewUpdateWrapper() {
   const supabase = createClient();
 
   const { data: user, error: userError } = await supabase.auth.getUser();
@@ -30,9 +29,10 @@ export default async function NewUpdate() {
   }
 
   return (
-    <div className='animate-in pt-4 pb-12'>
-      <h2 className='text-2xl font-bold mb-6'>New Update</h2>
-      <NewUpdateWrapper />
-    </div>
+    <NewUpdateForm
+      data={projects}
+      impactIndicators={impactIndicators}
+      user={userid}
+    />
   );
 }
