@@ -21,7 +21,8 @@ export default function OutputUpdatesWrapper({ output }: { output: number }) {
         '*, projects (*), output_measurables!inner(*, outputs!inner(*), impact_indicators (*))'
       )
       .eq('output_measurables.outputs.id', output)
-      .eq('duplicate', false);
+      .eq('duplicate', false)
+      .order('date', { ascending: false });
 
     if (error) {
       console.log(error);

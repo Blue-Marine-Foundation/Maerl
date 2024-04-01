@@ -114,14 +114,10 @@ export default function UpdateForm({
   data,
   impactIndicators,
   user,
-  project,
-  outputIndicator,
 }: {
   data: Project_W_Outputs[];
   impactIndicators: any[];
   user: string | null;
-  project?: number;
-  outputIndicator?: number;
 }) {
   const projects = parseProjects(data);
   const outputs = parseOutputs(data);
@@ -225,44 +221,41 @@ export default function UpdateForm({
       impact_indicator_id: inputValues.impactIndicatorId,
     };
 
-    console.log(update);
-    setIsSubmitting(false);
+    setTimeout(async () => {
+      const { data, error } = await supabase
+        .from('updates')
+        .insert(update)
+        .select();
 
-    // setTimeout(async () => {
-    //   const { data, error } = await supabase
-    //     .from('updates')
-    //     .insert(update)
-    //     .select();
+      if (error) {
+        setIsSubmitting(false);
+        setHasSubmittedSuccessfully(false);
+        setFormError(true);
+        setErrorMessage(
+          `Error submitting update (please screenshot this error and send it to Appin): ${error.message}`
+        );
+        console.log('Tried to submit: ', update);
+      }
 
-    //   if (error) {
-    //     setIsSubmitting(false);
-    //     setHasSubmittedSuccessfully(false);
-    //     setFormError(true);
-    //     setErrorMessage(
-    //       `Error submitting update (please screenshot this error and send it to Appin): ${error.message}`
-    //     );
-    //     console.log('Tried to submit: ', update);
-    //   }
-
-    //   if (data) {
-    //     console.log(data);
-    //     setFormError(false);
-    //     setErrorMessage('');
-    //     setIsSubmitting(false);
-    //     setHasSubmittedSuccessfully(true);
-    //     setInputValues((prevValues) => ({
-    //       ...prevValues,
-    //       update_type: 'Impact',
-    //       date: new Date().toISOString().split('T')[0],
-    //       description: '',
-    //       value: '',
-    //       link: '',
-    //     }));
-    //     setTimeout(() => {
-    //       setHasSubmittedSuccessfully(false);
-    //     }, 2500);
-    //   }
-    // }, 1000);
+      if (data) {
+        console.log(data);
+        setFormError(false);
+        setErrorMessage('');
+        setIsSubmitting(false);
+        setHasSubmittedSuccessfully(true);
+        setInputValues((prevValues) => ({
+          ...prevValues,
+          update_type: 'Impact',
+          date: new Date().toISOString().split('T')[0],
+          description: '',
+          value: '',
+          link: '',
+        }));
+        setTimeout(() => {
+          setHasSubmittedSuccessfully(false);
+        }, 2500);
+      }
+    }, 1000);
   };
 
   return (

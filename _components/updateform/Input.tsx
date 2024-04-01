@@ -35,7 +35,7 @@ export default function ControlledTextInput({
 
   return (
     <div className='flex justify-start items-center gap-8 text-sm'>
-      <label className='block basis-1/5 pl-1 text-sm text-foreground/80'>
+      <label className='block basis-1/5 text-sm text-foreground/80'>
         {label}
       </label>
       <input

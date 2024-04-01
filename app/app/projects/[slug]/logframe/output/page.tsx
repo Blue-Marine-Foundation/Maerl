@@ -9,6 +9,7 @@ import sortOutputs from '@/lib/sortOutputs';
 import Tooltip from '@/_components/Tooltip';
 import Link from 'next/link';
 import OutputUpdatesWrapper from '@/_components/OutputUpdatesWrapper';
+import QuickUpdateModal from '@/_components/QuickUpdateForm/QuickUpdateModal';
 
 export default function Output() {
   const supabase = createClient();
@@ -24,6 +25,21 @@ export default function Output() {
   const [otherOutputs, setOtherOutputs] = useState<Output[]>([]);
   const [previousOutput, setPreviousOutput] = useState<Output>();
   const [nextOutput, setNextOutput] = useState<Output>();
+
+  const [user, setUser] = useState<any>();
+  const [userError, setUserError] = useState<any>();
+
+  const fetchUser = async () => {
+    const { data: user, error: userError } = await supabase.auth.getUser();
+
+    if (userError) setUserError(userError.message);
+
+    if (user.user) setUser(user.user.id);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const fetchOutput = async (id: string) => {
     const { data: output, error } = await supabase
@@ -156,14 +172,14 @@ export default function Output() {
                       )}
                   </div>
 
-                  <Link
-                    //@ts-ignore
-                    href={`/app/newupdate?project=${project.id}&output=${indicator.id}`}
-                    className='ml-4 px-2 py-1 bg-sky-950/10 flex flex-col items-center'
-                  >
-                    Add update
-                  </Link>
-                  {/* <FormDialogue /> */}
+                  <div className='ml-4 w-[120px]'>
+                    <QuickUpdateModal
+                      // @ts-ignore
+                      project={project}
+                      output={indicator}
+                      userId={user}
+                    />
+                  </div>
                 </li>
               );
             })}
