@@ -1,24 +1,25 @@
 import { createClient } from '@/_utils/supabase/server';
 import UpdateForm from '../../../_components/updateform/updateform';
+import ErrorState from '@/_components/ErrorState';
 
 export default async function NewUpdate() {
   const supabase = createClient();
+
+  const { data: user, error: userError } = await supabase.auth.getUser();
+
+  const userid = user?.user?.id ? user.user.id : null;
+
   const { data: projects, error } = await supabase
     .from('projects')
     .select(`*, outputs (*, output_measurables (*, impact_indicators (*)))`);
 
-  const { data: user, error: userError } = await supabase.auth.getUser();
-
-  const userid = user?.user?.id ? user.user.id : 'Unknown';
-
-  if (!projects || !user) {
+  if (error || userError) {
     return (
-      <div>
+      <div className='animate-in'>
         <div className='pt-4 pb-12'>
           <h2 className='text-2xl font-bold mb-6'>New Update</h2>
-          <p className='mb-6'>Error connecting to database</p>
-          {error && <p className='mb-6'>{error.message}</p>}
-          {userError && <p className='mb-6'>{userError.message}</p>}
+          {error && <ErrorState message={error.message} />}
+          {userError && <ErrorState message={userError.message} />}
         </div>
       </div>
     );
@@ -27,7 +28,7 @@ export default async function NewUpdate() {
   return (
     <div className='animate-in pt-4 pb-12'>
       <h2 className='text-2xl font-bold mb-6'>New Update</h2>
-      {projects && user && <UpdateForm data={projects} user={userid} />}
+      {projects && <UpdateForm data={projects} user={userid} />}
     </div>
   );
 }

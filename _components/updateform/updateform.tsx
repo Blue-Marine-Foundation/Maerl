@@ -16,7 +16,7 @@ export default function UpdateForm({
   user,
 }: {
   data: Project_W_Outputs[];
-  user: string;
+  user: string | null;
 }) {
   const projects = data.map((project) => {
     return { name: project.name, value: project.id };
