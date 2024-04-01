@@ -18,7 +18,7 @@ export default function Indicator() {
   const [updates, setUpdates] = useState<Update[]>();
 
   const fetchUpdates = async (id: string) => {
-    const { data: updates, error } = await supabase
+    const { data, error } = await supabase
       .from('impact_indicators')
       .select(
         '*, updates(*, projects(*), output_measurables(*, impact_indicators(*)))'
@@ -34,8 +34,8 @@ export default function Indicator() {
     }
 
     if (updates) {
-      console.log(updates.updates);
-      setUpdates(updates.updates);
+      console.log(data.updates);
+      setUpdates(data.updates);
     }
   };
 
