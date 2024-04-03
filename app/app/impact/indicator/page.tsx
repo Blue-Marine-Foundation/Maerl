@@ -73,7 +73,8 @@ export default function Indicator() {
           )}
           {impact && (
             <p>
-              Total of {d3.format(',.0f')(impact)} {indicator.indicator_unit}
+              Total of {d3.format(',.0f')(impact)}{' '}
+              {indicator ? indicator.indicator_unit : null}
             </p>
           )}
         </div>
