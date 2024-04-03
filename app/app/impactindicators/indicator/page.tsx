@@ -33,7 +33,7 @@ export default function Indicator() {
       return <ErrorState message={error.message} />;
     }
 
-    if (updates) {
+    if (data) {
       console.log(data.updates);
       setUpdates(data.updates);
     }
