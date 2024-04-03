@@ -17,7 +17,7 @@ export default function MainNav() {
     },
     {
       name: 'Impact Indicators',
-      href: '/app/impactindicators',
+      href: '/app/impact',
     },
   ];
 

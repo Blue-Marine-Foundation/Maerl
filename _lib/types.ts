@@ -26,6 +26,13 @@ export interface Output {
   outputNumber?: number;
 }
 
+export interface ImpactIndicator {
+  id: number;
+  indicator_code: string;
+  indicator_title: string;
+  indicator_unit: string;
+}
+
 export interface Update {
   id: number;
   project_id: number;
@@ -38,6 +45,7 @@ export interface Update {
   link: string | null;
   projects: Project;
   output_measurables: Measurable;
+  impact_indicators: ImpactIndicator;
 }
 
 export interface UpdateNested {

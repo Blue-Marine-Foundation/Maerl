@@ -70,7 +70,7 @@ export default function IndicatorList({ data }: { data: any[] }) {
             return (
               <Link
                 key={indicator.id}
-                href={`/app/impactindicators/indicator?id=${indicator.id}&code=${indicator.indicator_code}`}
+                href={`/app/impact/indicator?id=${indicator.id}&code=${indicator.indicator_code}`}
               >
                 <IndicatorRow key={indicator.id} indicator={indicator} />
               </Link>
