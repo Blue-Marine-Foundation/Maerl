@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Tooltip from './Tooltip';
 import { Update } from '@/_lib/types';
 import dayjs from 'dayjs';
+import * as d3 from 'd3';
 
 export default function UpdateLarge({ update }: { update: Update }) {
   return (
@@ -37,20 +38,15 @@ export default function UpdateLarge({ update }: { update: Update }) {
         )}
 
         <p className='text-xs text-foreground/70'>
-          {update.output_measurables?.impact_indicators?.indicator_code &&
-          update.output_measurables?.impact_indicators?.id < 900 ? (
+          {update.impact_indicators && (
             <Tooltip
-              tooltipContent={
-                update.output_measurables.impact_indicators.indicator_title
-              }
+              tooltipContent={update.impact_indicators.indicator_title}
               tooltipWidth={380}
               tooltipDirection='left'
             >
-              Impact indicator{' '}
-              {update.output_measurables.impact_indicators.indicator_code}
+              {update.impact_indicators.id < 900 ? 'Impact indicator ' : null}
+              {update.impact_indicators.indicator_code}
             </Tooltip>
-          ) : (
-            'Progress update'
           )}
         </p>
       </div>
@@ -58,12 +54,14 @@ export default function UpdateLarge({ update }: { update: Update }) {
         <p className='max-w-lg overflow-clip'>{update.description}</p>
       </div>
       <div className='w-[200px]'>
-        {update.output_measurable_id && update.value && (
+        {update.value && (
           <>
-            <p className='mb-2'>{update.value}</p>
-            <p className='text-xs text-foreground/70'>
-              {update.output_measurables.impact_indicators.indicator_unit}
-            </p>
+            <p className='mb-2'>{d3.format(',.0f')(update.value)}</p>
+            {update.impact_indicators?.indicator_unit && (
+              <p className='text-xs text-foreground/70'>
+                {update.impact_indicators.indicator_unit}
+              </p>
+            )}
           </>
         )}
       </div>

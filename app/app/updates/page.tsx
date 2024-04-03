@@ -7,14 +7,15 @@ export default async function Updates() {
 
   const { data: updates, error } = await supabase
     .from('updates')
-    .select('*, projects (*), output_measurables (*, impact_indicators (*))')
+    .select(
+      '*, projects (*), impact_indicators(*), output_measurables (*, impact_indicators (*))'
+    )
     .eq('valid', 'true')
     .eq('duplicate', 'false')
     .order('date', { ascending: false });
 
   if (error) {
     console.log(`Failed to fetch projects: ${error.message}`);
-
     return <ErrorState message={error.message} />;
   }
 

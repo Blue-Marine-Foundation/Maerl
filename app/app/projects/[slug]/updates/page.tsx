@@ -9,7 +9,7 @@ async function Page({ params }: { params: Params }) {
   const { data: updates, error } = await supabase
     .from('updates')
     .select(
-      '*, projects!inner(*), output_measurables (*, impact_indicators (*))'
+      '*, projects!inner(*), impact_indicators(*), output_measurables (*, impact_indicators (*))'
     )
     .order('date', { ascending: false })
     .eq('duplicate', 'false')
