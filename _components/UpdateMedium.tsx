@@ -20,7 +20,9 @@ export default function UpdateMedium({ update }: { update: Update }) {
           }`}
         </Link>
         <p className='pl-6 text-xs text-foreground/70'>
-          {dayjs(update.date).format('DD MMM YY')}
+          {update.date
+            ? dayjs(update.date).format('DD MMM YY')
+            : 'Date unknown'}
         </p>
       </div>
       <div className='w-[160px] shrink-0'>

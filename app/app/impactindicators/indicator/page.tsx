@@ -25,7 +25,7 @@ export default function Indicator() {
       )
       .eq('id', id)
       .eq('updates.valid', true)
-      .eq('updates.duplicate', false)
+      .eq('updates.original', true)
       .single();
 
     if (error) {
