@@ -1,6 +1,7 @@
 import { createClient } from '@/_utils/supabase/server';
 import Link from 'next/link';
 import UpdateMedium from '@/_components/UpdateMedium';
+import ErrorState from '@/_components/ErrorState';
 
 export default async function Overview() {
   const supabase = createClient();
@@ -8,13 +9,14 @@ export default async function Overview() {
   const { data: updates, error } = await supabase
     .from('updates')
     .select('*, projects (*), output_measurables (*, impact_indicators (*))')
-    .order('date', { ascending: false })
     .eq('valid', 'true')
-    .eq('duplicate', 'false')
+    .eq('original', 'true')
+    .order('id', { ascending: false })
     .limit(25);
 
   if (error) {
     console.log(`Failed to fetch projects: ${error.message}`);
+    return <ErrorState message={error.message} />;
   }
 
   // @ts-ignore

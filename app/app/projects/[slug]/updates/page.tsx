@@ -12,7 +12,8 @@ async function Page({ params }: { params: Params }) {
       '*, projects!inner(*), impact_indicators(*), output_measurables (*, impact_indicators (*))'
     )
     .order('date', { ascending: false })
-    .eq('duplicate', 'false')
+    .eq('valid', 'true')
+    .eq('original', 'true')
     .eq('projects.slug', params.slug);
 
   if (error) {

@@ -11,7 +11,7 @@ export default async function Updates() {
       '*, projects (*), impact_indicators(*), output_measurables (*, impact_indicators (*))'
     )
     .eq('valid', 'true')
-    .eq('duplicate', 'false')
+    .eq('original', 'true')
     .order('date', { ascending: false });
 
   if (error) {
