@@ -14,7 +14,7 @@ export default function FormMessages() {
         </p>
       )}
       {message && (
-        <p className='mb-4 p-2 bg-slate-50 border rounded-md border-slate-300 text-foreground text-center dark:bg-slate-300 dark:text-slate-900'>
+        <p className='mb-4 p-2 bg-card-bg border rounded-md border-slate-300 text-foreground text-center '>
           {message}
         </p>
       )}
