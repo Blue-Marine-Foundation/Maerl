@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   if (error) {
     console.log(error);
     return NextResponse.redirect(
-      `${PRODUCTION_URL}/dashboard/account/passwordreset?error=Could not reset password`,
+      `${PRODUCTION_URL}/app/account/passwordreset?error=Could not reset password`,
       {
         // a 301 status is required to redirect from a POST to a GET route
         status: 301,
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.redirect(
-    `${PRODUCTION_URL}/dashboard/account/passwordreset/success`,
+    `${PRODUCTION_URL}/app/account/passwordreset/success`,
     {
       // a 301 status is required to redirect from a POST to a GET route
       status: 301,

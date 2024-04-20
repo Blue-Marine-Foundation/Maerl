@@ -23,5 +23,5 @@ export async function GET(request: Request) {
       NextResponse.redirect(`${PRODUCTION_URL}/${next}`)
     : // Otherwise go to dashboard home.
       // Will reroute to homepage if no user found
-      NextResponse.redirect(`${PRODUCTION_URL}/dashboard`);
+      NextResponse.redirect(`${PRODUCTION_URL}/app`);
 }
