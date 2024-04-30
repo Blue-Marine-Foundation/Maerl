@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   if (error) {
     console.log(error);
     return NextResponse.redirect(
-      `${PRODUCTION_URL}/requestpasswordreset?error=Could not send reset password email`,
+      `${PRODUCTION_URL}/requestpasswordreset?error=${error.message}`,
       {
         // a 301 status is required to redirect from a POST to a GET route
         status: 301,
