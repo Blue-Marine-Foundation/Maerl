@@ -12,6 +12,7 @@ export default async function Updates() {
     )
     .eq('valid', 'true')
     .eq('original', 'true')
+    .not('date', 'is', null)
     .order('date', { ascending: false });
 
   if (error) {
