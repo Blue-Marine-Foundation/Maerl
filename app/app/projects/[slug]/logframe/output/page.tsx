@@ -4,14 +4,15 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import Breadcrumbs from '@/_components/breadcrumbs';
-import { Output, Measurable, Project, Update } from '@/_lib/types';
+import { Output, Measurable, Project } from '@/_lib/types';
 import sortOutputs from '@/lib/sortOutputs';
 import Tooltip from '@/_components/Tooltip';
 import Link from 'next/link';
 import OutputUpdatesWrapper from '@/_components/OutputUpdatesWrapper';
 import QuickUpdateModal from '@/_components/QuickUpdateForm/QuickUpdateModal';
+import ErrorState from '@/_components/ErrorState';
 
-export default function Output() {
+export default function OutputPage() {
   const supabase = createClient();
   const searchParams = useSearchParams();
 
@@ -28,13 +29,21 @@ export default function Output() {
 
   const [user, setUser] = useState<any>();
   const [userError, setUserError] = useState<any>();
+  const [outputError, setOutputError] = useState<any>();
 
   const fetchUser = async () => {
     const { data: user, error: userError } = await supabase.auth.getUser();
 
-    if (userError) setUserError(userError.message);
+    if (userError) {
+      setUser(null);
+      setUserError(userError.message);
+    }
 
-    if (user.user) setUser(user.user.id);
+    if (user.user) {
+      setUserError(null);
+      console.log(user);
+      setUser(user.user.id);
+    }
   };
 
   useEffect(() => {
@@ -50,15 +59,16 @@ export default function Output() {
       .eq('id', id)
       .single();
 
+    if (error) {
+      console.log(error);
+      setOutputError(error.message);
+    }
+
     if (output) {
       setOutput(output);
       setProject(output.projects);
       setOutputIndicators(sortOutputs(output.output_measurables));
       setOtherOutputs(sortOutputs(output.projects.outputs));
-    }
-
-    if (error) {
-      console.log(error);
     }
   };
 
@@ -100,6 +110,7 @@ export default function Output() {
           <h2 className='text-xl font-semibold text-white'>
             Output {code?.split('.').pop()}
           </h2>
+
           <div className='flex items-center gap-4 text-sm'>
             {previousOutput && (
               <Link
@@ -120,73 +131,89 @@ export default function Output() {
           </div>
         </div>
 
-        {output && (
-          <p className='font-medium max-w-3xl mb-2'>{output.description}</p>
+        {outputError && (
+          <div className='p-4 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
+            <p>Error loading logframe page!</p>
+            <p>
+              It's likely that this Output doesn't exist in the project
+              logframe. Please let the SII team know!
+            </p>
+            <ErrorState message={userError} />
+          </div>
         )}
 
-        <ul className='mb-8 bg-card-bg text-sm'>
-          {outputIndicators &&
-            outputIndicators.map((indicator: Measurable) => {
-              return (
-                <li
-                  key={indicator.id}
-                  className='p-4 flex justify-between items-center gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
-                >
-                  <div className='w-[150px] shrink-0'>
-                    <p className='mb-1.5 font-medium'>
-                      Output {indicator.code.slice(2, 6)}
-                    </p>
-                    <p className='text-xs text-foreground/80'>
-                      {indicator.impact_indicators.indicator_code &&
-                      indicator.impact_indicators.id < 900 ? (
-                        <Tooltip
-                          tooltipContent={
-                            indicator.impact_indicators.indicator_title
-                          }
-                          tooltipWidth={380}
-                          tooltipDirection='left'
-                        >
-                          Impact indicator{' '}
-                          {indicator.impact_indicators.indicator_code}
-                        </Tooltip>
-                      ) : (
-                        'Progress'
-                      )}
-                    </p>
-                  </div>
-                  <div className='grow pr-2'>
-                    <p className='max-w-lg'>{indicator.description.trim()}</p>
-                  </div>
-                  <div className='w-[350px] shrink-0 text-xs flex flex-col gap-2'>
-                    {indicator.target &&
-                      indicator.impact_indicators &&
-                      indicator.impact_indicators.indicator_unit && (
-                        <p>
-                          <span className='mr-2 text-sm font-semibold'>
-                            {indicator.target}
-                          </span>
-                          <span>
-                            {indicator.impact_indicators.indicator_unit}
-                          </span>
+        {!outputError && output && (
+          <>
+            <p className='font-medium max-w-3xl mb-2'>{output.description}</p>
+            <ul className='mb-8 bg-card-bg text-sm'>
+              {outputIndicators &&
+                outputIndicators.map((indicator: Measurable) => {
+                  return (
+                    <li
+                      key={indicator.id}
+                      className='p-4 flex justify-between items-center gap-4 border border-b-0 first:rounded-t-md last:border-b last:rounded-b-md'
+                    >
+                      <div className='w-[150px] shrink-0'>
+                        <p className='mb-1.5 font-medium'>
+                          Output {indicator.code.slice(2, 6)}
                         </p>
-                      )}
-                  </div>
+                        <p className='text-xs text-foreground/80'>
+                          {indicator.impact_indicators.indicator_code &&
+                          indicator.impact_indicators.id < 900 ? (
+                            <Tooltip
+                              tooltipContent={
+                                indicator.impact_indicators.indicator_title
+                              }
+                              tooltipWidth={380}
+                              tooltipDirection='left'
+                            >
+                              Impact indicator{' '}
+                              {indicator.impact_indicators.indicator_code}
+                            </Tooltip>
+                          ) : (
+                            'Progress'
+                          )}
+                        </p>
+                      </div>
+                      <div className='grow pr-2'>
+                        <p className='max-w-lg'>
+                          {indicator.description
+                            ? indicator.description.trim()
+                            : 'Indicator description tbc'}
+                        </p>
+                      </div>
+                      <div className='w-[350px] shrink-0 text-xs flex flex-col gap-2'>
+                        {indicator.target &&
+                          indicator.impact_indicators &&
+                          indicator.impact_indicators.indicator_unit && (
+                            <p>
+                              <span className='mr-2 text-sm font-semibold'>
+                                {indicator.target}
+                              </span>
+                              <span>
+                                {indicator.impact_indicators.indicator_unit}
+                              </span>
+                            </p>
+                          )}
+                      </div>
 
-                  <div className='ml-4 shrink-0 w-[100px]'>
-                    <QuickUpdateModal
-                      // @ts-ignore
-                      project={project}
-                      output={indicator}
-                      userId={user}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-        </ul>
+                      <div className='ml-4 shrink-0 w-[100px]'>
+                        <QuickUpdateModal
+                          // @ts-ignore
+                          project={project}
+                          output={indicator}
+                          userId={user}
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
+            </ul>
+          </>
+        )}
       </div>
 
-      {output && <OutputUpdatesWrapper output={output.id} />}
+      {!outputError && output && <OutputUpdatesWrapper output={output.id} />}
     </div>
   );
 }

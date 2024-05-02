@@ -16,26 +16,26 @@ export default function Indicator() {
   const code = searchParams.get('code');
 
   const [updates, setUpdates] = useState<Update[]>();
+  const [error, setError] = useState<string | undefined>();
 
   const fetchUpdates = async (id: string) => {
-    const { data, error } = await supabase
+    const { data: updates, error } = await supabase
       .from('impact_indicators')
       .select(
         '*, updates(*, projects(*), output_measurables(*, impact_indicators(*)))'
       )
       .eq('id', id)
       .eq('updates.valid', true)
-      .eq('updates.original', true)
-      .single();
+      .eq('updates.original', true);
 
     if (error) {
+      setError(error.message);
       console.log(error);
-      return <ErrorState message={error.message} />;
     }
 
-    if (data) {
-      console.log(data.updates);
-      setUpdates(data.updates);
+    if (updates) {
+      setUpdates(updates);
+      console.log(updates);
     }
   };
 
@@ -56,6 +56,8 @@ export default function Indicator() {
       </div>
 
       <div className='mb-8 bg-card-bg rounded-lg shadow'>
+        {error && <ErrorState message={error} />}
+
         {updates &&
           updates.map((update) => {
             return <UpdateLarge key={update.id} update={update} />;
