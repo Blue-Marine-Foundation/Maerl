@@ -32,17 +32,20 @@ export default function OutputPage() {
   const [outputError, setOutputError] = useState<any>();
 
   const fetchUser = async () => {
-    const { data: user, error: userError } = await supabase.auth.getUser();
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .single();
 
     if (userError) {
       setUser(null);
       setUserError(userError.message);
     }
 
-    if (user.user) {
+    if (user) {
       setUserError(null);
       console.log(user);
-      setUser(user.user.id);
+      setUser(user.id);
     }
   };
 
