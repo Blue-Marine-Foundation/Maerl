@@ -11,6 +11,7 @@ export default async function Overview() {
     .select('*, projects (*), output_measurables (*, impact_indicators (*))')
     .eq('valid', 'true')
     .eq('original', 'true')
+    .not('date', 'is', null)
     .order('date', { ascending: false })
     .limit(25);
 
