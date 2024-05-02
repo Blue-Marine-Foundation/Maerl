@@ -32,17 +32,19 @@ export default function OutputPage() {
   const [outputError, setOutputError] = useState<any>();
 
   const fetchUser = async () => {
-    const { data: user, error: userError } = await supabase.auth.getUser();
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .single();
 
     if (userError) {
       setUser(null);
       setUserError(userError.message);
     }
 
-    if (user.user) {
+    if (user) {
       setUserError(null);
-      console.log(user);
-      setUser(user.user.id);
+      setUser(user.id);
     }
   };
 
@@ -131,14 +133,12 @@ export default function OutputPage() {
           </div>
         </div>
 
-        {outputError && (
+        {(outputError || userError) && (
           <div className='p-4 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
-            <p>Error loading logframe page!</p>
-            <p>
-              It's likely that this Output doesn't exist in the project
-              logframe. Please let the SII team know!
-            </p>
-            <ErrorState message={userError} />
+            <ErrorState
+              message={`It's likely that this Output doesn't exist in the project
+              logframe. Error message: ${outputError} ${userError}`}
+            />
           </div>
         )}
 

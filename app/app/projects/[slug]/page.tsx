@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: { params: Params }) {
 }
 
 export default async function Project({ params }: { params: Params }) {
-  const supabase = createClient();
-  const { data: project, error: projectError } = await supabase
+  const supabaseClient = createClient();
+  const { data: project, error: projectError } = await supabaseClient
     .from('projects')
     .select('*, users (*), outputs (*), updates (*)')
     .eq('slug', params.slug)
