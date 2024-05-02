@@ -44,7 +44,6 @@ export default function OutputPage() {
 
     if (user) {
       setUserError(null);
-      console.log(user);
       setUser(user.id);
     }
   };
@@ -134,14 +133,12 @@ export default function OutputPage() {
           </div>
         </div>
 
-        {outputError && (
+        {(outputError || userError) && (
           <div className='p-4 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
-            <p>Error loading logframe page!</p>
-            <p>
-              It's likely that this Output doesn't exist in the project
-              logframe. Please let the SII team know!
-            </p>
-            <ErrorState message={userError} />
+            <ErrorState
+              message={`It's likely that this Output doesn't exist in the project
+              logframe. Error message: ${outputError} ${userError}`}
+            />
           </div>
         )}
 
