@@ -1,5 +1,4 @@
 import { createClient } from '@/_utils/supabase/server';
-import NewUpdateForm from '@/_components/updateform/NewUpdateForm';
 import ErrorState from '@/_components/ErrorState';
 import NewUpdateWrapper from '@/_components/updateform/NewUpdateFormWrapper';
 
