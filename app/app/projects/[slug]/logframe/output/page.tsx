@@ -113,9 +113,18 @@ export default function OutputPage() {
 
       <div className='p-4 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
         <div className='mb-4 flex justify-between items-center gap-4'>
-          <h2 className='text-xl font-semibold text-white'>
-            Output {code?.split('.').pop()}
-          </h2>
+          <div className='mb-4 flex justify-start items-center gap-8'>
+            <h2 className='text-xl font-semibold text-white'>
+              Output {code?.split('.').pop()}
+            </h2>
+            {output &&
+              output.funding_requests &&
+              output.funding_requests.length > 0 && (
+                <span className='px-2 py-1.5 text-xs bg-purple-700 text-white rounded shadow'>
+                  Funding required
+                </span>
+              )}
+          </div>
 
           <div className='flex items-center gap-4 text-sm'>
             {output && project && user && (
@@ -242,7 +251,7 @@ export default function OutputPage() {
                       {d3.format(',.0f')(request.amount)}
                     </p>
                   </div>
-                  <p className='w-full max-w-lg'>{request.detail}</p>
+                  <p className='w-full max-w-lg text-sm'>{request.detail}</p>
                 </div>
               );
             })}

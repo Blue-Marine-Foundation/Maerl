@@ -19,6 +19,10 @@ export default function MainNav() {
       name: 'Impact Indicators',
       href: '/app/impact',
     },
+    {
+      name: 'Funding Requests',
+      href: '/app/fundingrequests',
+    },
   ];
 
   return (
