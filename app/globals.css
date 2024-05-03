@@ -20,9 +20,7 @@
       --card-bg: 220 23% 20%;
     }
   }
-}
 
-@layer base {
   * {
     @apply border-foreground/20;
   }

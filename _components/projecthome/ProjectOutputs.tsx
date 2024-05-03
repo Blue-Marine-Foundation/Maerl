@@ -28,6 +28,14 @@ export default function ProjectOutputs({ project }: { project: Project }) {
               <div className='basis-4/8 grow'>
                 <p className='max-w-xl'>{output.description}</p>
               </div>
+              {output.funding_requests &&
+                output.funding_requests.length > 0 && (
+                  <div>
+                    <span className='px-2 py-1.5 text-xs bg-purple-700 text-white rounded shadow'>
+                      Funding required
+                    </span>
+                  </div>
+                )}
               <div className='pr-4 group-hover:pr-0 transition-all'>&rarr;</div>
             </Link>
           );

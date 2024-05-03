@@ -9,7 +9,7 @@ export default async function Logframe({ params }: { params: Params }) {
   const supabaseClient = createClient();
   const { data: project, error } = await supabaseClient
     .from('projects')
-    .select(`*, outputs (*)`)
+    .select(`*, outputs (*, funding_requests(*))`)
     .eq('slug', params.slug)
     .single();
 

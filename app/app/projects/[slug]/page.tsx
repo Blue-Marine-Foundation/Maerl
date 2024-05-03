@@ -27,7 +27,7 @@ export default async function Project({ params }: { params: Params }) {
   const supabaseClient = createClient();
   const { data: project, error: projectError } = await supabaseClient
     .from('projects')
-    .select('*, users (*), outputs (*), updates (*)')
+    .select('*, users (*), outputs (*, funding_requests(*)), updates (*)')
     .eq('slug', params.slug)
     .single();
 

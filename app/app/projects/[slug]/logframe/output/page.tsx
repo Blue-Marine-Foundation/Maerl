@@ -11,6 +11,8 @@ import Link from 'next/link';
 import OutputUpdatesWrapper from '@/_components/OutputUpdatesWrapper';
 import QuickUpdateModal from '@/_components/QuickUpdateForm/QuickUpdateModal';
 import ErrorState from '@/_components/ErrorState';
+import FundingRequestModal from '@/_components/FundingRequestForm/FundingRequestModal';
+import * as d3 from 'd3';
 
 export default function OutputPage() {
   const supabase = createClient();
@@ -26,6 +28,7 @@ export default function OutputPage() {
   const [otherOutputs, setOtherOutputs] = useState<Output[]>([]);
   const [previousOutput, setPreviousOutput] = useState<Output>();
   const [nextOutput, setNextOutput] = useState<Output>();
+  const [fundingRequests, setFundingRequests] = useState<any[]>();
 
   const [user, setUser] = useState<any>();
   const [userError, setUserError] = useState<any>();
@@ -56,7 +59,7 @@ export default function OutputPage() {
     const { data: output, error } = await supabase
       .from('outputs')
       .select(
-        '*, projects(*, outputs(id, code)), output_measurables(*, impact_indicators (*))'
+        '*, projects(*, outputs(id, code)), output_measurables(*, impact_indicators (*)), funding_requests(*)'
       )
       .eq('id', id)
       .single();
@@ -71,6 +74,7 @@ export default function OutputPage() {
       setProject(output.projects);
       setOutputIndicators(sortOutputs(output.output_measurables));
       setOtherOutputs(sortOutputs(output.projects.outputs));
+      setFundingRequests(output.funding_requests);
     }
   };
 
@@ -102,18 +106,34 @@ export default function OutputPage() {
   }, [thisOutput]);
 
   return (
-    <div className='animate-in pb-24'>
-      <div className='mb-8'>
+    <div className='animate-in pb-24 flex flex-col gap-8'>
+      <div>
         <Breadcrumbs currentPage={`Output ${code}`} />
       </div>
 
-      <div className='p-4 mb-8 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
-        <div className='flex justify-between items-center gap-4'>
-          <h2 className='text-xl font-semibold text-white'>
-            Output {code?.split('.').pop()}
-          </h2>
+      <div className='p-4 flex flex-col gap-4 bg-card-bg rounded-lg shadow'>
+        <div className='mb-4 flex justify-between items-center gap-4'>
+          <div className='mb-4 flex justify-start items-center gap-8'>
+            <h2 className='text-xl font-semibold text-white'>
+              Output {code?.split('.').pop()}
+            </h2>
+            {output &&
+              output.funding_requests &&
+              output.funding_requests.length > 0 && (
+                <span className='px-2 py-1.5 text-xs bg-purple-700 text-white rounded shadow'>
+                  Funding required
+                </span>
+              )}
+          </div>
 
           <div className='flex items-center gap-4 text-sm'>
+            {output && project && user && (
+              <FundingRequestModal
+                project={project}
+                output={output}
+                userId={user}
+              />
+            )}
             {previousOutput && (
               <Link
                 href={`/app/projects/${project?.slug}/logframe/output?id=${previousOutput.id}&code=${previousOutput.code}`}
@@ -145,7 +165,8 @@ export default function OutputPage() {
         {!outputError && output && (
           <>
             <p className='font-medium max-w-3xl mb-2'>{output.description}</p>
-            <ul className='mb-8 bg-card-bg text-sm'>
+
+            <ul className='mb-4 bg-card-bg text-sm'>
               {outputIndicators &&
                 outputIndicators.map((indicator: Measurable) => {
                   return (
@@ -212,6 +233,31 @@ export default function OutputPage() {
           </>
         )}
       </div>
+
+      {fundingRequests && fundingRequests.length > 0 && (
+        <div className=''>
+          <h2 className='mb-4 px-4 text-xl font-medium'>Funding requests</h2>
+          <div className='grid grid-cols-3 gap-8'>
+            {fundingRequests.map((request) => {
+              return (
+                <div
+                  key={request.id}
+                  className='p-4 bg-card-bg shadow rounded-md'
+                >
+                  <div className='mb-4 text-sm text-foreground/80 flex justify-between items-center gap-4'>
+                    <p>{d3.timeFormat('%d %b %Y')(new Date(request.date))}</p>
+                    <p>
+                      <span className='pr-2 text-xs'>{request.currency}</span>
+                      {d3.format(',.0f')(request.amount)}
+                    </p>
+                  </div>
+                  <p className='w-full max-w-lg text-sm'>{request.detail}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {!outputError && output && <OutputUpdatesWrapper output={output.id} />}
     </div>

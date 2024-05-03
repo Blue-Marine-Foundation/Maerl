@@ -28,12 +28,19 @@ export default async function LogframeOutput({
 
   return (
     <div id={outputAnchor} className='scroll-m-8'>
-      <h3 className='text-xl font-semibold mb-4'>
-        Output {output.code.slice(2, 6)}
-      </h3>
+      <div className='mb-4 flex justify-start items-center gap-8'>
+        <h3 className='text-xl font-semibold'>
+          Output {output.code.slice(2, 6)}
+        </h3>
+        {output.funding_requests && output.funding_requests.length > 0 && (
+          <span className='px-2 py-1.5 text-xs bg-purple-700 text-white rounded shadow'>
+            Funding required
+          </span>
+        )}
+      </div>
 
       <p className='text-lg max-w-2xl text-white font-medium mb-6'>
-        {output.description}
+        {output.description}{' '}
       </p>
       <ul className='shadow-md'>
         {outputIndicators &&
