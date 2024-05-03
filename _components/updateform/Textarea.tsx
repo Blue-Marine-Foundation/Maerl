@@ -31,7 +31,9 @@ export default function ControlledTextarea({
 
   return (
     <div className='flex justify-start items-start gap-8 text-sm'>
-      <label className='block basis-1/5 pt-2 text-foreground/80'>{label}</label>
+      <label className='block basis-1/5 shrink-0 pt-2 text-foreground/80'>
+        {label}
+      </label>
       <textarea
         value={value}
         placeholder={placeholder}

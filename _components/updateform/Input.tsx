@@ -35,7 +35,7 @@ export default function ControlledTextInput({
 
   return (
     <div className='flex justify-start items-center gap-8 text-sm'>
-      <label className='block basis-1/5 text-sm text-foreground/80'>
+      <label className='block basis-1/5 shrink-0 text-sm text-foreground/80'>
         {label}
       </label>
       <input
@@ -46,7 +46,7 @@ export default function ControlledTextInput({
         required={isRequired}
         className={`basis-4/5 p-2 rounded-md bg-foreground/10 text-foreground shadow-md ${
           type === 'number'
-            ? 'max-w-[200px] -ml-2 text-right pr-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+            ? 'max-w-[200px] text-right pr-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
             : ''
         } ${type === 'date' ? 'max-w-[200px] -ml-2' : ''}`}
       />
