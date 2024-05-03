@@ -24,6 +24,7 @@ export interface Output {
   status: string;
   output_measurables: Measurable[];
   outputNumber?: number;
+  funding_requests?: any[];
 }
 
 export interface ImpactIndicator {
