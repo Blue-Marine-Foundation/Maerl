@@ -63,7 +63,8 @@ export default async function Page() {
                   </p>
                   <p>
                     <span className='text-foreground/70'>Requested by</span>{' '}
-                    {request.users.first_name} {request.users.last_name}
+                    {request.users && request.users.first_name}{' '}
+                    {request.users && request.users.last_name}
                   </p>
                 </div>
               </div>

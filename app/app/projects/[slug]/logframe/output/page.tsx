@@ -35,10 +35,7 @@ export default function OutputPage() {
   const [outputError, setOutputError] = useState<any>();
 
   const fetchUser = async () => {
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .single();
+    const { data: user, error: userError } = await supabase.auth.getUser();
 
     if (userError) {
       setUser(null);
@@ -47,7 +44,7 @@ export default function OutputPage() {
 
     if (user) {
       setUserError(null);
-      setUser(user.id);
+      setUser(user.user!.id);
     }
   };
 
