@@ -8,14 +8,14 @@ import os
 #
 ############################################################
 
-project_id = 43
-file_name = './unprocessed_logframes/43_solentoysterrestoration.xlsx'
+project_id = 94
+file_name = './unprocessed_logframes/94_Climate.xlsx'
 switch = 'live'
-project_name = 'Solent Oyster Restoration'
-project_slug = 'solentoysterrestoration'
+project_name = 'Climate'
+project_slug = 'climate'
 project_organisation_id = 1
-project_highlight_color = "#4fa0a4"
-project_pm = "fa8bf85d-8a92-4f5d-bee1-2a804187f8a5"
+project_highlight_color = "#ff4884"
+project_pm = "75fb542e-70b7-427e-a5d7-9eb6f8f3d91d"
 
 project_meta = {
     'id': project_id, 
