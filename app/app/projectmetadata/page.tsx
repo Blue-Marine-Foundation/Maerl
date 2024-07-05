@@ -204,9 +204,7 @@ export default function Page() {
                     <p className='text-foreground/80'>
                       {entry.regional_strategy}
                     </p>
-                    <p className='text-foreground/80'>
-                      <p>{entry.start_date}</p>
-                    </p>
+                    <p className='text-foreground/80'>{entry.start_date}</p>
                   </div>
                 </td>
                 <td className='px-1 py-2 align-baseline'>
