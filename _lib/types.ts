@@ -104,6 +104,76 @@ export interface Project {
   stub: boolean;
 }
 
+export interface ProjectMetadata {
+  id: number;
+  created_at: string;
+  name: string;
+  organisation_id: number | null;
+  lead_partner: string | null;
+  highlight_color: string;
+  project_manager_id: string | null;
+  start_date: string | null;
+  delivery_partners:
+    | [
+        {
+          name: string;
+        }
+      ]
+    | null;
+  funding_partner: string | null;
+  funders:
+    | [
+        {
+          name: string;
+        }
+      ]
+    | null;
+  slug: string;
+  stub: boolean;
+  regional_strategy: string | null;
+  pillars: string | null;
+  project_contacts:
+    | [
+        {
+          name: string;
+          organisation: string | null;
+        }
+      ]
+    | null;
+  funding_status: string | null;
+  unit_requirements: string | null;
+  project_issues: string | null;
+  exit_strategy: string | null;
+  local_partners:
+    | [
+        {
+          name: string;
+          organisation: string | null;
+        }
+      ]
+    | null;
+  users?: {
+    created_at: string;
+    first_name: string;
+    id: string;
+    last_name: string;
+    role: string;
+  };
+  impacts?: {
+    created_at: string;
+    id: number;
+    project_id: number;
+    title: string;
+  }[];
+  outcomes?: {
+    code: string;
+    created_at: string;
+    description: string;
+    id: number;
+    project_id: number;
+  }[];
+}
+
 export interface Project_W_Outputs {
   id: number;
   created_at: string;
