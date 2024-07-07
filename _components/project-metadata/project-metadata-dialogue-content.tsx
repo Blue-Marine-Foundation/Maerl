@@ -40,10 +40,14 @@ export default function ProjectMetadataDialogueContent({
             entry.project_contacts.map((contact) => {
               return (
                 <div key={contact.name}>
-                  <p>{contact.name}</p>
-                  {contact.organisation && (
-                    <p className='text-foreground/70'>{contact.organisation}</p>
-                  )}
+                  <p>
+                    {contact.name}{' '}
+                    {contact.organisation && (
+                      <span className='text-foreground/70'>
+                        &mdash; {contact.organisation}
+                      </span>
+                    )}
+                  </p>
                 </div>
               );
             })}
@@ -75,11 +79,11 @@ export default function ProjectMetadataDialogueContent({
             entry.local_partners.map((contact) => (
               <p key={contact.organisation}>
                 {contact.organisation && <span>{contact.organisation}</span>}
-                {contact.name && contact.organisation && (
+                {contact.person && contact.organisation && (
                   <span className='text-foreground/80'> &mdash; </span>
                 )}
-                {contact.name && (
-                  <span className='text-foreground/80'>{contact.name}</span>
+                {contact.person && (
+                  <span className='text-foreground/80'>{contact.person}</span>
                 )}
               </p>
             ))}

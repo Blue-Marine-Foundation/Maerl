@@ -147,7 +147,7 @@ export interface ProjectMetadata {
   local_partners:
     | [
         {
-          name: string;
+          person: string;
           organisation: string | null;
         }
       ]

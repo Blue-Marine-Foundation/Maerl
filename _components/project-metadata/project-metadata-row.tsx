@@ -96,8 +96,10 @@ export default function ProjectMetaDataRow({
             {entryData.local_partners &&
               entryData.local_partners.map((partner) => {
                 return (
-                  <p key={partner.name}>
-                    {partner.organisation ? partner.organisation : partner.name}
+                  <p key={partner.organisation}>
+                    {partner.organisation
+                      ? partner.organisation
+                      : partner.person}
                   </p>
                 );
               })}

@@ -1,7 +1,83 @@
 import { ProjectMetadata } from '@/_lib/types';
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useCallback } from 'react';
 import ProjectMetadataServerAction from './server-action';
 import { PlusIcon } from 'lucide-react';
+
+type TextInputProps = {
+  label: string;
+  name: keyof ProjectMetadata;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+};
+
+const TextInput: React.FC<TextInputProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+}) => (
+  <div className='flex gap-4 items-baseline'>
+    <h3 className='flex-shrink-0 w-40'>{label}:</h3>
+    <input
+      className='flex-grow bg-white/10 px-2 py-1 text-foreground'
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+    />
+  </div>
+);
+
+type JsonbInputProps = {
+  label: string;
+  field: keyof ProjectMetadata;
+  entries: any[];
+  handleJsonbChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+    key: string
+  ) => void;
+  handleAddEntry: () => void;
+  entryTemplate: any;
+};
+
+const JsonbInput: React.FC<JsonbInputProps> = ({
+  label,
+  field,
+  entries,
+  handleJsonbChange,
+  handleAddEntry,
+  entryTemplate,
+}) => (
+  <div className='flex gap-4 items-baseline'>
+    <h3 className='flex-shrink-0 w-40'>{label}:</h3>
+    <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
+      {entries.map((entry, index) => (
+        <div key={index} className='flex gap-1'>
+          {Object.keys(entryTemplate).map((key) => (
+            <input
+              key={key}
+              className=' bg-white/10 px-2 py-1 text-foreground'
+              name={key}
+              value={entry[key] || ''}
+              placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+              onChange={(e) => handleJsonbChange(e, index, key)}
+            />
+          ))}
+        </div>
+      ))}
+      <button
+        type='button'
+        className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
+        onClick={handleAddEntry}
+      >
+        <PlusIcon size={16} /> Add {label.split(' ')[1]}
+      </button>
+    </div>
+  </div>
+);
 
 const EditableProjectMetadataForm = forwardRef<
   HTMLFormElement,
@@ -10,37 +86,44 @@ const EditableProjectMetadataForm = forwardRef<
     onSubmitSuccess: (formState: ProjectMetadata) => void;
   }
 >(({ entry, onSubmitSuccess }, ref) => {
-  const [formState, setFormState] = useState(entry);
+  const [formState, setFormState] = useState<ProjectMetadata>(entry);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFormState((prev) => ({ ...prev, [name]: value }));
+    },
+    []
+  );
 
-  const handleJsonbChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: string,
-    index: number,
-    key: string
-  ) => {
-    const { value } = e.target;
-    setFormState((prev) => {
-      // @ts-expect-error
-      const updatedField = [...(prev[field] || [])];
-      updatedField[index] = { ...updatedField[index], [key]: value };
-      return { ...prev, [field]: updatedField };
-    });
-  };
+  const handleJsonbChange = useCallback(
+    (
+      e: React.ChangeEvent<HTMLInputElement>,
+      index: number,
+      key: string,
+      field: keyof ProjectMetadata
+    ) => {
+      const { value } = e.target;
+      setFormState((prev) => {
+        // @ts-expect-error
+        const updatedField = [...(prev[field] || [])];
+        updatedField[index] = { ...updatedField[index], [key]: value };
+        return { ...prev, [field]: updatedField };
+      });
+    },
+    []
+  );
 
-  const handleAddJsonbEntry = (field: string, newEntry: object) => {
-    setFormState((prev) => ({
-      ...prev,
-      // @ts-expect-error
-      [field]: [...(prev[field] || []), newEntry],
-    }));
-  };
+  const handleAddJsonbEntry = useCallback(
+    (field: keyof ProjectMetadata, newEntry: any) => {
+      setFormState((prev) => ({
+        ...prev,
+        // @ts-expect-error
+        [field]: [...(prev[field] || []), newEntry],
+      }));
+    },
+    []
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,190 +142,95 @@ const EditableProjectMetadataForm = forwardRef<
       onSubmit={handleSubmit}
       className='flex flex-col gap-4 py-6'
     >
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Regional Strategy:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='regional_strategy'
-          value={formState.regional_strategy || ''}
-          onChange={handleChange}
-          placeholder='Regional Strategy'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Start Date:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='start_date'
-          type='string'
-          value={formState.start_date || ''}
-          onChange={handleChange}
-          placeholder='Project start date'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Pillars:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='pillars'
-          value={formState.pillars || ''}
-          onChange={handleChange}
-          placeholder='Pillars'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Unit Requirements:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='unit_requirements'
-          value={formState.unit_requirements || ''}
-          onChange={handleChange}
-          placeholder='Unit requirements'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Project Contacts:</h3>
-        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
-          {formState.project_contacts &&
-            formState.project_contacts.map((contact, index) => (
-              <div key={index} className='flex gap-1'>
-                <input
-                  className=' bg-white/10 px-2 py-1 text-foreground'
-                  name='name'
-                  value={contact.name}
-                  placeholder='Name'
-                  onChange={(e) =>
-                    handleJsonbChange(e, 'project_contacts', index, 'name')
-                  }
-                />
-                <input
-                  className=' bg-white/10 px-2 py-1 text-foreground'
-                  name='organisation'
-                  placeholder='Organisation'
-                  value={contact.organisation || ''}
-                  onChange={(e) =>
-                    handleJsonbChange(
-                      e,
-                      'project_contacts',
-                      index,
-                      'organisation'
-                    )
-                  }
-                />
-              </div>
-            ))}
-          <button
-            type='button'
-            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
-            onClick={() =>
-              handleAddJsonbEntry('project_contacts', {
-                name: '',
-                organisation: '',
-              })
-            }
-          >
-            <PlusIcon size={16} /> Add Contact
-          </button>
-        </div>
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Funding Status:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='funding_status'
-          value={formState.funding_status || ''}
-          onChange={handleChange}
-          placeholder='Funding status'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Current Funders:</h3>
-        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
-          {formState.funders &&
-            formState.funders.map((funder, index) => (
-              <input
-                key={index}
-                className=' bg-white/10 px-2 py-1 w-full'
-                name='name'
-                value={funder.name}
-                onChange={(e) => handleJsonbChange(e, 'funders', index, 'name')}
-                placeholder='Funder name'
-              />
-            ))}
-          <button
-            type='button'
-            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
-            onClick={() => handleAddJsonbEntry('funders', { name: '' })}
-          >
-            <PlusIcon size={16} /> Add Funder
-          </button>
-        </div>
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Local Partners:</h3>
-        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
-          {formState.local_partners &&
-            formState.local_partners.map((partner, index) => (
-              <div key={index} className='grid grid-cols-2 gap-2'>
-                <input
-                  className='bg-white/10 px-2 py-1 '
-                  name='organisation'
-                  value={partner.organisation || ''}
-                  placeholder='Organisation'
-                  onChange={(e) =>
-                    handleJsonbChange(
-                      e,
-                      'local_partners',
-                      index,
-                      'organisation'
-                    )
-                  }
-                />
-                <input
-                  className='bg-white/10 px-2 py-1 '
-                  name='name'
-                  value={partner.name}
-                  placeholder='Contact person'
-                  onChange={(e) =>
-                    handleJsonbChange(e, 'local_partners', index, 'name')
-                  }
-                />
-              </div>
-            ))}
-          <button
-            type='button'
-            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
-            onClick={() =>
-              handleAddJsonbEntry('local_partners', {
-                name: '',
-                organisation: '',
-              })
-            }
-          >
-            <PlusIcon size={16} /> Add Partner
-          </button>
-        </div>
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Issues:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='project_issues'
-          value={formState.project_issues || ''}
-          onChange={handleChange}
-          placeholder='Project issues'
-        />
-      </div>
-      <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Exit Strategy:</h3>
-        <input
-          className='flex-grow bg-white/10 px-2 py-1 text-foreground'
-          name='exit_strategy'
-          value={formState.exit_strategy || ''}
-          onChange={handleChange}
-          placeholder='Exit strategy'
-        />
-      </div>
+      <TextInput
+        label='Regional Strategy'
+        name='regional_strategy'
+        value={formState.regional_strategy || ''}
+        onChange={handleChange}
+        placeholder='Regional Strategy'
+      />
+      <TextInput
+        label='Start Date'
+        name='start_date'
+        value={formState.start_date || ''}
+        onChange={handleChange}
+        placeholder='Project start date'
+      />
+      <TextInput
+        label='Pillars'
+        name='pillars'
+        value={formState.pillars || ''}
+        onChange={handleChange}
+        placeholder='Pillars'
+      />
+      <TextInput
+        label='Unit Requirements'
+        name='unit_requirements'
+        value={formState.unit_requirements || ''}
+        onChange={handleChange}
+        placeholder='Unit requirements'
+      />
+      <JsonbInput
+        label='Project Contacts'
+        field='project_contacts'
+        entries={formState.project_contacts || []}
+        handleJsonbChange={(e, index, key) =>
+          handleJsonbChange(e, index, key, 'project_contacts')
+        }
+        handleAddEntry={() =>
+          handleAddJsonbEntry('project_contacts', {
+            name: '',
+            organisation: '',
+          })
+        }
+        entryTemplate={{ name: '', organisation: '' }}
+      />
+      <TextInput
+        label='Funding Status'
+        name='funding_status'
+        value={formState.funding_status || ''}
+        onChange={handleChange}
+        placeholder='Funding status'
+      />
+      <JsonbInput
+        label='Current Funders'
+        field='funders'
+        entries={formState.funders || []}
+        handleJsonbChange={(e, index, key) =>
+          handleJsonbChange(e, index, key, 'funders')
+        }
+        handleAddEntry={() => handleAddJsonbEntry('funders', { name: '' })}
+        entryTemplate={{ name: '' }}
+      />
+      <JsonbInput
+        label='Local Partners'
+        field='local_partners'
+        entries={formState.local_partners || []}
+        handleJsonbChange={(e, index, key) =>
+          handleJsonbChange(e, index, key, 'local_partners')
+        }
+        handleAddEntry={() =>
+          handleAddJsonbEntry('local_partners', {
+            organisation: '',
+            person: '',
+          })
+        }
+        entryTemplate={{ organisation: '', person: '' }}
+      />
+      <TextInput
+        label='Issues'
+        name='project_issues'
+        value={formState.project_issues || ''}
+        onChange={handleChange}
+        placeholder='Project issues'
+      />
+      <TextInput
+        label='Exit Strategy'
+        name='exit_strategy'
+        value={formState.exit_strategy || ''}
+        onChange={handleChange}
+        placeholder='Exit strategy'
+      />
       <div className='flex gap-4 items-baseline'>
         <h3 className='flex-shrink-0 w-40'>Impact:</h3>
         <div className='text-foreground flex-grow'>
