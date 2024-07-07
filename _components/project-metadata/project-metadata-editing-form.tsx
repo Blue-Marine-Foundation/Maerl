@@ -1,12 +1,15 @@
 import { ProjectMetadata } from '@/_lib/types';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import ProjectMetadataServerAction from './server-action';
+import { PlusIcon } from 'lucide-react';
 
-export default function EditableProjectMetadataForm({
-  entry,
-}: {
-  entry: ProjectMetadata;
-}) {
+const EditableProjectMetadataForm = forwardRef<
+  HTMLFormElement,
+  {
+    entry: ProjectMetadata;
+    onSubmitSuccess: (formState: ProjectMetadata) => void;
+  }
+>(({ entry, onSubmitSuccess }, ref) => {
   const [formState, setFormState] = useState(entry);
 
   const handleChange = (
@@ -39,17 +42,23 @@ export default function EditableProjectMetadataForm({
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const { data, error } = await ProjectMetadataServerAction(formState);
     if (error) {
       console.log(error);
       return;
     }
     console.log(data);
+    onSubmitSuccess(formState);
   };
 
   return (
-    <div className='flex flex-col gap-4 py-6'>
+    <form
+      ref={ref}
+      onSubmit={handleSubmit}
+      className='flex flex-col gap-4 py-6'
+    >
       <div className='flex gap-4 items-baseline'>
         <h3 className='flex-shrink-0 w-40'>Regional Strategy:</h3>
         <input
@@ -57,6 +66,7 @@ export default function EditableProjectMetadataForm({
           name='regional_strategy'
           value={formState.regional_strategy || ''}
           onChange={handleChange}
+          placeholder='Regional Strategy'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
@@ -67,6 +77,7 @@ export default function EditableProjectMetadataForm({
           type='string'
           value={formState.start_date || ''}
           onChange={handleChange}
+          placeholder='Project start date'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
@@ -76,6 +87,7 @@ export default function EditableProjectMetadataForm({
           name='pillars'
           value={formState.pillars || ''}
           onChange={handleChange}
+          placeholder='Pillars'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
@@ -85,18 +97,20 @@ export default function EditableProjectMetadataForm({
           name='unit_requirements'
           value={formState.unit_requirements || ''}
           onChange={handleChange}
+          placeholder='Unit requirements'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
         <h3 className='flex-shrink-0 w-40'>Project Contacts:</h3>
-        <div className='text-foreground flex-grow flex flex-col gap-2'>
+        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
           {formState.project_contacts &&
             formState.project_contacts.map((contact, index) => (
-              <div key={index} className='flex flex-col gap-1'>
+              <div key={index} className='flex gap-1'>
                 <input
                   className=' bg-white/10 px-2 py-1 text-foreground'
                   name='name'
                   value={contact.name}
+                  placeholder='Name'
                   onChange={(e) =>
                     handleJsonbChange(e, 'project_contacts', index, 'name')
                   }
@@ -104,6 +118,7 @@ export default function EditableProjectMetadataForm({
                 <input
                   className=' bg-white/10 px-2 py-1 text-foreground'
                   name='organisation'
+                  placeholder='Organisation'
                   value={contact.organisation || ''}
                   onChange={(e) =>
                     handleJsonbChange(
@@ -117,6 +132,8 @@ export default function EditableProjectMetadataForm({
               </div>
             ))}
           <button
+            type='button'
+            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
             onClick={() =>
               handleAddJsonbEntry('project_contacts', {
                 name: '',
@@ -124,7 +141,7 @@ export default function EditableProjectMetadataForm({
               })
             }
           >
-            Add Contact
+            <PlusIcon size={16} /> Add Contact
           </button>
         </div>
       </div>
@@ -135,41 +152,38 @@ export default function EditableProjectMetadataForm({
           name='funding_status'
           value={formState.funding_status || ''}
           onChange={handleChange}
+          placeholder='Funding status'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
         <h3 className='flex-shrink-0 w-40'>Current Funders:</h3>
-        <div className='text-foreground flex-grow flex flex-col gap-2'>
+        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
           {formState.funders &&
             formState.funders.map((funder, index) => (
               <input
                 key={index}
-                className=' bg-white/10 px-2 py-1 '
+                className=' bg-white/10 px-2 py-1 w-full'
                 name='name'
                 value={funder.name}
                 onChange={(e) => handleJsonbChange(e, 'funders', index, 'name')}
+                placeholder='Funder name'
               />
             ))}
-          <button onClick={() => handleAddJsonbEntry('funders', { name: '' })}>
-            Add Funder
+          <button
+            type='button'
+            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
+            onClick={() => handleAddJsonbEntry('funders', { name: '' })}
+          >
+            <PlusIcon size={16} /> Add Funder
           </button>
         </div>
       </div>
       <div className='flex gap-4 items-baseline'>
         <h3 className='flex-shrink-0 w-40'>Local Partners:</h3>
-        <div className='text-foreground flex-grow flex flex-col gap-2'>
+        <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
           {formState.local_partners &&
             formState.local_partners.map((partner, index) => (
               <div key={index} className='grid grid-cols-2 gap-2'>
-                <input
-                  className='bg-white/10 px-2 py-1 '
-                  name='name'
-                  value={partner.name}
-                  placeholder='Name'
-                  onChange={(e) =>
-                    handleJsonbChange(e, 'local_partners', index, 'name')
-                  }
-                />
                 <input
                   className='bg-white/10 px-2 py-1 '
                   name='organisation'
@@ -184,9 +198,20 @@ export default function EditableProjectMetadataForm({
                     )
                   }
                 />
+                <input
+                  className='bg-white/10 px-2 py-1 '
+                  name='name'
+                  value={partner.name}
+                  placeholder='Contact person'
+                  onChange={(e) =>
+                    handleJsonbChange(e, 'local_partners', index, 'name')
+                  }
+                />
               </div>
             ))}
           <button
+            type='button'
+            className='text-xs flex gap-1 items-center border rounded py-1 px-2 hover:bg-white/10 transition-all'
             onClick={() =>
               handleAddJsonbEntry('local_partners', {
                 name: '',
@@ -194,7 +219,7 @@ export default function EditableProjectMetadataForm({
               })
             }
           >
-            Add Partner
+            <PlusIcon size={16} /> Add Partner
           </button>
         </div>
       </div>
@@ -205,6 +230,7 @@ export default function EditableProjectMetadataForm({
           name='project_issues'
           value={formState.project_issues || ''}
           onChange={handleChange}
+          placeholder='Project issues'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
@@ -214,6 +240,7 @@ export default function EditableProjectMetadataForm({
           name='exit_strategy'
           value={formState.exit_strategy || ''}
           onChange={handleChange}
+          placeholder='Exit strategy'
         />
       </div>
       <div className='flex gap-4 items-baseline'>
@@ -245,7 +272,8 @@ export default function EditableProjectMetadataForm({
           )}
         </div>
       </div>
-      <button onClick={handleSubmit}>Save</button>
-    </div>
+    </form>
   );
-}
+});
+
+export default EditableProjectMetadataForm;
