@@ -28,7 +28,7 @@ export default function ProjectMetadataDialogueContent({
         <div className='text-foreground flex-grow flex flex-col gap-2'>
           {entry.users && (
             <div
-              key={entry.users.first_name + entry.users.last_name}
+              key={`${entry.id}-${entry.users.id}`}
               className='flex flex-col gap-1'
             >
               <p>

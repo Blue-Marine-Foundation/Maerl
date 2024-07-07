@@ -28,6 +28,17 @@ export default function ProjectMetaDataRow({
     setIsEditing(false);
   };
 
+  // window.addEventListener('DOMContentLoaded', (event) => {
+  //   const parentElements = document.querySelectorAll('p');
+  //   parentElements.forEach((parentElement) => {
+  //     const descendantElements = parentElement.querySelectorAll('div, p, h3');
+  //     console.log('Found descendant error');
+  //     descendantElements.forEach((descendantElement) => {
+  //       descendantElement.innerHTML += '<!-- descendant error -->';
+  //     });
+  //   });
+  // });
+
   return (
     <>
       <tr
@@ -52,7 +63,7 @@ export default function ProjectMetaDataRow({
         <td className='px-1 py-3 align-baseline'>
           <div className='flex flex-col gap-1'>
             {entryData.users && (
-              <p key={entryData.users.first_name + entryData.users.last_name}>
+              <p key={`${entryData.id}-${entryData.users.id}`}>
                 {entryData.users.first_name} {entryData.users.last_name}
               </p>
             )}
