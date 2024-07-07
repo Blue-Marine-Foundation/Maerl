@@ -1,5 +1,6 @@
 import ErrorState from '@/_components/ErrorState';
 import ProjectMetaDataRow from '@/_components/project-metadata/project-metadata-row';
+import { ProjectMetadata } from '@/_lib/types';
 import { createClient } from '@/_utils/supabase/server';
 
 export default async function Page() {
@@ -56,7 +57,7 @@ export default async function Page() {
           </tr>
         </thead>
         <tbody>
-          {data.map((entry) => {
+          {data.map((entry: ProjectMetadata) => {
             return <ProjectMetaDataRow key={entry.name} entry={entry} />;
           })}
         </tbody>

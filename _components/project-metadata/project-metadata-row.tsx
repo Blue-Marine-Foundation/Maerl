@@ -162,18 +162,18 @@ export default function ProjectMetaDataRow({
                   </div>
                 </div>
               </DialogTitle>
-              <DialogDescription>
-                {isEditing ? (
-                  <EditableProjectMetadataForm
-                    entry={entryData}
-                    ref={formRef}
-                    onSubmitSuccess={updateEntryData}
-                  />
-                ) : (
-                  <ProjectMetadataDialogueContent entry={entryData} />
-                )}
-              </DialogDescription>
             </DialogHeader>
+            <DialogDescription>
+              {isEditing ? (
+                <EditableProjectMetadataForm
+                  entry={entryData}
+                  ref={formRef}
+                  onSubmitSuccess={updateEntryData}
+                />
+              ) : (
+                <ProjectMetadataDialogueContent entry={entryData} />
+              )}
+            </DialogDescription>
           </DialogContent>
         </Dialog>
       )}
