@@ -8,23 +8,31 @@ export default function ProjectMetadataDialogueContent({
   return (
     <div className='flex flex-col gap-4 py-6'>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Regional Strategy:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Regional Strategy:
+        </h3>
         <p className='flex-grow text-foreground'>{entry.regional_strategy}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Start Date:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Start Date:
+        </h3>
         <p className='flex-grow text-foreground'>{entry.start_date}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Pillars:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>Pillars:</h3>
         <p className='flex-grow text-foreground'>{entry.pillars}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Unit Requirements:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Unit Requirements:
+        </h3>
         <p className='flex-grow text-foreground'>{entry.unit_requirements}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Project Contacts:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Project Contacts:
+        </h3>
         <div className='text-foreground flex-grow flex flex-col gap-2'>
           {entry.users && (
             <div
@@ -54,14 +62,18 @@ export default function ProjectMetadataDialogueContent({
         </div>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Funding Status:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Funding Status:
+        </h3>
 
         <p className='text-foreground flex-grow'>
           {entry.funding_status && entry.funding_status}
         </p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Current Funders:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Current Funders:
+        </h3>
         <p className='text-foreground flex-grow'>
           {entry.funders &&
             entry.funders.map((funder, index) => (
@@ -73,7 +85,9 @@ export default function ProjectMetadataDialogueContent({
         </p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Local Partners:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Local Partners:
+        </h3>
         <div className='text-foreground flex-grow flex flex-col gap-2'>
           {entry.local_partners &&
             entry.local_partners.map((contact) => (
@@ -90,15 +104,17 @@ export default function ProjectMetadataDialogueContent({
         </div>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Issues:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>Issues:</h3>
         <p className='text-foreground flex-grow'>{entry.project_issues}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Exit Strategy:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>
+          Exit Strategy:
+        </h3>
         <p className='text-foreground flex-grow'>{entry.exit_strategy}</p>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Impact:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>Impact:</h3>
         <div className='text-foreground flex-grow'>
           {entry.stub ? (
             <p>Project has no logframe yet</p>
@@ -109,7 +125,7 @@ export default function ProjectMetadataDialogueContent({
         </div>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-36'>Outcomes:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-36'>Outcomes:</h3>
         <div className='text-foreground flex-grow'>
           {entry.stub ? (
             <p>Project has no logframe yet</p>

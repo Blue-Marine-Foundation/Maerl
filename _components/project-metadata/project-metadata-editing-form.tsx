@@ -19,7 +19,7 @@ const TextInput: React.FC<TextInputProps> = ({
   placeholder,
 }) => (
   <div className='flex gap-4 items-baseline'>
-    <h3 className='flex-shrink-0 w-40'>{label}:</h3>
+    <h3 className='text-muted-foreground flex-shrink-0 w-40'>{label}:</h3>
     <input
       className='flex-grow bg-white/10 px-2 py-1 text-foreground'
       name={name}
@@ -52,7 +52,7 @@ const JsonbInput: React.FC<JsonbInputProps> = ({
   entryTemplate,
 }) => (
   <div className='flex gap-4 items-baseline'>
-    <h3 className='flex-shrink-0 w-40'>{label}:</h3>
+    <h3 className='text-muted-foreground flex-shrink-0 w-40'>{label}:</h3>
     <div className='text-foreground flex-grow flex flex-col items-start gap-2'>
       {entries.map((entry, index) => (
         <div key={index} className='flex gap-1'>
@@ -252,7 +252,7 @@ const EditableProjectMetadataForm = forwardRef<
         placeholder='Exit strategy'
       />
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Impact:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-40'>Impact:</h3>
         <div className='text-foreground flex-grow'>
           {entry.stub ? (
             <p>Project has no logframe yet</p>
@@ -265,7 +265,7 @@ const EditableProjectMetadataForm = forwardRef<
         </div>
       </div>
       <div className='flex gap-4 items-baseline'>
-        <h3 className='flex-shrink-0 w-40'>Outcomes:</h3>
+        <h3 className='text-muted-foreground flex-shrink-0 w-40'>Outcomes:</h3>
         <div className='text-foreground flex-grow'>
           {entry.stub ? (
             <p>Project has no logframe yet</p>

@@ -28,17 +28,6 @@ export default function ProjectMetaDataRow({
     setIsEditing(false);
   };
 
-  // window.addEventListener('DOMContentLoaded', (event) => {
-  //   const parentElements = document.querySelectorAll('p');
-  //   parentElements.forEach((parentElement) => {
-  //     const descendantElements = parentElement.querySelectorAll('div, p, h3');
-  //     console.log('Found descendant error');
-  //     descendantElements.forEach((descendantElement) => {
-  //       descendantElement.innerHTML += '<!-- descendant error -->';
-  //     });
-  //   });
-  // });
-
   return (
     <>
       <tr
@@ -109,61 +98,61 @@ export default function ProjectMetaDataRow({
       {isOpen && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                <div className='flex justify-between items-center gap-4'>
-                  <div className='flex justify-start items-center gap-4'>
-                    <span
-                      style={{ background: entry.highlight_color }}
-                      className='flex justify-center items-center w-10 h-10 font-semibold text-background rounded-md'
-                    >
-                      {entry.id}
-                    </span>
-                    <h2>{entry.name}</h2>
-                  </div>
-                  <div className='flex justify-end items-center gap-4'>
-                    {isEditing && (
-                      <button
-                        type='button'
-                        role='button'
-                        className='text-sm px-2 py-1 border rounded shadow'
-                        onClick={() => {
-                          if (formRef.current) {
-                            formRef.current.dispatchEvent(
-                              new Event('submit', {
-                                cancelable: true,
-                                bubbles: true,
-                              })
-                            );
-                          }
-                        }}
-                      >
-                        Save
-                      </button>
-                    )}
-                    <button
-                      role='button'
-                      className='text-sm px-2 py-1 border rounded shadow'
-                      onClick={() => {
-                        setIsEditing(!isEditing);
-                      }}
-                    >
-                      {isEditing ? 'Cancel' : 'Edit'}
-                    </button>
-                    <button
-                      role='button'
-                      className='text-sm px-2 py-1 border rounded shadow'
-                      onClick={() => {
-                        setIsOpen(false);
-                      }}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </DialogTitle>
-            </DialogHeader>
-            <DialogDescription>
+            <div className='sr-only'>
+              <DialogTitle>Project metadata editing view</DialogTitle>
+            </div>
+            <div className='flex justify-between items-center gap-4'>
+              <div className='flex justify-start items-center gap-4'>
+                <span
+                  style={{ background: entry.highlight_color }}
+                  className='flex justify-center items-center w-10 h-10 font-semibold text-background rounded-md'
+                >
+                  {entry.id}
+                </span>
+                <h2 className='text-lg font-semibold'>{entry.name}</h2>
+              </div>
+              <div className='flex justify-end items-center gap-4'>
+                {isEditing && (
+                  <button
+                    type='button'
+                    role='button'
+                    className='text-sm px-2 py-1 border rounded shadow'
+                    onClick={() => {
+                      if (formRef.current) {
+                        formRef.current.dispatchEvent(
+                          new Event('submit', {
+                            cancelable: true,
+                            bubbles: true,
+                          })
+                        );
+                      }
+                    }}
+                  >
+                    Save
+                  </button>
+                )}
+                <button
+                  role='button'
+                  className='text-sm px-2 py-1 border rounded shadow'
+                  onClick={() => {
+                    setIsEditing(!isEditing);
+                  }}
+                >
+                  {isEditing ? 'Cancel' : 'Edit'}
+                </button>
+                <button
+                  role='button'
+                  className='text-sm px-2 py-1 border rounded shadow'
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            <div className='text-sm'>
               {isEditing ? (
                 <EditableProjectMetadataForm
                   entry={entryData}
@@ -173,7 +162,7 @@ export default function ProjectMetaDataRow({
               ) : (
                 <ProjectMetadataDialogueContent entry={entryData} />
               )}
-            </DialogDescription>
+            </div>
           </DialogContent>
         </Dialog>
       )}
