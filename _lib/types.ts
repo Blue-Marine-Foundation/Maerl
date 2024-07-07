@@ -121,36 +121,21 @@ export interface ProjectMetadata {
       ]
     | null;
   funding_partner: string | null;
-  funders:
-    | [
-        {
-          name: string;
-        }
-      ]
-    | null;
+  funders: { name: string }[] | null;
   slug: string;
   stub: boolean;
   regional_strategy: string | null;
   pillars: string | null;
-  project_contacts:
-    | [
-        {
-          name: string;
-          organisation: string | null;
-        }
-      ]
-    | null;
+  project_contacts: { name: string; organisation: string | null }[] | null;
   funding_status: string | null;
   unit_requirements: string | null;
   project_issues: string | null;
   exit_strategy: string | null;
   local_partners:
-    | [
-        {
-          person: string;
-          organisation: string | null;
-        }
-      ]
+    | {
+        person: string;
+        organisation: string | null;
+      }[]
     | null;
   users?: {
     created_at: string;

@@ -127,13 +127,33 @@ const EditableProjectMetadataForm = forwardRef<
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { data, error } = await ProjectMetadataServerAction(formState);
+
+    const filteredFormState = {
+      ...formState,
+      funders:
+        formState.funders?.filter((funder) => funder.name.trim() !== '') || [],
+      project_contacts:
+        formState.project_contacts?.filter(
+          (contact) =>
+            contact.name.trim() !== '' ||
+            (contact.organisation?.trim() ?? '') !== ''
+        ) || [],
+      local_partners:
+        formState.local_partners?.filter(
+          (partner) =>
+            partner.person?.trim() !== '' || partner.organisation?.trim() !== ''
+        ) || [],
+    };
+
+    const { data, error } = await ProjectMetadataServerAction(
+      filteredFormState
+    );
     if (error) {
       console.log(error);
       return;
     }
     console.log(data);
-    onSubmitSuccess(formState);
+    onSubmitSuccess(filteredFormState);
   };
 
   return (
