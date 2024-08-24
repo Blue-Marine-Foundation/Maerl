@@ -24,7 +24,7 @@ export default async function HomepageUpdates() {
         return (
           <div
             key={update.id}
-            className="flex flex-col gap-2 border-t first-of-type:border-0 hover:bg-foreground/10 transition-all py-4"
+            className="flex flex-col gap-2 border-t first-of-type:border-0 hover:bg-foreground/10 transition-all px-3 py-4"
           >
             <div className="text-sm flex justify-start gap-4">
               <p className="font-medium">{update.projects.name}</p>{' '}
