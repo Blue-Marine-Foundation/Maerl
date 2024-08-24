@@ -1,5 +1,6 @@
 import { createClient } from "@/_utils/supabase/server";
 import ErrorState from "@/_components/ErrorState";
+import * as d3 from 'd3';
 
 export default async function HomePageNewestProjects() {
   const supabase = createClient();
@@ -16,14 +17,14 @@ export default async function HomePageNewestProjects() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       {projects.map((project) => {
         return (
-          <div key={project.id} className="flex flex-col gap-1">
-            <p className="text-xs font-mono text-foreground/80">
-              {project.created_at.slice(0, 10)}
+          <div key={project.id} className="flex justify-between place-items-baseline gap-2">
+            <p className="text-base">
+               {project.name}
             </p>
-            <p>{project.name}</p>
+            <p className="text-sm text-foreground/80">{d3.timeFormat('%d %B')(new Date(project.created_at.slice(0, 10)))}</p>
           </div>
         );
       })}
