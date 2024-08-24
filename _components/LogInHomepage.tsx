@@ -9,9 +9,9 @@ export default function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
 
   return (
-    <div className="mx-auto w-full max-w-7xl py-4 px-4 lg:py-16 justify-center gap-2">
+    <div className="py-4 lg:py-16">
       <div className="flex flex-wrap justify-between items-start lg:items-stretch gap-4 lg:gap-8">
-        <div className="basis-full lg:basis-1/2 bg-blue-300/5 rounded shadow flex flex-col justify-center items-center gap-4 lg:gap-8 px-4 py-12">
+        <div className="basis-full lg:basis-1/2 bg-blue-300/5 rounded-md shadow flex flex-col justify-center items-center gap-4 lg:gap-8 px-4 py-12">
           <Logo width={36} />
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-2">Maerl</h2>
@@ -22,7 +22,7 @@ export default function Login() {
 
           <p className="font-light">Log in to get started</p>
         </div>
-        <div className="flex-1 bg-blue-300/5 rounded shadow py-4 lg:py-8">
+        <div className="flex-1 bg-blue-300/5 rounded-md shadow py-4 lg:py-8">
           <form
             className="mx-auto p-4 flex-1 flex flex-col w-full justify-center sm:max-w-md gap-2 text-foreground"
             action="/auth/sign-in"

@@ -12,7 +12,7 @@ export default async function AuthButton() {
     return (
       <div className="flex items-center gap-4 text-sm">
         <p>
-          <Link href="/app/account"> {user.email}</Link>
+          <Link href="/account"> {user.email}</Link>
         </p>
         <form action="/auth/sign-out" method="post">
           <button className="py-1.5 px-3 rounded-md no-underline border hover:bg-btn-background-hover text-sm transition-all duration-500">
