@@ -8,24 +8,25 @@ export default async function HomepageUpdatePlot({updates}: {updates: Update[]} 
   return (
     <ClientPlotFigure
       options={{
-        height: 300,
+        x: {
+          grid: true,
+        },
         y: {
-          grid: true
+          line: true,
         },
         marks: [
-          Plot.areaY(updates, Plot.binX({y: "count"}, {
-            x: d => new Date(d.date),
+          Plot.areaX(updates, Plot.binY({x: "count"}, {
+            y: d => new Date(d.date),
             interval: 'month',
             fill: 'skyblue',
             fillOpacity: 0.5,
             curve: 'catmull-rom'
           })),
-          Plot.lineY(updates, Plot.binX({y: "count"}, {
-            x: d => new Date(d.date),
+          Plot.lineX(updates, Plot.binY({x: "count"}, {
+            y: d => new Date(d.date),
             interval: 'month',
             curve: 'catmull-rom'
           })),
-          Plot.ruleY([0])
         ]
       }}
     />
