@@ -1,24 +1,41 @@
-import ProjectCard from '@/_components/ProjectCard';
-import { createClient } from '@/_utils/supabase/server';
-import { Project, Output } from '@/lib/types';
+import { createClient } from '@/_utils/supabase/server'
+import { columns } from '@/components/projects-data-table/columns'
+import { ProjectsDataTable } from '@/components/projects-data-table/projects-data-table'
+import ErrorState from '@/_components/ErrorState'
 
 export default async function Projects() {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const { data: projects, error } = await supabase
     .from('projects')
-    .select('*, outputs (*), updates (*)');
+    .select('*, users(*)')
+    .order('name')
+
+  const parsedProjects = projects?.map(
+    ({ users, unit_requirements, ...rest }) => {
+      const projectManager = users
+        ? `${users.first_name} ${users.last_name}`
+        : null
+
+      return {
+        ...rest,
+        projectManager,
+        unitRequirements: unit_requirements,
+      }
+    }
+  )
 
   return (
-    <div className='animate-in pt-4 pb-24'>
-      <h2 className='text-2xl font-bold mb-6'>Projects</h2>
-      {error && <p>Error fetching projects from database: {error.message}</p>}
-      {projects &&
-        projects
-          .sort((a: Project, b: Project) => a.name.localeCompare(b.name))
-          .map((project: Project) => {
-            return <ProjectCard key={project.name} project={project} />;
-          })}
+    <div className="animate-in pt-4 pb-24">
+      <h2 className="text-2xl font-bold mb-6">Projects</h2>
+
+      {error ? (
+        <ErrorState message={error.message} />
+      ) : (
+        parsedProjects && (
+          <ProjectsDataTable columns={columns} data={parsedProjects} />
+        )
+      )}
     </div>
-  );
+  )
 }
