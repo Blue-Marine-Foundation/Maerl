@@ -24,12 +24,10 @@ import {
 } from '@/components/ui/table'
 
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '../ui/button'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -42,7 +40,14 @@ export function ProjectsDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    pillars: false,
+    local_contacts: false,
+    highlights: false,
+    current_issues: false,
+    proposed_solutions: false,
+    board_intervention_required: false,
+  })
 
   const table = useReactTable({
     data,
@@ -62,7 +67,7 @@ export function ProjectsDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center gap-4 py-4">
+      <div className="flex items-center gap-4 pb-6 text-sm">
         <input
           placeholder="Filter by PM"
           value={
@@ -74,38 +79,49 @@ export function ProjectsDataTable<TData, TValue>({
               .getColumn('projectManager')
               ?.setFilterValue(event.target.value)
           }
-          className="max-w-sm bg-background text-foreground border rounded-md p-1"
+          className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
         />
         <input
           placeholder="Filter by unit(s)"
-          value={
-            (table.getColumn('unitRequirements')?.getFilterValue() as string) ??
-            ''
-          }
+          value={(table.getColumn('units')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table
-              .getColumn('unitRequirements')
-              ?.setFilterValue(event.target.value)
+            table.getColumn('units')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm bg-background text-foreground border rounded-md p-1"
+          className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
         />
 
-        {table
-          .getAllColumns()
-          .filter((column) => column.getCanHide())
-          .map((column) => {
-            return (
-              <label key={column.id}>
-                {column.id}{' '}
-                <input
-                  type="checkbox"
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onChange={(e) => column.toggleVisibility(e.target.checked)}
-                />
-              </label>
-            )
-          })}
+        <Popover>
+          <PopoverTrigger className="border rounded-md px-3 py-1">
+            Show/hide columns
+          </PopoverTrigger>
+          <PopoverContent className="flex flex-col gap-2">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <label key={column.id}>
+                    <input
+                      type="checkbox"
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onChange={(e) =>
+                        column.toggleVisibility(e.target.checked)
+                      }
+                    />
+                    <span className="ml-2">
+                      {column.id
+                        .split('_')
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(' ')}
+                    </span>
+                  </label>
+                )
+              })}
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -114,7 +130,7 @@ export function ProjectsDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-3 py-2">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -135,7 +151,7 @@ export function ProjectsDataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="text-xs px-3 py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

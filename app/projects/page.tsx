@@ -20,13 +20,13 @@ export default async function Projects() {
       return {
         ...rest,
         projectManager,
-        unitRequirements: unit_requirements,
+        units: unit_requirements,
       }
     }
   )
 
   return (
-    <div className="animate-in pt-4 pb-24">
+    <div className="animate-in pt-6 pb-24">
       <h2 className="text-2xl font-bold mb-6">Projects</h2>
 
       {error ? (
