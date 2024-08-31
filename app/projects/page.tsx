@@ -14,9 +14,7 @@ export default async function Projects() {
 
   const parsedProjects = projects?.map(
     ({ users, unit_requirements, ...rest }) => {
-      const projectManager = users
-        ? `${users.first_name} ${users.last_name}`
-        : null
+      const projectManager = users ? `${users.first_name}` : null
 
       return {
         ...rest,

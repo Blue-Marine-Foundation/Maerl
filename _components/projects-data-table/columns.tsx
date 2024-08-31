@@ -19,6 +19,14 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
         </button>
       )
     },
+    cell: ({ row }) => {
+      return (
+        <p>
+          {row.original.name.slice(0, 25)}
+          {row.original.name.length > 25 && '...'}
+        </p>
+      )
+    },
     enableHiding: false,
   },
   {
@@ -55,6 +63,10 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   {
     accessorKey: 'units',
     header: 'Units',
+    cell: ({ row }) => {
+      // @ts-expect-error
+      return <p className="max-w-[230px]">{row.original.units}</p>
+    },
     filterFn: 'includesString',
   },
   {
