@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
+  VisibilityState,
 } from '@tanstack/react-table'
 
 import {
@@ -21,6 +22,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '../ui/button'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,6 +42,7 @@ export function ProjectsDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   const table = useReactTable({
     data,
@@ -42,9 +52,11 @@ export function ProjectsDataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
     },
   })
 
@@ -77,6 +89,23 @@ export function ProjectsDataTable<TData, TValue>({
           }
           className="max-w-sm bg-background text-foreground border rounded-md p-1"
         />
+
+        {table
+          .getAllColumns()
+          .filter((column) => column.getCanHide())
+          .map((column) => {
+            return (
+              <label key={column.id}>
+                {column.id}{' '}
+                <input
+                  type="checkbox"
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onChange={(e) => column.toggleVisibility(e.target.checked)}
+                />
+              </label>
+            )
+          })}
       </div>
       <div className="rounded-md border">
         <Table>

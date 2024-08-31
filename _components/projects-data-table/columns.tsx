@@ -19,6 +19,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
         </button>
       )
     },
+    enableHiding: false,
   },
   {
     accessorKey: 'regional_strategy',
@@ -46,6 +47,9 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   },
   {
     id: 'edit',
-    cell: ({ row }) => <EditProjectMetadata project={row.original.slug} />,
+    cell: ({ row }) => (
+      <EditProjectMetadata project={row.original.slug.slice(0, 3)} />
+    ),
+    enableHiding: false,
   },
 ]
