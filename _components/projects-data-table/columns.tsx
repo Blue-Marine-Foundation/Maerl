@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { ProjectMetadata } from '@/_lib/types'
 import EditProjectMetadata from './edit-project-metadata'
+import Link from 'next/link'
 
 export const columns: ColumnDef<ProjectMetadata>[] = [
   {
@@ -21,12 +22,14 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p
-          className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500' : 'border-l-yellow-500'} pl-2`}
-        >
-          {row.original.name.slice(0, 25)}
-          {row.original.name.length > 25 && '...'}
-        </p>
+        <Link href={`/projects/${row.original.slug}`} className="group">
+          <p
+            className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500 group-hover:bg-blue-500/20' : 'border-l-yellow-500 group-hover:bg-yellow-500/20'} pl-2 `}
+          >
+            {row.original.name.slice(0, 25)}
+            {row.original.name.length > 25 && '...'}
+          </p>
+        </Link>
       )
     },
     enableHiding: false,
