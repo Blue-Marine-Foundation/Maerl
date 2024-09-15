@@ -6,7 +6,7 @@ import MainNav from '../navigation/MainNav'
 
 export default function Header({ withSession }: { withSession: boolean }) {
   return (
-    <nav className="w-full bg-[#2e3648]">
+    <nav className="w-full bg-card-bg/80">
       <div className="w-full max-w-[1376px] mx-auto px-4 flex justify-between items-center py-4">
         <div className="flex items-center justify-start gap-4">
           <h2 className="font-medium flex items-center justify-start gap-2">
