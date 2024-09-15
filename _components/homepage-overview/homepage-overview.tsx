@@ -1,26 +1,26 @@
-import { createClient } from "@/_utils/supabase/server";
-import * as d3 from 'd3';
-import ErrorState from "@/_components/ErrorState";
+import { createClient } from '@/_utils/supabase/server'
+import * as d3 from 'd3'
+import ErrorState from '@/_components/ErrorState'
 
 export default async function HomepageOverview() {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const { count: projects, error: projectsError } = await supabase
-    .from("projects")
-    .select("*", { count: "exact", head: true });
+    .from('projects')
+    .select('*', { count: 'exact', head: true })
 
   if (projectsError) {
-    console.log(`Failed to fetch projects: ${projectsError}`);
-    return <ErrorState message={projectsError.message} />;
+    console.log(`Failed to fetch projects: ${projectsError}`)
+    return <ErrorState message={projectsError.message} />
   }
 
   const { count: updates, error: updatesError } = await supabase
-    .from("updates")
-    .select("*", { count: "exact", head: true });
+    .from('updates')
+    .select('*', { count: 'exact', head: true })
 
   if (updatesError) {
-    console.log(`Failed to fetch projects: ${updatesError}`);
-    return <ErrorState message={updatesError.message} />;
+    console.log(`Failed to fetch projects: ${updatesError}`)
+    return <ErrorState message={updatesError.message} />
   }
 
   const { data: latest, error: latestError } = await supabase
@@ -32,8 +32,8 @@ export default async function HomepageOverview() {
     .limit(1)
 
   if (latestError) {
-    console.log(`Failed to fetch projects: ${latestError}`);
-    return <ErrorState message={latestError.message} />;
+    console.log(`Failed to fetch projects: ${latestError}`)
+    return <ErrorState message={latestError.message} />
   }
 
   return (
@@ -45,5 +45,5 @@ export default async function HomepageOverview() {
       <p className="text-foreground/80">Last updated:</p>
       <p>{d3.timeFormat('%d %B')(new Date(latest[0].date))}</p>
     </div>
-  );
+  )
 }

@@ -13,23 +13,23 @@ export default async function HomepageUpdatePlot({
     <ClientPlotFigure
       options={{
         marginTop: 40,
-        x: {
+        height: 250,
+        y: {
           grid: true,
           label: 'Updates per week',
-          labelAnchor: 'center',
-          labelOffset: 35,
-          axis: 'top',
+          labelOffset: 20,
+          axis: 'left',
         },
-        y: {
+        x: {
           line: true,
         },
         marks: [
-          Plot.areaX(
+          Plot.areaY(
             updates,
-            Plot.binY(
-              { x: 'count' },
+            Plot.binX(
+              { y: 'count' },
               {
-                y: (d) => new Date(d.date),
+                x: (d) => new Date(d.date),
                 interval: 'week',
                 // @ts-expect-error
                 fill: 'skyblue',
@@ -38,12 +38,12 @@ export default async function HomepageUpdatePlot({
               }
             )
           ),
-          Plot.lineX(
+          Plot.lineY(
             updates,
-            Plot.binY(
-              { x: 'count' },
+            Plot.binX(
+              { y: 'count' },
               {
-                y: (d) => new Date(d.date),
+                x: (d) => new Date(d.date),
                 interval: 'week',
                 // @ts-expect-error
                 curve: 'catmull-rom',

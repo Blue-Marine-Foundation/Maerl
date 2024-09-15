@@ -1,6 +1,6 @@
 import { createClient } from '@/_utils/supabase/server'
 import ErrorState from '@/_components/ErrorState'
-import * as d3 from 'd3';
+import * as d3 from 'd3'
 
 export default async function HomepageUpdates() {
   const supabase = createClient()
@@ -24,13 +24,18 @@ export default async function HomepageUpdates() {
         return (
           <div
             key={update.id}
-            className="flex flex-col gap-2 border-t first-of-type:border-0 hover:bg-foreground/10 transition-all px-3 py-4"
+            className="flex flex-col gap-2 border-t hover:bg-foreground/10 transition-all px-3 py-4"
           >
-            <div className="text-sm flex justify-start gap-4">
-              <p className="font-medium">{update.projects.name}</p>{' '}
-              <p className="text-foreground/70">{d3.timeFormat('%d %B')(new Date(update.date))} by {update.users.first_name}</p>
+            <div className="text-sm flex justify-between gap-4">
+              <p className="text-base text-white">{update.projects.name}</p>{' '}
+              <p className="text-foreground/70">
+                {d3.timeFormat('%d %B')(new Date(update.date))} by{' '}
+                {update.users.first_name}
+              </p>
             </div>
-            <p className="text-white/90 text-sm leading-6">{update.description}</p>
+            <p className="text-white/90 text-sm leading-7">
+              {update.description}
+            </p>
           </div>
         )
       })}
