@@ -1,32 +1,32 @@
-import Link from "next/link";
-import NavList from "./NavList";
+import Link from 'next/link'
+import NavList from './NavList'
 
 export default function MainNav() {
   const accountNav = [
     {
-      name: "Overview",
-      href: "/",
+      name: 'Overview',
+      href: '/',
     },
     {
-      name: "Projects",
-      href: "/projects",
+      name: 'Projects',
+      href: '/projects',
     },
     {
-      name: "All Updates",
-      href: "/updates",
+      name: 'All Updates',
+      href: '/updates',
     },
     {
-      name: "Impact Indicators",
-      href: "/impact",
+      name: 'Impact Indicators',
+      href: '/impact',
     },
     {
-      name: "Funding Requests",
-      href: "/fundingrequests",
+      name: 'Funding Requests',
+      href: '/fundingrequests',
     },
-  ];
+  ]
 
   return (
-    <div className="max-w-7xl mx-auto pr-4 pb-3 flex justify-between items-center">
+    <div className="max-w-[1376px] mx-auto pr-4 pb-3 flex justify-between items-center">
       <NavList items={accountNav} />
       <Link
         href="/newupdate"
@@ -46,9 +46,9 @@ export default function MainNav() {
         >
           <path d="M5 12h14" />
           <path d="M12 5v14" />
-        </svg>{" "}
+        </svg>{' '}
         <span>Add Update</span>
       </Link>
     </div>
-  );
+  )
 }
