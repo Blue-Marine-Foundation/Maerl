@@ -21,13 +21,31 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p>
+        <p
+          className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500' : 'border-l-yellow-500'} pl-2`}
+        >
           {row.original.name.slice(0, 25)}
           {row.original.name.length > 25 && '...'}
         </p>
       )
     },
     enableHiding: false,
+  },
+  {
+    accessorKey: 'project_type',
+    header: 'Project Type',
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length === 0) return true
+      return filterValue.includes(row.getValue(columnId))
+    },
+  },
+  {
+    accessorKey: 'project_status',
+    header: 'Status',
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length === 0) return true
+      return filterValue.includes(row.getValue(columnId))
+    },
   },
   {
     accessorKey: 'start_date',

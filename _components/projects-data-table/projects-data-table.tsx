@@ -23,11 +23,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import StatusFilter from './status-filter'
+import ProjectTypeFilter from './project-type-filter'
+import ColumnFilter from './column-filter'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -41,6 +39,7 @@ export function ProjectsDataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    project_type: false,
     pillars: false,
     local_contacts: false,
     highlights: false,
@@ -67,63 +66,35 @@ export function ProjectsDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center gap-4 pb-6 text-sm">
-        <input
-          placeholder="Filter by PM"
-          value={
-            (table.getColumn('projectManager')?.getFilterValue() as string) ??
-            ''
-          }
-          onChange={(event) =>
-            table
-              .getColumn('projectManager')
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
-        />
-        <input
-          placeholder="Filter by unit(s)"
-          value={(table.getColumn('units')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('units')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
-        />
-
-        <Popover>
-          <PopoverTrigger className="border rounded-md px-3 py-1">
-            Show/hide columns
-          </PopoverTrigger>
-          <PopoverContent className="flex flex-col gap-2">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <label key={column.id}>
-                    <input
-                      type="checkbox"
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onChange={(e) =>
-                        column.toggleVisibility(e.target.checked)
-                      }
-                    />
-                    <span className="ml-2">
-                      {column.id
-                        .split('_')
-                        .map(
-                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(' ')}
-                    </span>
-                  </label>
-                )
-              })}
-          </PopoverContent>
-        </Popover>
+      <div className="flex items-center justify-between gap-4 pb-4 text-sm">
+        <ProjectTypeFilter table={table} />
+        <div className="flex items-center gap-4">
+          <StatusFilter table={table} />
+          <ColumnFilter table={table} />
+          <input
+            placeholder="Filter by PM"
+            value={
+              (table.getColumn('projectManager')?.getFilterValue() as string) ??
+              ''
+            }
+            onChange={(event) =>
+              table
+                .getColumn('projectManager')
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
+          />
+          <input
+            placeholder="Filter by unit(s)"
+            value={(table.getColumn('units')?.getFilterValue() as string) ?? ''}
+            onChange={(event) =>
+              table.getColumn('units')?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
+          />
+        </div>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-card-bg/70">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
