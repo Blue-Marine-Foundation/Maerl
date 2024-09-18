@@ -8,10 +8,21 @@ export default async function HomepageOverview() {
   const { count: projects, error: projectsError } = await supabase
     .from('projects')
     .select('*', { count: 'exact', head: true })
+    .eq('project_type', 'Project')
 
   if (projectsError) {
     console.log(`Failed to fetch projects: ${projectsError}`)
     return <ErrorState message={projectsError.message} />
+  }
+
+  const { count: workstreams, error: workstreamsError } = await supabase
+    .from('projects')
+    .select('*', { count: 'exact', head: true })
+    .eq('project_type', 'Workstream')
+
+  if (workstreamsError) {
+    console.log(`Failed to fetch projects: ${workstreamsError}`)
+    return <ErrorState message={workstreamsError.message} />
   }
 
   const { count: updates, error: updatesError } = await supabase
@@ -40,6 +51,8 @@ export default async function HomepageOverview() {
     <div className="grid grid-cols-2 gap-2">
       <p className="text-foreground/80">Projects:</p>
       <p>{projects}</p>
+      <p className="text-foreground/80">Workstreams:</p>
+      <p>{workstreams}</p>
       <p className="text-foreground/80">Updates:</p>
       <p>{d3.format(',')(updates || 0)}</p>
       <p className="text-foreground/80">Last updated:</p>

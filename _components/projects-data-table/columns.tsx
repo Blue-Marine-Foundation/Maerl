@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { ProjectMetadata } from '@/_lib/types'
-import EditProjectMetadata from './edit-project-metadata'
+import ProjectActionButtons from './project-action-buttons'
 import Link from 'next/link'
 
 export const columns: ColumnDef<ProjectMetadata>[] = [
@@ -73,7 +73,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     header: 'Pillars',
   },
   {
-    accessorKey: 'projectManager',
+    accessorKey: 'project_manager',
     header: 'PM',
     filterFn: 'includesString',
   },
@@ -82,11 +82,10 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     header: 'Support',
   },
   {
-    accessorKey: 'units',
+    accessorKey: 'unit_requirements',
     header: 'Units',
     cell: ({ row }) => {
-      // @ts-expect-error
-      return <p className="max-w-[230px]">{row.original.units}</p>
+      return <p className="max-w-[230px]">{row.original.unit_requirements}</p>
     },
     filterFn: 'includesString',
   },
@@ -96,11 +95,11 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-1">
-          {row.original.local_partners &&
-            row.original.local_partners.map((partner) => {
+          {row.original.local_contacts &&
+            row.original.local_contacts.map((contact) => {
               return (
-                <p key={partner.organisation}>
-                  {partner.organisation ? partner.organisation : partner.person}
+                <p key={contact.organisation}>
+                  {contact.organisation ? contact.organisation : contact.name}
                 </p>
               )
             })}
@@ -126,7 +125,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   },
   {
     id: 'edit',
-    cell: ({ row }) => <EditProjectMetadata project={row.original.slug} />,
+    cell: ({ row }) => <ProjectActionButtons project={row.original} />,
     enableHiding: false,
   },
 ]

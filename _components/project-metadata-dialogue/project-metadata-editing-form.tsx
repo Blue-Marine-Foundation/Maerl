@@ -127,30 +127,25 @@ const EditableProjectMetadataForm = forwardRef<
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const filteredFormState = {
-      ...formState,
-      funders:
-        formState.funders?.filter((funder) => funder.name.trim() !== '') || [],
-      project_contacts:
-        formState.project_contacts?.filter(
+    const { project_manager, ...filteredFormState } = formState
+
+    const parsedFormState = {
+      ...filteredFormState,
+      local_contacts:
+        formState.local_contacts?.filter(
           (contact) =>
             contact.name.trim() !== '' ||
             (contact.organisation?.trim() ?? '') !== ''
         ) || [],
-      local_partners:
-        formState.local_partners?.filter(
-          (partner) =>
-            partner.person?.trim() !== '' || partner.organisation?.trim() !== ''
-        ) || [],
     }
 
-    const { data, error } = await ProjectMetadataServerAction(filteredFormState)
+    const { data, error } = await ProjectMetadataServerAction(parsedFormState)
     if (error) {
       console.log(error)
       return
     }
     console.log(data)
-    onSubmitSuccess(filteredFormState)
+    onSubmitSuccess(parsedFormState)
   }
 
   return (
@@ -159,12 +154,18 @@ const EditableProjectMetadataForm = forwardRef<
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 py-6"
     >
+      <div className="flex gap-4 items-baseline">
+        <h3 className="text-muted-foreground flex-shrink-0 w-40">PM:</h3>
+        <div className="text-foreground flex-grow">
+          {entry.project_manager && <p>{entry.project_manager}</p>}
+        </div>
+      </div>
       <TextInput
-        label="Regional Strategy"
-        name="regional_strategy"
-        value={formState.regional_strategy || ''}
+        label="Support"
+        name="support"
+        value={formState.support || ''}
         onChange={handleChange}
-        placeholder="Regional Strategy"
+        placeholder="Supporting staff"
       />
       <TextInput
         label="Start Date"
@@ -172,6 +173,21 @@ const EditableProjectMetadataForm = forwardRef<
         value={formState.start_date || ''}
         onChange={handleChange}
         placeholder="Project start date"
+      />
+      <div className="flex gap-4 items-baseline">
+        <h3 className="text-muted-foreground flex-shrink-0 w-40">
+          Project Status:
+        </h3>
+        <div className="text-foreground flex-grow">
+          <p className="font-mono text-xs">Todo: Add status select</p>
+        </div>
+      </div>
+      <TextInput
+        label="Regional Strategy"
+        name="regional_strategy"
+        value={formState.regional_strategy || ''}
+        onChange={handleChange}
+        placeholder="Regional Strategy"
       />
       <TextInput
         label="Pillars"
@@ -188,14 +204,14 @@ const EditableProjectMetadataForm = forwardRef<
         placeholder="Unit requirements"
       />
       <JsonbInput
-        label="Project Contacts"
-        field="project_contacts"
-        entries={formState.project_contacts || []}
+        label="Local Contacts"
+        field="local_contacts"
+        entries={formState.local_contacts || []}
         handleJsonbChange={(e, index, key) =>
-          handleJsonbChange(e, index, key, 'project_contacts')
+          handleJsonbChange(e, index, key, 'local_contacts')
         }
         handleAddEntry={() =>
-          handleAddJsonbEntry('project_contacts', {
+          handleAddJsonbEntry('local_contacts', {
             name: '',
             organisation: '',
           })
@@ -203,80 +219,33 @@ const EditableProjectMetadataForm = forwardRef<
         entryTemplate={{ name: '', organisation: '' }}
       />
       <TextInput
-        label="Funding Status"
-        name="funding_status"
-        value={formState.funding_status || ''}
+        label="Highlights"
+        name="highlights"
+        value={formState.highlights || ''}
         onChange={handleChange}
-        placeholder="Funding status"
-      />
-      <JsonbInput
-        label="Current Funders"
-        field="funders"
-        entries={formState.funders || []}
-        handleJsonbChange={(e, index, key) =>
-          handleJsonbChange(e, index, key, 'funders')
-        }
-        handleAddEntry={() => handleAddJsonbEntry('funders', { name: '' })}
-        entryTemplate={{ name: '' }}
-      />
-      <JsonbInput
-        label="Local Partners"
-        field="local_partners"
-        entries={formState.local_partners || []}
-        handleJsonbChange={(e, index, key) =>
-          handleJsonbChange(e, index, key, 'local_partners')
-        }
-        handleAddEntry={() =>
-          handleAddJsonbEntry('local_partners', {
-            organisation: '',
-            person: '',
-          })
-        }
-        entryTemplate={{ organisation: '', person: '' }}
+        placeholder="Project highlights"
       />
       <TextInput
         label="Issues"
-        name="project_issues"
-        value={formState.project_issues || ''}
+        name="current_issues"
+        value={formState.current_issues || ''}
         onChange={handleChange}
-        placeholder="Project issues"
+        placeholder="Current issues"
       />
       <TextInput
-        label="Exit Strategy"
-        name="exit_strategy"
-        value={formState.exit_strategy || ''}
+        label="Proposed solutions"
+        name="proposed_solutions"
+        value={formState.proposed_solutions || ''}
         onChange={handleChange}
-        placeholder="Exit strategy"
+        placeholder="Proposed solutions"
       />
-      <div className="flex gap-4 items-baseline">
-        <h3 className="text-muted-foreground flex-shrink-0 w-40">Impact:</h3>
-        <div className="text-foreground flex-grow">
-          {entry.stub ? (
-            <p>Project has no logframe yet</p>
-          ) : (
-            formState.impacts &&
-            formState.impacts.map((impact) => (
-              <p key={impact.id}>{impact.title}</p>
-            ))
-          )}
-        </div>
-      </div>
-      <div className="flex gap-4 items-baseline">
-        <h3 className="text-muted-foreground flex-shrink-0 w-40">Outcomes:</h3>
-        <div className="text-foreground flex-grow">
-          {entry.stub ? (
-            <p>Project has no logframe yet</p>
-          ) : (
-            formState.outcomes &&
-            formState.outcomes.map((outcome) => (
-              <p key={outcome.id}>
-                <span className="font-medium">{outcome.code}</span>{' '}
-                {outcome.description}
-              </p>
-            ))
-          )}
-        </div>
-      </div>
+      <TextInput
+        label="Board intervention req"
+        name="board_intervention_required"
+        value={formState.board_intervention_required || ''}
+        onChange={handleChange}
+        placeholder="Board intervention required"
+      />
     </form>
   )
 })

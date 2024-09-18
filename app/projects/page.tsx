@@ -2,7 +2,7 @@ import { createClient } from '@/_utils/supabase/server'
 import { columns } from '@/components/projects-data-table/columns'
 import { ProjectsDataTable } from '@/components/projects-data-table/projects-data-table'
 import ErrorState from '@/_components/ErrorState'
-import BulkExportProjectData from '@/_components/bulk-upsert-project-data/bulk-upsert-project-data'
+// import BulkExportProjectData from '@/_components/bulk-upsert-project-data/bulk-upsert-project-data'
 
 export default async function Projects() {
   const supabase = createClient()
@@ -12,17 +12,14 @@ export default async function Projects() {
     .select('*, users(*)')
     .order('name')
 
-  const parsedProjects = projects?.map(
-    ({ users, unit_requirements, ...rest }) => {
-      const projectManager = users ? `${users.first_name}` : null
+  const parsedProjects = projects?.map(({ users, ...rest }) => {
+    const project_manager = users ? `${users.first_name}` : null
 
-      return {
-        ...rest,
-        projectManager,
-        units: unit_requirements,
-      }
+    return {
+      ...rest,
+      project_manager,
     }
-  )
+  })
 
   return (
     <div className="animate-in pt-6 pb-24">

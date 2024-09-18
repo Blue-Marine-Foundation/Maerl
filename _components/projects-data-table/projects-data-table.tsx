@@ -74,21 +74,28 @@ export function ProjectsDataTable<TData, TValue>({
           <input
             placeholder="Filter by PM"
             value={
-              (table.getColumn('projectManager')?.getFilterValue() as string) ??
-              ''
+              (table
+                .getColumn('project_manager')
+                ?.getFilterValue() as string) ?? ''
             }
             onChange={(event) =>
               table
-                .getColumn('projectManager')
+                .getColumn('project_manager')
                 ?.setFilterValue(event.target.value)
             }
             className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
           />
           <input
             placeholder="Filter by unit(s)"
-            value={(table.getColumn('units')?.getFilterValue() as string) ?? ''}
+            value={
+              (table
+                .getColumn('unit_requirements')
+                ?.getFilterValue() as string) ?? ''
+            }
             onChange={(event) =>
-              table.getColumn('units')?.setFilterValue(event.target.value)
+              table
+                .getColumn('unit_requirements')
+                ?.setFilterValue(event.target.value)
             }
             className="max-w-sm bg-background text-foreground border rounded-md px-2 py-1"
           />
