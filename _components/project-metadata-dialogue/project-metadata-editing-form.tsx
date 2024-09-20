@@ -30,6 +30,38 @@ const TextInput: React.FC<TextInputProps> = ({
   </div>
 )
 
+type SelectInputProps = {
+  label: string
+  name: keyof ProjectMetadata
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  options: { value: string; label: string }[]
+}
+
+const SelectInput: React.FC<SelectInputProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+}) => (
+  <div className="flex gap-4 items-baseline">
+    <h3 className="text-muted-foreground flex-shrink-0 w-40">{label}:</h3>
+    <select
+      className="flex-grow bg-white/10 px-2 py-1 text-foreground"
+      name={name}
+      value={value}
+      onChange={onChange}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+)
+
 type JsonbInputProps = {
   label: string
   field: keyof ProjectMetadata
@@ -90,6 +122,14 @@ const EditableProjectMetadataForm = forwardRef<
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target
+      setFormState((prev) => ({ ...prev, [name]: value }))
+    },
+    []
+  )
+
+  const handleSelectChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { name, value } = e.target
       setFormState((prev) => ({ ...prev, [name]: value }))
     },
@@ -174,14 +214,17 @@ const EditableProjectMetadataForm = forwardRef<
         onChange={handleChange}
         placeholder="Project start date"
       />
-      <div className="flex gap-4 items-baseline">
-        <h3 className="text-muted-foreground flex-shrink-0 w-40">
-          Project Status:
-        </h3>
-        <div className="text-foreground flex-grow">
-          <p className="font-mono text-xs">Todo: Add status select</p>
-        </div>
-      </div>
+      <SelectInput
+        label="Project Status"
+        name="project_status"
+        value={formState.project_status}
+        onChange={handleSelectChange}
+        options={[
+          { label: 'Active', value: 'Active' },
+          { label: 'Complete', value: 'Complete' },
+          { label: 'Pipeline', value: 'Pipeline' },
+        ]}
+      />
       <TextInput
         label="Regional Strategy"
         name="regional_strategy"
