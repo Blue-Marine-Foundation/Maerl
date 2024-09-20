@@ -6,7 +6,11 @@ import HomepageUpdatePlot from './homepage-update-plot'
 export default async function HomepageUpdatePlotWrapper() {
   const supabase = createClient()
 
-  const dateCutoff = dayjs().startOf('year').toDate().toISOString()
+  const dateCutoff = dayjs()
+    .subtract(6, 'months')
+    .startOf('month')
+    .toDate()
+    .toISOString()
 
   const { data: updates, error: updatesError } = await supabase
     .from('updates')
