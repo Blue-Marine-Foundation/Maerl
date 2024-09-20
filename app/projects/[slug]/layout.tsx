@@ -45,7 +45,7 @@ export default async function ProjectLayout({
   if (project) {
     return (
       <>
-        <div className="flex justify-between items-center gap-4 pb-4 border-b border-foreground/10">
+        <div className="flex justify-between items-center gap-4 py-4 border-b border-foreground/10">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-medium">
               <Link href={`/projects/${params.slug}`}>{project.name}</Link>
