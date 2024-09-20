@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import NavListVertical from './NavListVertical';
+import NavListVertical from './NavListVertical'
 
 export default function AccountSideNav() {
   const accountNav = [
     {
       name: 'User Profile',
-      href: '/app/account',
+      href: '/account',
     },
     {
       name: 'Password Reset',
-      href: '/app/account/passwordreset',
+      href: '/account/passwordreset',
     },
-  ];
+  ]
 
-  return <NavListVertical data={accountNav} />;
+  return <NavListVertical data={accountNav} />
 }
