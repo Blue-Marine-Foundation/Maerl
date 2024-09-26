@@ -1,8 +1,14 @@
 import { ProjectMetadata } from '@/_lib/types'
-import { useState, forwardRef, useCallback } from 'react'
+import {
+  useState,
+  forwardRef,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+} from 'react'
 import ProjectMetadataServerAction from './server-action'
 import { PlusIcon } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 type TextInputProps = {
   label: string
@@ -78,7 +84,6 @@ type JsonbInputProps = {
 
 const JsonbInput: React.FC<JsonbInputProps> = ({
   label,
-  field,
   entries,
   handleJsonbChange,
   handleAddEntry,
@@ -116,7 +121,7 @@ const EditableProjectMetadataForm = forwardRef<
   HTMLFormElement,
   {
     entry: ProjectMetadata
-    onSubmitSuccess: (formState: ProjectMetadata) => void
+    onSubmitSuccess: Dispatch<SetStateAction<boolean>>
   }
 >(({ entry, onSubmitSuccess }, ref) => {
   const [formState, setFormState] = useState<ProjectMetadata>(entry)
@@ -165,7 +170,19 @@ const EditableProjectMetadataForm = forwardRef<
     []
   )
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (parsedFormState: ProjectMetadata) =>
+      ProjectMetadataServerAction(parsedFormState),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] })
+      onSubmitSuccess(false)
+    },
+    mutationKey: ['editProject'],
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const { project_manager, ...filteredFormState } = formState
@@ -180,13 +197,7 @@ const EditableProjectMetadataForm = forwardRef<
         ) || [],
     }
 
-    const { data, error } = await ProjectMetadataServerAction(parsedFormState)
-    if (error) {
-      console.log(error)
-      return
-    }
-    console.log(data)
-    onSubmitSuccess(parsedFormState)
+    mutation.mutate(parsedFormState)
   }
 
   return (

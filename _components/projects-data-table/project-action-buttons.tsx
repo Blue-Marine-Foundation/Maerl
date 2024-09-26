@@ -12,15 +12,9 @@ export default function ProjectActionButtons({
 }: {
   project: ProjectMetadata
 }) {
-  const [entryData, setEntryData] = useState<ProjectMetadata>(project)
   const [isOpen, setIsOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(true)
   const formRef = useRef<HTMLFormElement>(null)
-
-  const updateEntryData = async (updatedData: ProjectMetadata) => {
-    setEntryData(updatedData)
-    setIsEditing(false)
-  }
 
   return (
     <div className="text-xs flex justify-end items-center gap-2">
@@ -45,7 +39,7 @@ export default function ProjectActionButtons({
             </div>
             <div className="flex justify-between items-center gap-4">
               <div className="flex justify-start items-center gap-4">
-                <h2 className="text-lg font-semibold">{entryData.name}</h2>
+                <h2 className="text-lg font-semibold">{project.name}</h2>
               </div>
               <div className="flex justify-end items-center gap-4">
                 {isEditing && (
@@ -91,12 +85,12 @@ export default function ProjectActionButtons({
             <div className="text-sm">
               {isEditing ? (
                 <EditableProjectMetadataForm
-                  entry={entryData}
+                  entry={project}
                   ref={formRef}
-                  onSubmitSuccess={updateEntryData}
+                  onSubmitSuccess={setIsEditing}
                 />
               ) : (
-                <ProjectMetadataDialogueContent entry={entryData} />
+                <ProjectMetadataDialogueContent entry={project} />
               )}
             </div>
           </DialogContent>
