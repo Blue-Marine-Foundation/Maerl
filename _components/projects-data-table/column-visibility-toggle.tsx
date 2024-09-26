@@ -10,7 +10,7 @@ type FilterProps<TData> = {
   table: Table<TData>
 }
 
-const ColumnFilter = <TData,>({ table }: FilterProps<TData>) => {
+const ColumnVisibilityToggle = <TData,>({ table }: FilterProps<TData>) => {
   return (
     <Popover>
       <PopoverTrigger className="border rounded-md px-3 py-1">
@@ -43,4 +43,4 @@ const ColumnFilter = <TData,>({ table }: FilterProps<TData>) => {
   )
 }
 
-export default ColumnFilter
+export default ColumnVisibilityToggle

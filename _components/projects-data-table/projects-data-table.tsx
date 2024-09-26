@@ -25,7 +25,7 @@ import {
 
 import StatusFilter from './status-filter'
 import ProjectTypeFilter from './project-type-filter'
-import ColumnFilter from './column-filter'
+import ColumnVisibilityToggle from './column-visibility-toggle'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -70,7 +70,7 @@ export function ProjectsDataTable<TData, TValue>({
         <ProjectTypeFilter table={table} />
         <div className="flex items-center gap-4">
           <StatusFilter table={table} />
-          <ColumnFilter table={table} />
+          <ColumnVisibilityToggle table={table} />
           <input
             placeholder="Filter by PM"
             value={
