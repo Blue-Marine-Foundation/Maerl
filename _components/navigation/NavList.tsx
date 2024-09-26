@@ -1,17 +1,17 @@
-'use client';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+'use client'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 interface NavItem {
-  name: string;
-  href: string;
+  name: string
+  href: string
 }
 
 export default function NavList({ items }: { items: NavItem[] }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
-    <ul className='text-sm flex items-center gap-1'>
+    <ul className="text-sm flex items-center gap-1">
       {items.map((item: NavItem) => {
         return (
           <li
@@ -24,13 +24,13 @@ export default function NavList({ items }: { items: NavItem[] }) {
           >
             <Link
               href={item.href}
-              className='inline-block px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-[#222838] group-[.active]:border-slate-800 group-[.active]:shadow-md'
+              className="inline-block px-4 py-2 rounded-md border border-transparent transition-all ease-in-out duration-300 hover:border-foreground/20 group-[.active]:bg-blue-400/30 group-[.active]:border-slate-800 group-[.active]:shadow-md"
             >
               {item.name}
             </Link>
           </li>
-        );
+        )
       })}
     </ul>
-  );
+  )
 }
