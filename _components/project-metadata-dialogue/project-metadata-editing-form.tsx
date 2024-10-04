@@ -177,7 +177,7 @@ const EditableProjectMetadataForm = forwardRef<
       ProjectMetadataServerAction(parsedFormState),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] })
-      onSubmitSuccess(false)
+      onSubmitSuccess(false) // Sets parent editing state to false; not intuitive!
     },
     mutationKey: ['editProject'],
   })
