@@ -1,33 +1,46 @@
-import Header from '@/_components/header/header'
-import Footer from '@/_components/footer/footer'
-import './globals.css'
-import { createClient } from '@/_utils/supabase/server'
-import Login from '@/_components/LogInHomepage'
+import { GeistSans } from 'geist/font/sans';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Header from '@/components/header/header';
+import { hasEnvVars } from '@/utils/supabase/check-env-vars';
+import { Badge } from '@/components/ui/badge';
+
+const defaultUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000';
 
 export const metadata = {
-  title: 'Maerl',
-  description: 'Impact reporting',
-}
+  metadataBase: new URL(defaultUrl),
+  title: 'Start Here',
+  description: 'An opinionated starter repo for NextJS projects using Supabase',
+};
 
-export default async function RootLayout({
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = createClient()
-  const { data, error } = await supabase.auth.getSession()
-
-  const session = data.session ? true : false
-
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-background text-foreground">
-        <Header withSession={session} />
-        <main className="w-full max-w-[1376px] mx-auto px-4">
-          {session ? <>{children}</> : <Login />}
-        </main>
-        <Footer />
+    <html lang='en' className={inter.className} suppressHydrationWarning>
+      <body className='min-h-svh bg-background px-4 text-foreground dark:bg-background'>
+        {!hasEnvVars && (
+          <div className={`max-w-app mx-auto flex w-full justify-end py-4`}>
+            <Badge
+              variant='default'
+              className='pointer-events-none text-xs font-normal'
+            >
+              Please update .env.local file with anon key and url
+            </Badge>
+          </div>
+        )}
+        {hasEnvVars && <Header />}
+        <div>{children}</div>
       </body>
     </html>
-  )
+  );
 }
