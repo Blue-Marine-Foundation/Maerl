@@ -24,9 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className={inter.className} suppressHydrationWarning>
-      <body className='min-h-svh bg-background px-4 text-foreground dark:bg-background'>
+      <body className='min-h-svh bg-background text-foreground dark:bg-background'>
         <Header />
-        <div>{children}</div>
+        <div className='px-4'>{children}</div>
       </body>
     </html>
   );
