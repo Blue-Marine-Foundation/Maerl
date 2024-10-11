@@ -12,12 +12,12 @@ export default function PrimaryNavigation() {
 
   const items = [
     {
-      name: 'Secret stuff',
-      href: '/secretstuff',
+      name: 'Overview',
+      href: '/',
     },
     {
-      name: 'More secret stuff',
-      href: '/moresecretstuff',
+      name: 'Projects',
+      href: '/projects',
     },
   ];
 

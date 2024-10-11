@@ -20,8 +20,6 @@ export default async function AuthButton({ user }: { user: User }) {
         <p className='text-xs'>{user.email}</p> <MenuIcon className='h-5 w-5' />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Your account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Link href='/reset-password' className='px-4'>
             Change password

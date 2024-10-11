@@ -10,21 +10,21 @@ export default async function Header() {
   } = await createClient().auth.getUser();
 
   return (
-    <div className='max-w-app mx-auto flex w-full items-center justify-between gap-4 py-4'>
-      <div className='flex items-baseline justify-start gap-8'>
+    <div className='max-w-app mx-auto w-full border-b py-4'>
+      <div className='flex items-baseline justify-between gap-4'>
         <h2 className='text-lg font-semibold'>
-          <Link href='/'>Start Here</Link>
+          <Link href='/'>Maerl</Link>
         </h2>
-        {user && <PrimaryNavigation />}
+        {user ? (
+          <AuthButton user={user} />
+        ) : (
+          <Button asChild size='sm' variant='outline'>
+            <Link href='/sign-in'>Sign in</Link>
+          </Button>
+        )}
       </div>
 
-      {user ? (
-        <AuthButton user={user} />
-      ) : (
-        <Button asChild size='sm' variant='outline'>
-          <Link href='/sign-in'>Sign in</Link>
-        </Button>
-      )}
+      {user && <PrimaryNavigation />}
     </div>
   );
 }
