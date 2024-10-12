@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 // import { ProjectsDataTable } from './projects-data-table';
 // import { columns } from '@/components/projects-data-table/columns';
 import fetchProjectList from './fetch-project-list';
+import Link from 'next/link';
 
 export default function ProjectsDataTableWrapper() {
   const { data, error, isLoading } = useQuery({
@@ -43,7 +44,11 @@ export default function ProjectsDataTableWrapper() {
     <div className='flex min-h-96 flex-col items-center justify-center gap-6 rounded-md bg-card p-6'>
       <div className='flex w-full flex-col gap-2'>
         {data.map((project) => (
-          <p key={project.id}>{project.name}</p>
+          <Link key={project.id} href={`/projects/${project.slug}`}>
+            <p className='text-sm text-foreground/80 transition-all hover:text-foreground hover:underline'>
+              {project.name}
+            </p>
+          </Link>
         ))}
       </div>
     </div>
