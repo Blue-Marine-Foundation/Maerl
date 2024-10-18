@@ -1,10 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-// import { ProjectsDataTable } from './projects-data-table';
-// import { columns } from '@/components/projects-data-table/columns';
 import fetchProjectList from './fetch-project-list';
-import Link from 'next/link';
+import { ProjectsDataTable } from './projects-data-table';
+import { columns } from './columns';
 
 export default function ProjectsDataTableWrapper() {
   const { data, error, isLoading } = useQuery({
@@ -22,7 +21,7 @@ export default function ProjectsDataTableWrapper() {
 
   if (isLoading)
     return (
-      <div className='flex min-h-96 flex-col items-center justify-center gap-6 rounded-md bg-card p-12'>
+      <div className='flex min-h-screen flex-col items-center justify-start gap-6 rounded-md bg-card p-28'>
         <p className='text-lg font-semibold'>Loading</p>
         <p className='text-sm text-muted-foreground'>
           Fetching all projects and workstreams...
@@ -38,19 +37,5 @@ export default function ProjectsDataTableWrapper() {
       </div>
     );
 
-  // return <ProjectsDataTable columns={columns} data={data} />;
-
-  return (
-    <div className='flex min-h-96 flex-col items-center justify-center gap-6 rounded-md bg-card p-6'>
-      <div className='flex w-full flex-col gap-2'>
-        {data.map((project) => (
-          <Link key={project.id} href={`/projects/${project.slug}`}>
-            <p className='text-sm text-foreground/80 transition-all hover:text-foreground hover:underline'>
-              {project.name}
-            </p>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
+  return <ProjectsDataTable columns={columns} data={data} />;
 }
