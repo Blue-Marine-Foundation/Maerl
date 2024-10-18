@@ -23,8 +23,7 @@ const fuzzyFilter: FilterFn<ProjectMetadata> = (
   value,
   addMeta,
 ) => {
-  const projectManager =
-    (row.getValue('project_manager') as string | null) ?? '';
+  const projectManager = (row.getValue('pm') as string | null) ?? '';
   const support = (row.getValue('support') as string | null) ?? '';
   const searchValue = value.toLowerCase();
 
@@ -116,7 +115,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     filterFn: listFilterFn,
   },
   {
-    accessorKey: 'project_manager',
+    accessorKey: 'pm',
     header: 'PM',
     filterFn: fuzzyFilter,
   },

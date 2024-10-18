@@ -76,15 +76,9 @@ export function ProjectsDataTable<TData, TValue>({
           <ListColumnFilter table={table} columnId='unit_requirements' />
           <input
             placeholder='Filter by person'
-            value={
-              (table
-                .getColumn('project_manager')
-                ?.getFilterValue() as string) ?? ''
-            }
+            value={(table.getColumn('pm')?.getFilterValue() as string) ?? ''}
             onChange={(event) => {
-              table
-                .getColumn('project_manager')
-                ?.setFilterValue(event.target.value);
+              table.getColumn('pm')?.setFilterValue(event.target.value);
               table.getColumn('support')?.setFilterValue(event.target.value);
             }}
             className='max-w-sm rounded-md border bg-background px-2 py-1 text-foreground'

@@ -29,7 +29,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: upsertProjectMetadata,
+    mutationFn: (data: ProjectMetadata) => upsertProjectMetadata(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectMetadata'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -37,7 +37,8 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
     },
     onError: (error: Error) => {
       setErrorMessage(
-        error.message || 'An error occurred while saving changes.',
+        `Unable to save! Error: ${error.message}. Sorry about this. Please screenshot this whole page and send it to Suneha.` ||
+          'An error occurred while saving changes.',
       );
     },
   });
@@ -52,7 +53,12 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
           contact.name.trim() !== '' || contact.organisation.trim() !== '',
       ),
     };
-    await mutation.mutateAsync(cleanedFormState);
+    try {
+      await mutation.mutateAsync(cleanedFormState);
+    } catch (error) {
+      // Error will be handled by onError callback, no need to do anything here
+      console.log('Error submitting form:', error);
+    }
   };
 
   return (
@@ -155,7 +161,11 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         placeholder='Board intervention required'
       />
 
-      {errorMessage && <div className='mb-2 text-red-500'>{errorMessage}</div>}
+      {errorMessage && (
+        <div className='ml-auto max-w-prose rounded-md bg-red-500/10 p-2 text-red-500'>
+          <p>{errorMessage}</p>
+        </div>
+      )}
 
       <div className='flex justify-end gap-2 text-sm'>
         <button

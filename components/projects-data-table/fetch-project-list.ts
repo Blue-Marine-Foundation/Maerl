@@ -13,11 +13,11 @@ export default async function fetchProjectList() {
   }
 
   const parsedProjects = projects?.map(({ users, ...rest }) => {
-    const project_manager = users ? `${users.first_name}` : null;
+    const pm = users ? `${users.first_name} ${users.last_name}` : null;
 
     return {
       ...rest,
-      project_manager,
+      pm,
     };
   });
 
