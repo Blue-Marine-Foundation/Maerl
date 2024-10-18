@@ -32,10 +32,14 @@ export default async function upsertProjectMetadata(values: ProjectMetadata) {
 
   const supabase = createClient();
 
-  const result = await supabase
+  const { data, error } = await supabase
     .from('projects')
     .upsert(update, { onConflict: 'id' })
     .select();
 
-  return result;
+  if (error) {
+    throw new Error(error.message || 'Failed to update project metadata');
+  }
+
+  return data;
 }

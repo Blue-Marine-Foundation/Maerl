@@ -11,6 +11,7 @@ type EditFormProps = {
 
 const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
   const [formState, setFormState] = useState<ProjectMetadata>(project);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -34,10 +35,16 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       onClose();
     },
+    onError: (error: Error) => {
+      setErrorMessage(
+        error.message || 'An error occurred while saving changes.',
+      );
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage(null);
     const cleanedFormState = {
       ...formState,
       local_contacts: formState.local_contacts.filter(
@@ -45,7 +52,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
           contact.name.trim() !== '' || contact.organisation.trim() !== '',
       ),
     };
-    mutation.mutate(cleanedFormState);
+    await mutation.mutateAsync(cleanedFormState);
   };
 
   return (
@@ -148,6 +155,8 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         placeholder='Board intervention required'
       />
 
+      {errorMessage && <div className='mb-2 text-red-500'>{errorMessage}</div>}
+
       <div className='flex justify-end gap-2 text-sm'>
         <button
           type='button'
@@ -159,8 +168,9 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         <button
           type='submit'
           className='rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600'
+          disabled={mutation.isPending}
         >
-          Save Changes
+          {mutation.isPending ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
     </form>
