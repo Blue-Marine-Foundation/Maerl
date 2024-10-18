@@ -56,7 +56,6 @@ export const SelectInput: React.FC<SelectInputProps> = ({
         onChange as unknown as React.ChangeEventHandler<HTMLSelectElement>
       }
     >
-      <option value=''>Select {label}</option>
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}

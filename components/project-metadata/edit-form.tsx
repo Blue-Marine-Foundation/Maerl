@@ -29,28 +29,9 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
 
   const mutation = useMutation({
     mutationFn: upsertProjectMetadata,
-    onMutate: async (newProjectData) => {
-      await queryClient.cancelQueries({ queryKey: ['projects', project.id] });
-      const previousProject = queryClient.getQueryData([
-        'projects',
-        project.id,
-      ]);
-      queryClient.setQueryData(['projects', project.id], newProjectData);
-      return { previousProject };
-    },
-    onError: (err, newProjectData, context) => {
-      queryClient.setQueryData(
-        ['projects', project.id],
-        context?.previousProject,
-      );
-    },
-    onSuccess: (data, variables) => {
-      // Update the cache with the returned data from the server
-      queryClient.setQueryData(['projects', project.id], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projectMetadata'] });
       onClose();
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects', project.id] });
     },
   });
 
