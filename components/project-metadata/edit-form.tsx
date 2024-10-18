@@ -31,6 +31,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
     mutationFn: upsertProjectMetadata,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectMetadata'] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
       onClose();
     },
   });

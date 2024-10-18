@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ProjectMetadata } from '@/utils/types';
+import EditDialogue from '../project-metadata/edit-dialogue';
 
 export default function ProjectActionButtons({
   project,
@@ -16,9 +17,7 @@ export default function ProjectActionButtons({
       >
         View
       </Link>
-      <button type='button' className='rounded border px-2 py-1'>
-        Edit
-      </button>
+      <EditDialogue project={project} />
     </div>
   );
 }
