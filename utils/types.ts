@@ -1,5 +1,5 @@
 export type ProjectMetadata = {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   pm: string | null;

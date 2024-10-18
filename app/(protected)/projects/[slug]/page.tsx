@@ -1,7 +1,9 @@
 import { supabase } from '@/utils/supabase/service-role';
 import { createClient } from '@/utils/supabase/server';
 import PageHeading from '@/components/ui/page-heading';
-import ProjectQueryProvider from '@/components/project-page/project-query-provider';
+import { PlusCircleIcon } from 'lucide-react';
+import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
+import MetadataQueryProvider from '@/components/project-metadata/metadata-query-provider';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase.from('projects').select('*');
@@ -77,7 +79,37 @@ export default async function Project({
     <div className='flex flex-col gap-8 animate-in'>
       <PageHeading>{project.name}</PageHeading>
 
-      <ProjectQueryProvider project={flatProject} />
+      <div className='grid grid-cols-3 items-start gap-4'>
+        <MetadataQueryProvider>
+          <ProjectMetadataDisplay project={flatProject} />
+        </MetadataQueryProvider>
+        <div className='flex min-h-64 flex-col rounded-md bg-card p-4'>
+          <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
+            Logframe
+          </h3>
+          <div className='flex flex-grow flex-col items-center justify-center gap-2'>
+            <p className='text-foreground/80'>
+              This project has no logframe yet
+            </p>
+            <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
+              <PlusCircleIcon className='h-4 w-4' /> Create logframe
+            </button>
+          </div>
+        </div>
+        <div className='flex min-h-64 flex-col rounded-md bg-card p-4'>
+          <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
+            Funding requests
+          </h3>
+          <div className='flex flex-grow flex-col items-center justify-center gap-2'>
+            <p className='text-foreground/80'>
+              This project has no funding requests yet
+            </p>
+            <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
+              <PlusCircleIcon className='h-4 w-4' /> Create funding request
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
