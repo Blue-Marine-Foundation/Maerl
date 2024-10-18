@@ -5,6 +5,7 @@ import { ArrowUpDown } from 'lucide-react';
 import { ProjectMetadata } from '@/utils/types';
 // import ProjectActionButtons from './project-action-buttons'
 import Link from 'next/link';
+import ProjectActionButtons from './project-action-buttons';
 
 const createFilterFn = () => {
   return (row: any, columnId: string, filterValue: string[]) => {
@@ -168,7 +169,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   },
   {
     id: 'edit',
-    // cell: ({ row }) => <ProjectActionButtons project={row.original} />,
+    cell: ({ row }) => <ProjectActionButtons project={row.original} />,
     enableHiding: false,
   },
 ];
