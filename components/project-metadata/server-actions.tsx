@@ -26,3 +26,16 @@ export async function fetchProjectMetadata(
 
   return flatProject;
 }
+
+export default async function upsertProjectMetadata(values: ProjectMetadata) {
+  const { users, pm, ...update } = values;
+
+  const supabase = createClient();
+
+  const result = await supabase
+    .from('projects')
+    .upsert(update, { onConflict: 'id' })
+    .select();
+
+  return result;
+}
