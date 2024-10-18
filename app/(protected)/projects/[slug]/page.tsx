@@ -71,7 +71,11 @@ export default async function Project({
     );
   }
 
-  const pm = `${project.users.first_name} ${project.users.last_name}` || '';
+  const pm = project.users
+    ? [project.users.first_name, project.users.last_name]
+        .filter(Boolean)
+        .join(' ')
+    : '';
 
   const flatProject = { ...project, pm };
 
