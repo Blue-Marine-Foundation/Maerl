@@ -17,7 +17,7 @@ export default async function Layout({
   }
 
   return (
-    <div className={`max-w-app mx-auto flex w-full flex-col gap-8 py-8`}>
+    <div className={`max-w-app mx-auto flex w-full flex-col gap-8 py-6`}>
       {children}
     </div>
   );

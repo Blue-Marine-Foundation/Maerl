@@ -28,7 +28,7 @@ export default function Breadcrumbs({ projectName }: BreadcrumbsProps) {
   ];
 
   return (
-    <nav aria-label='Breadcrumb' className='mb-4'>
+    <nav aria-label='Breadcrumb'>
       <ol className='flex flex-wrap items-center space-x-2 text-sm text-muted-foreground'>
         {breadcrumbs.map((crumb, index) => (
           <li key={crumb.path} className='flex items-center'>

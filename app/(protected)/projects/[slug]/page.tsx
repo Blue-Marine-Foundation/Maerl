@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { PlusCircleIcon } from 'lucide-react';
 import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
 import MetadataQueryProvider from '@/components/project-metadata/metadata-query-provider';
+import Link from 'next/link';
 
 export default async function ProjectPage({
   params,
@@ -38,9 +39,12 @@ export default async function ProjectPage({
         </h3>
         <div className='flex flex-grow flex-col items-center justify-center gap-2'>
           <p className='text-foreground/80'>This project has no logframe yet</p>
-          <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
+          <Link
+            href={`/projects/${params.slug}/logframe`}
+            className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'
+          >
             <PlusCircleIcon className='h-4 w-4' /> Create logframe
-          </button>
+          </Link>
         </div>
       </div>
       <div className='flex min-h-64 flex-col rounded-md bg-card p-4'>
