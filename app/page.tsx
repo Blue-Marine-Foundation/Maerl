@@ -1,4 +1,6 @@
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const ListItem = ({ href, text }: { href: string; text: string }) => (
   <li className='flex min-h-64 items-center justify-center rounded-md bg-card p-8'>
@@ -9,6 +11,16 @@ const ListItem = ({ href, text }: { href: string; text: string }) => (
 );
 
 export default async function Index() {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect('/sign-in');
+  }
+
   const items = [
     { href: 'https://nextjs.org', text: 'NextJS' },
     { href: 'https://supabase.com', text: 'Supabase Auth' },

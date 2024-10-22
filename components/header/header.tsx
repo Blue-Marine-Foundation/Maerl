@@ -11,9 +11,9 @@ export default async function Header() {
   } = await createClient().auth.getUser();
 
   return (
-    <div className='mx-auto w-full border-b p-4'>
+    <div className='mx-auto w-full border-b px-4 py-3'>
       <div className='max-w-app mx-auto'>
-        <div className='flex items-baseline justify-between gap-4'>
+        <div className='mb-2 flex items-center justify-between gap-4'>
           <h2 className='flex items-center justify-start gap-2 font-medium'>
             <Logo width={22} />
             <Link href='/'>Maerl</Link>
