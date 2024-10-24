@@ -6,9 +6,11 @@ import PrimaryNavigation from './primary-nav';
 import Logo from '../logo';
 
 export default async function Header() {
+  const supabase = await createClient();
+
   const {
     data: { user },
-  } = await createClient().auth.getUser();
+  } = await supabase.auth.getUser();
 
   return (
     <div className='mx-auto w-full border-b px-4 py-3'>

@@ -4,6 +4,7 @@ import { ProjectMetadata } from '@/utils/types';
 import EditDialogue from './edit-dialogue';
 import { fetchProjectMetadata } from './server-actions';
 import { useQuery } from '@tanstack/react-query';
+import ProjectStatusBadge from '../ui/project-status-badge';
 
 export default function ProjectMetadataDisplay({
   project,
@@ -62,20 +63,9 @@ export default function ProjectMetadataDisplay({
         <div className='grid grid-cols-[170px_auto] gap-4 text-sm'>
           <p className='mb-1 text-sm text-foreground/80'>Project Status</p>
           <p>
-            <span
-              className={`rounded-md px-3 py-1 text-sm font-light tracking-wide ${
-                data.project_status === 'Active' &&
-                'bg-green-500/15 text-green-500'
-              } ${
-                data.project_status === 'Pipeline' &&
-                'bg-yellow-500/15 text-yellow-400'
-              } ${
-                data.project_status === 'Complete' &&
-                'bg-blue-500/15 text-blue-400'
-              } }`}
-            >
-              {data.project_status}
-            </span>
+            {data.project_status && (
+              <ProjectStatusBadge status={data.project_status} />
+            )}
           </p>
         </div>
         {projectMetadataKeys.map((key) => (

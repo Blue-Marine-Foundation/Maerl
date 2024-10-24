@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.16",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -19,6 +20,7 @@
     "autoprefixer": "10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "d3": "^7.9.0",
     "geist": "^1.2.1",
     "lucide-react": "^0.436.0",
     "next": "latest",
@@ -27,6 +29,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "20.10.6",
     "@types/react": "18.2.46",
     "@types/react-dom": "18.2.18",
