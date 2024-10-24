@@ -25,3 +25,11 @@ export type ProjectMetadata = {
     role: string;
   }[];
 };
+
+export type ImpactIndicator = {
+  id: number;
+  created_at: string;
+  indicator_code: string;
+  indicator_title: string;
+  indicator_unit: string;
+};

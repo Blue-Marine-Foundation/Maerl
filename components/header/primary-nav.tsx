@@ -19,6 +19,10 @@ export default function PrimaryNavigation() {
       name: 'Projects',
       href: '/projects',
     },
+    {
+      name: 'Impact Indicators',
+      href: '/impactindicators',
+    },
   ];
 
   return (
