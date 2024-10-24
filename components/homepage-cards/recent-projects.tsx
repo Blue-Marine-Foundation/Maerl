@@ -8,11 +8,19 @@ import * as d3 from 'd3';
 export default async function RecentProjects() {
   const supabase = await createClient();
 
-  const { data: projects } = await supabase
+  const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(5);
+
+  if (error) {
+    return (
+      <FeatureCard title='Recent Updates'>
+        <p>Error fetching projects from database: {error.message}</p>
+      </FeatureCard>
+    );
+  }
 
   return (
     <FeatureCard title='Recently Added Projects'>
