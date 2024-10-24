@@ -74,7 +74,7 @@ export default async function ProjectLayout({
 
   return (
     <div className='flex flex-col gap-6 animate-in'>
-      <div className='flex items-baseline justify-start gap-8'>
+      <div className='flex items-start justify-between gap-8'>
         <PageHeading>{project.name}</PageHeading>
         <Breadcrumbs projectName={project.name} />
       </div>
