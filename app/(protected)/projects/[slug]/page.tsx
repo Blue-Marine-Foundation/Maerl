@@ -9,11 +9,12 @@ export default async function ProjectPage({
 }: {
   params: { slug: string };
 }) {
-  const supabaseClient = createClient();
-  const { data: project, error: projectError } = await supabaseClient
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: project, error: projectError } = await supabase
     .from('projects')
     .select('*, users (*)')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (projectError) {
@@ -40,7 +41,7 @@ export default async function ProjectPage({
         <div className='flex flex-grow flex-col items-center justify-center gap-2'>
           <p className='text-foreground/80'>This project has no logframe yet</p>
           <Link
-            href={`/projects/${params.slug}/logframe`}
+            href={`/projects/${slug}/logframe`}
             className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'
           >
             <PlusCircleIcon className='h-4 w-4' /> Create logframe

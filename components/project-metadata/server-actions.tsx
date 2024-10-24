@@ -6,7 +6,7 @@ import { ProjectMetadata } from '@/utils/types';
 export async function fetchProjectMetadata(
   projectId: number,
 ): Promise<ProjectMetadata> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('projects')
@@ -30,7 +30,7 @@ export async function fetchProjectMetadata(
 export default async function upsertProjectMetadata(values: ProjectMetadata) {
   const { users, pm, ...update } = values;
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('projects')

@@ -23,8 +23,9 @@ export async function generateMetadata({
     slug: string;
   };
 }): Promise<Metadata> {
+  const { slug } = await params;
   return {
-    title: `${params.slug.slice(0, 3).toUpperCase()} | Maerl`,
+    title: `${slug.slice(0, 3).toUpperCase()} | Maerl`,
   };
 }
 
@@ -37,11 +38,12 @@ export default async function ProjectLayout({
   };
   children: React.ReactNode;
 }) {
-  const supabaseClient = createClient();
-  const { data: project, error: projectError } = await supabaseClient
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: project, error: projectError } = await supabase
     .from('projects')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (projectError) {
@@ -56,9 +58,7 @@ export default async function ProjectLayout({
         <div className='flex flex-col items-center gap-4 rounded-lg bg-card p-20'>
           <h2 className='font-semibold'>
             Error loading project:{' '}
-            <span className='font-mono text-muted-foreground'>
-              {params.slug}
-            </span>
+            <span className='font-mono text-muted-foreground'>{slug}</span>
           </h2>
           <p>
             Please screenshot this whole page (including the address bar) and
