@@ -1,8 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { PlusCircleIcon } from 'lucide-react';
 import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
-import MetadataQueryProvider from '@/components/project-metadata/metadata-query-provider';
-import Link from 'next/link';
+import QueryProvider from '@/utils/query-provider';
 import LogframeCard from '@/components/projects-pages/logframe-card';
 
 export default async function ProjectPage({
@@ -30,9 +29,9 @@ export default async function ProjectPage({
 
   return (
     <div className='grid grid-cols-3 items-start gap-4'>
-      <MetadataQueryProvider>
+      <QueryProvider>
         <ProjectMetadataDisplay project={project} />
-      </MetadataQueryProvider>
+      </QueryProvider>
       <LogframeCard projectId={project.id} slug={slug} />
       <div className='flex min-h-64 flex-col rounded-md bg-card p-4'>
         <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
