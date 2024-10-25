@@ -33,3 +33,10 @@ export type ImpactIndicator = {
   indicator_title: string;
   indicator_unit: string;
 };
+
+export type Impact = {
+  id: number;
+  created_at: string;
+  project_id: number;
+  title: string;
+};
