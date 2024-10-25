@@ -1,5 +1,5 @@
-import ImpactForm from '@/components/theory-of-change/impact-form';
-import OutcomesForm from '@/components/theory-of-change/outcomes-form';
+import ImpactForm from '@/components/logframe/impact-form';
+import OutcomesForm from '@/components/logframe/outcomes-form';
 
 export default function Logframe() {
   return (
