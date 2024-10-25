@@ -7,7 +7,13 @@ import Image from 'next/image';
 import logo from '@/public/bluemarinefoundationlogo.svg';
 import Link from 'next/link';
 
-export default function Login({ searchParams }: { searchParams: Message }) {
+export default async function Login({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
+  const message = await searchParams;
+
   return (
     <div className='max-w-app mx-auto flex w-full justify-between gap-8'>
       <div className='flex min-h-96 basis-1/2 flex-col items-center justify-center gap-12 rounded-lg bg-card p-8'>
@@ -47,7 +53,7 @@ export default function Login({ searchParams }: { searchParams: Message }) {
             >
               Sign in
             </SubmitButton>
-            <FormMessage message={searchParams} />
+            <FormMessage message={message} />
           </div>
         </form>
       </div>
