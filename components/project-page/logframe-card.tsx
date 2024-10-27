@@ -48,7 +48,7 @@ export default async function LogframeCard({
         outcomes.length > 0 &&
         outcomes.map((outcome) => (
           <div key={outcome.id} className='flex flex-col gap-2'>
-            <p className='text-sm text-muted-foreground'>Outcomes</p>
+            <p className='text-sm text-muted-foreground'>Outcome</p>
             <p className='text-sm'>
               <Badge className='mr-2'>{outcome.code}</Badge>
               {outcome.description}
@@ -60,7 +60,7 @@ export default async function LogframeCard({
         <div className='flex flex-grow flex-col items-center justify-center gap-2'>
           <p className='text-foreground/80'>This project has no logframe yet</p>
           <Link
-            href={`/projects/${slug}/logframe`}
+            href={`/projects/${slug}/theory-of-change`}
             className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'
           >
             <PlusCircleIcon className='h-4 w-4' /> Create logframe

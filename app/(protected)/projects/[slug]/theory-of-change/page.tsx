@@ -9,7 +9,7 @@ export default function TheoryOfChangePage() {
   const queryClient = new QueryClient();
 
   return (
-    <div className='flex flex-col gap-4 border-t pt-6'>
+    <div className='flex flex-col gap-4'>
       <QueryClientProvider client={queryClient}>
         <TheoryOfChange slug={slug as string} />
       </QueryClientProvider>

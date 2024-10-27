@@ -67,4 +67,11 @@ export interface Output {
   code: string;
   description: string;
   status: string;
+  output_measurables?: OutputMeasurable[];
+}
+
+export interface OutputMeasurable {
+  id?: number;
+  output_id: number;
+  description: string;
 }
