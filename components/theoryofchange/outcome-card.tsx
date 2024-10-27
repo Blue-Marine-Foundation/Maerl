@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Outcome } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeForm from './outcome-form';
-import EditButton from '@/components/ui/edit-button';
+import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
 import OutcomeMeasurableCard from './outcome-measurable-card';
 
@@ -22,8 +22,8 @@ export default function OutcomeCard({
       {!outcome && (
         <FeatureCard title='Outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
-            <EditButton
-              variant='add'
+            <ActionButton
+              action='add'
               label='Add outcome'
               onClick={() => setIsOutcomeDialogOpen(true)}
             />
@@ -49,7 +49,10 @@ export default function OutcomeCard({
                   </p>
                 </div>
                 <div className='flex w-full justify-end text-sm'>
-                  <EditButton onClick={() => setIsOutcomeDialogOpen(true)} />
+                  <ActionButton
+                    action='edit'
+                    onClick={() => setIsOutcomeDialogOpen(true)}
+                  />
                 </div>
               </div>
 

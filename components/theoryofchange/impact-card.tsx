@@ -4,7 +4,7 @@ import { Impact } from '@/utils/types';
 import FeatureCard from '../ui/feature-card';
 import { useState } from 'react';
 import ImpactForm from './impact-form';
-import EditButton from '../ui/edit-button';
+import ActionButton from '../ui/action-button';
 
 export default function ImpactCard({
   impact,
@@ -19,8 +19,8 @@ export default function ImpactCard({
     <FeatureCard title='Impact'>
       {!impact ? (
         <div className='flex grow flex-col items-center justify-center gap-4'>
-          <EditButton
-            variant='add'
+          <ActionButton
+            action='add'
             label='Add impact'
             onClick={() => setIsDialogOpen(true)}
           />
@@ -29,7 +29,7 @@ export default function ImpactCard({
         <div className='flex grow flex-col items-start justify-between gap-4'>
           <p className='text-base'>{impact.title}</p>
           <div className='flex w-full justify-end text-sm'>
-            <EditButton onClick={() => setIsDialogOpen(true)} />
+            <ActionButton action='edit' onClick={() => setIsDialogOpen(true)} />
           </div>
         </div>
       )}

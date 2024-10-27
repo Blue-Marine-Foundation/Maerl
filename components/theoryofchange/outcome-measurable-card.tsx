@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { OutcomeMeasurable } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeMeasurableForm from './outcome-measurable-form';
-import EditButton from '@/components/ui/edit-button';
+import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
+import OutputsContainer from './outputs-container';
 
 export default function OutcomeMeasurableCard({
   measurables,
@@ -43,8 +44,8 @@ export default function OutcomeMeasurableCard({
     <>
       {measurables.length === 0 && (
         <div className='flex items-center justify-center rounded-md border border-dashed py-12'>
-          <EditButton
-            variant='add'
+          <ActionButton
+            action='add'
             label='Add outcome indicator'
             onClick={handleAddMeasurable}
           />
@@ -61,7 +62,7 @@ export default function OutcomeMeasurableCard({
                 title={`Outcome Indicator ${measurable.code.slice(3)}`}
                 minHeight='100px'
               >
-                <div className='grid grid-cols-[1fr_auto_1fr] items-baseline justify-between gap-4 text-sm'>
+                <div className='grid grid-cols-[50px_auto_50px] items-baseline justify-between gap-4 text-sm'>
                   <div>
                     <Badge className='mr-2'>{measurable.code}</Badge>
                   </div>
@@ -76,16 +77,20 @@ export default function OutcomeMeasurableCard({
                     </p>
                   </div>
                   <div className='flex justify-end'>
-                    <EditButton
+                    <ActionButton
+                      action='edit'
+                      variant='icon'
                       onClick={() => handleEditMeasurable(measurable)}
                     />
                   </div>
                 </div>
+
+                <OutputsContainer outputs={measurable.outputs || []} />
               </FeatureCard>
             ))}
           <div className='flex items-start justify-center rounded-md border border-dashed bg-card/30 p-8'>
-            <EditButton
-              variant='add'
+            <ActionButton
+              action='add'
               label='Add outcome indicator'
               onClick={handleAddMeasurable}
             />
