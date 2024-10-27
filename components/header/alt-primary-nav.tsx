@@ -35,7 +35,7 @@ export default function PrimaryNavigation() {
           >
             <Link
               href={item.href}
-              className='inline-block rounded-md border border-transparent px-4 py-2 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50'
+              className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50 group-[.active]:text-foreground'
             >
               {item.name}
             </Link>
