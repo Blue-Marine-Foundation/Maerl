@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchLogframe } from '@/components/logframe/server-action';
 import ImpactCard from '@/components/logframe/impact-card';
-import OutcomesCard from '@/components/logframe/outcomes-card';
+import OutcomeCard from '@/components/logframe/outcome-card';
 import TheoryOfChangeSkeleton from './theory-of-change-skeleton';
 
 export default function TheoryOfChange({ slug }: { slug: string }) {
@@ -25,20 +25,20 @@ export default function TheoryOfChange({ slug }: { slug: string }) {
   const projectId = data?.data?.id;
 
   return (
-    <div className='relative grid grid-cols-[30%_1fr] items-start gap-8 text-sm'>
+    <div className='relative grid grid-cols-[1fr_3fr] items-start gap-8 text-sm'>
       <div className='sticky top-4'>
         <ImpactCard impact={impact} projectId={projectId} />
       </div>
       <div className='flex flex-col gap-4'>
         {outcomes.map((outcome) => (
-          <OutcomesCard
+          <OutcomeCard
             key={outcome.id}
             outcome={outcome}
             projectId={projectId}
           />
         ))}
         {outcomes.length === 0 && (
-          <OutcomesCard outcome={null} projectId={projectId} />
+          <OutcomeCard outcome={null} projectId={projectId} />
         )}
       </div>
     </div>
