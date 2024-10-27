@@ -83,7 +83,7 @@ export default function OutcomeMeasurableCard({
                 </div>
               </FeatureCard>
             ))}
-          <div className='flex items-start justify-start'>
+          <div className='flex items-start justify-center rounded-md border border-dashed bg-card/30 p-8'>
             <EditButton
               variant='add'
               label='Add outcome indicator'
