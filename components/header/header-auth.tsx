@@ -14,8 +14,8 @@ import { MenuIcon } from 'lucide-react';
 export default async function AuthButton({ user }: { user: User }) {
   return user ? (
     <DropdownMenu>
-      <DropdownMenuTrigger className='flex items-center gap-4 rounded-md border px-3 py-2 transition-colors hover:bg-sky-800/50'>
-        <p className='text-sm'>{user.email}</p> <MenuIcon className='h-5 w-5' />
+      <DropdownMenuTrigger className='flex items-center gap-4 rounded-md border px-2 py-1 transition-colors hover:bg-sky-800/50'>
+        <p className='text-xs'>{user.email}</p> <MenuIcon className='h-4 w-4' />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
