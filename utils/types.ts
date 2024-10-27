@@ -57,4 +57,14 @@ export interface OutcomeMeasurable {
   description: string;
   verification: string;
   assumptions: string;
+  outputs?: Output[];
+}
+
+export interface Output {
+  id: number;
+  project_id: number;
+  outcome_measurable_id: number;
+  code: string;
+  description: string;
+  status: string;
 }
