@@ -29,14 +29,14 @@ export default function Breadcrumbs({ projectName }: BreadcrumbsProps) {
 
   return (
     <nav aria-label='Breadcrumb'>
-      <ol className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
+      <ol className='flex flex-wrap items-center gap-2 text-xs text-muted-foreground'>
         {breadcrumbs.map((crumb, index) => (
           <li key={crumb.path} className='flex items-center'>
             {index > 0 && (
               <ChevronRight className='mr-2 h-4 w-4 text-muted-foreground/60' />
             )}
             {index === breadcrumbs.length - 1 ? (
-              <span className='max-w-48 truncate font-medium text-foreground'>
+              <span className='max-w-48 truncate font-medium text-foreground/90'>
                 {crumb.name}
               </span>
             ) : (
