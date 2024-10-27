@@ -27,11 +27,11 @@ export default async function LogframeCard({
   const cardLinks = [
     {
       label: 'View theory of change',
-      href: `/projects/${slug}/logframe`,
+      href: `/projects/${slug}/theory-of-change`,
     },
     {
-      label: 'View outputs',
-      href: `/projects/${slug}/outputs`,
+      label: 'View logframe',
+      href: `/projects/${slug}/logframe`,
     },
   ];
 

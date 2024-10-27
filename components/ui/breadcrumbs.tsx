@@ -18,7 +18,13 @@ export default function Breadcrumbs({ projectName }: BreadcrumbsProps) {
       let name = segment;
       if (segment === 'projects') name = 'Projects';
       else if (index === 1 && projectName) name = projectName;
-      else name = segment.charAt(0).toUpperCase() + segment.slice(1);
+      else {
+        // Handle hyphenated segments by splitting, capitalizing each word, and joining
+        name = segment
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+      }
 
       return {
         name,

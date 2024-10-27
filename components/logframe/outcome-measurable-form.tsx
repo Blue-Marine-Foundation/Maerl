@@ -11,6 +11,7 @@ interface OutcomeMeasurableFormProps {
   onClose: () => void;
   measurable: OutcomeMeasurable | null;
   outcomeId: number;
+  projectId: number;
 }
 
 export default function OutcomeMeasurableForm({
@@ -18,6 +19,7 @@ export default function OutcomeMeasurableForm({
   onClose,
   measurable,
   outcomeId,
+  projectId,
 }: OutcomeMeasurableFormProps) {
   // Initialize state with measurable values if editing
   const [description, setDescription] = useState(measurable?.description || '');
@@ -51,6 +53,7 @@ export default function OutcomeMeasurableForm({
     e.preventDefault();
     mutation.mutate({
       id: measurable?.id,
+      project_id: projectId,
       code: measurable?.code,
       description,
       verification,

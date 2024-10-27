@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Outcome, OutcomeMeasurable } from '@/utils/types';
+import { OutcomeMeasurable } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
-import OutcomeForm from './outcome-form';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import EditButton from '@/components/ui/edit-button';
 import { Badge } from '@/components/ui/badge';
@@ -49,44 +48,52 @@ export default function OutcomeMeasurableCard({
             label='Add outcome indicator'
             onClick={handleAddMeasurable}
           />
-          <OutcomeMeasurableForm
-            isOpen={isMeasurableDialogOpen}
-            onClose={handleCloseMeasurableDialog}
-            measurable={selectedMeasurable}
-            outcomeId={outcomeId}
-          />
         </div>
       )}
 
       {measurables.length > 0 && (
-        <FeatureCard title='Outcome Indicators'>
-          {measurables.map((measurable) => (
-            <div key={measurable.id} className='mb-2 text-sm'>
-              <div className='flex items-start justify-between'>
-                <div>
-                  <p>
+        <div className='flex flex-col gap-8'>
+          {measurables
+            .sort((a, b) => a.code.localeCompare(b.code))
+            .map((measurable) => (
+              <FeatureCard
+                title={`Outcome Indicator ${measurable.code.slice(3)}`}
+                minHeight='100px'
+              >
+                <div
+                  key={measurable.id}
+                  className='grid grid-cols-[1fr_auto_1fr] items-baseline justify-between gap-4 text-sm'
+                >
+                  <div>
                     <Badge className='mr-2'>{measurable.code}</Badge>
-                    {measurable.description}
-                  </p>
-                  <p className='text-xs text-muted-foreground'>
-                    Verification: {measurable.verification}
-                  </p>
-                  <p className='text-xs text-muted-foreground'>
-                    Assumptions: {measurable.assumptions}
-                  </p>
+                  </div>
+
+                  <div className='flex grow flex-col gap-2'>
+                    <p>{measurable.description}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      Verification: {measurable.verification}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      Assumptions: {measurable.assumptions}
+                    </p>
+                  </div>
+                  <div className='flex justify-end'>
+                    <EditButton
+                      onClick={() => handleEditMeasurable(measurable)}
+                    />
+                  </div>
                 </div>
-                <EditButton onClick={() => handleEditMeasurable(measurable)} />
-              </div>
-            </div>
-          ))}
-          <OutcomeMeasurableForm
-            isOpen={isMeasurableDialogOpen}
-            onClose={handleCloseMeasurableDialog}
-            measurable={selectedMeasurable}
-            outcomeId={outcomeId}
-          />
-        </FeatureCard>
+              </FeatureCard>
+            ))}
+        </div>
       )}
+      <OutcomeMeasurableForm
+        isOpen={isMeasurableDialogOpen}
+        onClose={handleCloseMeasurableDialog}
+        measurable={selectedMeasurable}
+        outcomeId={outcomeId}
+        projectId={projectId}
+      />
     </>
   );
 }
