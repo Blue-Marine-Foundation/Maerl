@@ -59,10 +59,10 @@ export default function OutcomeMeasurableCard({
             .map((measurable) => (
               <FeatureCard
                 key={measurable.id}
-                title={`Outcome Indicator ${measurable.code.slice(3)}`}
+                title={`Outcome Indicator ${measurable.code}`}
                 minHeight='100px'
               >
-                <div className='grid grid-cols-[50px_auto_50px] items-baseline justify-between gap-4 text-sm'>
+                <div className='grid grid-cols-[50px_1fr_50px] items-baseline justify-between gap-4 text-sm'>
                   <div>
                     <Badge className='mr-2'>{measurable.code}</Badge>
                   </div>
@@ -85,7 +85,11 @@ export default function OutcomeMeasurableCard({
                   </div>
                 </div>
 
-                <OutputsContainer outputs={measurable.outputs || []} />
+                <OutputsContainer
+                  outputs={measurable.outputs || []}
+                  outcomeMeasurableId={measurable.id!}
+                  projectId={projectId}
+                />
               </FeatureCard>
             ))}
           <div className='flex items-start justify-center rounded-md border border-dashed bg-card/30 p-8'>
