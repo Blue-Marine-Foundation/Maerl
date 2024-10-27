@@ -2,6 +2,7 @@ import FeatureCard from '../ui/feature-card';
 import Link from 'next/link';
 import { PlusCircleIcon } from 'lucide-react';
 import { fetchLogframe } from './server-action';
+import { Badge } from '../ui/badge';
 
 export default async function LogframeCard({
   projectId,
@@ -49,9 +50,7 @@ export default async function LogframeCard({
           <div key={outcome.id} className='flex flex-col gap-2'>
             <p className='text-sm text-muted-foreground'>Outcomes</p>
             <p className='text-sm'>
-              <span className='mr-2 rounded bg-sky-500/50 px-1 py-0.5 text-sm'>
-                {outcome.code}
-              </span>{' '}
+              <Badge className='mr-2'>{outcome.code}</Badge>
               {outcome.description}
             </p>
           </div>
