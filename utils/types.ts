@@ -40,3 +40,20 @@ export type Impact = {
   project_id: number;
   title: string;
 };
+
+export type Outcome = {
+  id: number;
+  project_id: number;
+  description: string;
+  code: string;
+  outcome_measurables: OutcomeMeasurable[];
+};
+
+export interface OutcomeMeasurable {
+  id?: number;
+  outcome_id: number;
+  code: string;
+  description: string;
+  verification: string;
+  assumptions: string;
+}
