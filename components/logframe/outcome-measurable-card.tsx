@@ -57,13 +57,11 @@ export default function OutcomeMeasurableCard({
             .sort((a, b) => a.code.localeCompare(b.code))
             .map((measurable) => (
               <FeatureCard
+                key={measurable.id}
                 title={`Outcome Indicator ${measurable.code.slice(3)}`}
                 minHeight='100px'
               >
-                <div
-                  key={measurable.id}
-                  className='grid grid-cols-[1fr_auto_1fr] items-baseline justify-between gap-4 text-sm'
-                >
+                <div className='grid grid-cols-[1fr_auto_1fr] items-baseline justify-between gap-4 text-sm'>
                   <div>
                     <Badge className='mr-2'>{measurable.code}</Badge>
                   </div>
@@ -85,6 +83,13 @@ export default function OutcomeMeasurableCard({
                 </div>
               </FeatureCard>
             ))}
+          <div className='flex items-start justify-start'>
+            <EditButton
+              variant='add'
+              label='Add outcome indicator'
+              onClick={handleAddMeasurable}
+            />
+          </div>
         </div>
       )}
       <OutcomeMeasurableForm

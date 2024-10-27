@@ -18,7 +18,7 @@ export default function OutcomeCard({
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
 
   return (
-    <div className='grid grid-cols-[1fr_2fr] items-start justify-between gap-8'>
+    <div className='relative grid grid-cols-[1fr_2fr] items-start justify-between gap-8'>
       {!outcome && (
         <FeatureCard title='Outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
@@ -39,26 +39,29 @@ export default function OutcomeCard({
 
       {outcome && (
         <>
-          <FeatureCard title='Outcome'>
-            <div className='flex grow flex-col items-start justify-between gap-4'>
-              <div>
-                <p className='text-sm'>
-                  <Badge className='mr-2'>{outcome.code}</Badge>
-                  {outcome.description}
-                </p>
+          <div className='sticky top-4'>
+            <FeatureCard title='Outcome'>
+              <div className='flex grow flex-col items-start justify-between gap-4'>
+                <div>
+                  <p className='text-sm'>
+                    <Badge className='mr-2'>{outcome.code}</Badge>
+                    {outcome.description}
+                  </p>
+                </div>
+                <div className='flex w-full justify-end text-sm'>
+                  <EditButton onClick={() => setIsOutcomeDialogOpen(true)} />
+                </div>
               </div>
-              <div className='flex w-full justify-end text-sm'>
-                <EditButton onClick={() => setIsOutcomeDialogOpen(true)} />
-              </div>
-            </div>
 
-            <OutcomeForm
-              isOpen={isOutcomeDialogOpen}
-              onClose={() => setIsOutcomeDialogOpen(false)}
-              outcome={outcome}
-              projectId={projectId}
-            />
-          </FeatureCard>
+              <OutcomeForm
+                isOpen={isOutcomeDialogOpen}
+                onClose={() => setIsOutcomeDialogOpen(false)}
+                outcome={outcome}
+                projectId={projectId}
+              />
+            </FeatureCard>
+          </div>
+
           <OutcomeMeasurableCard
             measurables={outcome.outcome_measurables}
             outcomeId={outcome.id}
