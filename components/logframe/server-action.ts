@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { Impact, Outcome } from '@/utils/types';
+import { Impact, Outcome, OutcomeMeasurable } from '@/utils/types';
 
 export const fetchLogframe = async (identifier: number | string) => {
   const supabase = await createClient();
@@ -59,5 +59,32 @@ export const upsertOutcome = async (outcome: Partial<Outcome>) => {
     if (measurablesError) throw measurablesError;
   }
 
+  return data;
+};
+
+export const upsertOutcomeMeasurable = async (
+  measurable: Partial<OutcomeMeasurable>,
+) => {
+  const supabase = await createClient();
+
+  // Ensure we have required fields
+  if (!measurable.outcome_id || !measurable.description || !measurable.code) {
+    throw new Error('Missing required fields');
+  }
+
+  const { data, error } = await supabase
+    .from('outcome_measurables')
+    .upsert({
+      id: measurable.id,
+      outcome_id: measurable.outcome_id,
+      description: measurable.description,
+      verification: measurable.verification || '',
+      assumptions: measurable.assumptions || '',
+      code: measurable.code,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
   return data;
 };
