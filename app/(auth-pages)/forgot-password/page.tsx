@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 
-export default function ForgotPassword({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
+export default async function ForgotPassword(
+  props: {
+    searchParams: Promise<Message>;
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <div className='mx-auto flex w-full min-w-64 max-w-96 flex-1 flex-col gap-2'>
       <form className='mb-12 text-foreground [&>input]:mb-6'>

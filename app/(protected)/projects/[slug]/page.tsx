@@ -7,7 +7,7 @@ import LogframeCard from '@/components/project-page/logframe-card';
 export default async function ProjectPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   const supabase = await createClient();

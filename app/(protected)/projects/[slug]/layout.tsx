@@ -20,9 +20,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }): Promise<Metadata> {
   const { slug } = await params;
   return {
@@ -34,9 +34,9 @@ export default async function ProjectLayout({
   params,
   children,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
   children: React.ReactNode;
 }) {
   const { slug } = await params;

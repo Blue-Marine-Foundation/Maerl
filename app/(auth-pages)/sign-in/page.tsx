@@ -7,12 +7,8 @@ import Image from 'next/image';
 import logo from '@/public/bluemarinefoundationlogo.svg';
 import Link from 'next/link';
 
-export default async function Login({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
-  const message = await searchParams;
+export default async function Login(props: { searchParams: Promise<Message> }) {
+  const message = await props.searchParams;
 
   return (
     <div className='max-w-app mx-auto flex w-full justify-between gap-8'>
