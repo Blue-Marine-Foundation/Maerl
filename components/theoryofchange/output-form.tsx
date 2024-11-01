@@ -23,11 +23,13 @@ export default function OutputForm({
 }: OutputFormProps) {
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
+  const [error, setError] = useState<string | null>(null);
 
   // Reset form when output prop changes
   useEffect(() => {
     setDescription(output?.description || '');
     setCode(output?.code || '');
+    setError(null); // Clear any previous errors
   }, [output]);
 
   const queryClient = useQueryClient();
@@ -42,10 +44,15 @@ export default function OutputForm({
       queryClient.invalidateQueries({ queryKey: ['logframe'] });
       onClose();
     },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     mutation.mutate({
       id: output?.id,
       project_id: projectId,
@@ -88,7 +95,12 @@ export default function OutputForm({
               placeholder='Enter output description'
             />
           </div>
-          <div className='flex justify-end'>
+          <div className='flex items-center justify-end gap-6'>
+            {error && (
+              <div className='rounded-md border border-red-800 bg-red-600/10 px-4 py-2 text-sm'>
+                <p>{error}</p>
+              </div>
+            )}
             <button
               className='flex items-center gap-2 rounded-md border border-blue-400 bg-blue-600 px-3 py-1 text-foreground transition-all hover:bg-blue-700'
               type='submit'

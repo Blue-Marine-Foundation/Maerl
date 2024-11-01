@@ -92,11 +92,25 @@ export const upsertOutcomeMeasurable = async (
 export const upsertOutput = async (output: Partial<Output>) => {
   const supabase = await createClient();
 
-  // Ensure we have required fields
   if (!output.outcome_measurable_id || !output.description || !output.code) {
     throw new Error('Missing required fields');
   }
 
+  const { data: existingOutputs } = await supabase
+    .from('outputs')
+    .select('id, code')
+    .eq('project_id', output.project_id)
+    .neq('id', output.id || 0); // Exclude current output when editing
+
+  const isDuplicate = existingOutputs?.some(
+    (existingOutput) => existingOutput.code === output.code,
+  );
+
+  if (isDuplicate) {
+    throw new Error(`Output code "${output.code}" already exists`);
+  }
+
+  // If no duplicate found, proceed with upsert
   const { data, error } = await supabase
     .from('outputs')
     .upsert({
