@@ -1,6 +1,6 @@
 'use client';
 
-import TheoryOfChange from '@/components/theoryofchange/theory-of-change';
+import TheoryOfChange from '@/components/logframe/theory-of-change';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 

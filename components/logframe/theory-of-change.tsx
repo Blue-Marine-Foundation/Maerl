@@ -1,10 +1,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchLogframe } from '@/components/theoryofchange/server-action';
-import ImpactCard from '@/components/theoryofchange/impact-card';
-import OutcomeCard from '@/components/theoryofchange/outcome-card';
-import TheoryOfChangeSkeleton from '@/components/theoryofchange/theory-of-change-skeleton';
+import { fetchLogframe } from '@/components/logframe/server-actions';
+import ImpactCard from '@/components/logframe/impact-card';
+import OutcomeCard from '@/components/logframe/outcome-card';
+import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skeleton';
 
 export default function TheoryOfChange({ slug }: { slug: string }) {
   const { data, isLoading, error } = useQuery({

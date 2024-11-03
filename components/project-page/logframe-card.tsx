@@ -1,7 +1,7 @@
 import FeatureCard from '../ui/feature-card';
 import Link from 'next/link';
 import { PlusCircleIcon } from 'lucide-react';
-import { fetchLogframe } from '@/components/theoryofchange/server-action';
+import { fetchLogframe } from '@/components/logframe/server-action';
 import { Badge } from '../ui/badge';
 
 export default async function LogframeCard({
