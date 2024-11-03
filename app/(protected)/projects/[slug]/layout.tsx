@@ -77,7 +77,7 @@ export default async function ProjectLayout({
     <div className='flex flex-col gap-6 animate-in'>
       <div className='-mt-2 flex flex-col items-start justify-start gap-6'>
         <Breadcrumbs projectName={project.name} />
-        <div className='flex w-full items-baseline justify-between gap-6'>
+        <div className='flex w-full items-baseline justify-start gap-6'>
           <PageHeading>{project.name}</PageHeading>
           <ProjectNavigation slug={slug} />
         </div>

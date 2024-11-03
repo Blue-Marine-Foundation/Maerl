@@ -12,7 +12,7 @@ export default function ProjectNavigation({ slug }: { slug: string }) {
 
   const items = [
     {
-      name: 'Overview',
+      name: 'Project Home',
       href: `/projects/${slug}`,
     },
     {
