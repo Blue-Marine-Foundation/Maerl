@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import { fetchOutputByCode } from '@/components/logframe/server-actions';
 import FeatureCard from '@/components/ui/feature-card';
 import { OutputMeasurable } from '@/utils/types';
+import OutputCard from '@/components/logframe/output-card';
 
 function OutputContent() {
   const { output, slug } = useParams();
@@ -26,17 +27,7 @@ function OutputContent() {
     return <div>Output not found</div>;
   }
 
-  return (
-    <FeatureCard title={`Output ${outputData.code}`}>
-      <p className='mb-4'>{outputData.description}</p>
-
-      <div className='flex flex-col gap-2'>
-        {outputData.output_measurables.map((indicator: OutputMeasurable) => {
-          return <p key={indicator.id}>{indicator.description}</p>;
-        })}
-      </div>
-    </FeatureCard>
-  );
+  return <OutputCard output={outputData} />;
 }
 
 export default function LogframeOutputPage() {

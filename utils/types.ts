@@ -72,6 +72,13 @@ export interface Output {
 
 export interface OutputMeasurable {
   id?: number;
+  project_id: number;
   output_id: number;
+  code: string;
   description: string;
+  impact_indicator_id: number | null;
+  target: string;
+  unit: string;
+  verification: string;
+  assumptions: string;
 }
