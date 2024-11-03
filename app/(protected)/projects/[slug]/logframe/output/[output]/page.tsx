@@ -7,8 +7,6 @@ import {
 } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { fetchOutputByCode } from '@/components/logframe/server-actions';
-import FeatureCard from '@/components/ui/feature-card';
-import { OutputMeasurable } from '@/utils/types';
 import OutputCard from '@/components/logframe/output-card';
 
 function OutputContent() {

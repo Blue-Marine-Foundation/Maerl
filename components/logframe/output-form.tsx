@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
-import { upsertOutput } from './server-action';
+import { upsertOutput } from './server-actions';
 
 interface OutputFormProps {
   isOpen: boolean;
@@ -60,6 +60,7 @@ export default function OutputForm({
       project_id: projectId,
       code,
       description,
+      status,
     });
   };
 

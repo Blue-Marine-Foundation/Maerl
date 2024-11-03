@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { upsertOutcome } from './server-action';
+import { upsertOutcome } from './server-actions';
 import { Outcome } from '@/utils/types';
 
 interface OutcomeFormProps {

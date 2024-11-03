@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { upsertImpact } from './server-action';
+import { upsertImpact } from './server-actions';
 import { Impact } from '@/utils/types';
 
 interface ImpactDialogProps {

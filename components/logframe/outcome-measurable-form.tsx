@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { OutcomeMeasurable } from '@/utils/types';
-import { upsertOutcomeMeasurable } from './server-action';
+import { upsertOutcomeMeasurable } from './server-actions';
 
 interface OutcomeMeasurableFormProps {
   isOpen: boolean;
