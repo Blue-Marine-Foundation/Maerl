@@ -23,12 +23,14 @@ export default function OutputForm({
 }: OutputFormProps) {
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
+  const [status, setStatus] = useState(output?.status || 'Not started');
   const [error, setError] = useState<string | null>(null);
 
   // Reset form when output prop changes
   useEffect(() => {
     setDescription(output?.description || '');
     setCode(output?.code || '');
+    setStatus(output?.status || 'Not started');
     setError(null); // Clear any previous errors
   }, [output]);
 
@@ -94,6 +96,23 @@ export default function OutputForm({
               onChange={(e) => setDescription(e.target.value)}
               placeholder='Enter output description'
             />
+          </div>
+          <div>
+            <label htmlFor='status' className='mb-1 block text-sm font-medium'>
+              Status
+            </label>
+            <select
+              id='status'
+              className='w-full rounded-md border bg-background px-4 py-2'
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value='Not started'>Not Started</option>
+              <option value='Delayed'>Delayed</option>
+              <option value='In progress'>In Progress</option>
+              <option value='Complete'>Complete</option>
+              <option value='Abandoned'>Abandoned</option>
+            </select>
           </div>
           <div className='flex items-center justify-end gap-6'>
             {error && (

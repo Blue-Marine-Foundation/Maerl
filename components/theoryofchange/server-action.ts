@@ -100,7 +100,7 @@ export const upsertOutput = async (output: Partial<Output>) => {
     .from('outputs')
     .select('id, code')
     .eq('project_id', output.project_id)
-    .neq('id', output.id || 0); // Exclude current output when editing
+    .neq('id', output.id || 0);
 
   const isDuplicate = existingOutputs?.some(
     (existingOutput) => existingOutput.code === output.code,
@@ -110,7 +110,6 @@ export const upsertOutput = async (output: Partial<Output>) => {
     throw new Error(`Output code "${output.code}" already exists`);
   }
 
-  // If no duplicate found, proceed with upsert
   const { data, error } = await supabase
     .from('outputs')
     .upsert({
@@ -119,6 +118,7 @@ export const upsertOutput = async (output: Partial<Output>) => {
       project_id: output.project_id,
       description: output.description,
       code: output.code,
+      status: output.status,
     })
     .select()
     .single();
