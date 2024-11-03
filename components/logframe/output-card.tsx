@@ -8,7 +8,7 @@ export default function OutputCard({ output }: { output: Output }) {
   return (
     <>
       <FeatureCard title={`Output ${output.code}`}>
-        <p className='mb-4'>{output.description}</p>
+        <p className='max-w-prose text-lg font-medium'>{output.description}</p>
         <OutputMeasurableTable output={output} />
       </FeatureCard>
       <div className='grid grid-cols-2 gap-8'>
