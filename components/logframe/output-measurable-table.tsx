@@ -47,6 +47,10 @@ const columns: ColumnDef<OutputMeasurable>[] = [
     },
   },
   {
+    accessorKey: 'target',
+    header: 'Target',
+  },
+  {
     id: 'actions',
     cell: ({ row, table }) => {
       const { handleEditMeasurable } = table.options.meta as {

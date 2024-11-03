@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { OutputMeasurable } from '@/utils/types';
+import { OutputMeasurable, ImpactIndicator } from '@/utils/types';
 import { upsertOutputMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '@/components/impact-indicators/impact-indicator-select';
-import type { ImpactIndicator } from '@/utils/types';
 
 interface OutputMeasurableFormProps {
   isOpen: boolean;
@@ -28,7 +27,7 @@ export default function OutputMeasurableForm({
   const [impactIndicatorId, setImpactIndicatorId] = useState<number | null>(
     measurable?.impact_indicator_id || null,
   );
-  const [target, setTarget] = useState(measurable?.target || '');
+  const [target, setTarget] = useState(measurable?.target || null);
   const [verification, setVerification] = useState(
     measurable?.verification || '',
   );
@@ -41,7 +40,7 @@ export default function OutputMeasurableForm({
     setCode(measurable?.code || '');
     setDescription(measurable?.description || '');
     setImpactIndicatorId(measurable?.impact_indicator_id || null);
-    setTarget(measurable?.target || '');
+    setTarget(measurable?.target || null);
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
   }, [measurable]);
@@ -127,9 +126,10 @@ export default function OutputMeasurableForm({
             </label>
             <input
               id='target'
+              type='number'
               className='w-full rounded-md border bg-background px-4 py-2'
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
+              value={target || ''}
+              onChange={(e) => setTarget(Number(e.target.value))}
               placeholder='Enter target value'
             />
           </div>

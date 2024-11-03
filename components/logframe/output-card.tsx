@@ -13,10 +13,17 @@ export default function OutputCard({ output }: { output: Output }) {
       </FeatureCard>
       <div className='grid grid-cols-2 gap-8'>
         <FeatureCard title='Activities'>
-          <p>Blah blah blah</p>
+          <div className='flex h-full items-center justify-center gap-2'>
+            <p className='text-muted-foreground'>Activities coming soon</p>
+          </div>
         </FeatureCard>
         <FeatureCard title='Updates'>
-          <p>Foo bar baz</p>
+          <div className='flex h-full items-center justify-center gap-2'>
+            <p className='text-muted-foreground'>
+              Updates moving here soon; for now, keep adding updates in old
+              Maerl
+            </p>
+          </div>
         </FeatureCard>
       </div>
     </>

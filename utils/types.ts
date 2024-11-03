@@ -77,7 +77,7 @@ export interface OutputMeasurable {
   code: string;
   description: string;
   impact_indicator_id: number | null;
-  target: string;
+  target: number | null;
   unit: string;
   verification: string;
   assumptions: string;
