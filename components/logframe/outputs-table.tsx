@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { Badge, BadgeProps } from '@/components/ui/badge';
 import ActionButton from '../ui/action-button';
 import OutputForm from './output-form';
 import Link from 'next/link';
@@ -47,6 +47,22 @@ export default function OutputsTable({
       ),
     },
     {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const badgeVariant = row.original.status
+          ? (row.original.status
+              .toLowerCase()
+              .replace(' ', '_') as BadgeProps['variant'])
+          : 'default';
+        return (
+          <div className='flex w-24'>
+            <Badge variant={badgeVariant}>{row.original.status}</Badge>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: 'description',
       header: 'Description',
       cell: ({ row }) => {
@@ -62,22 +78,11 @@ export default function OutputsTable({
       },
     },
     {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => {
-        return (
-          <div className='flex w-24'>
-            <Badge variant='default'>{row.original.status}</Badge>
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: 'output_measurables',
       header: 'Indicators',
       cell: ({ row }) => {
         const measurables = row.original.output_measurables || [];
-        return <span>{measurables.length}</span>;
+        return <p className='text-right'>{measurables.length}</p>;
       },
     },
     {

@@ -11,6 +11,9 @@ const badgeVariants = cva('inline items-center rounded px-2 py-0.5 text-sm', {
       destructive:
         'border-transparent bg-destructive text-destructive-foreground',
       outline: 'text-foreground',
+      success: 'border-transparent bg-green-500/50 text-foreground',
+      complete: 'border-transparent bg-green-500/50 text-foreground',
+      in_progress: 'border-transparent bg-sky-500/50 text-foreground',
     },
   },
   defaultVariants: {
