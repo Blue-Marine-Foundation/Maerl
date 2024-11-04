@@ -23,6 +23,7 @@ import ActionButton from '../ui/action-button';
 import OutputForm from './output-form';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { timeFormat } from 'd3';
 
 interface OutputsTableProps {
   outputs: Output[];
@@ -68,14 +69,25 @@ export default function OutputsTable({
       cell: ({ row }) => {
         const outputNumber = row.original.code.slice(2);
         return (
-          <Link
-            href={`/projects/${slug}/logframe/output/${outputNumber}`}
-            className='hover:underline'
-          >
-            {row.getValue('description')}
-          </Link>
+          <p className='max-w-prose'>
+            <Link
+              href={`/projects/${slug}/logframe/output/${outputNumber}`}
+              className='hover:underline'
+            >
+              {row.getValue('description')}
+            </Link>
+          </p>
         );
       },
+    },
+    {
+      accessorKey: 'created_at',
+      header: 'Last updated',
+      cell: ({ row }) => (
+        <p className='w-28'>
+          {timeFormat('%d %b %Y')(new Date(row.original.created_at))}
+        </p>
+      ),
     },
     {
       accessorKey: 'output_measurables',

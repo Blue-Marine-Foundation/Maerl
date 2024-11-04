@@ -62,6 +62,7 @@ export interface OutcomeMeasurable {
 
 export interface Output {
   id: number;
+  created_at: string;
   project_id: number;
   outcome_measurable_id: number;
   code: string;

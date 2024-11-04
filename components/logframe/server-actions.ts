@@ -30,7 +30,7 @@ export const fetchOutputByCode = async (code: string, projectSlug: string) => {
       `
       *,
       projects!inner(*),
-      output_measurables(*, impact_indicators(*)),
+      output_measurables(*, impact_indicators(*))
     `,
     )
     .eq('projects.slug', projectSlug)
