@@ -18,20 +18,21 @@ export default function LogframeContent() {
     return <div>Loading...</div>;
   }
 
-  console.log(data);
-
   const outputs =
     data?.data?.outcomes
       .flatMap((outcome) => outcome.outcome_measurables)
       .flatMap((measurable) => measurable.outputs)
-      .sort((a, b) => a.code.localeCompare(b.code)) || [];
+      .sort((a, b) => {
+        const aNum = parseInt(a.code.split('.')[1]);
+        const bNum = parseInt(b.code.split('.')[1]);
+        return aNum - bNum;
+      }) || [];
   const projectId = data?.data?.id;
 
   return (
     <div className='flex flex-col gap-4'>
-      <FeatureCard title='Logframe'>
-        <OutputsTable outputs={outputs} projectId={projectId} />
-      </FeatureCard>
+      <h4 className='text-lg font-semibold'>Logframe</h4>
+      <OutputsTable outputs={outputs} projectId={projectId} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Output } from '@/utils/types';
-import { Badge } from '@/components/ui/badge';
+import { Badge, BadgeProps } from '@/components/ui/badge';
 import ActionButton from '../ui/action-button';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -17,10 +17,24 @@ export default function OutputCard({
   const outputNumber = output.code.slice(2);
 
   return (
-    <div className='grid grid-cols-[50px_1fr_50px] items-baseline justify-between gap-4 text-sm'>
+    <div className='grid grid-cols-[50px_96px_1fr_50px] items-baseline justify-between gap-4 text-sm'>
       <div>
         <Badge className='mr-2'>{output.code}</Badge>
       </div>
+      <div>
+        <Badge
+          variant={
+            output.status
+              ? (output.status
+                  .toLowerCase()
+                  .replace(' ', '_') as BadgeProps['variant'])
+              : 'default'
+          }
+        >
+          {output.status}
+        </Badge>
+      </div>
+
       <div className=''>
         <Link
           href={`/projects/${slug}/logframe/output/${outputNumber}`}

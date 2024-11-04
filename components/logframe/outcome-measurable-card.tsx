@@ -5,7 +5,7 @@ import { OutcomeMeasurable } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
-import { Badge } from '@/components/ui/badge';
+import { Badge, BadgeProps } from '@/components/ui/badge';
 import OutputsContainer from './outputs-container';
 
 export default function OutcomeMeasurableCard({
