@@ -14,7 +14,7 @@ export const fetchLogframe = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, outputs(*))),  outputs(*)',
+      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, outputs(*, output_measurables(*, impact_indicators(*)))))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .single();
@@ -30,7 +30,7 @@ export const fetchOutputByCode = async (code: string, projectSlug: string) => {
       `
       *,
       projects!inner(*),
-      output_measurables(*)
+      output_measurables(*, impact_indicators(*)),
     `,
     )
     .eq('projects.slug', projectSlug)

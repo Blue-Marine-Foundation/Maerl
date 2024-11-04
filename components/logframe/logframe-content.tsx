@@ -18,8 +18,13 @@ export default function LogframeContent() {
     return <div>Loading...</div>;
   }
 
+  console.log(data);
+
   const outputs =
-    data?.data?.outputs.sort((a, b) => a.code.localeCompare(b.code)) || [];
+    data?.data?.outcomes
+      .flatMap((outcome) => outcome.outcome_measurables)
+      .flatMap((measurable) => measurable.outputs)
+      .sort((a, b) => a.code.localeCompare(b.code)) || [];
   const projectId = data?.data?.id;
 
   return (
