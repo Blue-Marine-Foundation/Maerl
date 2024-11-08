@@ -83,3 +83,24 @@ export interface OutputMeasurable {
   verification: string;
   assumptions: string;
 }
+
+export type Update = {
+  id: number;
+  created_at: string;
+  edited_at: string;
+  date: string;
+  project_id: number;
+  output_measurable_id: number;
+  type: string;
+  description: string;
+  value: number;
+  link: string;
+  posted_by: string;
+  year: number;
+  impact_indicator_id: number;
+  source: string;
+  original: boolean;
+  duplicate: boolean;
+  verified: boolean;
+  valid: boolean;
+};
