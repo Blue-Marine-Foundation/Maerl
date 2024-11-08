@@ -82,6 +82,7 @@ export interface OutputMeasurable {
   unit: string;
   verification: string;
   assumptions: string;
+  impact_indicators?: ImpactIndicator | null;
 }
 
 export type Update = {

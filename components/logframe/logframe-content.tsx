@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { fetchLogframe } from '@/components/logframe/server-actions';
 import OutputsTable from '@/components/logframe/outputs-table';
-import FeatureCard from '../ui/feature-card';
 
 export default function LogframeContent() {
   const { slug } = useParams();
