@@ -95,6 +95,19 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     header: 'Started',
   },
   {
+    accessorKey: 'last_updated',
+    header: 'Updated',
+    cell: ({ row }) => {
+      return (
+        <p>
+          {row.original.last_updated
+            ? new Date(row.original.last_updated).toLocaleDateString()
+            : ''}
+        </p>
+      );
+    },
+  },
+  {
     accessorKey: 'regional_strategy',
     header: ({ column }) => {
       return (

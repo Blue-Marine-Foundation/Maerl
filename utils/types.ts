@@ -5,6 +5,7 @@ export type ProjectMetadata = {
   pm: string | null;
   support: string | null;
   start_date: string | null;
+  last_updated: string | null;
   project_status: string | null;
   project_type: string | null;
   regional_strategy: string | null;

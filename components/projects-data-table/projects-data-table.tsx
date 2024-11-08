@@ -39,6 +39,7 @@ export function ProjectsDataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    start_date: false,
     project_type: false,
     pillars: false,
     local_contacts: false,

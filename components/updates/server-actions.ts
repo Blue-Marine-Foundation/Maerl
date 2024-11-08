@@ -41,7 +41,7 @@ export const upsertUpdate = async (update: Partial<Update>) => {
 
   const { data: updatedProject } = await supabase
     .from('projects')
-    .update({ edited_at: new Date().toISOString() })
+    .update({ last_updated: new Date().toISOString() })
     .eq('id', update.project_id)
     .select()
     .single();
