@@ -81,6 +81,7 @@ export const upsertOutcome = async (outcome: Partial<Outcome>) => {
     const measurablesToUpsert = outcome.outcome_measurables.map(
       (measurable) => ({
         ...measurable,
+        project_id: outcome.project_id,
         outcome_id: data.id,
       }),
     );
@@ -109,6 +110,7 @@ export const upsertOutcomeMeasurable = async (
     .from('outcome_measurables')
     .upsert({
       id: measurable.id,
+      project_id: measurable.project_id,
       outcome_id: measurable.outcome_id,
       description: measurable.description,
       verification: measurable.verification || '',
