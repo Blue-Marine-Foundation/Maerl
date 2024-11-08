@@ -1,4 +1,4 @@
-import ImpactIndicatorList from '@/components/impact-indicator/impact-indicator-list';
+import ImpactIndicatorList from '@/components/impact-indicators/impact-indicator-list';
 import FeatureCard from '@/components/ui/feature-card';
 import PageHeading from '@/components/ui/page-heading';
 import { createClient } from '@/utils/supabase/server';
