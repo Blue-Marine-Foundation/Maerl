@@ -12,7 +12,7 @@ export default async function UpdatesChartWrapper() {
     .order('created_at', { ascending: false })
     .gte(
       'created_at',
-      new Date(new Date().setDate(new Date().getDate() - 91)).toISOString(),
+      new Date(new Date().setDate(new Date().getDate() - 105)).toISOString(),
     );
 
   if (error) {
@@ -24,7 +24,7 @@ export default async function UpdatesChartWrapper() {
   }
 
   return (
-    <FeatureCard title='Weekly Updates'>
+    <FeatureCard title='Weekly number of updates'>
       <Suspense fallback={<div>Loading...</div>}>
         <UpdatesChart updates={updates} />
       </Suspense>

@@ -11,7 +11,8 @@ export default async function RecentProjects() {
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
-    .order('created_at', { ascending: false })
+    .not('last_updated', 'is', null)
+    .order('last_updated', { ascending: false })
     .limit(5);
 
   if (error) {
@@ -23,7 +24,7 @@ export default async function RecentProjects() {
   }
 
   return (
-    <FeatureCard title='Recently Added Projects'>
+    <FeatureCard title='Recently updated projects'>
       <div className='flex flex-col gap-2'>
         {projects?.map((project) => (
           <Link
@@ -35,7 +36,7 @@ export default async function RecentProjects() {
             <hr className='grow' />
             <ProjectStatusBadge status={project.project_status} size='xs' />
             <span className='font-mono text-xs text-muted-foreground'>
-              {d3.timeFormat('%d %b %Y')(new Date(project.created_at))}
+              {d3.timeFormat('%d %b %Y')(new Date(project.last_updated))}
             </span>
           </Link>
         ))}
