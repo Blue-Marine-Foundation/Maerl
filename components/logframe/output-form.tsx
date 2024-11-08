@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
-import { upsertOutput } from './server-actions';
+import { upsertOutput, fetchOutcomeMeasurables } from './server-actions';
+import type { OutcomeMeasurable } from '@/utils/types';
+import OutcomeMeasurableSelect from './outcome-measurable-select';
 
 interface OutputFormProps {
   isOpen: boolean;
@@ -24,23 +26,25 @@ export default function OutputForm({
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
   const [status, setStatus] = useState(output?.status || 'Not started');
+  const [selectedMeasurableId, setSelectedMeasurableId] =
+    useState<number>(outcomeMeasurableId);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset form when output prop changes
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     setDescription(output?.description || '');
     setCode(output?.code || '');
     setStatus(output?.status || 'Not started');
-    setError(null); // Clear any previous errors
-  }, [output]);
-
-  const queryClient = useQueryClient();
+    setSelectedMeasurableId(outcomeMeasurableId);
+    setError(null);
+  }, [output, outcomeMeasurableId]);
 
   const mutation = useMutation({
     mutationFn: (newOutput: Partial<Output>) =>
       upsertOutput({
         ...newOutput,
-        outcome_measurable_id: outcomeMeasurableId,
+        outcome_measurable_id: selectedMeasurableId,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['logframe'] });
@@ -61,6 +65,7 @@ export default function OutputForm({
       code,
       description,
       status,
+      outcome_measurable_id: selectedMeasurableId,
     });
   };
 
@@ -71,6 +76,13 @@ export default function OutputForm({
           <DialogTitle>{output ? 'Edit Output' : 'Add Output'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <OutcomeMeasurableSelect
+            value={selectedMeasurableId}
+            projectId={projectId}
+            onChange={(measurable) =>
+              setSelectedMeasurableId(measurable?.id || outcomeMeasurableId)
+            }
+          />
           <div>
             <label htmlFor='code' className='mb-1 block text-sm font-medium'>
               Code

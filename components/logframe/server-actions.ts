@@ -22,6 +22,20 @@ export const fetchLogframe = async (identifier: number | string) => {
   return response;
 };
 
+export const fetchUnassignedOutputs = async (identifier: number | string) => {
+  const supabase = await createClient();
+  const response = await supabase
+    .from('projects')
+    .select(
+      'id, slug, name,  outputs!inner(*, output_measurables(*, impact_indicators(*)))',
+    )
+    .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
+    .is('outputs.outcome_measurable_id', null)
+    .single();
+
+  return response;
+};
+
 export const fetchOutputByCode = async (code: string, projectSlug: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -190,3 +204,15 @@ export const upsertOutputMeasurable = async (
   if (error) throw error;
   return data;
 };
+
+export async function fetchOutcomeMeasurables(projectId: number) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('outcome_measurables')
+    .select('*')
+    .eq('project_id', projectId)
+    .order('code');
+
+  if (error) throw error;
+  return data;
+}
