@@ -48,3 +48,18 @@ export const upsertUpdate = async (update: Partial<Update>) => {
 
   return { update };
 };
+
+export const fetchOutputUpdates = async (outputId: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('updates')
+    .select(
+      '*, projects(name, slug), output_measurables!inner(*), impact_indicators(*)',
+    )
+    .eq('output_measurables.output_id', outputId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+};
