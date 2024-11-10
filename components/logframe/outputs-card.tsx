@@ -14,7 +14,6 @@ export default function OutputCard({
   onEdit: (output: Output) => void;
 }) {
   const { slug } = useParams();
-  const outputNumber = output.code.slice(2);
 
   return (
     <div className='grid grid-cols-[50px_96px_1fr_50px] items-baseline justify-between gap-4 text-sm'>
@@ -37,7 +36,7 @@ export default function OutputCard({
 
       <div className=''>
         <Link
-          href={`/projects/${slug}/logframe/output/${outputNumber}`}
+          href={`/projects/${slug}/logframe/output?id=${output.id}`}
           className='hover:underline'
         >
           <p>{output.description}</p>

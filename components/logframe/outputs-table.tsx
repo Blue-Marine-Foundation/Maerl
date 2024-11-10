@@ -67,11 +67,10 @@ export default function OutputsTable({
       accessorKey: 'description',
       header: 'Description',
       cell: ({ row }) => {
-        const outputNumber = row.original.code.slice(2);
         return (
           <p className='max-w-prose'>
             <Link
-              href={`/projects/${slug}/logframe/output/${outputNumber}`}
+              href={`/projects/${slug}/logframe/output?id=${row.original.id}`}
               className='hover:underline'
             >
               {row.getValue('description')}

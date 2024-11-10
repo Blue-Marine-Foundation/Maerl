@@ -36,7 +36,7 @@ export const fetchUnassignedOutputs = async (identifier: number | string) => {
   return response;
 };
 
-export const fetchOutputByCode = async (code: string, projectSlug: string) => {
+export const fetchOutputById = async (id: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('outputs')
@@ -47,8 +47,7 @@ export const fetchOutputByCode = async (code: string, projectSlug: string) => {
       output_measurables(*, impact_indicators(*))
     `,
     )
-    .eq('projects.slug', projectSlug)
-    .eq('code', `O.${code}`)
+    .eq('id', id)
     .single();
 
   if (error) throw error;

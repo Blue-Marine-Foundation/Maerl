@@ -5,24 +5,30 @@ import {
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import { fetchOutputByCode } from '@/components/logframe/server-actions';
+import { useSearchParams } from 'next/navigation';
+import { fetchOutputById } from '@/components/logframe/server-actions';
 import OutputCard from '@/components/logframe/output-card';
 
 function OutputContent() {
-  const { output, slug } = useParams();
+  const searchParams = useSearchParams();
+  const outputId = searchParams.get('id');
 
   const { data: outputData, isLoading } = useQuery({
-    queryKey: ['output', output, slug],
-    queryFn: () => fetchOutputByCode(output as string, slug as string),
+    queryKey: ['output', outputId],
+    queryFn: () => fetchOutputById(outputId as string),
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading output with database id: {outputId}</div>;
   }
 
   if (!outputData) {
-    return <div>Output not found</div>;
+    return (
+      <div>
+        Apologies, output with database id: {outputId} was not found, please
+        notify the SII team.
+      </div>
+    );
   }
 
   return <OutputCard output={outputData} />;
