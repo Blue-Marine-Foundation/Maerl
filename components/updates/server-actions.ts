@@ -6,7 +6,7 @@ import { Update } from '@/utils/types';
 export const upsertUpdate = async (update: Partial<Update>) => {
   const supabase = await createClient();
 
-  if (!update.output_measurable_id || !update.description) {
+  if (!update.description) {
     throw new Error('Missing required fields');
   }
 
@@ -20,8 +20,8 @@ export const upsertUpdate = async (update: Partial<Update>) => {
       id: update.id,
       date: update.date || new Date().toISOString().split('T')[0],
       project_id: update.project_id,
-      output_measurable_id: update.output_measurable_id,
-      type: update.type || 'progress',
+      output_measurable_id: update.output_measurable_id || null,
+      type: update.type || 'Progress',
       description: update.description,
       value: update.value || null,
       link: update.link || null,

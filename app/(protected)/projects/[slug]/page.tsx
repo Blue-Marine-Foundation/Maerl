@@ -33,17 +33,21 @@ export default async function ProjectPage({
         <ProjectMetadataDisplay project={project} />
 
         <LogframeCard projectId={project.id} slug={slug} />
-        <div className='flex min-h-64 flex-col rounded-md bg-card p-4'>
-          <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
-            Funding requests
-          </h3>
-          <div className='flex flex-grow flex-col items-center justify-center gap-2'>
-            <p className='text-foreground/80'>
-              This project has no funding requests yet
-            </p>
-            <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
+        <div className='flex flex-col gap-4'>
+          {/* <div className='flex flex-col rounded-md bg-card p-4'>Thing</div> */}
+          <div className='flex flex-col rounded-md bg-card p-4'>
+            <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
+              Funding requests
+            </h3>
+            <div className='flex flex-grow flex-col items-center justify-start gap-2 py-4'>
+              <p className='text-foreground/80'>
+                Funding requests via Maerl are temporarily disabled. We're
+                working to bring them back soon!
+              </p>
+              {/* <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
               <PlusCircleIcon className='h-4 w-4' /> Create funding request
-            </button>
+            </button> */}
+            </div>
           </div>
         </div>
       </div>

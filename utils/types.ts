@@ -92,14 +92,14 @@ export type Update = {
   edited_at: string;
   date: string;
   project_id: number;
-  output_measurable_id: number;
+  output_measurable_id: number | null;
   type: string;
   description: string;
   value: number;
   link: string;
   posted_by: string;
   year: number;
-  impact_indicator_id: number;
+  impact_indicator_id: number | null;
   source: string;
   original: boolean;
   duplicate: boolean;
