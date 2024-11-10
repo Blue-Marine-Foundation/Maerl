@@ -105,4 +105,7 @@ export type Update = {
   duplicate: boolean;
   verified: boolean;
   valid: boolean;
+  projects?: ProjectMetadata;
+  output_measurables?: OutputMeasurable;
+  impact_indicators?: ImpactIndicator;
 };
