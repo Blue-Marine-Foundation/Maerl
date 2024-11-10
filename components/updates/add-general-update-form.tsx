@@ -79,7 +79,14 @@ export default function AddGeneralUpdateForm({
       };
 
       await upsertUpdate(updateData);
-      setSubmittedUpdates((prev) => [updateData as Partial<Update>, ...prev]);
+      setSubmittedUpdates((prev) => [
+        {
+          date: updateData.date,
+          description: updateData.description,
+          edited_at: new Date().toISOString(),
+        } as Partial<Update>,
+        ...prev,
+      ]);
       resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -254,9 +261,17 @@ export default function AddGeneralUpdateForm({
       {submittedUpdates.length > 0 && (
         <div className='grow rounded-lg bg-card p-4'>
           <h3 className='mb-2 font-medium'>Submitted updates</h3>
-          <pre className='whitespace-pre-wrap rounded-md bg-muted p-4 text-xs'>
-            {JSON.stringify(submittedUpdates, null, 2)}
-          </pre>
+          <div className='flex flex-col gap-3 rounded-md bg-muted p-4'>
+            {submittedUpdates.map((update) => (
+              <div
+                key={update.edited_at}
+                className='grid grid-cols-[100px_1fr] items-baseline gap-2'
+              >
+                <p className='text-sm text-muted-foreground'>{update.date}</p>
+                <p className='text-sm'>{update.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
