@@ -27,7 +27,15 @@ export default function UpdatesListMedium({ updates }: { updates: Update[] }) {
                 className='text-sm'
                 title={update.output_measurables.description}
               >
-                Output {update.output_measurables.code}
+                {update.output_measurables.output_id ? (
+                  <Link
+                    href={`/projects/${update.projects?.slug}/logframe/output?id=${update.output_measurables.output_id}`}
+                  >
+                    Output {update.output_measurables.code}
+                  </Link>
+                ) : (
+                  <span>Output {update.output_measurables.code}</span>
+                )}
               </p>
             )}
             {update.impact_indicators && (
