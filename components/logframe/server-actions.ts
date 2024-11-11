@@ -203,6 +203,15 @@ export const upsertOutput = async (output: Partial<Output>) => {
     .select()
     .single();
 
+  if (output.id) {
+    const { data: updatedOutput } = await supabase
+      .from('outputs')
+      .update({ last_updated: new Date().toISOString() })
+      .eq('id', output.id)
+      .select()
+      .single();
+  }
+
   return data;
 };
 
@@ -237,6 +246,13 @@ export const upsertOutputMeasurable = async (
     .from('projects')
     .update({ last_updated: new Date().toISOString() })
     .eq('id', measurable.project_id)
+    .select()
+    .single();
+
+  const { data: updatedOutput } = await supabase
+    .from('outputs')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', measurable.output_id)
     .select()
     .single();
 

@@ -84,7 +84,9 @@ export default function OutputsTable({
       header: 'Last updated',
       cell: ({ row }) => (
         <p className='w-28'>
-          {timeFormat('%d %b %Y')(new Date(row.original.created_at))}
+          {timeFormat('%d %b %Y')(
+            new Date(row.original.last_updated ?? row.original.created_at),
+          )}
         </p>
       ),
     },
