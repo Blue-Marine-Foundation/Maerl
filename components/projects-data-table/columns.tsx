@@ -3,7 +3,6 @@
 import { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { ProjectMetadata } from '@/utils/types';
-// import ProjectActionButtons from './project-action-buttons'
 import Link from 'next/link';
 import ProjectActionButtons from './project-action-buttons';
 
@@ -96,7 +95,17 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   },
   {
     accessorKey: 'last_updated',
-    header: 'Updated',
+    header: ({ column }) => {
+      return (
+        <button
+          className='flex items-center gap-1'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Updated
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </button>
+      );
+    },
     cell: ({ row }) => {
       return (
         <p>
