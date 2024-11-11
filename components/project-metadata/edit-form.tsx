@@ -48,6 +48,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
     setErrorMessage(null);
     const cleanedFormState = {
       ...formState,
+      last_updated: new Date().toISOString(),
       local_contacts: formState.local_contacts.filter(
         (contact) =>
           contact.name.trim() !== '' || contact.organisation.trim() !== '',

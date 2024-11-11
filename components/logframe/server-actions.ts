@@ -71,6 +71,14 @@ export const upsertImpact = async (impact: Partial<Impact>) => {
     .single();
 
   if (error) throw error;
+
+  const { data: updatedProject } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', impact.project_id)
+    .select()
+    .single();
+
   return data;
 };
 
@@ -106,6 +114,13 @@ export const upsertOutcome = async (outcome: Partial<Outcome>) => {
     if (measurablesError) throw measurablesError;
   }
 
+  const { data: updatedProject } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', outcome.project_id)
+    .select()
+    .single();
+
   return data;
 };
 
@@ -134,6 +149,14 @@ export const upsertOutcomeMeasurable = async (
     .single();
 
   if (error) throw error;
+
+  const { data: updatedProject } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', measurable.project_id)
+    .select()
+    .single();
+
   return data;
 };
 
@@ -172,6 +195,14 @@ export const upsertOutput = async (output: Partial<Output>) => {
     .single();
 
   if (error) throw error;
+
+  const { data: updatedProject } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', output.project_id)
+    .select()
+    .single();
+
   return data;
 };
 
@@ -201,6 +232,14 @@ export const upsertOutputMeasurable = async (
     .single();
 
   if (error) throw error;
+
+  const { data: updatedProject } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', measurable.project_id)
+    .select()
+    .single();
+
   return data;
 };
 

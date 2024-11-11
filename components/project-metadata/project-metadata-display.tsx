@@ -40,7 +40,7 @@ export default function ProjectMetadataDisplay({
         ),
       );
     }
-    if (key === 'last_updated') {
+    if (key === 'last_updated' && value) {
       return <p>{d3.timeFormat('%d %B %Y')(new Date(value as string))}</p>;
     }
     return <p>{value as string}</p>;
