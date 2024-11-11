@@ -1,33 +1,35 @@
-import Header from '@/_components/header/header'
-import Footer from '@/_components/footer/footer'
-import './globals.css'
-import { createClient } from '@/_utils/supabase/server'
-import Login from '@/_components/LogInHomepage'
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Header from '@/components/header/alt-header';
+import Footer from '@/components/footer/footer';
+
+const defaultUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000';
 
 export const metadata = {
+  metadataBase: new URL(defaultUrl),
   title: 'Maerl',
-  description: 'Impact reporting',
-}
+  description: 'Impact monitoring for Blue Marine Foundation',
+};
 
-export default async function RootLayout({
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = createClient()
-  const { data, error } = await supabase.auth.getSession()
-
-  const session = data.session ? true : false
-
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-background text-foreground">
-        <Header withSession={session} />
-        <main className="w-full max-w-[1376px] mx-auto px-4">
-          {session ? <>{children}</> : <Login />}
-        </main>
+    <html lang='en' className={inter.className} suppressHydrationWarning>
+      <body className='min-h-svh bg-background text-foreground dark:bg-background'>
+        <Header />
+        <div className='mb-32 px-4'>{children}</div>
         <Footer />
       </body>
     </html>
-  )
+  );
 }
