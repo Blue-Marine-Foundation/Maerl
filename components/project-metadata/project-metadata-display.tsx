@@ -5,13 +5,14 @@ import EditDialogue from './edit-dialogue';
 import { fetchProjectMetadata } from './server-actions';
 import { useQuery } from '@tanstack/react-query';
 import ProjectStatusBadge from '../ui/project-status-badge';
-
+import * as d3 from 'd3';
 export default function ProjectMetadataDisplay({
   project,
 }: {
   project: ProjectMetadata;
 }) {
   const projectMetadataKeys = [
+    { label: 'Last Updated', key: 'last_updated' },
     { label: 'Project Manager', key: 'pm' },
     { label: 'Support', key: 'support' },
     { label: 'Start Date', key: 'start_date' },
@@ -38,6 +39,9 @@ export default function ProjectMetadataDisplay({
           </p>
         ),
       );
+    }
+    if (key === 'last_updated') {
+      return <p>{d3.timeFormat('%d %B %Y')(new Date(value as string))}</p>;
     }
     return <p>{value as string}</p>;
   };
