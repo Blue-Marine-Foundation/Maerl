@@ -3,6 +3,16 @@
 import { createClient } from '@/utils/supabase/server';
 import { Update } from '@/utils/types';
 
+export const fetchUpdates = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('updates')
+    .select('*, projects(name)')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+};
+
 export const upsertUpdate = async (update: Partial<Update>) => {
   const supabase = await createClient();
 
