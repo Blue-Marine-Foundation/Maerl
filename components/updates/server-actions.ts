@@ -7,7 +7,9 @@ export const fetchUpdates = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('updates')
-    .select('*, projects(name)')
+    .select(
+      '*, projects(name, slug), output_measurables(*), impact_indicators(*)',
+    )
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data;
