@@ -11,6 +11,7 @@ export const fetchUpdates = async () => {
       '*, projects(name, slug), output_measurables(*), impact_indicators(*)',
     )
     .order('created_at', { ascending: false });
+
   if (error) throw error;
   return data;
 };

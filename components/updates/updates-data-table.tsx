@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { columns } from './updates-table-columns';
 import { fetchUpdates } from './server-actions';
 import ColumnFilter from '../data-tables/column-filter';
