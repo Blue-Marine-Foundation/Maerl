@@ -69,7 +69,7 @@ export default function DateRangePicker({
             initialFocus
             mode='range'
             ISOWeek
-            defaultMonth={startOfYear(subYears(new Date(), 1))}
+            defaultMonth={startOfMonth(subMonths(new Date(), 1))}
             fromDate={startOfYear(subYears(new Date(), 1))}
             toDate={new Date()}
             selected={date}

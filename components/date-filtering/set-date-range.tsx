@@ -1,27 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { Loader } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import DateRangePicker from './date-range-picker';
-
-export function initializeDateRange(
-  fromParam: string | null,
-  toParam: string | null,
-  defaultFrom: Date,
-  defaultTo: Date,
-): DateRange {
-  const fromDate = fromParam ? new Date(fromParam) : defaultFrom;
-  const toDate = toParam ? new Date(toParam) : defaultTo;
-
-  fromDate.setHours(0, 0, 0, 0);
-  toDate.setHours(23, 59, 59, 999);
-
-  return { from: fromDate, to: toDate };
-}
+import useUrlDateState from './use-url-date-state';
 
 export default function SetDateRange({
   className,
@@ -30,43 +16,28 @@ export default function SetDateRange({
 }) {
   const router = useRouter();
   const path = usePathname();
-  const searchParams = useSearchParams();
+  const { from: initialFrom, to: initialTo } = useUrlDateState();
 
-  const [date, setDate] = useState<DateRange | undefined>(() =>
-    initializeDateRange(
-      searchParams.get('from'),
-      searchParams.get('to'),
-      subDays(new Date(), 29),
-      new Date(),
-    ),
-  );
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(initialFrom),
+    to: new Date(initialTo),
+  });
 
   const [datesAreEdited, setDatesAreEdited] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
-  // Regret
-  const [isFirstRender, setIsFirstRender] = useState(true);
-
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-      return;
-    }
-
     setIsUpdating(false);
-
-    const prevFrom = searchParams.get('from') as string;
-    const prevTo = searchParams.get('to') as string;
 
     const newFrom = date?.from ? format(date.from, 'yyyy-MM-dd') : null;
     const newTo = date?.to ? format(date.to, 'yyyy-MM-dd') : null;
 
-    if (newFrom && newTo && (prevFrom !== newFrom || prevTo !== newTo)) {
+    if (newFrom && newTo && (initialFrom !== newFrom || initialTo !== newTo)) {
       setDatesAreEdited(true);
     } else {
       setDatesAreEdited(false);
     }
-  }, [searchParams, date]);
+  }, [initialFrom, initialTo, date]);
 
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();

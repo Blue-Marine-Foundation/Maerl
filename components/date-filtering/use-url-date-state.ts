@@ -1,10 +1,13 @@
-import { subDays, format } from 'date-fns';
+import { startOfMonth, format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 
 export interface DateState {
   from: string;
   to: string;
 }
+
+export const defaultFrom = startOfMonth(new Date());
+export const defaultTo = new Date();
 
 export default function useUrlDateState(): DateState {
   const queryStrings = useSearchParams();
@@ -19,8 +22,8 @@ export default function useUrlDateState(): DateState {
     };
   }
 
-  const from = new Date(fromParam ?? subDays(new Date(), 29));
-  const to = new Date(toParam ?? new Date());
+  const from = new Date(fromParam ?? defaultFrom);
+  const to = new Date(toParam ?? defaultTo);
 
   return {
     from: format(from, 'yyyy-MM-dd'),
