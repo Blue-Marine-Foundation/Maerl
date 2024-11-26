@@ -22,14 +22,17 @@ import { useState } from 'react';
 import { columns } from './updates-table-columns';
 import { fetchUpdates } from './server-actions';
 import ColumnFilter from '../data-tables/column-filter';
-
+import SetDateRange from '../date-filtering/set-date-range';
+import useUrlDateState from '../date-filtering/use-url-date-state';
 export default function UpdatesDataTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  const dateRange = useUrlDateState();
+
   const { data, error } = useQuery({
-    queryKey: ['updates'],
-    queryFn: fetchUpdates,
+    queryKey: ['updates', dateRange],
+    queryFn: () => fetchUpdates(dateRange),
   });
 
   const table = useReactTable({
@@ -61,15 +64,19 @@ export default function UpdatesDataTable() {
   if (data) {
     return (
       <div className='flex flex-col gap-4'>
-        <div className='flex items-center gap-4'>
-          <p>Filter by:</p>
-          <ColumnFilter table={table} columnId='project' label='Project' />
-          <ColumnFilter
-            table={table}
-            columnId='impact_indicator'
-            label='Impact Indicator'
-          />
-          <ColumnFilter table={table} columnId='type' label='Update Type' />
+        <div className='flex items-center justify-between gap-4'>
+          <div className='flex items-center justify-start gap-4'>
+            <p>Filter by:</p>
+            <ColumnFilter table={table} columnId='project' label='Project' />
+            <ColumnFilter
+              table={table}
+              columnId='impact_indicator'
+              label='Impact Indicator'
+            />
+            <ColumnFilter table={table} columnId='type' label='Update Type' />
+          </div>
+
+          <SetDateRange />
         </div>
         <div className='rounded-md border'>
           <Table className='overflow-x-auto'>

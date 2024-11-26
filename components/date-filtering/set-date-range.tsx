@@ -71,7 +71,7 @@ export default function SetDateRange({
             className='h-10 w-24 rounded-md border bg-background text-center disabled:bg-transparent disabled:text-foreground/40'
           >
             {isUpdating ? (
-              <Loader size={16} className='mx-auto animate-spin' />
+              <Loader size={12} className='mx-auto animate-spin' />
             ) : (
               'Update'
             )}

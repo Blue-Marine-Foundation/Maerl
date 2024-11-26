@@ -51,7 +51,7 @@ export default function DateRangePicker({
             !date && 'text-muted-foreground',
           )}
         >
-          <CalendarIcon className='mr-2 h-4 w-4' />
+          <CalendarIcon className='mr-2 h-3 w-3' />
           {!date && <span>Filter by date</span>}
           {date && date.from && date.to && (
             <span>

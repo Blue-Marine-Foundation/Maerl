@@ -63,7 +63,7 @@ export default function ColumnFilter<TData>({
 
   return (
     <Popover>
-      <PopoverTrigger className='rounded-md border px-3 py-1 text-sm hover:bg-sky-500/20'>
+      <PopoverTrigger className='rounded-md border px-5 py-2 text-sm hover:bg-sky-500/20'>
         {label || defaultLabel}
       </PopoverTrigger>
       <PopoverContent className='w-[250px]'>
