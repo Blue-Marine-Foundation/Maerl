@@ -1,5 +1,4 @@
 import { createClient } from '@/utils/supabase/server';
-import { PlusCircleIcon } from 'lucide-react';
 import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
 import QueryProvider from '@/utils/query-provider';
 import LogframeCard from '@/components/project-page/logframe-card';

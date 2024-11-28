@@ -25,8 +25,25 @@ export async function generateMetadata({
   }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const words = slug.split('-');
+
+  let titleAbbrev;
+  if (words.length === 1) {
+    titleAbbrev = slug.slice(0, 3).toUpperCase();
+  } else if (words.length === 2) {
+    titleAbbrev =
+      words[0][0].toUpperCase() +
+      words[1][0].toUpperCase() +
+      (words[1][1] || 'x').toLowerCase();
+  } else {
+    titleAbbrev = words
+      .slice(0, 3)
+      .map((word) => word[0].toUpperCase())
+      .join('');
+  }
+
   return {
-    title: `${slug.slice(0, 3).toUpperCase()} | Maerl`,
+    title: `${titleAbbrev} | Maerl`,
   };
 }
 
