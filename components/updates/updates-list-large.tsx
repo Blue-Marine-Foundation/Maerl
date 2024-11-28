@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 export default function UpdatesListLarge({ updates }: { updates: Update[] }) {
   return (
-    <div className='flex flex-col'>
+    <div className='flex grow flex-col'>
       {updates?.map((update) => (
         <div
           className='grid grid-cols-[200px_200px_1fr_1fr] items-baseline gap-12 border-t py-6 first:border-t-0 first:pt-0 hover:bg-muted/50'
@@ -73,7 +73,9 @@ export default function UpdatesListLarge({ updates }: { updates: Update[] }) {
         </div>
       ))}
       {updates.length === 0 && (
-        <p className='text-sm text-muted-foreground'>No updates yet</p>
+        <p className='pt-16 text-center text-sm text-muted-foreground'>
+          No updates yet
+        </p>
       )}
     </div>
   );
