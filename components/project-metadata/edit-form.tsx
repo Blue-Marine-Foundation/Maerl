@@ -49,7 +49,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
     const cleanedFormState = {
       ...formState,
       last_updated: new Date().toISOString(),
-      local_contacts: formState.local_contacts.filter(
+      local_contacts: (formState.local_contacts ?? []).filter(
         (contact) =>
           contact.name.trim() !== '' || contact.organisation.trim() !== '',
       ),
@@ -58,7 +58,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
       await mutation.mutateAsync(cleanedFormState);
     } catch (error) {
       // Error will be handled by onError callback, no need to do anything here
-      console.log('Error submitting form:', error);
+      throw error;
     }
   };
 
