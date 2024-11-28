@@ -35,6 +35,15 @@ export type ImpactIndicator = {
   indicator_unit: string;
 };
 
+export type ImpactIndicatorSummary = {
+  impact_indicator_id: number;
+  indicator_code: string;
+  indicator_title: string;
+  indicator_unit: string;
+  valid_updates: number;
+  total_value: number;
+};
+
 export type Impact = {
   id: number;
   created_at: string;

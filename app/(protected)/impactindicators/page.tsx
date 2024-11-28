@@ -2,14 +2,14 @@ import ImpactIndicatorList from '@/components/impact-indicators/impact-indicator
 import FeatureCard from '@/components/ui/feature-card';
 import PageHeading from '@/components/ui/page-heading';
 import { createClient } from '@/utils/supabase/server';
-import { ImpactIndicator } from '@/utils/types';
+import { ImpactIndicator, ImpactIndicatorSummary } from '@/utils/types';
 
 export default async function ImpactIndicatorsPage() {
   const supabase = await createClient();
   const { data: impactIndicators, error } = await supabase
-    .from('impact_indicators')
+    .from('impact_indicator_summaries')
     .select('*')
-    .order('id', { ascending: true });
+    .order('impact_indicator_id', { ascending: true });
 
   if (error) {
     <FeatureCard title='Error'>
@@ -25,7 +25,7 @@ export default async function ImpactIndicatorsPage() {
       <PageHeading>Impact Indicators</PageHeading>
       <FeatureCard>
         <ImpactIndicatorList
-          impactIndicators={impactIndicators as ImpactIndicator[]}
+          impactIndicators={impactIndicators as ImpactIndicatorSummary[]}
         />
       </FeatureCard>
     </div>
