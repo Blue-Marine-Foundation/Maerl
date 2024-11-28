@@ -23,6 +23,11 @@ export default async function ImpactIndicatorsPage() {
   return (
     <div className='flex flex-col gap-6'>
       <PageHeading>Impact Indicators</PageHeading>
+      <p className=''>
+        Summarised values are collated from updates that are{' '}
+        <strong>valid</strong> and <strong>original</strong>. Duplicates and
+        invalid updates are excluded.
+      </p>
       <FeatureCard>
         <ImpactIndicatorList
           impactIndicators={impactIndicators as ImpactIndicatorSummary[]}
