@@ -62,18 +62,18 @@ export default function SetDateRange({
       <div className={cn('grid gap-2', className)}>
         <form
           onSubmit={handleFormSubmit}
-          className='flex items-center justify-end gap-4'
+          className='flex items-center justify-end'
         >
           <DateRangePicker date={date} onDateChange={handleDateChange} />
           <button
             type='submit'
             disabled={!datesAreEdited}
-            className='h-10 w-24 rounded-md border bg-background text-center disabled:bg-transparent disabled:text-foreground/40'
+            className='h-10 w-32 rounded-r-md border border-l-0 bg-background text-center text-sm disabled:bg-transparent disabled:text-foreground/40'
           >
             {isUpdating ? (
               <Loader size={12} className='mx-auto animate-spin' />
             ) : (
-              'Update'
+              'Change dates'
             )}
           </button>
         </form>

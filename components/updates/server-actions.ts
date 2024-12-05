@@ -27,6 +27,7 @@ export const fetchUpdates = async (dateRange?: {
     )
     .gte('date::date', dates.from)
     .lte('date::date', dates.to)
+    .match({ valid: true, original: true })
     .order('date', { ascending: false });
 
   if (error) throw error;
