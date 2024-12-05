@@ -68,7 +68,7 @@ export default function SetDateRange({
           <button
             type='submit'
             disabled={!datesAreEdited}
-            className='h-10 w-32 rounded-r-md border border-l-0 bg-background text-center text-sm disabled:bg-transparent disabled:text-foreground/40'
+            className='h-10 w-32 rounded-r-md border border-l-0 bg-background text-center text-sm hover:bg-sky-500/20 disabled:bg-transparent disabled:text-foreground/40'
           >
             {isUpdating ? (
               <Loader size={12} className='mx-auto animate-spin' />
