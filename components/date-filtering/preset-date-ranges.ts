@@ -16,6 +16,7 @@ export const presetButtons = [
   { key: 'last30days', label: 'Last 30 Days' },
   { key: 'lastMonth', label: 'Last Month' },
   { key: 'last3months', label: 'Last 3 Months' },
+  { key: 'yearToDate', label: 'Year to Date' },
   { key: 'lastYear', label: 'Last Year' },
 ];
 
@@ -54,6 +55,15 @@ const presetDateRanges: Record<string, () => { dateRange: DateRange }> = {
       dateRange: {
         from: startOfMonth(subMonths(now, 3)),
         to: endOfMonth(subMonths(now, 1)),
+      },
+    };
+  },
+  yearToDate: () => {
+    const now = new Date();
+    return {
+      dateRange: {
+        from: startOfYear(now),
+        to: now,
       },
     };
   },

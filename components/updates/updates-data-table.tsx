@@ -24,6 +24,8 @@ import { fetchUpdates } from './server-actions';
 import ColumnFilter from '../data-tables/column-filter';
 import SetDateRange from '../date-filtering/set-date-range';
 import useUrlDateState from '../date-filtering/use-url-date-state';
+import CopyToCsvButton from '../data-tables/export-data';
+import { flattenUpdates } from './flatten-updates';
 export default function UpdatesDataTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -74,9 +76,13 @@ export default function UpdatesDataTable() {
               label='Impact Indicator'
             />
             <ColumnFilter table={table} columnId='type' label='Update Type' />
+            <SetDateRange />
           </div>
 
-          <SetDateRange />
+          <div className='flex items-center gap-4'>
+            <p>{data.length} updates</p>
+            <CopyToCsvButton data={flattenUpdates(data)} />
+          </div>
         </div>
         <div className='rounded-md border'>
           <Table className='overflow-x-auto'>

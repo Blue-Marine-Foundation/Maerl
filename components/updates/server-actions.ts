@@ -23,7 +23,7 @@ export const fetchUpdates = async (dateRange?: {
   const { data, error } = await supabase
     .from('updates')
     .select(
-      '*, projects(name, slug), output_measurables(*), impact_indicators(*)',
+      '*, projects(name, slug), output_measurables(*), impact_indicators(*), users(*)',
     )
     .gte('date::date', dates.from)
     .lte('date::date', dates.to)
