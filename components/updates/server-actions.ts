@@ -2,6 +2,41 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { Update } from '@/utils/types';
+import { endOfDay, format, startOfMonth } from 'date-fns';
+
+export const fetchUpdates = async (
+  dateRange?: {
+    from: string;
+    to: string;
+  },
+  projectId?: number,
+) => {
+  const supabase = await createClient();
+
+  // Set default date range if not provided
+  const today = new Date();
+  const defaultFrom = startOfMonth(today);
+  const defaultTo = endOfDay(today);
+
+  const dates = {
+    from: dateRange?.from || defaultFrom.toISOString(),
+    to: dateRange?.to || defaultTo.toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('updates')
+    .select(
+      '*, projects(name, slug), output_measurables(*), impact_indicators(*), users(*)',
+    )
+    .gte('date::date', dates.from)
+    .lte('date::date', dates.to)
+    .match({ project_id: projectId, valid: true, original: true })
+    .order('date', { ascending: false });
+
+  if (error) throw error;
+
+  return data;
+};
 
 export const upsertUpdate = async (update: Partial<Update>) => {
   const supabase = await createClient();

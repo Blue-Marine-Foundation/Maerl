@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 import { fetchOutputById } from '@/components/logframe/server-actions';
 import OutputCard from '@/components/logframe/output-card';
@@ -59,11 +55,5 @@ function OutputContent() {
 }
 
 export default function LogframeOutputPage() {
-  const queryClient = new QueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <OutputContent />
-    </QueryClientProvider>
-  );
+  return <OutputContent />;
 }

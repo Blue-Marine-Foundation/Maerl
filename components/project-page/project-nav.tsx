@@ -24,6 +24,10 @@ export default function ProjectNavigation({ slug }: { slug: string }) {
       name: 'Logframe',
       href: `/projects/${slug}/logframe`,
     },
+    {
+      name: 'Updates',
+      href: `/projects/${slug}/updates`,
+    },
   ];
 
   return (

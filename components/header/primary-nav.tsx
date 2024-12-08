@@ -23,23 +23,23 @@ export default function PrimaryNavigation() {
       name: 'Impact Indicators',
       href: '/impactindicators',
     },
+    {
+      name: 'Updates',
+      href: '/updates',
+    },
   ];
 
   return (
-    <ul className='flex w-full gap-1 pt-1 text-sm'>
+    <ul className='flex w-full gap-1 text-sm'>
       {items.map((item: NavItem) => {
         return (
           <li
             key={item.name}
-            className={
-              pathname === item.href
-                ? 'active group inline-block transition-all'
-                : 'group inline-block transition-all first-of-type:-ml-4'
-            }
+            className={` ${pathname === item.href && 'active'} group inline-block leading-4 transition-all`}
           >
             <Link
               href={item.href}
-              className='inline-block rounded-md border border-transparent px-4 py-2 transition-all duration-300 ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50'
+              className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50 group-[.active]:text-foreground'
             >
               {item.name}
             </Link>

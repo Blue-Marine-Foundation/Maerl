@@ -13,23 +13,22 @@ export default async function Header() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className='mx-auto w-full border-b px-4 py-3'>
-      <div className='max-w-app mx-auto'>
-        <div className='mb-2 flex items-center justify-between gap-4'>
+    <div className='mx-auto w-full border-b p-4'>
+      <div className='max-w-app mx-auto flex items-center justify-between gap-4'>
+        <div className='flex items-center justify-start gap-6'>
           <h2 className='flex items-center justify-start gap-2 font-medium'>
             <Logo width={22} />
             <Link href='/'>Maerl</Link>
           </h2>
-          {user ? (
-            <AuthButton user={user} />
-          ) : (
-            <Button asChild size='sm' variant='outline'>
-              <Link href='/sign-in'>Sign in</Link>
-            </Button>
-          )}
+          {user && <PrimaryNavigation />}
         </div>
-
-        {user && <PrimaryNavigation />}
+        {user ? (
+          <AuthButton user={user} />
+        ) : (
+          <Button asChild size='sm' variant='outline'>
+            <Link href='/sign-in'>Sign in</Link>
+          </Button>
+        )}
       </div>
     </div>
   );

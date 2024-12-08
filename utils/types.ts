@@ -118,4 +118,11 @@ export type Update = {
   projects?: ProjectMetadata;
   output_measurables?: OutputMeasurable;
   impact_indicators?: ImpactIndicator;
+  users?: User;
+};
+
+export type User = {
+  id: string;
+  first_name: string;
+  last_name: string;
 };
