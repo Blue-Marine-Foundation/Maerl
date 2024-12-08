@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import AddUpdateForm from '../updates/add-update-form';
+import AddUpdateForm from '@/components/updates/add-update-form';
 
 export default function OutputMeasurableTable({ output }: { output: Output }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

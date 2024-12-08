@@ -4,11 +4,18 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '../ui/hover-card';
+} from '@/components/ui/hover-card';
 import Link from 'next/link';
 import * as d3 from 'd3';
 import { ArrowUpRight } from 'lucide-react';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import UpdateEditingForm from './update-editing-form';
 export const columns: ColumnDef<Update>[] = [
   {
     header: 'Date',
@@ -142,6 +149,24 @@ export const columns: ColumnDef<Update>[] = [
         <p className='max-w-prose'>
           {row.original.users?.first_name} {row.original.users?.last_name}
         </p>
+      );
+    },
+  },
+  {
+    header: 'Edit',
+    cell: ({ row }) => {
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className='rounded-md border px-2 py-1'>Edit</button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit update</DialogTitle>
+            </DialogHeader>
+            <UpdateEditingForm update={row.original} />
+          </DialogContent>
+        </Dialog>
       );
     },
   },
