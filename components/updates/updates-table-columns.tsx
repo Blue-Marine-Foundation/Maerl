@@ -81,7 +81,7 @@ export const columns: ColumnDef<Update>[] = [
     },
   },
   {
-    header: 'Update type',
+    header: 'Type',
     accessorKey: 'type',
     accessorFn: (row) => row.type,
     filterFn: (row, columnId, filterValue) => {
@@ -126,6 +126,22 @@ export const columns: ColumnDef<Update>[] = [
             </p>
           )}
         </div>
+      );
+    },
+  },
+  {
+    header: 'Posted by',
+    accessorKey: 'posted_by',
+    accessorFn: (row) => row.users?.first_name + ' ' + row.users?.last_name,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length === 0) return true;
+      return filterValue.includes(row.getValue(columnId));
+    },
+    cell: ({ row }) => {
+      return (
+        <p className='max-w-prose'>
+          {row.original.users?.first_name} {row.original.users?.last_name}
+        </p>
       );
     },
   },
