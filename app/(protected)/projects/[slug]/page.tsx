@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
 import LogframeCard from '@/components/project-page/logframe-card';
+import ProjectUpdatesCard from '@/components/project-page/updates-card';
 
 export default async function ProjectPage({
   params,
@@ -31,7 +32,7 @@ export default async function ProjectPage({
 
       <LogframeCard projectId={project.id} slug={slug} />
       <div className='flex flex-col gap-4'>
-        {/* <div className='flex flex-col rounded-md bg-card p-4'>Thing</div> */}
+        <ProjectUpdatesCard projectId={project.id} />
         <div className='flex flex-col rounded-md bg-card p-4'>
           <h3 className='mb-auto text-sm font-semibold text-muted-foreground'>
             Funding requests
