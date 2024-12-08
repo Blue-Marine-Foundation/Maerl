@@ -4,10 +4,13 @@ import { createClient } from '@/utils/supabase/server';
 import { Update } from '@/utils/types';
 import { endOfDay, format, startOfMonth } from 'date-fns';
 
-export const fetchUpdates = async (dateRange?: {
-  from: string;
-  to: string;
-}) => {
+export const fetchUpdates = async (
+  dateRange?: {
+    from: string;
+    to: string;
+  },
+  projectId?: number,
+) => {
   const supabase = await createClient();
 
   // Set default date range if not provided
@@ -27,7 +30,7 @@ export const fetchUpdates = async (dateRange?: {
     )
     .gte('date::date', dates.from)
     .lte('date::date', dates.to)
-    .match({ valid: true, original: true })
+    .match({ project_id: projectId, valid: true, original: true })
     .order('date', { ascending: false });
 
   if (error) throw error;
