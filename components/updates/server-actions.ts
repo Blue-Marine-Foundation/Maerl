@@ -30,7 +30,11 @@ export const fetchUpdates = async (
     )
     .gte('date::date', dates.from)
     .lte('date::date', dates.to)
-    .match({ project_id: projectId, valid: true, original: true })
+    .match({
+      ...(projectId ? { project_id: projectId } : {}),
+      valid: true,
+      original: true,
+    })
     .order('date', { ascending: false });
 
   if (error) throw error;

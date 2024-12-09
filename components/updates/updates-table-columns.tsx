@@ -182,6 +182,7 @@ export const columns: ColumnDef<Update>[] = [
             </DialogHeader>
             <UpdateForm
               outputMeasurable={row.original.output_measurables!}
+              impactIndicator={row.original.impact_indicators!}
               projectId={row.original.projects?.id!}
               update={row.original}
             />

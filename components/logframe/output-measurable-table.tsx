@@ -102,6 +102,7 @@ export default function OutputMeasurableTable({ output }: { output: Output }) {
                 </DialogHeader>
                 <UpdateForm
                   outputMeasurable={row.original}
+                  impactIndicator={row.original.impact_indicators!}
                   projectId={row.original.project_id}
                 />
               </DialogContent>

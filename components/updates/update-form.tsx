@@ -2,18 +2,20 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { OutputMeasurable, Update } from '@/utils/types';
+import { ImpactIndicator, OutputMeasurable, Update } from '@/utils/types';
 import { upsertUpdate } from './server-actions';
 import { Badge } from '../ui/badge';
 
 interface UpdateFormProps {
   outputMeasurable: OutputMeasurable;
+  impactIndicator: ImpactIndicator;
   projectId: number;
   update?: Update;
 }
 
 export default function UpdateForm({
   outputMeasurable,
+  impactIndicator,
   projectId,
   update,
 }: UpdateFormProps) {
@@ -61,7 +63,7 @@ export default function UpdateForm({
       id: update?.id, // Include the id if we're editing
       project_id: projectId,
       output_measurable_id: outputMeasurable.id!,
-      impact_indicator_id: outputMeasurable.impact_indicator_id!,
+      impact_indicator_id: impactIndicator.id!,
       description,
       value: Number(value),
       type,
@@ -81,14 +83,14 @@ export default function UpdateForm({
           </Badge>{' '}
           {outputMeasurable.description}
         </p>
-        {outputMeasurable.impact_indicator_id && (
+        {impactIndicator && (
           <>
             <p className='text-sm font-medium'>Impact Indicator</p>
             <p className='text-sm text-muted-foreground'>
               <Badge variant='default' className='mr-2'>
-                {outputMeasurable.impact_indicators?.indicator_code}
+                {impactIndicator.indicator_code}
               </Badge>
-              {outputMeasurable.impact_indicators?.indicator_title}
+              {impactIndicator.indicator_title}
             </p>
           </>
         )}
