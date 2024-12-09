@@ -16,6 +16,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import UpdateEditingForm from './update-editing-form';
+import { format } from 'date-fns';
+
 export const columns: ColumnDef<Update>[] = [
   {
     header: 'Date',
@@ -24,6 +26,13 @@ export const columns: ColumnDef<Update>[] = [
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length === 0) return true;
       return filterValue.includes(row.getValue(columnId));
+    },
+    cell: ({ row }) => {
+      return (
+        <p className='whitespace-nowrap text-muted-foreground'>
+          {format(row.original.date, 'd MMM yyyy')}
+        </p>
+      );
     },
   },
   {
@@ -119,11 +128,16 @@ export const columns: ColumnDef<Update>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex flex-col gap-1'>
-          <p className='max-w-prose'>
+          <p>
+            {row.original.value && (
+              <span>{d3.format(',.0f')(row.original.value)}</span>
+            )}{' '}
             {row.original.value &&
-              d3.format(',.0f')(row.original.value) +
-                ' ' +
-                row.original.impact_indicators?.indicator_unit}
+              row.original.impact_indicators?.indicator_unit && (
+                <span className='text-muted-foreground'>
+                  {row.original.impact_indicators?.indicator_unit}
+                </span>
+              )}
           </p>
           {row.original.link && (
             <p className='text-sky-500'>
@@ -146,7 +160,7 @@ export const columns: ColumnDef<Update>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className='max-w-prose'>
+        <p className='max-w-prose whitespace-nowrap'>
           {row.original.users?.first_name} {row.original.users?.last_name}
         </p>
       );
@@ -158,7 +172,9 @@ export const columns: ColumnDef<Update>[] = [
       return (
         <Dialog>
           <DialogTrigger asChild>
-            <button className='rounded-md border px-2 py-1'>Edit</button>
+            <button className='rounded-md border px-2 py-1 text-muted-foreground'>
+              Edit
+            </button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
