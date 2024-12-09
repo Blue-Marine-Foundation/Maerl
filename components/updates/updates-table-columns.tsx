@@ -15,8 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import UpdateEditingForm from './update-editing-form';
 import { format } from 'date-fns';
+import UpdateForm from './update-form';
 
 export const columns: ColumnDef<Update>[] = [
   {
@@ -167,7 +167,7 @@ export const columns: ColumnDef<Update>[] = [
     },
   },
   {
-    header: 'Edit',
+    id: 'edit',
     cell: ({ row }) => {
       return (
         <Dialog>
@@ -180,7 +180,11 @@ export const columns: ColumnDef<Update>[] = [
             <DialogHeader>
               <DialogTitle>Edit update</DialogTitle>
             </DialogHeader>
-            <UpdateEditingForm update={row.original} />
+            <UpdateForm
+              outputMeasurable={row.original.output_measurables!}
+              projectId={row.original.projects?.id!}
+              update={row.original}
+            />
           </DialogContent>
         </Dialog>
       );
