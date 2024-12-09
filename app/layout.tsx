@@ -1,7 +1,8 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/header/alt-header';
+import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
+import QueryProvider from '@/utils/query-provider';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang='en' className={inter.className} suppressHydrationWarning>
       <body className='min-h-svh bg-background text-foreground dark:bg-background'>
         <Header />
-        <div className='mb-32 px-4'>{children}</div>
+        <QueryProvider>
+          <div className='mb-32 px-4'>{children}</div>
+        </QueryProvider>
         <Footer />
       </body>
     </html>

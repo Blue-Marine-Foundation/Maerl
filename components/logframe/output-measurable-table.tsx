@@ -16,13 +16,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import AddUpdateForm from '../updates/add-update-form';
+import UpdateForm from '@/components/updates/update-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export default function OutputMeasurableTable({ output }: { output: Output }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutputMeasurable | null>(null);
-  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const handleEditMeasurable = (measurable: OutputMeasurable) => {
     setSelectedMeasurable(measurable);
@@ -82,15 +88,26 @@ export default function OutputMeasurableTable({ output }: { output: Output }) {
       cell: ({ row }) => {
         return (
           <div className='flex justify-end gap-2'>
-            <ActionButton
-              action='add'
-              label='Add update'
-              className='bg-purple-600/20 hover:bg-purple-600/40'
-              onClick={() => {
-                setSelectedMeasurable(row.original);
-                setIsUpdateDialogOpen(true);
-              }}
-            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <ActionButton
+                  action='add'
+                  label='Add update'
+                  className='bg-purple-600/20 hover:bg-purple-600/40'
+                />
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit update</DialogTitle>
+                </DialogHeader>
+                <UpdateForm
+                  outputMeasurable={row.original}
+                  impactIndicator={row.original.impact_indicators!}
+                  projectId={row.original.project_id}
+                />
+              </DialogContent>
+            </Dialog>
+
             <ActionButton
               action='edit'
               variant='icon'
@@ -179,18 +196,6 @@ export default function OutputMeasurableTable({ output }: { output: Output }) {
         outputId={output.id}
         projectId={output.project_id}
       />
-
-      {selectedMeasurable && (
-        <AddUpdateForm
-          isOpen={isUpdateDialogOpen}
-          onClose={() => {
-            setIsUpdateDialogOpen(false);
-            setSelectedMeasurable(null);
-          }}
-          outputMeasurable={selectedMeasurable}
-          projectId={output.project_id}
-        />
-      )}
     </div>
   );
 }
