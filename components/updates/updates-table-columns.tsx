@@ -130,7 +130,14 @@ export const columns: ColumnDef<Update>[] = [
         <div className='flex flex-col gap-1'>
           <p>
             {row.original.value && (
-              <span>{d3.format(',.0f')(row.original.value)}</span>
+              <span>
+                {d3.format(
+                  Number.isInteger(row.original.value) ||
+                    row.original.value >= 100
+                    ? ',.0f'
+                    : ',.2f',
+                )(row.original.value)}
+              </span>
             )}{' '}
             {row.original.value &&
               row.original.impact_indicators?.indicator_unit && (
