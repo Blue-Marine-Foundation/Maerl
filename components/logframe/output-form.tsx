@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
-import { upsertOutput, fetchOutcomeMeasurables } from './server-actions';
-import type { OutcomeMeasurable } from '@/utils/types';
+import { upsertOutput } from './server-actions';
 import OutcomeMeasurableSelect from './outcome-measurable-select';
 
 interface OutputFormProps {
@@ -41,17 +40,24 @@ export default function OutputForm({
   }, [output, outcomeMeasurableId]);
 
   const mutation = useMutation({
-    mutationFn: (newOutput: Partial<Output>) =>
-      upsertOutput({
+    mutationFn: async (newOutput: Partial<Output>) => {
+      const response = await upsertOutput({
         ...newOutput,
         outcome_measurable_id: selectedMeasurableId,
-      }),
+      });
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['logframe'] });
       onClose();
     },
     onError: (error: Error) => {
-      setError(error.message);
+      setError(error.message || 'An unexpected error occurred');
     },
   });
 

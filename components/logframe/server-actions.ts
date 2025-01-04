@@ -160,11 +160,19 @@ export const upsertOutcomeMeasurable = async (
   return data;
 };
 
-export const upsertOutput = async (output: Partial<Output>) => {
+type UpsertOutputResponse = {
+  success: boolean;
+  data?: Output;
+  error?: string;
+};
+
+export const upsertOutput = async (
+  output: Partial<Output>,
+): Promise<UpsertOutputResponse> => {
   const supabase = await createClient();
 
   if (!output.outcome_measurable_id || !output.description || !output.code) {
-    throw new Error('Missing required fields');
+    return { success: false, error: 'Missing required fields' };
   }
 
   const { data: existingOutputs } = await supabase
@@ -178,7 +186,10 @@ export const upsertOutput = async (output: Partial<Output>) => {
   );
 
   if (isDuplicate) {
-    throw new Error(`Output code "${output.code}" already exists`);
+    return {
+      success: false,
+      error: `Output code "${output.code}" already exists`,
+    };
   }
 
   const { data, error } = await supabase
@@ -194,7 +205,12 @@ export const upsertOutput = async (output: Partial<Output>) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    return {
+      success: false,
+      error: 'Failed to save output. Please try again.',
+    };
+  }
 
   const { data: updatedProject } = await supabase
     .from('projects')
@@ -212,7 +228,7 @@ export const upsertOutput = async (output: Partial<Output>) => {
       .single();
   }
 
-  return data;
+  return { success: true, data };
 };
 
 export const upsertOutputMeasurable = async (
