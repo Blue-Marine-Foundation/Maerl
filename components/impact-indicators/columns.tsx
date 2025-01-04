@@ -12,7 +12,7 @@ export const columns: ColumnDef<ImpactIndicatorSummary>[] = [
       const code = row.getValue('indicator_code') as string;
       return (
         <div
-          className={`text-right ${
+          className={`max-w-20 text-right ${
             code.length < 2 && 'font-medium'
           } ${code.length < 4 && 'text-muted-foreground'}`}
         >

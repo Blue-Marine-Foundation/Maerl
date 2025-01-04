@@ -68,13 +68,13 @@ export default function ColumnFilter<TData>({
       <div className='flex items-center gap-2'>
         <input
           type='text'
-          placeholder={`Search ${label?.toLowerCase() || columnId}...`}
+          placeholder={`${label?.toLowerCase() || columnId}`}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             table.getColumn(columnId)?.setFilterValue(e.target.value);
           }}
-          className='w-full rounded-md border px-3 py-1'
+          className='w-full rounded-md border bg-background px-3 py-1 text-sm text-foreground'
         />
       </div>
     );
