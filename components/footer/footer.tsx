@@ -4,7 +4,7 @@ export default function Footer() {
       <div className='max-w-app mx-auto flex items-baseline justify-between'>
         <p className='mb-[2em] text-sm'>Powered by Blue Marine Foundation</p>
         <p className='text-xs'>
-          &copy; Blue Marine Foundation, 2024 and beyond...
+          &copy; Blue Marine Foundation, 2025 and beyond...
         </p>
       </div>
     </footer>
