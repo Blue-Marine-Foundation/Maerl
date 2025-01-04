@@ -29,9 +29,10 @@ interface DataTableProps<TData> {
   filterableColumns?: {
     id: string;
     label: string;
+    type?: 'text' | 'list';
   }[];
   enableDateFilter?: boolean;
-  exportData?: (data: TData[]) => Record<string, any>[];
+  enableExport?: boolean;
 }
 
 export function DataTable<TData>({
@@ -39,7 +40,7 @@ export function DataTable<TData>({
   columns,
   filterableColumns = [],
   enableDateFilter = false,
-  exportData,
+  enableExport = true,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -63,20 +64,25 @@ export function DataTable<TData>({
       <div className='flex items-center justify-between gap-4'>
         <div className='flex items-center justify-start gap-4'>
           {filterableColumns.length > 0 && <p>Filter by:</p>}
-          {filterableColumns.map((column) => (
+          {filterableColumns?.map(({ id, label, type }) => (
             <ColumnFilter
-              key={column.id}
+              key={id}
               table={table}
-              columnId={column.id}
-              label={column.label}
+              columnId={id}
+              label={label}
+              type={type}
             />
           ))}
           {enableDateFilter && <SetDateRange />}
         </div>
 
         <div className='flex items-center gap-4'>
-          <p>{data.length} items</p>
-          {exportData && <CopyToCsvButton data={exportData(data)} />}
+          <p>{table.getFilteredRowModel().rows.length} items</p>
+          {enableExport && (
+            <CopyToCsvButton
+              data={table.getFilteredRowModel().rows.map((row) => row.original)}
+            />
+          )}
         </div>
       </div>
 

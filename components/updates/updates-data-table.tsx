@@ -40,7 +40,7 @@ export default function UpdatesDataTable() {
       columns={columns}
       filterableColumns={filterableColumns}
       enableDateFilter
-      exportData={flattenUpdates}
+      enableExport
     />
   );
 }
