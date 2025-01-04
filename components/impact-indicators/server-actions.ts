@@ -1,15 +1,17 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import type { ImpactIndicator } from '@/utils/types';
 
-export const fetchImpactIndicators = async () => {
+export async function fetchImpactIndicators() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('impact_indicators')
+    .from('impact_indicator_summaries')
     .select('*')
-    .order('indicator_code');
+    .order('impact_indicator_id', { ascending: true });
 
-  if (error) throw error;
-  return data as ImpactIndicator[];
-};
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
