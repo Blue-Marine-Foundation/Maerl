@@ -33,8 +33,10 @@ export default function ImpactIndicatorList() {
           id: 'indicator_title',
           label: 'Search indicators',
           type: 'text',
+          placeholder: 'e.g. "species"',
         },
       ]}
+      enableDateFilter
       enableExport
     />
   );

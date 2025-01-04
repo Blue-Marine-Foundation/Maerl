@@ -12,6 +12,7 @@ type FilterProps<TData> = {
   columnId: string;
   label?: string;
   type?: 'text' | 'list';
+  placeholder?: string;
 };
 
 export default function ColumnFilter<TData>({
@@ -19,6 +20,7 @@ export default function ColumnFilter<TData>({
   columnId,
   label,
   type = 'list',
+  placeholder,
 }: FilterProps<TData>) {
   const [searchTerm, setSearchTerm] = useState('');
   const column = table.getColumn(columnId);
@@ -65,16 +67,19 @@ export default function ColumnFilter<TData>({
 
   if (type === 'text') {
     return (
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-4'>
+        <label className='shrink-0 text-sm text-muted-foreground'>
+          {label || columnId}:
+        </label>
         <input
           type='text'
-          placeholder={`${label?.toLowerCase() || columnId}`}
+          placeholder={placeholder || columnId}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             table.getColumn(columnId)?.setFilterValue(e.target.value);
           }}
-          className='w-full rounded-md border bg-background px-3 py-1 text-sm text-foreground'
+          className='h-10 w-full rounded-md border bg-background px-3 text-sm text-foreground'
         />
       </div>
     );

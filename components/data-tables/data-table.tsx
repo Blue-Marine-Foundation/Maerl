@@ -30,6 +30,7 @@ interface DataTableProps<TData> {
     id: string;
     label: string;
     type?: 'text' | 'list';
+    placeholder?: string;
   }[];
   enableDateFilter?: boolean;
   enableExport?: boolean;
@@ -63,14 +64,14 @@ export function DataTable<TData>({
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between gap-4'>
         <div className='flex items-center justify-start gap-4'>
-          {filterableColumns.length > 0 && <p>Filter by:</p>}
-          {filterableColumns?.map(({ id, label, type }) => (
+          {filterableColumns?.map(({ id, label, type, placeholder }) => (
             <ColumnFilter
               key={id}
               table={table}
               columnId={id}
               label={label}
               type={type}
+              placeholder={placeholder}
             />
           ))}
           {enableDateFilter && <SetDateRange />}
