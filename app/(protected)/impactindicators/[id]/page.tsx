@@ -6,7 +6,7 @@ import SetDateRange from '@/components/date-filtering/set-date-range';
 export default async function IndicatorUpdatesPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const supabase = await createClient();

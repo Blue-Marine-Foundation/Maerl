@@ -62,12 +62,12 @@ export default function IndicatorUpdates() {
             <h3 className='text-sm font-medium text-muted-foreground'>
               Total value
             </h3>
+            <p className='text-balance text-sm'>{project_summaries[0]?.unit}</p>
             <h2 className='text-right text-3xl font-bold'>
-              {d3.format(',.2f')(
+              {d3.format(',')(
                 d3.sum(project_summaries, (d) => d.valueSum || 0),
               )}
             </h2>
-            <p className='text-right text-sm'>{project_summaries[0]?.unit}</p>
           </div>
         </div>
         <div className='grow'>

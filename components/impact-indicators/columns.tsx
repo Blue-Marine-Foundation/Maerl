@@ -3,6 +3,8 @@
 import { ImpactIndicatorSummary } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import * as d3 from 'd3';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export const columns: ColumnDef<ImpactIndicatorSummary>[] = [
   {
@@ -32,13 +34,23 @@ export const columns: ColumnDef<ImpactIndicatorSummary>[] = [
     },
     cell: ({ row }) => {
       const code = row.original.indicator_code;
+      const searchParams = useSearchParams();
+      const hasSearchParams =
+        searchParams && searchParams.toString().length > 0;
       return (
         <div
           className={`max-w-prose ${
             code.length < 2 && 'font-medium'
           } ${code.length < 4 && 'text-muted-foreground'}`}
         >
-          {row.getValue('indicator_title')}
+          <Link
+            href={`/impactindicators/${row.original.impact_indicator_id}${
+              hasSearchParams ? `?${searchParams.toString()}` : ''
+            }`}
+            className='hover:underline'
+          >
+            {row.getValue('indicator_title')}
+          </Link>
         </div>
       );
     },
