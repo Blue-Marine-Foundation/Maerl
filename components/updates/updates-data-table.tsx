@@ -5,8 +5,8 @@ import { columns } from './updates-table-columns';
 import { fetchUpdates } from './server-actions';
 import useUrlDateState from '../date-filtering/use-url-date-state';
 import { DataTable } from '../data-tables/data-table';
-import { flattenUpdates } from './flatten-updates';
 import { Update } from '@/utils/types';
+import FeatureCard from '../ui/feature-card';
 
 const filterableColumns = [
   { id: 'project', label: 'Project' },
@@ -35,12 +35,14 @@ export default function UpdatesDataTable() {
   }
 
   return (
-    <DataTable<Update>
-      data={data}
-      columns={columns}
-      filterableColumns={filterableColumns}
-      enableDateFilter
-      exportData={flattenUpdates}
-    />
+    <FeatureCard>
+      <DataTable<Update>
+        data={data}
+        columns={columns}
+        filterableColumns={filterableColumns}
+        enableDateFilter
+        enableExport
+      />
+    </FeatureCard>
   );
 }

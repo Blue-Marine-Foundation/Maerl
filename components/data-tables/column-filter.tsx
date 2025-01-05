@@ -11,12 +11,16 @@ type FilterProps<TData> = {
   table: Table<TData>;
   columnId: string;
   label?: string;
+  type?: 'text' | 'list';
+  placeholder?: string;
 };
 
 export default function ColumnFilter<TData>({
   table,
   columnId,
   label,
+  type = 'list',
+  placeholder,
 }: FilterProps<TData>) {
   const [searchTerm, setSearchTerm] = useState('');
   const column = table.getColumn(columnId);
@@ -60,6 +64,26 @@ export default function ColumnFilter<TData>({
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+
+  if (type === 'text') {
+    return (
+      <div className='flex items-center gap-4'>
+        <label className='shrink-0 text-sm text-muted-foreground'>
+          {label || columnId}:
+        </label>
+        <input
+          type='text'
+          placeholder={placeholder || columnId}
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            table.getColumn(columnId)?.setFilterValue(e.target.value);
+          }}
+          className='h-10 w-full rounded-md border bg-background px-3 text-sm text-foreground'
+        />
+      </div>
+    );
+  }
 
   return (
     <Popover>

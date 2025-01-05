@@ -1,23 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 
 interface BreadcrumbsProps {
   projectName?: string;
+  type?: 'impactindicator' | 'project';
 }
 
-export default function Breadcrumbs({ projectName }: BreadcrumbsProps) {
+export default function Breadcrumbs({ projectName, type }: BreadcrumbsProps) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter((segment) => segment);
-
+  const searchParams = useSearchParams();
+  const hasSearchParams = searchParams && searchParams.toString().length > 0;
   const breadcrumbs = [
     { name: 'Home', path: '/' },
     ...pathSegments.map((segment, index) => {
       let name = segment;
       if (segment === 'projects') name = 'Projects';
       else if (index === 1 && projectName) name = projectName;
+      else if (type === 'impactindicator' && index === 0)
+        name = 'Impact Indicators';
       else {
         // Handle hyphenated segments by splitting, capitalizing each word, and joining
         name = segment
@@ -28,7 +32,9 @@ export default function Breadcrumbs({ projectName }: BreadcrumbsProps) {
 
       return {
         name,
-        path: `/${pathSegments.slice(0, index + 1).join('/')}`,
+        path: `/${pathSegments.slice(0, index + 1).join('/')}${
+          hasSearchParams ? `?${searchParams.toString()}` : ''
+        }`,
       };
     }),
   ];
