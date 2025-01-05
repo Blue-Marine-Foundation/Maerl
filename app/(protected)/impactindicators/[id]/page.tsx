@@ -28,7 +28,7 @@ export default async function IndicatorUpdatesPage({
 
   return (
     <div className='flex flex-col gap-8'>
-      <Breadcrumbs />
+      <Breadcrumbs type='impactindicator' />
       <div className='flex items-start justify-between gap-12'>
         <div className='flex flex-col gap-2'>
           <h3 className='font-semibold tracking-wide text-muted-foreground'>
