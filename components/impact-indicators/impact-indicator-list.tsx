@@ -2,7 +2,7 @@
 
 import { ImpactIndicatorSummary } from '@/utils/types';
 import { useQuery } from '@tanstack/react-query';
-import { fetchImpactIndicators } from './server-actions';
+import { fetchImpactIndicatorSummaries } from './server-actions';
 import { DataTable } from '../data-tables/data-table';
 import { columns } from './columns';
 import useUrlDateState from '@/components/date-filtering/use-url-date-state';
@@ -12,7 +12,7 @@ export default function ImpactIndicatorList() {
 
   const { data: impactIndicators, error } = useQuery({
     queryKey: ['impact-indicators', from, to],
-    queryFn: () => fetchImpactIndicators(from, to),
+    queryFn: () => fetchImpactIndicatorSummaries(from, to),
   });
 
   if (error) {

@@ -43,7 +43,7 @@ export default function ProjectUpdatesDataTable({
       columns={columns}
       filterableColumns={filterableColumns}
       enableDateFilter
-      exportData={flattenUpdates}
+      enableExport
     />
   );
 }
