@@ -32,3 +32,18 @@ export async function fetchImpactIndicatorSummaries(
 
   return data;
 }
+
+export async function fetchImpactIndicatorUpdates(id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('updates')
+    .select('*, projects(slug, name), output_measurables(*), users(*)')
+    .match({ impact_indicator_id: id, original: true, valid: true })
+    .order('date', { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
