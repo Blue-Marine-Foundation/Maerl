@@ -22,7 +22,7 @@ import { useState } from 'react';
 import ColumnFilter from './column-filter';
 import SetDateRange from '../date-filtering/set-date-range';
 import CopyToCsvButton from './export-data';
-
+import * as d3 from 'd3';
 interface DataTableProps<TData> {
   data: TData[];
   columns: ColumnDef<TData>[];
@@ -78,7 +78,7 @@ export function DataTable<TData>({
         </div>
 
         <div className='flex items-center gap-4'>
-          <p>{table.getFilteredRowModel().rows.length} items</p>
+          <p>{d3.format(',')(table.getFilteredRowModel().rows.length)} items</p>
           {enableExport && (
             <CopyToCsvButton
               data={table.getFilteredRowModel().rows.map((row) => row.original)}
