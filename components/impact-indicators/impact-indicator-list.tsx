@@ -5,11 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchImpactIndicators } from './server-actions';
 import { DataTable } from '../data-tables/data-table';
 import { columns } from './columns';
+import useUrlDateState from '@/components/date-filtering/use-url-date-state';
 
 export default function ImpactIndicatorList() {
+  const { from, to } = useUrlDateState();
+
   const { data: impactIndicators, error } = useQuery({
-    queryKey: ['impact-indicators'],
-    queryFn: fetchImpactIndicators,
+    queryKey: ['impact-indicators', from, to],
+    queryFn: () => fetchImpactIndicators(from, to),
   });
 
   if (error) {

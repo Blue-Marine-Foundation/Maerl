@@ -1,4 +1,4 @@
-import { startOfMonth, format } from 'date-fns';
+import { startOfYear, format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 
 export interface DateState {
@@ -6,7 +6,7 @@ export interface DateState {
   to: string;
 }
 
-export const defaultFrom = startOfMonth(new Date());
+export const defaultFrom = startOfYear(new Date());
 export const defaultTo = new Date();
 
 export default function useUrlDateState(): DateState {
