@@ -10,7 +10,12 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
       {outputs
         .sort((a, b) => a.code.localeCompare(b.code))
         .map((output) => (
-          <FeatureCard key={output.id} minHeight='100px' title='Output'>
+          <FeatureCard
+            key={output.id}
+            minHeight='100px'
+            title='Output'
+            variant='slate'
+          >
             <OutputCard output={output} />
           </FeatureCard>
         ))}

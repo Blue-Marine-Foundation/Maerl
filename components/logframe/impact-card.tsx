@@ -19,7 +19,7 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCard title='Impact'>
+    <FeatureCard title='Impact' variant='blue' minHeight='100%'>
       {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton

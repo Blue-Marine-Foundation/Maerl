@@ -25,7 +25,7 @@ export default function OutcomeCard({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCard title='Outcome'>
+        <FeatureCard title='Outcome' minHeight='100%'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -44,11 +44,13 @@ export default function OutcomeCard({
 
       {outcome && (
         <>
-          <FeatureCard title='Outcome'>
+          <FeatureCard title='Outcome' variant='green' minHeight='100%'>
             <div className='flex grow flex-col items-start justify-between gap-4'>
               <div>
                 <p className='text-sm'>
-                  <Badge className='mr-2'>{outcome.code}</Badge>
+                  <Badge className='mr-2' variant='transparent'>
+                    {outcome.code}
+                  </Badge>
                   {outcome.description}
                 </p>
               </div>
