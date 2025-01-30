@@ -25,10 +25,8 @@ export default function TheoryOfChange({ slug }: { slug: string }) {
   const projectId = data?.data?.id;
 
   return (
-    <div className='relative grid grid-cols-[1fr_3fr] items-start gap-8 text-sm'>
-      <div className='sticky top-4'>
-        <ImpactCard impact={impact} projectId={projectId} />
-      </div>
+    <div className='flex flex-col gap-8 text-sm'>
+      <ImpactCard impact={impact} projectId={projectId} />
       <div className='flex flex-col gap-4'>
         {outcomes.map((outcome) => (
           <OutcomeCard
