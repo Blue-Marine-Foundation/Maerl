@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchLogframe } from '@/components/logframe/server-actions';
+import { fetchTheoryOfChange } from '@/components/logframe/server-actions';
 import ImpactCard from '@/components/logframe/impact-card';
 import OutcomeCard from '@/components/logframe/outcome-card';
 import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skeleton';
@@ -9,7 +9,7 @@ import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skele
 export default function TheoryOfChange({ slug }: { slug: string }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['logframe', slug],
-    queryFn: () => fetchLogframe(slug),
+    queryFn: () => fetchTheoryOfChange(slug),
   });
 
   if (isLoading) {
@@ -22,6 +22,7 @@ export default function TheoryOfChange({ slug }: { slug: string }) {
 
   const impact = data?.data?.impacts[0] || null;
   const outcomes = data?.data?.outcomes || [];
+  const outputs = data?.data?.outputs || [];
   const projectId = data?.data?.id;
 
   return (
@@ -33,10 +34,11 @@ export default function TheoryOfChange({ slug }: { slug: string }) {
             key={outcome.id}
             outcome={outcome}
             projectId={projectId}
+            outputs={outputs}
           />
         ))}
         {outcomes.length === 0 && (
-          <OutcomeCard outcome={null} projectId={projectId} />
+          <OutcomeCard outcome={null} projectId={projectId} outputs={outputs} />
         )}
       </div>
     </div>

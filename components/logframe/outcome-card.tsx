@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Outcome } from '@/utils/types';
+import { Outcome, Output } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
@@ -11,9 +11,11 @@ import OutcomeMeasurableCard from './outcome-measurable-card';
 export default function OutcomeCard({
   outcome,
   projectId,
+  outputs,
 }: {
   outcome: Outcome | null;
   projectId: number;
+  outputs: Output[];
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
 
@@ -64,9 +66,9 @@ export default function OutcomeCard({
           </FeatureCard>
 
           <OutcomeMeasurableCard
-            measurables={outcome.outcome_measurables}
             outcomeId={outcome.id}
             projectId={projectId}
+            outputs={outputs}
           />
         </>
       )}

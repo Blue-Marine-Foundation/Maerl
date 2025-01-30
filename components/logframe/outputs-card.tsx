@@ -11,7 +11,7 @@ export default function OutputCard({
   onEdit,
 }: {
   output: Output;
-  onEdit: (output: Output) => void;
+  onEdit?: (output: Output) => void;
 }) {
   const { slug } = useParams();
 
@@ -43,11 +43,13 @@ export default function OutputCard({
         </Link>
       </div>
       <div className='flex justify-end'>
-        <ActionButton
-          action='edit'
-          variant='icon'
-          onClick={() => onEdit(output)}
-        />
+        {onEdit && (
+          <ActionButton
+            action='edit'
+            variant='icon'
+            onClick={() => onEdit(output)}
+          />
+        )}
       </div>
     </div>
   );
