@@ -6,7 +6,7 @@ import FeatureCard from '@/components/ui/feature-card';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
-import OutcomeMeasurableCard from './outcome-measurable-card';
+import OutputsContainer from './outputs-container';
 
 export default function OutcomeCard({
   canEdit = false,
@@ -72,11 +72,11 @@ export default function OutcomeCard({
             />
           </FeatureCard>
 
-          <OutcomeMeasurableCard
-            outcomeId={outcome.id}
-            projectId={projectId}
-            outputs={outputs}
-          />
+          {outputs.length > 0 && (
+            <div className='flex flex-col gap-8'>
+              <OutputsContainer outputs={outputs} />
+            </div>
+          )}
         </>
       )}
     </div>
