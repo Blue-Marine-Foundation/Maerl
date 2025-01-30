@@ -2,17 +2,10 @@
 
 import { Output } from '@/utils/types';
 import { Badge, BadgeProps } from '@/components/ui/badge';
-import ActionButton from '../ui/action-button';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-export default function OutputCard({
-  output,
-  onEdit,
-}: {
-  output: Output;
-  onEdit?: (output: Output) => void;
-}) {
+export default function OutputCard({ output }: { output: Output }) {
   const { slug } = useParams();
 
   return (
@@ -41,15 +34,6 @@ export default function OutputCard({
         >
           <p>{output.description}</p>
         </Link>
-      </div>
-      <div className='flex justify-end'>
-        {onEdit && (
-          <ActionButton
-            action='edit'
-            variant='icon'
-            onClick={() => onEdit(output)}
-          />
-        )}
       </div>
     </div>
   );

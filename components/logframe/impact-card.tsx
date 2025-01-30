@@ -9,15 +9,18 @@ import ActionButton from '../ui/action-button';
 export default function ImpactCard({
   impact,
   projectId,
+  canEdit = false,
 }: {
   impact: Impact | null;
   projectId: number;
+  /** Enables the Add Impact and Edit Impact buttons  */
+  canEdit?: boolean;
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <FeatureCard title='Impact'>
-      {!impact ? (
+      {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton
             action='add'
@@ -25,12 +28,18 @@ export default function ImpactCard({
             onClick={() => setIsDialogOpen(true)}
           />
         </div>
-      ) : (
+      )}
+      {impact && (
         <div className='flex grow flex-col items-start justify-between gap-4'>
           <p className='text-base'>{impact.title}</p>
-          <div className='flex w-full justify-end text-sm'>
-            <ActionButton action='edit' onClick={() => setIsDialogOpen(true)} />
-          </div>
+          {canEdit && (
+            <div className='flex w-full justify-end text-sm'>
+              <ActionButton
+                action='edit'
+                onClick={() => setIsDialogOpen(true)}
+              />
+            </div>
+          )}
         </div>
       )}
       <ImpactForm

@@ -9,19 +9,22 @@ import { Badge } from '@/components/ui/badge';
 import OutcomeMeasurableCard from './outcome-measurable-card';
 
 export default function OutcomeCard({
+  canEdit = false,
   outcome,
-  projectId,
   outputs,
+  projectId,
 }: {
+  /** Enables the Add Impact and Edit Impact buttons*/
+  canEdit?: boolean;
   outcome: Outcome | null;
-  projectId: number;
   outputs: Output[];
+  projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
 
   return (
     <div className='relative flex flex-col gap-8'>
-      {!outcome && (
+      {!outcome && canEdit && (
         <FeatureCard title='Outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
@@ -49,12 +52,14 @@ export default function OutcomeCard({
                   {outcome.description}
                 </p>
               </div>
-              <div className='flex w-full justify-end text-sm'>
-                <ActionButton
-                  action='edit'
-                  onClick={() => setIsOutcomeDialogOpen(true)}
-                />
-              </div>
+              {canEdit && (
+                <div className='flex w-full justify-end text-sm'>
+                  <ActionButton
+                    action='edit'
+                    onClick={() => setIsOutcomeDialogOpen(true)}
+                  />
+                </div>
+              )}
             </div>
 
             <OutcomeForm
