@@ -30,10 +30,10 @@ export default function ImpactCard({
         </div>
       )}
       {impact && (
-        <div className='flex grow flex-col items-start justify-between gap-4'>
+        <div className='flex grow items-center justify-between gap-4'>
           <p className='max-w-prose text-sm'>{impact.title}</p>
           {canEdit && (
-            <div className='flex w-full justify-end text-sm'>
+            <div className='flex-shrink-0 text-sm'>
               <ActionButton
                 action='edit'
                 onClick={() => setIsDialogOpen(true)}

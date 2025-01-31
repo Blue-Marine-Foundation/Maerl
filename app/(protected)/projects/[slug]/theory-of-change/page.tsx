@@ -24,7 +24,7 @@ export default function TheoryOfChangePage() {
     return <div>Error: {(error as Error).message}</div>;
   }
 
-  const impact = data?.data?.impacts[0] || null;
+  const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
   const outputs = data?.data?.outputs || [];
   const projectId = data?.data?.id;

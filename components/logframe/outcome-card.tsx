@@ -18,7 +18,6 @@ export default function OutcomeCard({
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
-
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
@@ -51,7 +50,7 @@ export default function OutcomeCard({
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
               </div>
               {canEdit && (
-                <div className='flex w-full justify-end text-sm'>
+                <div className='flex-shrink-0 text-sm'>
                   <ActionButton
                     action='edit'
                     onClick={() => setIsOutcomeDialogOpen(true)}
