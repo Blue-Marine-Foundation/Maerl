@@ -17,17 +17,17 @@ export default function TheoryOfChangeSkeleton() {
           </p>
         </div>
       </FeatureCard>
-      <FeatureCard title='Outcome' minHeight='100%'>
+      <FeatureCard title='Output' minHeight='100%'>
         <div className='flex grow flex-col items-center justify-center'>
           <p className='rounded-md bg-muted-foreground/10 px-2 py-1 text-center text-muted-foreground'>
-            Loading outcome
+            Loading output
           </p>
         </div>
       </FeatureCard>
-      <FeatureCard title='Outcome' minHeight='100%'>
+      <FeatureCard title='Output' minHeight='100%'>
         <div className='flex grow flex-col items-center justify-center'>
           <p className='rounded-md bg-muted-foreground/10 px-2 py-1 text-center text-muted-foreground'>
-            Loading outcome
+            Loading output
           </p>
         </div>
       </FeatureCard>
