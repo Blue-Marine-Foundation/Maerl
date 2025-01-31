@@ -6,6 +6,7 @@ import { fetchTheoryOfChange } from '@/components/logframe/server-actions';
 import ImpactCard from '@/components/logframe/impact-card';
 import OutcomeCard from '@/components/logframe/outcome-card';
 import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skeleton';
+import OutputsContainer from '@/components/logframe/outputs-container';
 
 export default function TheoryOfChangePage() {
   const { slug } = useParams();
@@ -38,15 +39,17 @@ export default function TheoryOfChangePage() {
               key={outcome.id}
               outcome={outcome}
               projectId={projectId}
-              outputs={outputs}
             />
           ))}
           {outcomes.length === 0 && (
-            <OutcomeCard
-              outcome={null}
-              projectId={projectId}
-              outputs={outputs}
-            />
+            <OutcomeCard outcome={null} projectId={projectId} />
+          )}
+        </div>
+        <div>
+          {outputs.length > 0 && (
+            <div className='flex flex-col gap-8'>
+              <OutputsContainer outputs={outputs} />
+            </div>
           )}
         </div>
       </div>

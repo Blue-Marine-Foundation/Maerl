@@ -1,23 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Outcome, Output } from '@/utils/types';
+import { Outcome } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
-import OutputsContainer from './outputs-container';
 
 export default function OutcomeCard({
   canEdit = false,
   outcome,
-  outputs,
   projectId,
 }: {
   /** Enables the Add Impact and Edit Impact buttons*/
   canEdit?: boolean;
   outcome: Outcome | null;
-  outputs: Output[];
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
@@ -71,12 +68,6 @@ export default function OutcomeCard({
               projectId={projectId}
             />
           </FeatureCard>
-
-          {outputs.length > 0 && (
-            <div className='flex flex-col gap-8'>
-              <OutputsContainer outputs={outputs} />
-            </div>
-          )}
         </>
       )}
     </div>
