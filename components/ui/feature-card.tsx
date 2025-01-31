@@ -9,33 +9,38 @@ export default function FeatureCard({
   title?: string;
   minHeight?: string;
   children: React.ReactNode;
-  /** card background color */
+  /** card title area background color */
   variant?: 'default' | 'blue' | 'green' | 'slate';
 }) {
-  console.log({ minHeight });
   return (
     <div
       className={cn(
-        'flex flex-col justify-between gap-6 rounded-md p-4 pb-6',
+        'flex flex-col justify-between gap-6 rounded-md bg-card',
         minHeight ? `min-h-[${minHeight}]` : 'min-h-64',
-        variant === 'default' && 'bg-card',
-        variant === 'blue' && 'bg-blue-950/90',
-        variant === 'green' && 'bg-emerald-900/90',
-        variant === 'slate' && 'bg-slate-800',
       )}
     >
       {title && (
-        <h3
+        <div
           className={cn(
-            'text-sm font-medium',
-            variant === 'default' && 'text-muted-foreground',
+            '-mt-0 w-full rounded-t-md px-4 py-3',
+            variant === 'default' && 'bg-card',
+            variant === 'blue' && 'bg-blue-950/90',
+            variant === 'green' && 'bg-emerald-900/90',
+            variant === 'slate' && 'bg-slate-800',
           )}
         >
-          {title}
-        </h3>
+          <h3
+            className={cn(
+              'text-sm font-medium',
+              variant === 'default' && 'text-muted-foreground',
+            )}
+          >
+            {title}
+          </h3>
+        </div>
       )}
 
-      {children}
+      <div className='px-4 pb-6'>{children}</div>
     </div>
   );
 }

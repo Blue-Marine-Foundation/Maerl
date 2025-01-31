@@ -31,7 +31,7 @@ export default function ImpactCard({
       )}
       {impact && (
         <div className='flex grow flex-col items-start justify-between gap-4'>
-          <p className='text-base'>{impact.title}</p>
+          <p className='max-w-prose text-sm'>{impact.title}</p>
           {canEdit && (
             <div className='flex w-full justify-end text-sm'>
               <ActionButton

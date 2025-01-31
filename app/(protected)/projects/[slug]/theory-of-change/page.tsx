@@ -30,28 +30,26 @@ export default function TheoryOfChangePage() {
   const projectId = data?.data?.id;
 
   return (
-    <div className='flex flex-col gap-4'>
-      <div className='flex flex-col gap-8 text-sm'>
-        <ImpactCard impact={impact} projectId={projectId} />
-        <div className='flex flex-col gap-4'>
-          {outcomes.map((outcome) => (
-            <OutcomeCard
-              key={outcome.id}
-              outcome={outcome}
-              projectId={projectId}
-            />
-          ))}
-          {outcomes.length === 0 && (
-            <OutcomeCard outcome={null} projectId={projectId} />
-          )}
-        </div>
-        <div>
-          {outputs.length > 0 && (
-            <div className='flex flex-col gap-8'>
-              <OutputsContainer outputs={outputs} />
-            </div>
-          )}
-        </div>
+    <div className='flex w-full flex-col gap-8 text-sm'>
+      <ImpactCard impact={impact} projectId={projectId} />
+      <div className='flex flex-col gap-4'>
+        {outcomes.map((outcome) => (
+          <OutcomeCard
+            key={outcome.id}
+            outcome={outcome}
+            projectId={projectId}
+          />
+        ))}
+        {outcomes.length === 0 && (
+          <OutcomeCard outcome={null} projectId={projectId} />
+        )}
+      </div>
+      <div>
+        {outputs.length > 0 && (
+          <div className='flex flex-col gap-8'>
+            <OutputsContainer outputs={outputs} />
+          </div>
+        )}
       </div>
     </div>
   );

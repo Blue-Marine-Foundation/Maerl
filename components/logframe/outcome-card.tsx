@@ -5,7 +5,6 @@ import { Outcome } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
-import { Badge } from '@/components/ui/badge';
 
 export default function OutcomeCard({
   canEdit = false,
@@ -44,12 +43,7 @@ export default function OutcomeCard({
           <FeatureCard title='Outcome' variant='green' minHeight='100%'>
             <div className='flex grow flex-col items-start justify-between gap-4'>
               <div>
-                <p className='text-sm'>
-                  <Badge className='mr-2' variant='transparent'>
-                    {outcome.code}
-                  </Badge>
-                  {outcome.description}
-                </p>
+                <p className='max-w-prose text-sm'>{outcome.description}</p>
               </div>
               {canEdit && (
                 <div className='flex w-full justify-end text-sm'>
