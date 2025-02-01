@@ -32,7 +32,7 @@ export default function TheoryOfChangePage() {
   return (
     <div className='flex w-full flex-col gap-8 text-sm'>
       <ImpactCard impact={impact} projectId={projectId} />
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-8'>
         {outcomes.map((outcome) => (
           <OutcomeCard
             key={outcome.id}

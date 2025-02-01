@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { Outcome } from '@/utils/types';
-import FeatureCard from '@/components/ui/feature-card';
+
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 
 export default function OutcomeCard({
   canEdit = false,
@@ -21,7 +22,7 @@ export default function OutcomeCard({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCard title='Outcome' minHeight='100%'>
+        <FeatureCardTheoryOfChange title='Outcome' minHeight='100%'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -35,12 +36,16 @@ export default function OutcomeCard({
             outcome={outcome}
             projectId={projectId}
           />
-        </FeatureCard>
+        </FeatureCardTheoryOfChange>
       )}
 
       {outcome && (
         <>
-          <FeatureCard title='Outcome' variant='green' minHeight='100%'>
+          <FeatureCardTheoryOfChange
+            title='Outcome'
+            variant='green'
+            minHeight='100%'
+          >
             <div className='flex grow flex-col items-start justify-between gap-4'>
               <div>
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
@@ -61,7 +66,7 @@ export default function OutcomeCard({
               outcome={outcome}
               projectId={projectId}
             />
-          </FeatureCard>
+          </FeatureCardTheoryOfChange>
         </>
       )}
     </div>

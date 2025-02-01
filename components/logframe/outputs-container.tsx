@@ -1,11 +1,11 @@
 'use client';
 
 import { Output } from '@/utils/types';
-import FeatureCard from '@/components/ui/feature-card';
 import { Badge, BadgeProps } from '@/components/ui/badge';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 
 export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
   const { slug } = useParams();
@@ -19,7 +19,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
         )
         .filter((output) => !output.code.startsWith('U'))
         .map((output) => (
-          <FeatureCard
+          <FeatureCardTheoryOfChange
             key={output.id}
             minHeight='100px'
             title={`Output ${extractOutputCodeNumber(output.code)}`}
@@ -47,7 +47,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
                 </div>
               )}
             </div>
-          </FeatureCard>
+          </FeatureCardTheoryOfChange>
         ))}
     </div>
   );

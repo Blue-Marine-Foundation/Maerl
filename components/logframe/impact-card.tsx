@@ -1,10 +1,10 @@
 'use client';
 
 import { Impact } from '@/utils/types';
-import FeatureCard from '../ui/feature-card';
 import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 
 export default function ImpactCard({
   impact,
@@ -19,7 +19,7 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCard title='Impact' variant='blue' minHeight='100%'>
+    <FeatureCardTheoryOfChange title='Impact' variant='blue' minHeight='100%'>
       {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton
@@ -48,6 +48,6 @@ export default function ImpactCard({
         impact={impact}
         projectId={projectId}
       />
-    </FeatureCard>
+    </FeatureCardTheoryOfChange>
   );
 }
