@@ -22,7 +22,7 @@ export default function FeatureCardLogframe({
       {title && (
         <div
           className={cn(
-            '-mt-0 w-full rounded-t-md px-4 py-3',
+            '-mt-0 w-full rounded-t-md px-4 py-6',
             variant === 'default' && 'bg-card',
             variant === 'blue' && 'bg-blue-950/90',
             variant === 'green' && 'bg-emerald-900/90',

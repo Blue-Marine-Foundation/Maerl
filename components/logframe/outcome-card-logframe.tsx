@@ -6,6 +6,7 @@ import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutcomeIndicatorsTable from './outcome-indicators-table';
+import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 
 export default function OutcomeCardLogframe({
   canEdit = false,
@@ -18,6 +19,13 @@ export default function OutcomeCardLogframe({
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
+
+  const outcomeMeasurables =
+    outcome?.outcome_measurables?.sort(
+      (a, b) =>
+        extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
+    ) || [];
+
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
@@ -41,8 +49,8 @@ export default function OutcomeCardLogframe({
       {outcome && (
         <>
           <FeatureCardLogframe title='Outcome' variant='green' minHeight='100%'>
-            <div className='flex grow flex-col items-start justify-between gap-4'>
-              <div className='flex flex-row justify-between gap-8 rounded-md border border-border bg-card p-4 pb-6'>
+            <div className='flex w-full grow flex-col items-start justify-between gap-4'>
+              <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card pb-6'>
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
                 {canEdit && (
                   <div className='flex-shrink-0 text-sm'>
@@ -54,7 +62,7 @@ export default function OutcomeCardLogframe({
                 )}
               </div>
               <OutcomeIndicatorsTable
-                measurables={outcome.outcome_measurables}
+                measurables={outcomeMeasurables}
                 outcomeId={outcome.id}
                 projectId={projectId}
               />

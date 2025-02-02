@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { OutcomeMeasurable } from '@/utils/types';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -19,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 
 export default function OutcomeIndicatorsTable({
   measurables,
@@ -33,10 +33,10 @@ export default function OutcomeIndicatorsTable({
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutcomeMeasurable | null>(null);
 
-  const handleEditMeasurable = (measurable: OutcomeMeasurable) => {
+  const handleEditMeasurable = useCallback((measurable: OutcomeMeasurable) => {
     setSelectedMeasurable(measurable);
     setIsMeasurableDialogOpen(true);
-  };
+  }, []);
 
   const handleCloseMeasurableDialog = () => {
     setIsMeasurableDialogOpen(false);
@@ -52,59 +52,73 @@ export default function OutcomeIndicatorsTable({
     }
   };
 
-  const columns: ColumnDef<OutcomeMeasurable>[] = [
-    {
-      accessorKey: 'description',
-      header: 'Measurable Indicator',
-      cell: ({ row }) => (
-        <div className='flex flex-row gap-4'>
-          <div>
-            <Badge className='font-medium'>{row.original.code}</Badge>
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: 'description',
+        header: 'Measurable Indicator',
+        cell: ({ row }) => (
+          <div className='flex flex-row gap-4'>
+            <div className='mt-1'>
+              <Badge className='bg-emerald-900/90 py-1 font-medium'>
+                {extractOutputCodeNumber(row.original.code)}
+              </Badge>
+            </div>
+            <p className='text-sm'>{row.getValue('description')}</p>
           </div>
-          <p className='text-sm'>{row.getValue('description')}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'verification',
-      header: 'Verification',
-    },
-    {
-      accessorKey: 'assumptions',
-      header: 'Assumptions',
-    },
-    // TODO: Test once backend data available for Target and Impact Indicator
-    {
-      accessorKey: 'target',
-      header: 'Target',
-    },
-    {
-      accessorKey: 'impact_indicator',
-      header: 'Impact Indicator',
-    },
-    {
-      id: 'actions',
-      cell: ({ row }) => (
-        <div className='flex justify-end'>
-          <ActionButton
-            action='edit'
-            variant='icon'
-            onClick={() => handleEditMeasurable(row.original)}
-          />
-        </div>
-      ),
-    },
-  ];
+        ),
+        size: 200,
+      },
+      {
+        accessorKey: 'verification',
+        header: 'Verification',
+        size: 200,
+      },
+      {
+        accessorKey: 'assumptions',
+        header: 'Assumptions',
+        size: 200,
+      },
+      // TODO: Test once backend data available for Target and Impact Indicator
+      {
+        accessorKey: 'target',
+        header: 'Target',
+        size: 200,
+      },
+      {
+        accessorKey: 'impact_indicator',
+        header: 'Impact Indicator',
+        size: 200,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <div className='flex justify-end'>
+            <ActionButton
+              action='edit'
+              variant='icon'
+              onClick={() => handleEditMeasurable(row.original)}
+            />
+          </div>
+        ),
+        size: 10,
+      },
+    ],
+    [handleEditMeasurable],
+  );
 
   const table = useReactTable({
     data: measurables,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: 'onChange',
   });
 
   return (
     <>
-      {measurables?.length === 0 ? (
+      {!measurables ? (
+        <div>Loading...</div>
+      ) : measurables.length === 0 ? (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'
@@ -113,14 +127,21 @@ export default function OutcomeIndicatorsTable({
           />
         </div>
       ) : (
-        <div className='flex flex-col items-start gap-4'>
-          <div className='rounded-md border'>
-            <Table>
+        <div className='flex w-full flex-col items-start gap-4'>
+          <div className='w-full rounded-md border'>
+            <Table style={{ width: '100%' }}>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead
+                        key={header.id}
+                        // TODO: decide whether to include border
+                        // className='border-r'
+                        style={{
+                          width: header.column.getSize(),
+                        }}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -136,7 +157,14 @@ export default function OutcomeIndicatorsTable({
                 {table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        // TODO: decide whether to include border
+                        // className='border-r'
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -148,7 +176,7 @@ export default function OutcomeIndicatorsTable({
               </TableBody>
             </Table>
           </div>
-          <div className='flex flex-row items-center justify-end'>
+          <div className='flex w-full flex-row items-center justify-start'>
             <ActionButton
               action='add'
               label='Add outcome indicator'
