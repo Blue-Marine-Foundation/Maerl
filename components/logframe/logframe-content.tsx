@@ -7,8 +7,8 @@ import {
   fetchUnassignedOutputs,
 } from '@/components/logframe/server-actions';
 import OutputsTable from '@/components/logframe/outputs-table';
-import ImpactCard from './impact-card';
-import OutcomeCard from './outcome-card';
+import ImpactCardLogframe from './impact-card-logframe';
+import OutcomeCardLogframe from './outcome-card-logframe';
 
 export default function LogframeContent() {
   const { slug } = useParams();
@@ -61,10 +61,10 @@ export default function LogframeContent() {
     <div className='flex flex-col gap-8'>
       <div className='flex flex-col gap-4'>
         <h4 className='text-lg font-semibold'>Logframe</h4>
-        <ImpactCard impact={impact} projectId={projectId} canEdit />
+        <ImpactCardLogframe impact={impact} projectId={projectId} canEdit />
         <div className='flex flex-col gap-4'>
           {outcomes.map((outcome) => (
-            <OutcomeCard
+            <OutcomeCardLogframe
               key={outcome.id}
               outcome={outcome}
               projectId={projectId}
@@ -72,7 +72,7 @@ export default function LogframeContent() {
             />
           ))}
           {outcomes.length === 0 && (
-            <OutcomeCard outcome={null} projectId={projectId} canEdit />
+            <OutcomeCardLogframe outcome={null} projectId={projectId} canEdit />
           )}
         </div>
         <OutputsTable outputs={outputs} projectId={projectId} />
