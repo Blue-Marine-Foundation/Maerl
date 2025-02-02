@@ -61,13 +61,15 @@ export type Outcome = {
 
 export interface OutcomeMeasurable {
   id?: number;
-  outcome_id: number;
-  project_id: number;
+  assumptions: string;
   code: string;
   description: string;
-  verification: string;
-  assumptions: string;
+  impact_indicator: ImpactIndicator | null;
+  outcome_id: number;
   outputs?: Output[];
+  project_id: number;
+  target: number | null;
+  verification: string;
 }
 
 export interface Output {

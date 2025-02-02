@@ -155,6 +155,15 @@ export const upsertOutcomeMeasurable = async (
       verification: measurable.verification || '',
       assumptions: measurable.assumptions || '',
       code: measurable.code,
+      // TODO: Add target and impact_indicator_id to the db table so we can modify them
+      target: measurable.target,
+      // TODO: Confirm schema for impact_indicator
+      // impact_indicator: {
+      //   id: measurable.impact_indicator?.id,
+      //   indicator_code: measurable.impact_indicator?.indicator_code,
+      //   indicator_title: measurable.impact_indicator?.indicator_title,
+      //   indicator_unit: measurable.impact_indicator?.indicator_unit,
+      // },
     })
     .select()
     .single();

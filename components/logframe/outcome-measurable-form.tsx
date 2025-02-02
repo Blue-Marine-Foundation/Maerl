@@ -27,12 +27,18 @@ export default function OutcomeMeasurableForm({
     measurable?.verification || '',
   );
   const [assumptions, setAssumptions] = useState(measurable?.assumptions || '');
+  const [target, setTarget] = useState(measurable?.target?.toString() || '');
+  const [impactIndicator, setImpactIndicator] = useState(
+    measurable?.impact_indicator?.indicator_title || '',
+  );
 
   // Reset form when measurable prop changes
   useEffect(() => {
     setDescription(measurable?.description || '');
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
+    setTarget(measurable?.target?.toString() || '');
+    setImpactIndicator(measurable?.impact_indicator?.indicator_title || '');
   }, [measurable]);
 
   const queryClient = useQueryClient();
@@ -58,6 +64,14 @@ export default function OutcomeMeasurableForm({
       description,
       verification,
       assumptions,
+      target: target ? Number(target) : null,
+      // impact_indicator: {
+      //   // @ts-expect-error - TODO: Confirm schema for impact_indicator
+      //   id: measurable?.impact_indicator?.id || null,
+      //   indicator_code: measurable?.impact_indicator?.indicator_code || '',
+      //   indicator_title: measurable?.impact_indicator?.indicator_title || '',
+      //   indicator_unit: measurable?.impact_indicator?.indicator_unit || '',
+      // },
     });
   };
 
@@ -75,7 +89,7 @@ export default function OutcomeMeasurableForm({
               htmlFor='description'
               className='mb-1 block text-sm font-medium'
             >
-              Description
+              Measurable Indicator
             </label>
             <input
               id='description'
@@ -113,6 +127,33 @@ export default function OutcomeMeasurableForm({
               value={assumptions}
               onChange={(e) => setAssumptions(e.target.value)}
               placeholder='Enter assumptions'
+            />
+          </div>
+          <div>
+            <label htmlFor='target' className='mb-1 block text-sm font-medium'>
+              Target
+            </label>
+            <input
+              id='target'
+              className='w-full rounded-md border bg-background px-4 py-2'
+              value={target}
+              onChange={(e) => setTarget(e.target.value)}
+              placeholder='Enter target'
+            />
+          </div>
+          <div>
+            <label
+              htmlFor='impactIndicator'
+              className='mb-1 block text-sm font-medium'
+            >
+              Impact Indicator
+            </label>
+            <input
+              id='impactIndicator'
+              className='w-full rounded-md border bg-background px-4 py-2'
+              value={impactIndicator}
+              onChange={(e) => setImpactIndicator(e.target.value)}
+              placeholder='Enter impact indicator'
             />
           </div>
           <div className='flex justify-end'>

@@ -57,7 +57,7 @@ export default function OutcomeIndicatorsTable({
       {
         accessorKey: 'description',
         header: 'Measurable Indicator',
-        cell: ({ row }) => (
+        cell: ({ row }: { row: any }) => (
           <div className='flex flex-row gap-4'>
             <div className='mt-1'>
               <Badge className='bg-emerald-900/90 py-1 font-medium'>
@@ -92,7 +92,7 @@ export default function OutcomeIndicatorsTable({
       },
       {
         id: 'actions',
-        cell: ({ row }) => (
+        cell: ({ row }: { row: any }) => (
           <div className='flex justify-end'>
             <ActionButton
               action='edit'
