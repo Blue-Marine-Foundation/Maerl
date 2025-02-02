@@ -29,19 +29,20 @@ export default function LogframeContent() {
 
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
-  const outputs = [...(data?.data?.outcomes || [])]
-    .flatMap((outcome) => outcome?.outcome_measurables || [])
-    .flatMap((measurable) => measurable?.outputs || [])
-    .filter((output): output is NonNullable<typeof output> => !!output)
-    .sort((a, b) => {
-      const aMatch = a.code?.match(/\.(\d+)$/);
-      const bMatch = b.code?.match(/\.(\d+)$/);
+  // TODO: revisit output data fetching when adding outputs
+  // const outputs = [...(data?.data?.outcomes || [])]
+  //   .flatMap((outcome) => outcome?.outcome_measurables || [])
+  //   .flatMap((measurable) => measurable?.outputs || [])
+  //   .filter((output): output is NonNullable<typeof output> => !!output)
+  //   .sort((a, b) => {
+  //     const aMatch = a.code?.match(/\.(\d+)$/);
+  //     const bMatch = b.code?.match(/\.(\d+)$/);
 
-      const aNum = aMatch ? parseInt(aMatch[1]) : 0;
-      const bNum = bMatch ? parseInt(bMatch[1]) : 0;
+  //     const aNum = aMatch ? parseInt(aMatch[1]) : 0;
+  //     const bNum = bMatch ? parseInt(bMatch[1]) : 0;
 
-      return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
-    });
+  //     return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
+  //   });
 
   const sortedUnassignedOutputs = [
     ...(unassignedOutputs?.data?.outputs || []),
@@ -75,7 +76,6 @@ export default function LogframeContent() {
             <OutcomeCardLogframe outcome={null} projectId={projectId} canEdit />
           )}
         </div>
-        <OutputsTable outputs={outputs} projectId={projectId} />
       </div>
 
       {sortedUnassignedOutputs && sortedUnassignedOutputs.length > 0 && (

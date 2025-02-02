@@ -5,6 +5,7 @@ import { Outcome } from '@/utils/types';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
+import OutcomeIndicatorsTable from './outcome-indicators-table';
 
 export default function OutcomeCardLogframe({
   canEdit = false,
@@ -40,16 +41,23 @@ export default function OutcomeCardLogframe({
       {outcome && (
         <>
           <FeatureCardLogframe title='Outcome' variant='green' minHeight='100%'>
-            <div className='flex grow items-center justify-between gap-4'>
-              <p className='max-w-prose text-sm'>{outcome.description}</p>
-              {canEdit && (
-                <div className='flex-shrink-0 text-sm'>
-                  <ActionButton
-                    action='edit'
-                    onClick={() => setIsOutcomeDialogOpen(true)}
-                  />
-                </div>
-              )}
+            <div className='flex grow flex-col items-start justify-between gap-4'>
+              <div className='flex flex-row justify-between gap-8 rounded-md border border-border bg-card p-4 pb-6'>
+                <p className='max-w-prose text-sm'>{outcome.description}</p>
+                {canEdit && (
+                  <div className='flex-shrink-0 text-sm'>
+                    <ActionButton
+                      action='edit'
+                      onClick={() => setIsOutcomeDialogOpen(true)}
+                    />
+                  </div>
+                )}
+              </div>
+              <OutcomeIndicatorsTable
+                measurables={outcome.outcome_measurables}
+                outcomeId={outcome.id}
+                projectId={projectId}
+              />
             </div>
 
             <OutcomeForm
