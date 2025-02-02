@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { OutcomeMeasurable } from '@/utils/types';
-import OutcomeMeasurableForm from './outcome-measurable-form';
+import { OutputMeasurable } from '@/utils/types';
+
 import ActionButton from '@/components/ui/action-button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -18,21 +18,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import OutputMeasurableForm from './output-measurable-form';
 
-export default function OutcomeIndicatorsTable({
+export default function OutputIndicatorsTable({
   measurables,
-  outcomeId,
+  outputId,
   projectId,
 }: {
-  measurables: OutcomeMeasurable[];
-  outcomeId: number;
+  measurables: OutputMeasurable[];
+  outputId: number;
   projectId: number;
 }) {
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
-    useState<OutcomeMeasurable | null>(null);
+    useState<OutputMeasurable | null>(null);
 
-  const handleEditMeasurable = useCallback((measurable: OutcomeMeasurable) => {
+  const handleEditMeasurable = useCallback((measurable: OutputMeasurable) => {
     setSelectedMeasurable(measurable);
     setIsMeasurableDialogOpen(true);
   }, []);
@@ -45,8 +46,8 @@ export default function OutcomeIndicatorsTable({
   const handleAddMeasurable = () => {
     if (measurables) {
       const nextIndex = (measurables.length || 0) + 1;
-      const nextCode = `OC0.${nextIndex}`;
-      setSelectedMeasurable({ code: nextCode } as OutcomeMeasurable);
+      const nextCode = `OP0.${nextIndex}`;
+      setSelectedMeasurable({ code: nextCode } as OutputMeasurable);
       setIsMeasurableDialogOpen(true);
     }
   };
@@ -56,16 +57,19 @@ export default function OutcomeIndicatorsTable({
       {
         accessorKey: 'description',
         header: 'Measurable Indicator',
-        cell: ({ row }: { row: any }) => (
-          <div className='flex flex-row gap-4'>
-            <div className='mt-1'>
-              <Badge className='bg-emerald-900/90 py-1.5 font-medium'>
-                {row.original.code}
-              </Badge>
+        cell: ({ row }: { row: any }) => {
+          console.log('row.original.code', row.original.code);
+          return (
+            <div className='flex flex-row gap-4'>
+              <div className='mt-1'>
+                <Badge className='bg-slate-800 py-1.5 font-medium'>
+                  {row.original.code}
+                </Badge>
+              </div>
+              <p className='text-sm'>{row.getValue('description')}</p>
             </div>
-            <p className='text-sm'>{row.getValue('description')}</p>
-          </div>
-        ),
+          );
+        },
         size: 400,
       },
       {
@@ -121,7 +125,7 @@ export default function OutcomeIndicatorsTable({
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'
-            label='Add outcome indicator'
+            label='Add output indicator'
             onClick={handleAddMeasurable}
           />
         </div>
@@ -175,18 +179,18 @@ export default function OutcomeIndicatorsTable({
           <div className='flex w-full flex-row items-center justify-start'>
             <ActionButton
               action='add'
-              label='Add outcome indicator'
+              label='Add output indicator'
               onClick={handleAddMeasurable}
             />
           </div>
         </div>
       )}
 
-      <OutcomeMeasurableForm
+      <OutputMeasurableForm
         isOpen={isMeasurableDialogOpen}
         onClose={handleCloseMeasurableDialog}
         measurable={selectedMeasurable}
-        outcomeId={outcomeId}
+        outputId={outputId}
         projectId={projectId}
       />
     </>

@@ -6,9 +6,9 @@ import {
   fetchLogframe,
   fetchUnassignedOutputs,
 } from '@/components/logframe/server-actions';
-import OutputsTable from '@/components/logframe/outputs-table';
 import ImpactCardLogframe from './impact-card-logframe';
 import OutcomeCardLogframe from './outcome-card-logframe';
+import OutputCardLogframe from './output-card-logframe';
 
 export default function LogframeContent() {
   const { slug } = useParams();
@@ -29,20 +29,20 @@ export default function LogframeContent() {
 
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
-  // TODO: revisit output data fetching when adding outputs
-  // const outputs = [...(data?.data?.outcomes || [])]
-  //   .flatMap((outcome) => outcome?.outcome_measurables || [])
-  //   .flatMap((measurable) => measurable?.outputs || [])
-  //   .filter((output): output is NonNullable<typeof output> => !!output)
-  //   .sort((a, b) => {
-  //     const aMatch = a.code?.match(/\.(\d+)$/);
-  //     const bMatch = b.code?.match(/\.(\d+)$/);
+  const outputs = [...(data?.data?.outcomes || [])]
+    .flatMap((outcome) => outcome?.outcome_measurables || [])
+    .flatMap((measurable) => measurable?.outputs || [])
+    .filter((output): output is NonNullable<typeof output> => !!output)
+    .sort((a, b) => {
+      const aMatch = a.code?.match(/\.(\d+)$/);
+      const bMatch = b.code?.match(/\.(\d+)$/);
 
-  //     const aNum = aMatch ? parseInt(aMatch[1]) : 0;
-  //     const bNum = bMatch ? parseInt(bMatch[1]) : 0;
+      const aNum = aMatch ? parseInt(aMatch[1]) : 0;
+      const bNum = bMatch ? parseInt(bMatch[1]) : 0;
 
-  //     return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
-  //   });
+      return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
+    });
+  console.log(outputs);
 
   const sortedUnassignedOutputs = [
     ...(unassignedOutputs?.data?.outputs || []),
@@ -76,9 +76,23 @@ export default function LogframeContent() {
             <OutcomeCardLogframe outcome={null} projectId={projectId} canEdit />
           )}
         </div>
+        <div className='flex flex-col gap-4'>
+          {outputs.map((output) => (
+            <OutputCardLogframe
+              key={output.id}
+              output={output}
+              projectId={projectId}
+              canEdit
+            />
+          ))}
+          {outputs.length === 0 && (
+            <OutputCardLogframe output={null} projectId={projectId} canEdit />
+          )}
+        </div>
       </div>
 
-      {sortedUnassignedOutputs && sortedUnassignedOutputs.length > 0 && (
+      {/* TODO: Handle unplanned or unassigned outputs */}
+      {/* {sortedUnassignedOutputs && sortedUnassignedOutputs.length > 0 && (
         <div className='flex flex-col gap-4'>
           <h4 className='text-lg font-semibold'>
             Unplanned or unassigned outputs
@@ -89,7 +103,7 @@ export default function LogframeContent() {
             projectId={projectId}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }
