@@ -89,9 +89,18 @@ export default function OutputIndicatorsTable({
         size: 200,
       },
       {
-        accessorKey: 'impact_indicator',
+        accessorKey: 'impact_indicator_id',
         header: 'Impact Indicator',
-        size: 200,
+        cell: ({ row }: { row: any }) => {
+          return (
+            <p
+              title={row.original.impact_indicators?.indicator_title}
+              className='hover:cursor-help'
+            >
+              {row.original.impact_indicators?.indicator_code}
+            </p>
+          );
+        },
       },
       {
         id: 'actions',
