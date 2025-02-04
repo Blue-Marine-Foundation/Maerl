@@ -9,7 +9,8 @@ import {
 import ImpactCardLogframe from './impact-card-logframe';
 import OutcomeCardLogframe from './outcome-card-logframe';
 import OutputCardLogframe from './output-card-logframe';
-import { extractOutputCodeNumber } from './extractOutputCodeNumber';
+import LogframeQuickNav from './quick-nav';
+import AddOutputButton from './add-output-button';
 
 export default function LogframeContent() {
   const { slug } = useParams();
@@ -43,7 +44,6 @@ export default function LogframeContent() {
 
       return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
     });
-  console.log(outputs);
 
   const sortedUnassignedOutputs = [
     ...(unassignedOutputs?.data?.outputs || []),
@@ -57,46 +57,19 @@ export default function LogframeContent() {
     return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
   });
 
+  const allOutputs = [...outputs, ...sortedUnassignedOutputs];
+
   const projectId = data?.data?.id;
 
   return (
     <>
       {(impact || outcomes.length > 0 || outputs.length > 0) && (
-        <nav className='sticky top-4 z-10 rounded-lg bg-background/95 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-          <div className='flex flex-row items-center gap-2'>
-            <p className='text-sm text-muted-foreground'>
-              View {data?.data?.name && `${data.data.name}`}:
-            </p>
-            <div className='flex flex-wrap gap-2'>
-              {impact && (
-                <a
-                  href='#impact'
-                  className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
-                >
-                  Impact
-                </a>
-              )}
-              {outcomes.map((outcome, index) => (
-                <a
-                  key={outcome.id}
-                  href={`#outcome-${outcome.id}`}
-                  className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
-                >
-                  {`Outcome ${index + 1}`}
-                </a>
-              ))}
-              {outputs.map((output) => (
-                <a
-                  key={output.id}
-                  href={`#output-${output.id}`}
-                  className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
-                >
-                  {`Output ${extractOutputCodeNumber(output.code)}`}
-                </a>
-              ))}
-            </div>
-          </div>
-        </nav>
+        <LogframeQuickNav
+          projectName={data?.data?.name}
+          impact={!!impact}
+          outcomes={outcomes}
+          outputs={allOutputs}
+        />
       )}
       <div className='flex flex-col'>
         <div className='flex flex-col gap-8'>
@@ -126,7 +99,7 @@ export default function LogframeContent() {
             )}
           </div>
           <div className='flex flex-col gap-4'>
-            {outputs.map((output) => (
+            {allOutputs.map((output) => (
               <div
                 key={output.id}
                 id={`output-${output.id}`}
@@ -139,25 +112,9 @@ export default function LogframeContent() {
                 />
               </div>
             ))}
-            {outputs.length === 0 && (
-              <OutputCardLogframe output={null} projectId={projectId} canEdit />
-            )}
+            <AddOutputButton projectId={projectId} output={null} />
           </div>
         </div>
-
-        {/* TODO: Handle unplanned or unassigned outputs */}
-        {/* {sortedUnassignedOutputs && sortedUnassignedOutputs.length > 0 && (
-        <div className='flex flex-col gap-4'>
-          <h4 className='text-lg font-semibold'>
-            Unplanned or unassigned outputs
-          </h4>
-
-          <OutputsTable
-            outputs={sortedUnassignedOutputs}
-            projectId={projectId}
-          />
-        </div>
-      )} */}
       </div>
     </>
   );

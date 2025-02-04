@@ -7,6 +7,8 @@ import ImpactCard from '@/components/logframe/impact-card';
 import OutcomeCard from '@/components/logframe/outcome-card';
 import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skeleton';
 import OutputsContainer from '@/components/logframe/outputs-container';
+import LogframeQuickNav from '@/components/logframe/quick-nav';
+import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
 
 export default function TheoryOfChangePage() {
   const { slug } = useParams();
@@ -26,19 +28,36 @@ export default function TheoryOfChangePage() {
 
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
-  const outputs = data?.data?.outputs || [];
+  const outputs = (data?.data?.outputs || [])
+    .sort(
+      (a, b) =>
+        extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
+    )
+    .filter((output) => !output.code.startsWith('U'));
   const projectId = data?.data?.id;
 
   return (
     <div className='flex w-full flex-col gap-8 text-sm'>
+      <LogframeQuickNav
+        projectName={data?.data?.name}
+        impact={!!impact}
+        outcomes={outcomes}
+        outputs={outputs}
+      />
       <ImpactCard impact={impact} projectId={projectId} />
       <div className='flex flex-col gap-8'>
         {outcomes.map((outcome) => (
-          <OutcomeCard
+          <div
             key={outcome.id}
-            outcome={outcome}
-            projectId={projectId}
-          />
+            id={`outcome-${outcome.id}`}
+            className='scroll-mt-20'
+          >
+            <OutcomeCard
+              key={outcome.id}
+              outcome={outcome}
+              projectId={projectId}
+            />
+          </div>
         ))}
         {outcomes.length === 0 && (
           <OutcomeCard outcome={null} projectId={projectId} />

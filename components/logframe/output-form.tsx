@@ -11,7 +11,7 @@ interface OutputFormProps {
   isOpen: boolean;
   onClose: () => void;
   output: Output | null;
-  outcomeMeasurableId: number;
+  outcomeMeasurableId?: number;
   projectId: number;
 }
 
@@ -98,7 +98,7 @@ export default function OutputForm({
               className='w-full rounded-md border bg-background px-4 py-2'
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder='Enter output code (e.g. O1)'
+              placeholder='Enter output code (e.g. 0.10 for Output 10)'
             />
           </div>
           <div>

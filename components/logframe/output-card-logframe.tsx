@@ -7,6 +7,7 @@ import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
 import OutputIndicatorsTable from './output-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
+import AddOutputButton from './add-output-button';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -30,26 +31,18 @@ export default function OutputCardLogframe({
       {!output && canEdit && (
         <FeatureCardLogframe title='Output' minHeight='100%' variant='slate'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
-            <ActionButton
-              action='add'
-              label='Add output'
-              onClick={() => setIsOutputDialogOpen(true)}
-            />
+            <AddOutputButton projectId={projectId} output={output} />
           </div>
-          <OutputForm
-            isOpen={isOutputDialogOpen}
-            onClose={() => setIsOutputDialogOpen(false)}
-            output={output}
-            projectId={projectId}
-            // TODO: Figure out if we need to pass outcomeMeasurableId
-            // outcomeMeasurableId={null}
-          />
         </FeatureCardLogframe>
       )}
 
       {output && (
         <FeatureCardLogframe
-          title={`Output ${extractOutputCodeNumber(output.code)}`}
+          title={
+            output.code?.startsWith('U')
+              ? `Unassigned Output  ${extractOutputCodeNumber(output.code)}`
+              : `Output ${extractOutputCodeNumber(output.code)}`
+          }
           variant='slate'
           minHeight='100%'
           href={`/projects/yavin4/logframe/output?id=${output.id}`}
