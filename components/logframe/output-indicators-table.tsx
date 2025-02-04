@@ -58,7 +58,6 @@ export default function OutputIndicatorsTable({
         accessorKey: 'description',
         header: 'Measurable Indicator',
         cell: ({ row }: { row: any }) => {
-          console.log('row.original.code', row.original.code);
           return (
             <div className='flex flex-row gap-4'>
               <div className='mt-1'>

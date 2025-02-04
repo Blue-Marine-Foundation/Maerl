@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { OutcomeMeasurable } from '@/utils/types';
+import { ImpactIndicator, OutcomeMeasurable } from '@/utils/types';
 import { upsertOutcomeMeasurable } from './server-actions';
+import ImpactIndicatorSelect from '../impact-indicators/impact-indicator-select';
 
 interface OutcomeMeasurableFormProps {
   isOpen: boolean;
@@ -28,9 +29,12 @@ export default function OutcomeMeasurableForm({
   );
   const [assumptions, setAssumptions] = useState(measurable?.assumptions || '');
   const [target, setTarget] = useState(measurable?.target?.toString() || '');
-  const [impactIndicator, setImpactIndicator] = useState(
-    measurable?.impact_indicator?.indicator_title || '',
+  const [impactIndicatorId, setImpactIndicatorId] = useState<number | null>(
+    measurable?.impact_indicator_id || null,
   );
+
+  const [selectedIndicator, setSelectedIndicator] =
+    useState<ImpactIndicator | null>(null);
 
   // Reset form when measurable prop changes
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function OutcomeMeasurableForm({
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
     setTarget(measurable?.target?.toString() || '');
-    setImpactIndicator(measurable?.impact_indicator?.indicator_title || '');
+    setImpactIndicatorId(measurable?.impact_indicator_id || null);
   }, [measurable]);
 
   const queryClient = useQueryClient();
@@ -65,13 +69,7 @@ export default function OutcomeMeasurableForm({
       verification,
       assumptions,
       target: target ? Number(target) : null,
-      // impact_indicator: {
-      //   // @ts-expect-error - TODO: Confirm schema for impact_indicator
-      //   id: measurable?.impact_indicator?.id || null,
-      //   indicator_code: measurable?.impact_indicator?.indicator_code || '',
-      //   indicator_title: measurable?.impact_indicator?.indicator_title || '',
-      //   indicator_unit: measurable?.impact_indicator?.indicator_unit || '',
-      // },
+      impact_indicator_id: impactIndicatorId,
     });
   };
 
@@ -141,21 +139,13 @@ export default function OutcomeMeasurableForm({
               placeholder='Enter target'
             />
           </div>
-          <div>
-            <label
-              htmlFor='impactIndicator'
-              className='mb-1 block text-sm font-medium'
-            >
-              Impact Indicator
-            </label>
-            <input
-              id='impactIndicator'
-              className='w-full rounded-md border bg-background px-4 py-2'
-              value={impactIndicator}
-              onChange={(e) => setImpactIndicator(e.target.value)}
-              placeholder='Enter impact indicator'
-            />
-          </div>
+          <ImpactIndicatorSelect
+            value={impactIndicatorId}
+            onChange={(indicator) => {
+              setImpactIndicatorId(indicator?.id || null);
+              setSelectedIndicator(indicator);
+            }}
+          />
           <div className='flex justify-end'>
             <button
               className='flex items-center gap-2 rounded-md border border-blue-400 bg-blue-600 px-3 py-1 text-foreground transition-all hover:bg-blue-700'

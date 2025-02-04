@@ -14,7 +14,7 @@ export const fetchLogframe = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, outputs(*, output_measurables(*, impact_indicators(*)))))',
+      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*), outputs(*, output_measurables(*, impact_indicators(*)))))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .single();
@@ -155,15 +155,9 @@ export const upsertOutcomeMeasurable = async (
       verification: measurable.verification || '',
       assumptions: measurable.assumptions || '',
       code: measurable.code,
-      // TODO: Add target and impact_indicator_id to the db table so we can modify them
       target: measurable.target,
-      // TODO: Confirm schema for impact_indicator
-      // impact_indicator: {
-      //   id: measurable.impact_indicator?.id,
-      //   indicator_code: measurable.impact_indicator?.indicator_code,
-      //   indicator_title: measurable.impact_indicator?.indicator_title,
-      //   indicator_unit: measurable.impact_indicator?.indicator_unit,
-      // },
+      // TODO: Confirm if the db outcome_measurables has the columnimpact_indicator_id, currently POST req not working
+      // impact_indicator_id: measurable.impact_indicator_id,
     })
     .select()
     .single();
