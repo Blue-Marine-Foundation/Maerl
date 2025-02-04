@@ -122,11 +122,13 @@ export default function OutputIndicatorsTable({
     columnResizeMode: 'onChange',
   });
 
+  if (!measurables) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      {!measurables ? (
-        <div>Loading...</div>
-      ) : measurables.length === 0 ? (
+      {measurables.length === 0 ? (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'

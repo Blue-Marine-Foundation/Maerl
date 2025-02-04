@@ -38,14 +38,9 @@ export default function TheoryOfChangePage() {
 
   return (
     <div className='-mt-4 flex w-full flex-col text-sm'>
-      <LogframeQuickNav
-        projectName={data?.data?.name}
-        impact={!!impact}
-        outcomes={outcomes}
-        outputs={outputs}
-      />
+      <LogframeQuickNav outcomes={outcomes} outputs={outputs} />
       <div className='flex flex-col gap-8'>
-        <div className='mt-4'>
+        <div className='mt-4 scroll-mt-20' id='impact'>
           <ImpactCard impact={impact} projectId={projectId} />
         </div>
         <div className='flex flex-col gap-8'>

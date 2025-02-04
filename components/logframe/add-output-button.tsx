@@ -5,13 +5,15 @@ import ActionButton from '@/components/ui/action-button';
 import OutputForm from './output-form';
 import { Output } from '@/utils/types';
 
+type AddOutputButtonProps = {
+  projectId: number;
+  output: Output | null;
+};
+
 export default function AddOutputButton({
   projectId,
   output,
-}: {
-  projectId: number;
-  output: Output | null;
-}) {
+}: AddOutputButtonProps) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
 
   return (

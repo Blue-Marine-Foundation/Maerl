@@ -64,12 +64,7 @@ export default function LogframePage() {
   return (
     <div className='-mt-4 flex flex-col'>
       {(impact || outcomes.length > 0 || outputs.length > 0) && (
-        <LogframeQuickNav
-          projectName={data?.data?.name}
-          impact={!!impact}
-          outcomes={outcomes}
-          outputs={allOutputs}
-        />
+        <LogframeQuickNav outcomes={outcomes} outputs={allOutputs} />
       )}
       <div className='flex flex-col gap-8'>
         <div id='impact' className='mt-4 scroll-mt-20'>

@@ -21,11 +21,6 @@ export default function OutputCardLogframe({
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
 
-  const outputIndicators =
-    output?.output_measurables?.sort(
-      (a, b) => a.code?.localeCompare(b.code ?? '') ?? 0,
-    ) || [];
-
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (
@@ -60,7 +55,7 @@ export default function OutputCardLogframe({
               )}
             </div>
             <OutputIndicatorsTable
-              measurables={outputIndicators}
+              measurables={output?.output_measurables || []}
               outputId={output.id}
               projectId={projectId}
             />

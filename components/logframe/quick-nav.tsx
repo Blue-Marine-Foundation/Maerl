@@ -1,17 +1,14 @@
 'use client';
 
+import { Outcome, Output } from '@/utils/types';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 
 type LogframeQuickNavProps = {
-  projectName?: string;
-  impact: boolean;
-  outcomes: { id: string }[];
-  outputs: { id: string; code?: string }[];
+  outcomes: Outcome[];
+  outputs: Output[];
 };
 
 export default function LogframeQuickNav({
-  projectName,
-  impact,
   outcomes,
   outputs,
 }: LogframeQuickNavProps) {
@@ -20,14 +17,12 @@ export default function LogframeQuickNav({
       <div className='flex flex-row items-center gap-2'>
         <p className='text-sm text-muted-foreground'>Jump to:</p>
         <div className='flex flex-wrap gap-2'>
-          {impact && (
-            <a
-              href='#impact'
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
-            >
-              Impact
-            </a>
-          )}
+          <a
+            href='#impact'
+            className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
+          >
+            Impact
+          </a>
           {outcomes.map((outcome, index) => (
             <a
               key={outcome.id}
