@@ -37,38 +37,42 @@ export default function TheoryOfChangePage() {
   const projectId = data?.data?.id;
 
   return (
-    <div className='flex w-full flex-col gap-8 text-sm'>
+    <div className='-mt-4 flex w-full flex-col text-sm'>
       <LogframeQuickNav
         projectName={data?.data?.name}
         impact={!!impact}
         outcomes={outcomes}
         outputs={outputs}
       />
-      <ImpactCard impact={impact} projectId={projectId} />
       <div className='flex flex-col gap-8'>
-        {outcomes.map((outcome) => (
-          <div
-            key={outcome.id}
-            id={`outcome-${outcome.id}`}
-            className='scroll-mt-20'
-          >
-            <OutcomeCard
+        <div className='mt-4'>
+          <ImpactCard impact={impact} projectId={projectId} />
+        </div>
+        <div className='flex flex-col gap-8'>
+          {outcomes.map((outcome) => (
+            <div
               key={outcome.id}
-              outcome={outcome}
-              projectId={projectId}
-            />
-          </div>
-        ))}
-        {outcomes.length === 0 && (
-          <OutcomeCard outcome={null} projectId={projectId} />
-        )}
-      </div>
-      <div>
-        {outputs.length > 0 && (
-          <div className='flex flex-col gap-8'>
-            <OutputsContainer outputs={outputs} />
-          </div>
-        )}
+              id={`outcome-${outcome.id}`}
+              className='scroll-mt-20'
+            >
+              <OutcomeCard
+                key={outcome.id}
+                outcome={outcome}
+                projectId={projectId}
+              />
+            </div>
+          ))}
+          {outcomes.length === 0 && (
+            <OutcomeCard outcome={null} projectId={projectId} />
+          )}
+        </div>
+        <div>
+          {outputs.length > 0 && (
+            <div className='flex flex-col gap-8'>
+              <OutputsContainer outputs={outputs} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

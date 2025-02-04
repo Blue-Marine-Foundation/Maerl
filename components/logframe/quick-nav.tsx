@@ -23,7 +23,7 @@ export default function LogframeQuickNav({
           {impact && (
             <a
               href='#impact'
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
             >
               Impact
             </a>
@@ -32,7 +32,7 @@ export default function LogframeQuickNav({
             <a
               key={outcome.id}
               href={`#outcome-${outcome.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
             >
               {`Outcome ${index + 1}`}
             </a>
@@ -41,7 +41,7 @@ export default function LogframeQuickNav({
             <a
               key={output.id}
               href={`#output-${output.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-gray-100'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
             >
               {output.code?.startsWith('U')
                 ? `Unassigned Output ${extractOutputCodeNumber(output.code || '')}`
