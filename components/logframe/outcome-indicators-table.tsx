@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState } from 'react';
 import { OutcomeMeasurable } from '@/utils/types';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
@@ -32,10 +32,10 @@ export default function OutcomeIndicatorsTable({
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutcomeMeasurable | null>(null);
 
-  const handleEditMeasurable = useCallback((measurable: OutcomeMeasurable) => {
+  const handleEditMeasurable = (measurable: OutcomeMeasurable) => {
     setSelectedMeasurable(measurable);
     setIsMeasurableDialogOpen(true);
-  }, []);
+  };
 
   const handleCloseMeasurableDialog = () => {
     setIsMeasurableDialogOpen(false);
@@ -51,69 +51,66 @@ export default function OutcomeIndicatorsTable({
     }
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'description',
-        header: 'Measurable Indicator',
-        cell: ({ row }: { row: any }) => (
-          <div className='flex flex-row gap-4'>
-            <div className='mt-1'>
-              <Badge className='bg-emerald-900/90 py-1.5 font-medium'>
-                {row.original.code}
-              </Badge>
-            </div>
-            <p className='text-sm'>{row.getValue('description')}</p>
+  const columns = [
+    {
+      accessorKey: 'description',
+      header: 'Measurable Indicator',
+      cell: ({ row }: { row: any }) => (
+        <div className='flex flex-row gap-4'>
+          <div className='mt-1'>
+            <Badge className='bg-emerald-900/90 py-1.5 font-medium'>
+              {row.original.code}
+            </Badge>
           </div>
-        ),
-        size: 400,
+          <p className='text-sm'>{row.getValue('description')}</p>
+        </div>
+      ),
+      size: 400,
+    },
+    {
+      accessorKey: 'verification',
+      header: 'Verification',
+      size: 200,
+    },
+    {
+      accessorKey: 'assumptions',
+      header: 'Assumptions',
+      size: 200,
+    },
+    // TODO: Test once backend data available for Target and Impact Indicator
+    {
+      accessorKey: 'target',
+      header: 'Target',
+      size: 200,
+    },
+    {
+      accessorKey: 'impact_indicator_id',
+      header: 'Impact Indicator',
+      cell: ({ row }: { row: any }) => {
+        return (
+          <p
+            title={row.original.impact_indicators?.indicator_title}
+            className='hover:cursor-help'
+          >
+            {row.original.impact_indicators?.indicator_code}
+          </p>
+        );
       },
-      {
-        accessorKey: 'verification',
-        header: 'Verification',
-        size: 200,
-      },
-      {
-        accessorKey: 'assumptions',
-        header: 'Assumptions',
-        size: 200,
-      },
-      // TODO: Test once backend data available for Target and Impact Indicator
-      {
-        accessorKey: 'target',
-        header: 'Target',
-        size: 200,
-      },
-      {
-        accessorKey: 'impact_indicator_id',
-        header: 'Impact Indicator',
-        cell: ({ row }: { row: any }) => {
-          return (
-            <p
-              title={row.original.impact_indicators?.indicator_title}
-              className='hover:cursor-help'
-            >
-              {row.original.impact_indicators?.indicator_code}
-            </p>
-          );
-        },
-      },
-      {
-        id: 'actions',
-        cell: ({ row }: { row: any }) => (
-          <div className='flex justify-end'>
-            <ActionButton
-              action='edit'
-              variant='icon'
-              onClick={() => handleEditMeasurable(row.original)}
-            />
-          </div>
-        ),
-        size: 10,
-      },
-    ],
-    [handleEditMeasurable],
-  );
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: any }) => (
+        <div className='flex justify-end'>
+          <ActionButton
+            action='edit'
+            variant='icon'
+            onClick={() => handleEditMeasurable(row.original)}
+          />
+        </div>
+      ),
+      size: 10,
+    },
+  ];
 
   const table = useReactTable({
     data: measurables,
