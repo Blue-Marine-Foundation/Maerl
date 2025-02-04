@@ -71,7 +71,6 @@ export default function OutputCardLogframe({
             onClose={() => setIsOutputDialogOpen(false)}
             output={output}
             projectId={projectId}
-            outcomeMeasurableId={output?.outcome_measurable_id}
           />
         </FeatureCardLogframe>
       )}

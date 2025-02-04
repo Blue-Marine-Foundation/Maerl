@@ -11,7 +11,6 @@ interface OutputFormProps {
   isOpen: boolean;
   onClose: () => void;
   output: Output | null;
-  outcomeMeasurableId?: number;
   projectId: number;
 }
 
@@ -19,14 +18,14 @@ export default function OutputForm({
   isOpen,
   onClose,
   output,
-  outcomeMeasurableId,
   projectId,
 }: OutputFormProps) {
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
   const [status, setStatus] = useState(output?.status || 'Not started');
-  const [selectedMeasurableId, setSelectedMeasurableId] =
-    useState<number>(outcomeMeasurableId);
+  const [selectedMeasurableId, setSelectedMeasurableId] = useState<
+    number | undefined
+  >(output?.outcome_measurable_id);
   const [error, setError] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
@@ -35,9 +34,9 @@ export default function OutputForm({
     setDescription(output?.description || '');
     setCode(output?.code || '');
     setStatus(output?.status || 'Not started');
-    setSelectedMeasurableId(outcomeMeasurableId);
+    setSelectedMeasurableId(output?.outcome_measurable_id);
     setError(null);
-  }, [output, outcomeMeasurableId]);
+  }, [output]);
 
   const mutation = useMutation({
     mutationFn: async (newOutput: Partial<Output>) => {
@@ -83,11 +82,9 @@ export default function OutputForm({
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
           <OutcomeMeasurableSelect
-            value={selectedMeasurableId}
+            value={selectedMeasurableId || 0}
             projectId={projectId}
-            onChange={(measurable) =>
-              setSelectedMeasurableId(measurable?.id || outcomeMeasurableId)
-            }
+            onChange={(measurable) => setSelectedMeasurableId(measurable?.id)}
           />
           <div>
             <label htmlFor='code' className='mb-1 block text-sm font-medium'>
