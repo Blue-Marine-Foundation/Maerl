@@ -80,7 +80,6 @@ export default function OutputIndicatorsTable({
       header: 'Assumptions',
       size: 200,
     },
-    // TODO: Test once backend data available for Target and Impact Indicator
     {
       accessorKey: 'target',
       header: 'Target',

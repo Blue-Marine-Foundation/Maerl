@@ -44,7 +44,6 @@ export default function LogframePage() {
 
       return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
     });
-
   const sortedUnassignedOutputs = [
     ...(unassignedOutputs?.data?.outputs || []),
   ].sort((a, b) => {
@@ -56,9 +55,7 @@ export default function LogframePage() {
 
     return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
   });
-
   const allOutputs = [...outputs, ...sortedUnassignedOutputs];
-
   const projectId = data?.data?.id;
 
   return (

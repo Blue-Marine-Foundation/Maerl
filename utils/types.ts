@@ -64,7 +64,7 @@ export interface OutcomeMeasurable {
   assumptions: string;
   code: string;
   description: string;
-  impact_indicator_id: number | null; // TODO: confirm if this will be available
+  impact_indicator_id: number | null;
   impact_indicators?: ImpactIndicator | null;
   outcome_id: number;
   outputs?: Output[];

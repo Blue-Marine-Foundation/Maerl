@@ -156,8 +156,7 @@ export const upsertOutcomeMeasurable = async (
       assumptions: measurable.assumptions || '',
       code: measurable.code,
       target: measurable.target,
-      // TODO: Confirm if the db outcome_measurables has the columnimpact_indicator_id, currently POST req not working
-      // impact_indicator_id: measurable.impact_indicator_id,
+      impact_indicator_id: measurable.impact_indicator_id,
     })
     .select()
     .single();

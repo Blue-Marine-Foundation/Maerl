@@ -63,13 +63,13 @@ export default function OutcomeMeasurableForm({
     e.preventDefault();
     mutation.mutate({
       id: measurable?.id,
-      project_id: projectId,
+      assumptions,
       code: measurable?.code,
       description,
-      verification,
-      assumptions,
-      target: target ? Number(target) : null,
       impact_indicator_id: impactIndicatorId,
+      project_id: projectId,
+      target: target ? Number(target) : null,
+      verification,
     });
   };
 
