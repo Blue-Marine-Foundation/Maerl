@@ -49,8 +49,8 @@ export default function OutcomeCardLogframe({
       {outcome && (
         <>
           <FeatureCardLogframe title='Outcome' variant='green' minHeight='100%'>
-            <div className='flex w-full grow flex-col items-start justify-between gap-4'>
-              <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card pb-6'>
+            <div className='flex w-full grow flex-col items-start justify-between gap-6'>
+              <div className='flex w-full flex-row items-center justify-between'>
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
                 {canEdit && (
                   <div className='flex-shrink-0 text-sm'>

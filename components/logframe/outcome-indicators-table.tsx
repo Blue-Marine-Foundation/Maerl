@@ -134,7 +134,7 @@ export default function OutcomeIndicatorsTable({
           />
         </div>
       ) : (
-        <div className='flex w-full flex-col items-start gap-4'>
+        <div className='flex w-full flex-col items-start gap-6'>
           <div className='w-full rounded-md border'>
             <Table style={{ width: '100%' }}>
               <TableHeader>

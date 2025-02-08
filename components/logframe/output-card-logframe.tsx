@@ -42,8 +42,8 @@ export default function OutputCardLogframe({
           minHeight='100%'
           href={`/projects/yavin4/logframe/output?id=${output.id}`}
         >
-          <div className='flex w-full grow flex-col items-start justify-between gap-4'>
-            <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card pb-6'>
+          <div className='flex w-full grow flex-col items-start justify-between gap-6'>
+            <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card'>
               <p className='max-w-prose text-sm'>{output.description}</p>
               {canEdit && (
                 <div className='flex-shrink-0 space-x-2 text-sm'>

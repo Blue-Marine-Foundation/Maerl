@@ -19,7 +19,7 @@ export default function LogframeQuickNav({
         <div className='flex flex-wrap gap-2'>
           <a
             href='#impact'
-            className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
+            className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:bg-primary/20'
           >
             Impact
           </a>
@@ -27,7 +27,7 @@ export default function LogframeQuickNav({
             <a
               key={outcome.id}
               href={`#outcome-${outcome.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:bg-primary/20'
             >
               {`Outcome ${index + 1}`}
             </a>
@@ -36,7 +36,7 @@ export default function LogframeQuickNav({
             <a
               key={output.id}
               href={`#output-${output.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:bg-primary/20'
             >
               {output.code?.startsWith('U')
                 ? `Unassigned Output ${extractOutputCodeNumber(output.code || '')}`

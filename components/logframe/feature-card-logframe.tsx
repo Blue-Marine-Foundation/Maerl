@@ -46,26 +46,26 @@ export default function FeatureCardLogframe({
                 href && 'hover:text-foreground',
               )}
             >
-              {href ? <Link href={href}>{title}</Link> : title}
+              {title}
             </h3>
             <div className='flex items-center gap-2'>
               {href && (
                 <Link
                   href={href}
-                  className='rounded-md bg-black/10 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:bg-black/30'
+                  className='rounded-md px-3 py-1.5 text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground active:text-foreground/80'
                 >
                   View Output Details
                 </Link>
               )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className='flex items-center gap-2 rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-black/10 hover:text-foreground'
+                className='flex items-center gap-2 rounded-md px-2 py-1 text-muted-foreground transition-colors hover:text-foreground active:text-foreground/80'
                 aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
               >
                 {isExpanded ? (
-                  <ChevronUp className='h-4 w-4' />
+                  <ChevronUp className='h-5 w-5' />
                 ) : (
-                  <ChevronDown className='h-4 w-4' />
+                  <ChevronDown className='h-5 w-5' />
                 )}
               </button>
             </div>
