@@ -118,7 +118,6 @@ export default function OutcomeIndicatorsTable({
     columnResizeMode: 'onChange',
   });
 
-  // Early return for loading state
   if (!measurables) {
     return <div>Loading...</div>;
   }
