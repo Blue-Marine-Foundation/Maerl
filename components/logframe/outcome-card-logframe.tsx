@@ -48,7 +48,7 @@ export default function OutcomeCardLogframe({
         </FeatureCardLogframe>
       )}
 
-      {outcome && (
+      {outcomes && outcome && (
         <>
           <FeatureCardLogframe
             title={
