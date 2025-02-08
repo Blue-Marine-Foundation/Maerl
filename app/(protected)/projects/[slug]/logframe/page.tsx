@@ -76,6 +76,7 @@ export default function LogframePage() {
             >
               <OutcomeCardLogframe
                 outcome={outcome}
+                outcomes={outcomes}
                 projectId={projectId}
                 canEdit
               />

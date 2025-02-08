@@ -6,15 +6,18 @@ import { Outcome } from '@/utils/types';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 
 export default function OutcomeCard({
   canEdit = false,
   outcome,
+  outcomes,
   projectId,
 }: {
   /** Enables the Add Impact and Edit Impact buttons*/
   canEdit?: boolean;
   outcome: Outcome | null;
+  outcomes?: Outcome[];
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
@@ -38,10 +41,14 @@ export default function OutcomeCard({
         </FeatureCardTheoryOfChange>
       )}
 
-      {outcome && (
+      {outcomes && outcome && (
         <>
           <FeatureCardTheoryOfChange
-            title='Outcome'
+            title={
+              outcomes.length > 1
+                ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
+                : 'Outcome'
+            }
             variant='green'
             minHeight='100%'
           >

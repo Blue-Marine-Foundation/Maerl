@@ -53,6 +53,7 @@ export default function TheoryOfChangePage() {
               <OutcomeCard
                 key={outcome.id}
                 outcome={outcome}
+                outcomes={outcomes}
                 projectId={projectId}
               />
             </div>

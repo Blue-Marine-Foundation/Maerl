@@ -11,11 +11,13 @@ import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 export default function OutcomeCardLogframe({
   canEdit = false,
   outcome,
+  outcomes,
   projectId,
 }: {
   /** Enables the Add Impact and Edit Impact buttons*/
   canEdit?: boolean;
   outcome: Outcome | null;
+  outcomes?: Outcome[];
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
@@ -48,7 +50,15 @@ export default function OutcomeCardLogframe({
 
       {outcome && (
         <>
-          <FeatureCardLogframe title='Outcome' variant='green' minHeight='100%'>
+          <FeatureCardLogframe
+            title={
+              outcomes.length > 1
+                ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
+                : 'Outcome'
+            }
+            variant='green'
+            minHeight='100%'
+          >
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full flex-row items-center justify-between'>
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
