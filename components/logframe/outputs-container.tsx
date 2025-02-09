@@ -1,67 +1,54 @@
 'use client';
 
-import { useState } from 'react';
 import { Output } from '@/utils/types';
-import OutputCard from './outputs-card';
-import OutputForm from './output-form';
-import ActionButton from '../ui/action-button';
+import { Badge, BadgeProps } from '@/components/ui/badge';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 
-export default function OutputsContainer({
-  outputs,
-  outcomeMeasurableId,
-  projectId,
-}: {
-  outputs: Output[];
-  outcomeMeasurableId: number;
-  projectId: number;
-}) {
-  const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
-  const [selectedOutput, setSelectedOutput] = useState<Output | null>(null);
-
-  const handleEditOutput = (output: Output) => {
-    setSelectedOutput(output);
-    setIsOutputDialogOpen(true);
-  };
-
-  const handleCloseOutputDialog = () => {
-    setIsOutputDialogOpen(false);
-    setSelectedOutput(null);
-  };
-
-  const handleAddOutput = () => {
-    if (outputs) {
-      const nextCode = `O.X`;
-      setSelectedOutput({ code: nextCode } as Output);
-      setIsOutputDialogOpen(true);
-    }
-  };
+export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
+  const { slug } = useParams();
 
   return (
-    <div className='flex flex-col gap-4'>
-      <h4 className='text-sm font-medium text-muted-foreground'>Outputs</h4>
+    <div className='flex flex-col gap-8'>
       {outputs
-        .sort((a, b) => a.code.localeCompare(b.code))
+        .sort(
+          (a, b) =>
+            extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
+        )
+        .filter((output) => !output.code.startsWith('U'))
         .map((output) => (
-          <OutputCard
+          <FeatureCardTheoryOfChange
             key={output.id}
-            output={output}
-            onEdit={handleEditOutput}
-          />
+            minHeight='100px'
+            title={`Output ${extractOutputCodeNumber(output.code)}`}
+            variant='slate'
+          >
+            <div className='flex justify-between'>
+              <Link
+                href={`/projects/${slug}/logframe/output?id=${output.id}`}
+                className='hover:underline'
+              >
+                <p className='max-w-prose'>{output.description}</p>
+              </Link>
+
+              {output.status && (
+                <div>
+                  <Badge
+                    variant={
+                      output.status
+                        .toLowerCase()
+                        .replace(' ', '_') as BadgeProps['variant']
+                    }
+                  >
+                    {output.status}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          </FeatureCardTheoryOfChange>
         ))}
-      <div className='flex justify-center rounded-md border border-dashed bg-background/30 p-4'>
-        <ActionButton
-          action='add'
-          label='Add output'
-          onClick={handleAddOutput}
-        />
-      </div>
-      <OutputForm
-        isOpen={isOutputDialogOpen}
-        onClose={handleCloseOutputDialog}
-        output={selectedOutput}
-        outcomeMeasurableId={outcomeMeasurableId}
-        projectId={projectId}
-      />
     </div>
   );
 }

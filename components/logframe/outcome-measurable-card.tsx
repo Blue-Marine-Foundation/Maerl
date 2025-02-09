@@ -5,7 +5,7 @@ import { OutcomeMeasurable } from '@/utils/types';
 import FeatureCard from '@/components/ui/feature-card';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
-import { Badge, BadgeProps } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import OutputsContainer from './outputs-container';
 
 export default function OutcomeMeasurableCard({
@@ -85,11 +85,7 @@ export default function OutcomeMeasurableCard({
                   </div>
                 </div>
 
-                <OutputsContainer
-                  outputs={measurable.outputs || []}
-                  outcomeMeasurableId={measurable.id!}
-                  projectId={projectId}
-                />
+                <OutputsContainer outputs={measurable.outputs || []} />
               </FeatureCard>
             ))}
           <div className='flex items-start justify-center rounded-md border border-dashed bg-card/30 p-8'>

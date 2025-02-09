@@ -1,23 +1,26 @@
 'use client';
 
 import { Impact } from '@/utils/types';
-import FeatureCard from '../ui/feature-card';
 import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 
 export default function ImpactCard({
   impact,
   projectId,
+  canEdit = false,
 }: {
   impact: Impact | null;
   projectId: number;
+  /** Enables the Add Impact and Edit Impact buttons  */
+  canEdit?: boolean;
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCard title='Impact'>
-      {!impact ? (
+    <FeatureCardTheoryOfChange title='Impact' variant='blue' minHeight='100%'>
+      {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton
             action='add'
@@ -25,12 +28,18 @@ export default function ImpactCard({
             onClick={() => setIsDialogOpen(true)}
           />
         </div>
-      ) : (
+      )}
+      {impact && (
         <div className='flex grow flex-col items-start justify-between gap-4'>
-          <p className='text-base'>{impact.title}</p>
-          <div className='flex w-full justify-end text-sm'>
-            <ActionButton action='edit' onClick={() => setIsDialogOpen(true)} />
-          </div>
+          <p className='max-w-prose text-sm'>{impact.title}</p>
+          {canEdit && (
+            <div className='flex w-full justify-end text-sm'>
+              <ActionButton
+                action='edit'
+                onClick={() => setIsDialogOpen(true)}
+              />
+            </div>
+          )}
         </div>
       )}
       <ImpactForm
@@ -39,6 +48,6 @@ export default function ImpactCard({
         impact={impact}
         projectId={projectId}
       />
-    </FeatureCard>
+    </FeatureCardTheoryOfChange>
   );
 }

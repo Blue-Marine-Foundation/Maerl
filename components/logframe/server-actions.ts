@@ -22,6 +22,17 @@ export const fetchLogframe = async (identifier: number | string) => {
   return response;
 };
 
+export const fetchTheoryOfChange = async (identifier: number | string) => {
+  const supabase = await createClient();
+  const response = await supabase
+    .from('projects')
+    .select('id, slug, name, impacts(*), outcomes(*), outputs(*)')
+    .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
+    .single();
+
+  return response;
+};
+
 export const fetchUnassignedOutputs = async (identifier: number | string) => {
   const supabase = await createClient();
   const response = await supabase
