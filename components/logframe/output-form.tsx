@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
 import { upsertOutput } from './server-actions';
 import OutcomeMeasurableSelect from './outcome-measurable-select';
+import CalloutCard from './callout-card';
 
 interface OutputFormProps {
   isOpen: boolean;
@@ -76,7 +77,7 @@ export default function OutputForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{output ? 'Edit Output' : 'Add Output'}</DialogTitle>
         </DialogHeader>
@@ -145,6 +146,28 @@ export default function OutputForm({
             </button>
           </div>
         </form>
+        <div className='mt-2 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content='Outputs are specific, direct deliverables...'
+          />
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='5000 households trained in sustainable fishing practices to enhance food security and seagrass meadow restoration.'
+          />
+          <CalloutCard
+            variant='success'
+            label='Best practice'
+            content='Think of outputs as specific deliverables you aim to achieve throughout the life of a project. Think of them as a result of many day-to-day activities.'
+          />
+          <CalloutCard
+            variant='warning'
+            label='Avoid'
+            content="Don't confused outputs with activities. Activities are things that lead you to an output. For example, if your output is x number of people trained in sustainable fishing practices, the activities to achieve that include attending training courses, assessing the skills that were gained, setting up a course etc."
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

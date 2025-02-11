@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { upsertOutcome } from './server-actions';
 import { Outcome } from '@/utils/types';
+import CalloutCard from './callout-card';
 
 interface OutcomeFormProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export default function OutcomeForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{outcome ? 'Edit Outcome' : 'Add Outcome'}</DialogTitle>
         </DialogHeader>
@@ -72,6 +73,28 @@ export default function OutcomeForm({
             </button>
           </div>
         </form>
+        <div className='mt-16 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content='The outcome statement is the overarching objective of the project. It is what is expected to be achieved as a result of the project. There is typically one outcome for a project, although there may be several indicators to measure its achievement. The outcome is within the control of the project, providing the assumptions hold (e.g. maintained political will).'
+          />
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='Seagrass ecosystems are protected and restored, providing ecosystem services to improve local community livelihoods and long-term climate change resilience.'
+          />
+          <CalloutCard
+            variant='success'
+            label='Best practice'
+            content='Have one outcome statement that can be measured. It should be within the control of the project, providing it operates within our assumptions.'
+          />
+          <CalloutCard
+            variant='warning'
+            label='Avoid'
+            content='Long, difficult statements or lots of sentences.'
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

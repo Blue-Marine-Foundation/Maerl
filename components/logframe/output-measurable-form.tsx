@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { OutputMeasurable, ImpactIndicator } from '@/utils/types';
 import { upsertOutputMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '@/components/impact-indicators/impact-indicator-select';
+import CalloutCard from './callout-card';
 
 interface OutputMeasurableFormProps {
   isOpen: boolean;
@@ -76,7 +77,7 @@ export default function OutputMeasurableForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
             {measurable ? 'Edit Indicator' : 'Add Indicator'}
@@ -174,6 +175,18 @@ export default function OutputMeasurableForm({
             </button>
           </div>
         </form>
+        <div className='mt-16 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content='Output indicators are something you will measure to assess progress towards completing each output (not what is to be achieved). Each output can have more than one indicator though it is good practice not to have more than three per output. Output indicators will be measurable within the timeframe of the project, they need to be specific, usable and clearly verifiable. Indicators can be both quantitative and qualitative.'
+          />
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='Output indicator example (quantitative): "Number of individuals attending sustainable fishing workshops (disaggregated by gender and disability status)". Output indicator example (qualitative): "Fisher knowledge levels post sustainable fishing workshops"'
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

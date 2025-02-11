@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { ImpactIndicator, OutcomeMeasurable } from '@/utils/types';
 import { upsertOutcomeMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '../impact-indicators/impact-indicator-select';
+import CalloutCard from './callout-card';
 
 interface OutcomeMeasurableFormProps {
   isOpen: boolean;
@@ -75,7 +76,7 @@ export default function OutcomeMeasurableForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
             {measurable ? 'Edit Indicator' : 'Add Indicator'}
@@ -156,6 +157,18 @@ export default function OutcomeMeasurableForm({
             </button>
           </div>
         </form>
+        <div className='mt-16 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content="Outcome indicators state what is to be measured to assess progress towards reaching the outcome (not what needs to be achieved). They usually require primary data to be collected by the project, used to evidence the project's impact. An Outcome can have several indicators, they can be quantitative or qualitative and should capture all aspects of the project whether environmental, social, economic or institutional aspects of intended change."
+          />
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='Number of fishers adopting sustainable practices'
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
