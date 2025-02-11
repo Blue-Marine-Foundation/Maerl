@@ -166,7 +166,7 @@ export default function OutcomeMeasurableForm({
           <CalloutCard
             variant='info'
             label='Example'
-            content='Number of fishers adopting sustainable practices'
+            content='Number of fishers adopting sustainable practices.'
           />
         </div>
       </DialogContent>

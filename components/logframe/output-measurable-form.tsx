@@ -184,7 +184,7 @@ export default function OutputMeasurableForm({
           <CalloutCard
             variant='info'
             label='Example'
-            content='Output indicator example (quantitative): "Number of individuals attending sustainable fishing workshops (disaggregated by gender and disability status)". Output indicator example (qualitative): "Fisher knowledge levels post sustainable fishing workshops"'
+            content='Output indicator example (quantitative): "Number of individuals attending sustainable fishing workshops (disaggregated by gender and disability status)". Output indicator example (qualitative): "Fisher knowledge levels post sustainable fishing workshops."'
           />
         </div>
       </DialogContent>

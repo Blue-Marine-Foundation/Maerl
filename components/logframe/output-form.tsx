@@ -150,7 +150,7 @@ export default function OutputForm({
           <CalloutCard
             variant='info'
             label='Description'
-            content='Outputs are specific, direct deliverables...'
+            content='Outputs are specific, direct deliverables that result from the project’s activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.    '
           />
           <CalloutCard
             variant='info'

@@ -80,11 +80,6 @@ export default function OutcomeForm({
             content='The outcome statement is the overarching objective of the project. It is what is expected to be achieved as a result of the project. There is typically one outcome for a project, although there may be several indicators to measure its achievement. The outcome is within the control of the project, providing the assumptions hold (e.g. maintained political will).'
           />
           <CalloutCard
-            variant='info'
-            label='Example'
-            content='Seagrass ecosystems are protected and restored, providing ecosystem services to improve local community livelihoods and long-term climate change resilience.'
-          />
-          <CalloutCard
             variant='success'
             label='Best practice'
             content='Have one outcome statement that can be measured. It should be within the control of the project, providing it operates within our assumptions.'
