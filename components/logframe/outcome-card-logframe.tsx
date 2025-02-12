@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { Outcome } from '@/utils/types';
-
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
-import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import FeatureCardLogframe from './feature-card-logframe';
+import OutcomeIndicatorsTable from './outcome-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 
-export default function OutcomeCard({
+export default function OutcomeCardLogframe({
   canEdit = false,
   outcome,
   outcomes,
@@ -21,10 +21,17 @@ export default function OutcomeCard({
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
+
+  const outcomeMeasurables =
+    outcome?.outcome_measurables?.sort(
+      (a, b) =>
+        extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
+    ) || [];
+
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardTheoryOfChange title='Outcome' minHeight='100%'>
+        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='green'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -38,12 +45,12 @@ export default function OutcomeCard({
             outcome={outcome}
             projectId={projectId}
           />
-        </FeatureCardTheoryOfChange>
+        </FeatureCardLogframe>
       )}
 
       {outcomes && outcome && (
         <>
-          <FeatureCardTheoryOfChange
+          <FeatureCardLogframe
             title={
               outcomes.length > 1
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
@@ -52,18 +59,23 @@ export default function OutcomeCard({
             variant='green'
             minHeight='100%'
           >
-            <div className='flex grow flex-col items-start justify-between gap-4'>
-              <div>
+            <div className='flex w-full grow flex-col items-start justify-between gap-6'>
+              <div className='flex w-full flex-row items-center justify-between'>
                 <p className='max-w-prose text-sm'>{outcome.description}</p>
+                {canEdit && (
+                  <div className='flex-shrink-0 text-sm'>
+                    <ActionButton
+                      action='edit'
+                      onClick={() => setIsOutcomeDialogOpen(true)}
+                    />
+                  </div>
+                )}
               </div>
-              {canEdit && (
-                <div className='flex-shrink-0 text-sm'>
-                  <ActionButton
-                    action='edit'
-                    onClick={() => setIsOutcomeDialogOpen(true)}
-                  />
-                </div>
-              )}
+              <OutcomeIndicatorsTable
+                measurables={outcomeMeasurables}
+                outcomeId={outcome.id}
+                projectId={projectId}
+              />
             </div>
 
             <OutcomeForm
@@ -72,7 +84,7 @@ export default function OutcomeCard({
               outcome={outcome}
               projectId={projectId}
             />
-          </FeatureCardTheoryOfChange>
+          </FeatureCardLogframe>
         </>
       )}
     </div>

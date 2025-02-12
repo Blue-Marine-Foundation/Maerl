@@ -6,12 +6,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
 import { upsertOutput } from './server-actions';
 import OutcomeMeasurableSelect from './outcome-measurable-select';
+import CalloutCard from './callout-card';
 
 interface OutputFormProps {
   isOpen: boolean;
   onClose: () => void;
   output: Output | null;
-  outcomeMeasurableId: number;
   projectId: number;
 }
 
@@ -19,14 +19,14 @@ export default function OutputForm({
   isOpen,
   onClose,
   output,
-  outcomeMeasurableId,
   projectId,
 }: OutputFormProps) {
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
   const [status, setStatus] = useState(output?.status || 'Not started');
-  const [selectedMeasurableId, setSelectedMeasurableId] =
-    useState<number>(outcomeMeasurableId);
+  const [selectedMeasurableId, setSelectedMeasurableId] = useState<
+    number | undefined
+  >(output?.outcome_measurable_id);
   const [error, setError] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
@@ -35,9 +35,9 @@ export default function OutputForm({
     setDescription(output?.description || '');
     setCode(output?.code || '');
     setStatus(output?.status || 'Not started');
-    setSelectedMeasurableId(outcomeMeasurableId);
+    setSelectedMeasurableId(output?.outcome_measurable_id);
     setError(null);
-  }, [output, outcomeMeasurableId]);
+  }, [output]);
 
   const mutation = useMutation({
     mutationFn: async (newOutput: Partial<Output>) => {
@@ -77,17 +77,15 @@ export default function OutputForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{output ? 'Edit Output' : 'Add Output'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
           <OutcomeMeasurableSelect
-            value={selectedMeasurableId}
+            value={selectedMeasurableId || 0}
             projectId={projectId}
-            onChange={(measurable) =>
-              setSelectedMeasurableId(measurable?.id || outcomeMeasurableId)
-            }
+            onChange={(measurable) => setSelectedMeasurableId(measurable?.id)}
           />
           <div>
             <label htmlFor='code' className='mb-1 block text-sm font-medium'>
@@ -98,7 +96,7 @@ export default function OutputForm({
               className='w-full rounded-md border bg-background px-4 py-2'
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder='Enter output code (e.g. O1)'
+              placeholder='Enter output code (e.g. 0.10 for Output 10)'
             />
           </div>
           <div>
@@ -148,6 +146,28 @@ export default function OutputForm({
             </button>
           </div>
         </form>
+        <div className='mt-2 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content='Outputs are specific, direct deliverables that result from the project’s activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.    '
+          />
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='5000 households trained in sustainable fishing practices to enhance food security and seagrass meadow restoration.'
+          />
+          <CalloutCard
+            variant='success'
+            label='Best practice'
+            content='Think of outputs as specific deliverables you aim to achieve throughout the life of a project. Think of them as a result of many day-to-day activities.'
+          />
+          <CalloutCard
+            variant='warning'
+            label='Avoid'
+            content="Don't confused outputs with activities. Activities are things that lead you to an output. For example, if your output is x number of people trained in sustainable fishing practices, the activities to achieve that include attending training courses, assessing the skills that were gained, setting up a course etc."
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

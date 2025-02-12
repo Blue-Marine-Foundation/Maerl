@@ -12,13 +12,12 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
 
   return (
     <div className='flex flex-col gap-8'>
-      {outputs
-        .sort(
-          (a, b) =>
-            extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
-        )
-        .filter((output) => !output.code.startsWith('U'))
-        .map((output) => (
+      {outputs.map((output) => (
+        <div
+          key={output.id}
+          id={`output-${output.id}`}
+          className='scroll-mt-20'
+        >
           <FeatureCardTheoryOfChange
             key={output.id}
             minHeight='100px'
@@ -48,7 +47,8 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
               )}
             </div>
           </FeatureCardTheoryOfChange>
-        ))}
+        </div>
+      ))}
     </div>
   );
 }

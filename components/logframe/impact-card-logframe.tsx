@@ -4,9 +4,9 @@ import { Impact } from '@/utils/types';
 import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
-import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import FeatureCardLogframe from './feature-card-logframe';
 
-export default function ImpactCard({
+export default function ImpactCardLogframe({
   impact,
   projectId,
   canEdit = false,
@@ -19,7 +19,7 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardTheoryOfChange title='Impact' variant='blue' minHeight='100%'>
+    <FeatureCardLogframe title='Impact' variant='blue' minHeight='100%'>
       {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton
@@ -48,6 +48,6 @@ export default function ImpactCard({
         impact={impact}
         projectId={projectId}
       />
-    </FeatureCardTheoryOfChange>
+    </FeatureCardLogframe>
   );
 }
