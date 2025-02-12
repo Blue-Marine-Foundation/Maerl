@@ -55,7 +55,12 @@ export const fetchOutputById = async (id: string) => {
       `
       *,
       projects!inner(*),
-      output_measurables(*, impact_indicators(*))
+      output_measurables(
+        *,
+        impact_indicators(*),
+        updates(*),
+        activities(*)
+      )
     `,
     )
     .eq('id', id)
