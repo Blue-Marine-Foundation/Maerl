@@ -3,14 +3,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 import { fetchOutputById } from '@/components/logframe/server-actions';
-import OutputCard from '@/components/logframe/output-card';
 import FeatureCard from '@/components/ui/feature-card';
 import Link from 'next/link';
+import OutputDetailView from '@/components/logframe/output-detail-view';
 
 function OutputContent() {
   const { slug } = useParams();
   const searchParams = useSearchParams();
   const outputId = searchParams.get('id');
+
+  const { data: outputData, isLoading } = useQuery({
+    queryKey: ['output', outputId],
+    queryFn: () => fetchOutputById(outputId as string),
+  });
 
   if (!outputId) {
     return (
@@ -33,11 +38,6 @@ function OutputContent() {
     );
   }
 
-  const { data: outputData, isLoading } = useQuery({
-    queryKey: ['output', outputId],
-    queryFn: () => fetchOutputById(outputId as string),
-  });
-
   if (isLoading) {
     return <div>Loading output with database id: {outputId}</div>;
   }
@@ -51,7 +51,9 @@ function OutputContent() {
     );
   }
 
-  return <OutputCard output={outputData} />;
+  return (
+    <OutputDetailView output={outputData} projectId={outputData.project_id} />
+  );
 }
 
 export default function LogframeOutputPage() {
