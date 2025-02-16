@@ -26,11 +26,7 @@ export const createColumns = (
         <ActionButton
           action='edit'
           variant='icon'
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEditMeasurable(row.original);
-          }}
-          className='flex-shrink-0'
+          onClick={() => handleEditMeasurable(row.original)}
         />
         <p className='text-sm'>{row.getValue('description')}</p>
       </div>
@@ -73,19 +69,17 @@ export const createColumns = (
   {
     id: 'actions',
     header: '',
-    size: 200,
+    size: 180,
     cell: ({ row }) => {
+      const measurable = row.original;
       return (
-        <div
-          className='flex flex-col items-end gap-2 pr-4'
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className='flex flex-col justify-center gap-2'>
           <Dialog>
             <DialogTrigger asChild>
               <ActionButton
                 action='add'
                 label='Add update'
-                className='flex w-full items-center justify-center bg-purple-600/20 hover:bg-purple-600/40'
+                className="className='flex w-full items-center justify-center bg-purple-600/20 hover:bg-purple-600/40"
               />
             </DialogTrigger>
             <DialogContent>
@@ -93,15 +87,15 @@ export const createColumns = (
                 <DialogTitle>Add update</DialogTitle>
               </DialogHeader>
               <UpdateForm
-                outputMeasurable={row.original}
-                impactIndicator={row.original.impact_indicators!}
+                outputMeasurable={measurable}
+                impactIndicator={measurable.impact_indicators!}
                 projectId={Number(projectId)}
               />
             </DialogContent>
           </Dialog>
           <button
             onClick={() => toggleRow(row.id)}
-            className='flex w-full items-center justify-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground transition-all hover:bg-accent hover:text-foreground'
+            className='flex w-full items-center justify-center gap-2 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-slate-300 dark:hover:text-slate-100'
           >
             {expandedRows[row.id] ? (
               <>
