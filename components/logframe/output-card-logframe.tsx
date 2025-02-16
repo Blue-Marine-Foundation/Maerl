@@ -5,9 +5,9 @@ import { Output } from '@/utils/types';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
-import OutputIndicatorsTable from './output-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import AddOutputButton from './add-output-button';
+import OutputIndicatorsDetailsTable from './output-indicators-details-table';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -40,7 +40,6 @@ export default function OutputCardLogframe({
           }
           variant='slate'
           minHeight='100%'
-          href={`/projects/yavin4/logframe/output?id=${output.id}`}
         >
           <div className='flex w-full grow flex-col items-start justify-between gap-6'>
             <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card'>
@@ -54,7 +53,7 @@ export default function OutputCardLogframe({
                 </div>
               )}
             </div>
-            <OutputIndicatorsTable
+            <OutputIndicatorsDetailsTable
               measurables={output?.output_measurables || []}
               outputId={output.id}
               projectId={projectId}

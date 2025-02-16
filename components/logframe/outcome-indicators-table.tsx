@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { OutcomeMeasurable } from '@/utils/types';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
-import { Badge } from '@/components/ui/badge';
 import {
   flexRender,
   getCoreRowModel,
@@ -55,36 +54,39 @@ export default function OutcomeIndicatorsTable({
     {
       accessorKey: 'description',
       header: 'Measurable Indicator',
+      size: 400,
       cell: ({ row }: { row: any }) => (
         <div className='flex flex-row gap-4'>
           <div className='mt-1'>
-            <Badge className='bg-emerald-900/90 py-1.5 font-medium'>
-              {row.original.code}
-            </Badge>
+            <ActionButton
+              action='edit'
+              variant='icon'
+              onClick={() => handleEditMeasurable(row.original)}
+            />
           </div>
           <p className='text-sm'>{row.getValue('description')}</p>
         </div>
       ),
-      size: 400,
     },
     {
       accessorKey: 'verification',
       header: 'Verification',
-      size: 200,
+      size: 250,
     },
     {
       accessorKey: 'assumptions',
       header: 'Assumptions',
-      size: 200,
+      size: 250,
     },
     {
       accessorKey: 'target',
       header: 'Target',
-      size: 200,
+      size: 70,
     },
     {
       accessorKey: 'impact_indicator_id',
       header: 'Impact Indicator',
+      size: 70,
       cell: ({ row }: { row: any }) => {
         return (
           <p
@@ -95,19 +97,6 @@ export default function OutcomeIndicatorsTable({
           </p>
         );
       },
-    },
-    {
-      id: 'actions',
-      cell: ({ row }: { row: any }) => (
-        <div className='flex justify-end'>
-          <ActionButton
-            action='edit'
-            variant='icon'
-            onClick={() => handleEditMeasurable(row.original)}
-          />
-        </div>
-      ),
-      size: 10,
     },
   ];
 
