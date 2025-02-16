@@ -48,7 +48,7 @@ export default function OutcomeMeasurableSelect({
         htmlFor='outcomeMeasurable'
         className='mb-1 block text-sm font-medium'
       >
-        Outcome Measurable
+        Select the outcome indicator that this output works towards
       </label>
       <select
         id='outcomeMeasurable'
