@@ -124,10 +124,10 @@ export default function OutputIndicatorsDetailsTable({
                         </Dialog>
                       </div>
                       <div>
-                        <p className='max-w-prose text-sm text-muted-foreground'>
+                        <p className='max-w-prose text-sm'>
                           {update.description}
                         </p>
-                        <div className='flex items-center gap-3'>
+                        <div className='mt-2 flex items-center gap-3'>
                           <span className='text-xs text-muted-foreground'>
                             {d3.timeFormat('%d %b %Y')(new Date(update.date))}
                           </span>
