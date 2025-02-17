@@ -4,13 +4,13 @@ export default function FeatureCardTheoryOfChange({
   title,
   children,
   minHeight,
-  variant = 'default',
+  variant,
 }: {
   title?: string;
   minHeight?: string;
   children: React.ReactNode;
   /** card title area background color */
-  variant?: 'impact' | 'outcome' | 'output';
+  variant: 'impact' | 'outcome' | 'output';
 }) {
   return (
     <div
