@@ -8,6 +8,7 @@ import OutputForm from './output-form';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import AddOutputButton from './add-output-button';
 import OutputIndicatorsDetailsTable from './output-indicators-details-table';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -20,6 +21,7 @@ export default function OutputCardLogframe({
   projectId: number;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
+  const [isTableExpanded, setIsTableExpanded] = useState(true);
 
   return (
     <div className='relative flex flex-col gap-8'>
@@ -53,11 +55,37 @@ export default function OutputCardLogframe({
                 </div>
               )}
             </div>
-            <OutputIndicatorsDetailsTable
-              measurables={output?.output_measurables || []}
-              outputId={output.id}
-              projectId={projectId}
-            />
+            <div className='w-full'>
+              <button
+                onClick={() => setIsTableExpanded(!isTableExpanded)}
+                className='mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+              >
+                {isTableExpanded ? (
+                  <>
+                    <ChevronDown className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Hide indicators
+                  </>
+                ) : (
+                  <>
+                    <ChevronRight className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Show indicators
+                  </>
+                )}
+              </button>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isTableExpanded
+                    ? 'max-h-[1000px] opacity-100'
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <OutputIndicatorsDetailsTable
+                  measurables={output?.output_measurables || []}
+                  outputId={output.id}
+                  projectId={projectId}
+                />
+              </div>
+            </div>
           </div>
 
           <OutputForm

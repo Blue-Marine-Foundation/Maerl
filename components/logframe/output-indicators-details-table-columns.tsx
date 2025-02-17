@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { OutputMeasurable } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -69,7 +69,7 @@ export const createColumns = (
   {
     id: 'actions',
     header: '',
-    size: 180,
+    size: 170,
     cell: ({ row }) => {
       const measurable = row.original;
       return (
@@ -99,13 +99,13 @@ export const createColumns = (
           >
             {expandedRows[row.id] ? (
               <>
-                Hide all updates
                 <ChevronDown className='h-4 w-4' />
+                Hide updates
               </>
             ) : (
               <>
-                Show all updates
-                <ChevronUp className='h-4 w-4' />
+                <ChevronRight className='h-4 w-4' />
+                Show updates
               </>
             )}
           </button>

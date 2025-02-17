@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Outcome } from '@/utils/types';
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
@@ -21,6 +22,7 @@ export default function OutcomeCardLogframe({
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
+  const [isTableExpanded, setIsTableExpanded] = useState(true);
 
   const outcomeMeasurables =
     outcome?.outcome_measurables?.sort(
@@ -71,11 +73,33 @@ export default function OutcomeCardLogframe({
                   </div>
                 )}
               </div>
-              <OutcomeIndicatorsTable
-                measurables={outcomeMeasurables}
-                outcomeId={outcome.id}
-                projectId={projectId}
-              />
+              <div className='w-full'>
+                <button
+                  onClick={() => setIsTableExpanded(!isTableExpanded)}
+                  className='mb-2 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+                >
+                  {isTableExpanded ? (
+                    <>
+                      <ChevronDown className='h-4 w-4 transition-transform duration-200' />{' '}
+                      Hide indicators
+                    </>
+                  ) : (
+                    <>
+                      <ChevronRight className='h-4 w-4 transition-transform duration-200' />{' '}
+                      Show indicators
+                    </>
+                  )}
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${isTableExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+                >
+                  <OutcomeIndicatorsTable
+                    measurables={outcomeMeasurables}
+                    outcomeId={outcome.id}
+                    projectId={projectId}
+                  />
+                </div>
+              </div>
             </div>
 
             <OutcomeForm
