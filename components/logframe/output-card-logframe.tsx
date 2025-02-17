@@ -24,7 +24,7 @@ export default function OutputCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (
-        <FeatureCardLogframe title='Output' minHeight='100%' variant='slate'>
+        <FeatureCardLogframe title='Output' minHeight='100%' variant='output'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <AddOutputButton projectId={projectId} output={output} />
           </div>
@@ -38,7 +38,7 @@ export default function OutputCardLogframe({
               ? `Unassigned Output  ${extractOutputCodeNumber(output.code)}`
               : `Output ${extractOutputCodeNumber(output.code)}`
           }
-          variant='slate'
+          variant='output'
           minHeight='100%'
           href={`/projects/yavin4/logframe/output?id=${output.id}`}
         >

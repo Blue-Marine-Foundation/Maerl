@@ -31,7 +31,7 @@ export default function OutcomeCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='green'>
+        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -56,7 +56,7 @@ export default function OutcomeCardLogframe({
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
                 : 'Outcome'
             }
-            variant='green'
+            variant='outcome'
             minHeight='100%'
           >
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>

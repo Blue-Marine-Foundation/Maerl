@@ -7,14 +7,14 @@ export default function FeatureCardLogframe({
   title,
   children,
   minHeight,
-  variant = 'default',
+  variant,
   href,
 }: {
   title?: string;
   minHeight?: string;
   children: React.ReactNode;
   /** card title area background color */
-  variant?: 'default' | 'blue' | 'green' | 'slate';
+  variant: 'impact' | 'outcome' | 'output';
   href?: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -32,17 +32,15 @@ export default function FeatureCardLogframe({
             '-mt-0 w-full px-4 py-6',
             'transition-[border-radius] duration-200',
             isExpanded ? 'rounded-t-md' : 'rounded-md',
-            variant === 'default' && 'bg-card',
-            variant === 'blue' && 'bg-blue-950/90',
-            variant === 'green' && 'bg-emerald-900/90',
-            variant === 'slate' && 'bg-slate-800',
+            variant === 'impact' && 'bg-blue-950/90',
+            variant === 'outcome' && 'bg-sky-900/90',
+            variant === 'output' && 'bg-sky-600/90',
           )}
         >
           <div className='flex items-center justify-between'>
             <h3
               className={cn(
                 'text-sm font-medium',
-                variant === 'default' && 'text-muted-foreground',
                 href && 'hover:text-foreground',
               )}
             >
