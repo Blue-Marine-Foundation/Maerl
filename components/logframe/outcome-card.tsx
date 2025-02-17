@@ -24,8 +24,12 @@ export default function OutcomeCard({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardTheoryOfChange title='Outcome' minHeight='100%'>
-          <div className='flex grow flex-col items-center justify-center gap-4'>
+        <FeatureCardTheoryOfChange
+          title='Outcome'
+          minHeight='100%'
+          variant='green'
+        >
+          <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
             <ActionButton
               action='add'
               label='Add outcome'

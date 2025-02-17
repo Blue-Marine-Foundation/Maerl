@@ -21,7 +21,7 @@ export default function ImpactCard({
   return (
     <FeatureCardTheoryOfChange title='Impact' variant='blue' minHeight='100%'>
       {!impact && canEdit && (
-        <div className='flex grow flex-col items-center justify-center gap-4'>
+        <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'
             label='Add impact'

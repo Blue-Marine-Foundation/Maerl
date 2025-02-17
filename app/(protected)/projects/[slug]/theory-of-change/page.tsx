@@ -41,7 +41,7 @@ export default function TheoryOfChangePage() {
       <LogframeQuickNav outcomes={outcomes} outputs={outputs} />
       <div className='flex flex-col gap-8'>
         <div className='mt-4 scroll-mt-20' id='impact'>
-          <ImpactCard impact={impact} projectId={projectId} />
+          <ImpactCard impact={impact} projectId={projectId} canEdit={!impact} />
         </div>
         <div className='mx-16 flex flex-col gap-8'>
           {outcomes.map((outcome) => (
@@ -59,7 +59,7 @@ export default function TheoryOfChangePage() {
             </div>
           ))}
           {outcomes.length === 0 && (
-            <OutcomeCard outcome={null} projectId={projectId} />
+            <OutcomeCard outcome={null} projectId={projectId} canEdit />
           )}
         </div>
         <div>
