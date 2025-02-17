@@ -27,7 +27,7 @@ export default function OutcomeCard({
         <FeatureCardTheoryOfChange
           title='Outcome'
           minHeight='100%'
-          variant='green'
+          variant='outcome'
         >
           <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
             <ActionButton
@@ -53,7 +53,7 @@ export default function OutcomeCard({
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
                 : 'Outcome'
             }
-            variant='green'
+            variant='outcome'
             minHeight='100%'
           >
             <div className='flex grow flex-col items-start justify-between gap-4'>

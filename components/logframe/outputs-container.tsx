@@ -24,7 +24,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
               key={output.id}
               minHeight='100px'
               title={`Output ${extractOutputCodeNumber(output.code)}`}
-              variant='slate'
+              variant='output'
             >
               <div className='flex justify-between'>
                 <Link
@@ -55,7 +55,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
         <FeatureCardTheoryOfChange
           minHeight='100px'
           title='Outputs'
-          variant='slate'
+          variant='output'
         >
           <AddOutputButton projectId={Number(slug)} output={null} />
         </FeatureCardTheoryOfChange>

@@ -10,7 +10,7 @@ export default function FeatureCardTheoryOfChange({
   minHeight?: string;
   children: React.ReactNode;
   /** card title area background color */
-  variant?: 'default' | 'blue' | 'green' | 'slate';
+  variant?: 'impact' | 'outcome' | 'output';
 }) {
   return (
     <div
@@ -23,17 +23,13 @@ export default function FeatureCardTheoryOfChange({
         <div
           className={cn(
             'w-64 rounded-l-md p-6',
-            variant === 'default' && 'bg-card',
-            variant === 'blue' && 'bg-blue-950/90',
-            variant === 'green' && 'bg-emerald-900/90',
-            variant === 'slate' && 'bg-slate-800',
+            variant === 'impact' && 'bg-blue-950/90',
+            variant === 'outcome' && 'bg-sky-900/90',
+            variant === 'output' && 'bg-sky-600/90',
           )}
         >
           <h3
-            className={cn(
-              'writing-vertical-lr text-sm font-medium',
-              variant === 'default' && 'text-muted-foreground',
-            )}
+            className={cn('writing-vertical-lr text-sm font-medium text-white')}
           >
             {title}
           </h3>
