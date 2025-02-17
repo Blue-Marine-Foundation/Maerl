@@ -6,7 +6,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
     "@observablehq/plot": "^0.6.16",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
