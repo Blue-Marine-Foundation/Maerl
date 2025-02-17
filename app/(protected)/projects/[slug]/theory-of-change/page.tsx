@@ -43,7 +43,7 @@ export default function TheoryOfChangePage() {
         <div className='mt-4 scroll-mt-20' id='impact'>
           <ImpactCard impact={impact} projectId={projectId} />
         </div>
-        <div className='flex flex-col gap-8'>
+        <div className='mx-16 flex flex-col gap-8'>
           {outcomes.map((outcome) => (
             <div
               key={outcome.id}
@@ -64,7 +64,7 @@ export default function TheoryOfChangePage() {
         </div>
         <div>
           {outputs.length > 0 && (
-            <div className='flex flex-col gap-8'>
+            <div className='mx-32 flex flex-col gap-8'>
               <OutputsContainer outputs={outputs} />
             </div>
           )}
