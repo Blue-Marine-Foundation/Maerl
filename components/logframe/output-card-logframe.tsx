@@ -7,8 +7,8 @@ import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
 import OutputIndicatorsTable from './output-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
-import AddOutputButton from './add-output-button';
 import { logframeText } from './logframe-text';
+import AddOutputButton from './add-output-button';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -21,7 +21,7 @@ export default function OutputCardLogframe({
   projectId: number;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
-
+  console.log('!output && canEdit: ', !output && canEdit);
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (

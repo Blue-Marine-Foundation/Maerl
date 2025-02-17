@@ -5,8 +5,8 @@ import { Badge, BadgeProps } from '@/components/ui/badge';
 import { useParams } from 'next/navigation';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
-import AddOutputButton from './add-output-button';
 import { logframeText } from './logframe-text';
+import Link from 'next/link';
 
 export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
   const { slug } = useParams();
@@ -51,7 +51,19 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
           variant='output'
           tooltipText={logframeText.output.description}
         >
-          <AddOutputButton projectId={Number(slug)} output={null} />
+          {/* <AddOutputButton projectId={Number(slug)} output={null} /> */}
+          <div className='flex items-center justify-center rounded-md border border-dashed p-12 text-muted-foreground'>
+            <p>
+              To add outputs, navigate to the project{' '}
+              <Link
+                className='underline underline-offset-4 transition-colors hover:text-white'
+                href={`/projects/${slug}/logframe`}
+              >
+                Logframe
+              </Link>{' '}
+              .
+            </p>
+          </div>
         </FeatureCardTheoryOfChange>
       )}
     </div>

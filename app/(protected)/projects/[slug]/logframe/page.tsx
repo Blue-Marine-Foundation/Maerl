@@ -11,6 +11,8 @@ import OutputCardLogframe from '@/components/logframe/output-card-logframe';
 import OutcomeCardLogframe from '@/components/logframe/outcome-card-logframe';
 import ImpactCardLogframe from '@/components/logframe/impact-card-logframe';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
+import FeatureCardLogframe from '@/components/logframe/feature-card-logframe';
+import { logframeText } from '@/components/logframe/logframe-text';
 
 export default function LogframePage() {
   const { slug } = useParams();
@@ -100,7 +102,23 @@ export default function LogframePage() {
               />
             </div>
           ))}
-          <AddOutputButton projectId={projectId} output={null} />
+          {allOutputs.length > 0 && (
+            <div className='mt-4'>
+              <AddOutputButton projectId={projectId} output={null} />
+            </div>
+          )}
+          {allOutputs.length === 0 && (
+            <FeatureCardLogframe
+              title='Outputs'
+              variant='output'
+              tooltipText={logframeText.output.description}
+            >
+              <div className='flex items-center justify-center rounded-md border border-dashed p-12 text-muted-foreground'>
+                To get started adding outputs, first add a relevant outcome
+                indicator above.
+              </div>
+            </FeatureCardLogframe>
+          )}
         </div>
       </div>
     </div>
