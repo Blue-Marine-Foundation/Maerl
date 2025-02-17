@@ -63,11 +63,11 @@ export default function TheoryOfChangePage() {
           )}
         </div>
         <div>
-          {outputs.length > 0 && (
+          {
             <div className='mx-32 flex flex-col gap-8'>
               <OutputsContainer outputs={outputs} />
             </div>
-          )}
+          }
         </div>
       </div>
     </div>
