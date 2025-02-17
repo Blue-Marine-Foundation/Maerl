@@ -69,7 +69,6 @@ export const createColumns = (
   {
     id: 'actions',
     header: '',
-    size: 170,
     cell: ({ row }) => {
       const measurable = row.original;
       return (
@@ -95,7 +94,7 @@ export const createColumns = (
           </Dialog>
           <button
             onClick={() => toggleRow(row.id)}
-            className='flex w-full items-center justify-center gap-2 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-slate-300 dark:hover:text-slate-100'
+            className='flex w-full min-w-[145px] items-center justify-center gap-1 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-slate-300 dark:hover:text-slate-100'
           >
             {expandedRows[row.id] ? (
               <>
