@@ -31,7 +31,12 @@ export default function OutcomeCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='outcome'>
+        <FeatureCardLogframe
+          title='Outcome'
+          minHeight='100%'
+          variant='outcome'
+          tooltipText='The outcome statement is the overarching objective of the project. It is what is expected to be achieved as a result of the project. There is typically one outcome for a project, although there may be several indicators to measure its achievement. The outcome is within the control of the project, providing the assumptions hold (e.g. maintained political will).'
+        >
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -58,6 +63,7 @@ export default function OutcomeCardLogframe({
             }
             variant='outcome'
             minHeight='100%'
+            tooltipText='The outcome statement is the overarching objective of the project. It is what is expected to be achieved as a result of the project. There is typically one outcome for a project, although there may be several indicators to measure its achievement. The outcome is within the control of the project, providing the assumptions hold (e.g. maintained political will).'
           >
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full flex-row items-center justify-between'>

@@ -21,7 +21,6 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
           >
             <FeatureCardTheoryOfChange
               key={output.id}
-              minHeight='100%'
               title={`Output ${extractOutputCodeNumber(output.code)}`}
               variant='output'
               tooltipText='Outputs are specific, direct deliverables that result from the project’s activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.'
@@ -47,7 +46,6 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
         ))
       ) : (
         <FeatureCardTheoryOfChange
-          minHeight='100px'
           title='Outputs'
           variant='output'
           tooltipText='The direct results of project activities that contribute to outcomes'

@@ -24,7 +24,12 @@ export default function OutputCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (
-        <FeatureCardLogframe title='Output' minHeight='100%' variant='output'>
+        <FeatureCardLogframe
+          title='Output'
+          minHeight='100%'
+          variant='output'
+          tooltipText="Outputs are specific, direct deliverables that result from the project's activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit."
+        >
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <AddOutputButton projectId={projectId} output={output} />
           </div>
@@ -41,6 +46,7 @@ export default function OutputCardLogframe({
           variant='output'
           minHeight='100%'
           href={`/projects/yavin4/logframe/output?id=${output.id}`}
+          tooltipText="Outputs are specific, direct deliverables that result from the project's activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit."
         >
           <div className='flex w-full grow flex-col items-start justify-between gap-6'>
             <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card'>

@@ -1,7 +1,13 @@
 import { cn } from '@/utils/cn';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 import Link from 'next/link';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function FeatureCardLogframe({
   title,
@@ -9,6 +15,7 @@ export default function FeatureCardLogframe({
   minHeight,
   variant,
   href,
+  tooltipText,
 }: {
   title?: string;
   minHeight?: string;
@@ -16,6 +23,7 @@ export default function FeatureCardLogframe({
   /** card title area background color */
   variant: 'impact' | 'outcome' | 'output';
   href?: string;
+  tooltipText?: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -38,14 +46,28 @@ export default function FeatureCardLogframe({
           )}
         >
           <div className='flex items-center justify-between'>
-            <h3
-              className={cn(
-                'text-sm font-medium',
-                href && 'hover:text-foreground',
+            <div className='flex items-center gap-2'>
+              <h3
+                className={cn(
+                  'text-sm font-medium',
+                  href && 'hover:text-foreground',
+                )}
+              >
+                {title}
+              </h3>
+              {tooltipText && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className='h-4 w-4 text-white/60 hover:text-white' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className='max-w-xs text-sm'>{tooltipText}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
-            >
-              {title}
-            </h3>
+            </div>
             <div className='flex items-center gap-2'>
               {href && (
                 <Link
