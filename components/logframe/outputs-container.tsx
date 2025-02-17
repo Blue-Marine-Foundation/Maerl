@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 import AddOutputButton from './add-output-button';
+import { logframeText } from './logframe-text';
 
 export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
   const { slug } = useParams();
@@ -23,7 +24,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
               key={output.id}
               title={`Output ${extractOutputCodeNumber(output.code)}`}
               variant='output'
-              tooltipText='Outputs are specific, direct deliverables that result from the project’s activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.'
+              tooltipText={logframeText.output.description}
             >
               <div className='flex justify-between'>
                 <p className='max-w-prose'>{output.description}</p>
@@ -48,7 +49,7 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
         <FeatureCardTheoryOfChange
           title='Outputs'
           variant='output'
-          tooltipText='The direct results of project activities that contribute to outcomes'
+          tooltipText={logframeText.output.description}
         >
           <AddOutputButton projectId={Number(slug)} output={null} />
         </FeatureCardTheoryOfChange>

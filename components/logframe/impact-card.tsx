@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import { logframeText } from './logframe-text';
 
 export default function ImpactCard({
   impact,
@@ -22,7 +23,7 @@ export default function ImpactCard({
     <FeatureCardTheoryOfChange
       title='Impact'
       variant='impact'
-      tooltipText='The long-term, high-level change that the project aims to achieve.'
+      tooltipText={logframeText.impact.description}
     >
       {!impact && canEdit && (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
