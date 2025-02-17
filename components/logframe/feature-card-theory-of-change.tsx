@@ -1,24 +1,26 @@
 import { cn } from '@/utils/cn';
+import { Info } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function FeatureCardTheoryOfChange({
   title,
   children,
-  minHeight,
   variant,
+  tooltipText,
 }: {
   title?: string;
-  minHeight?: string;
   children: React.ReactNode;
   /** card title area background color */
   variant: 'impact' | 'outcome' | 'output';
+  tooltipText?: string;
 }) {
   return (
-    <div
-      className={cn(
-        'flex flex-row rounded-md bg-card',
-        minHeight ? `min-h-[${minHeight}]` : 'min-h-64',
-      )}
-    >
+    <div className={cn('flex flex-row rounded-md bg-card')}>
       {title && (
         <div
           className={cn(
@@ -28,11 +30,21 @@ export default function FeatureCardTheoryOfChange({
             variant === 'output' && 'bg-sky-600/90',
           )}
         >
-          <h3
-            className={cn('writing-vertical-lr text-sm font-medium text-white')}
-          >
-            {title}
-          </h3>
+          <div className='flex items-center gap-2'>
+            <h3 className={cn('text-sm font-medium text-white')}>{title}</h3>
+            {tooltipText && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className='h-4 w-4 text-white/60 hover:text-white' />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className='max-w-xs text-sm'>{tooltipText}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
         </div>
       )}
 

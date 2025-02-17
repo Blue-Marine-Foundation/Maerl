@@ -19,7 +19,11 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardTheoryOfChange title='Impact' variant='impact' minHeight='100%'>
+    <FeatureCardTheoryOfChange
+      title='Impact'
+      variant='impact'
+      tooltipText='The long-term, high-level change that the project aims to achieve.'
+    >
       {!impact && canEdit && (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
