@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { Update } from '@/utils/types';
-import { endOfDay, format, startOfMonth } from 'date-fns';
+import { Update, Activity } from '@/utils/types';
+import { endOfDay, startOfMonth } from 'date-fns';
 
 export const fetchUpdates = async (
   dateRange?: {
@@ -100,6 +100,46 @@ export const fetchOutputUpdates = async (outputId: string) => {
     )
     .eq('output_measurables.output_id', outputId)
     .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+};
+
+export const fetchActivities = async (outputId: number) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('activities')
+    .select('*')
+    .eq('output_indicator_id', outputId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data;
+};
+
+export const upsertActivity = async (activity: Partial<Activity>) => {
+  const supabase = await createClient();
+
+  // TODO: can we make the activity associated with the Output instead of output indicator?
+  if (!activity.activity_description || !activity.output_indicator_id) {
+    throw new Error('Missing required fields');
+  }
+
+  const reqBody = {
+    id: activity.id,
+    output_indicator_id: activity.output_indicator_id,
+    activity_description: activity.activity_description,
+    activity_status: activity.activity_status,
+    activity_code: activity.activity_code,
+    project_id: activity.project_id,
+  };
+  console.log('reqBody: ', reqBody);
+  const { data, error } = await supabase
+    .from('activities')
+    .upsert(reqBody)
+    .select()
+    .single();
 
   if (error) throw error;
   return data;

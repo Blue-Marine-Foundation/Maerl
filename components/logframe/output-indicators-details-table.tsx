@@ -265,7 +265,7 @@ export default function OutputIndicatorsDetailsTable({
               </TableBody>
             </Table>
           </div>
-          <div className='flex w-full flex-row items-center justify-start'>
+          <div className='mb-8 flex w-full flex-row items-center justify-start'>
             <ActionButton
               action='add'
               label='Add output indicator'

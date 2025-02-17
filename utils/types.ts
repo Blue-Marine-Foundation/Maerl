@@ -143,3 +143,13 @@ export type User = {
   first_name: string;
   last_name: string;
 };
+
+export interface Activity {
+  id: number;
+  created_at: string;
+  project_id: number;
+  output_indicator_id: number;
+  activity_description: string;
+  activity_status: string;
+  activity_code: string;
+}
