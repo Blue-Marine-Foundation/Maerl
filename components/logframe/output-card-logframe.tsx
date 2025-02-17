@@ -21,7 +21,6 @@ export default function OutputCardLogframe({
   projectId: number;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
-  console.log('!output && canEdit: ', !output && canEdit);
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (

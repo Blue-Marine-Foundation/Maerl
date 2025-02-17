@@ -51,7 +51,6 @@ export default function OutputsContainer({ outputs }: { outputs: Output[] }) {
           variant='output'
           tooltipText={logframeText.output.description}
         >
-          {/* <AddOutputButton projectId={Number(slug)} output={null} /> */}
           <div className='flex items-center justify-center rounded-md border border-dashed p-12 text-muted-foreground'>
             <p>
               To add outputs, navigate to the project{' '}
