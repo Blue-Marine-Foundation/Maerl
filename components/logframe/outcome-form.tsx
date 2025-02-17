@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { upsertOutcome } from './server-actions';
 import { Outcome } from '@/utils/types';
 import CalloutCard from './callout-card';
+import { logframeText } from './logframe-text';
 
 interface OutcomeFormProps {
   isOpen: boolean;
@@ -77,7 +78,7 @@ export default function OutcomeForm({
           <CalloutCard
             variant='info'
             label='Description'
-            content='The outcome statement is the overarching objective of the project. It is what is expected to be achieved as a result of the project. There is typically one outcome for a project, although there may be several indicators to measure its achievement. The outcome is within the control of the project, providing the assumptions hold (e.g. maintained political will).'
+            content={logframeText.outcome.description}
           />
           <CalloutCard
             variant='success'
