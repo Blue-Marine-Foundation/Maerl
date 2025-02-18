@@ -76,7 +76,7 @@ export default function OutcomeCardLogframe({
               <div className='w-full'>
                 <button
                   onClick={() => setIsTableExpanded(!isTableExpanded)}
-                  className='mb-2 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+                  className='mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
                 >
                   {isTableExpanded ? (
                     <>

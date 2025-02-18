@@ -9,6 +9,7 @@ import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import AddOutputButton from './add-output-button';
 import OutputIndicatorsDetailsTable from './output-indicators-details-table';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Badge, BadgeProps } from '../ui/badge';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -37,15 +38,29 @@ export default function OutputCardLogframe({
         <FeatureCardLogframe
           title={
             output.code?.startsWith('U')
-              ? `Unassigned Output  ${extractOutputCodeNumber(output.code)}`
+              ? `Unplanned Output  ${extractOutputCodeNumber(output.code)}`
               : `Output ${extractOutputCodeNumber(output.code)}`
           }
           variant='slate'
           minHeight='100%'
         >
           <div className='flex w-full grow flex-col items-start justify-between gap-6'>
-            <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card'>
-              <p className='max-w-prose text-sm'>{output.description}</p>
+            <div className='flex w-full justify-between gap-8 bg-card'>
+              {output.status && (
+                <div className='flex items-center gap-4'>
+                  <Badge
+                    variant={
+                      output.status
+                        .toLowerCase()
+                        .replace(' ', '_') as BadgeProps['variant']
+                    }
+                  >
+                    {output.status}
+                  </Badge>
+                  <p className='max-w-prose text-sm'>{output.description}</p>
+                </div>
+              )}
+
               {canEdit && (
                 <div className='flex-shrink-0 space-x-2 text-sm'>
                   <ActionButton
