@@ -92,14 +92,17 @@ export default function OutputIndicatorsDetailsTable({
   }: {
     measurable: OutputMeasurable;
   }) => {
+    const measurableUpdates = measurable.updates?.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
     return (
       <div className='mb-8 mt-4 pl-12'>
         <div className='mr-8 rounded-lg border border-slate-400/20'>
           <div className='p-4'>
             <p className='mb-4 font-medium text-muted-foreground'>Updates</p>
-            {measurable.updates?.length ? (
+            {measurableUpdates?.length ? (
               <div className='flex flex-col gap-3'>
-                {measurable.updates.map((update) => (
+                {measurableUpdates.map((update) => (
                   <div
                     className='group flex flex-col gap-2 px-2 py-3.5'
                     key={update.id}
@@ -265,7 +268,7 @@ export default function OutputIndicatorsDetailsTable({
               </TableBody>
             </Table>
           </div>
-          <div className='mb-8 flex w-full flex-row items-center justify-start'>
+          <div className='flex w-full flex-row items-center justify-start'>
             <ActionButton
               action='add'
               label='Add output indicator'
