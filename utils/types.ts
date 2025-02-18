@@ -84,19 +84,6 @@ export interface Output {
   status: string;
   output_measurables?: OutputMeasurable[];
 }
-
-// TODO: confirm activity contract
-export interface OutputMeasurableActivity {
-  id: number;
-  created_at: string;
-  project_id: number;
-  output_indicator_id: number;
-  activity_description: string;
-  activity_status: string;
-  activity_code: string;
-  date: string;
-  description: string;
-}
 export interface OutputMeasurable {
   id?: number;
   project_id: number;
@@ -110,7 +97,6 @@ export interface OutputMeasurable {
   assumptions: string;
   impact_indicators?: ImpactIndicator | null;
   updates?: Update[];
-  activities?: OutputMeasurableActivity[];
 }
 
 export type Update = {
@@ -143,13 +129,3 @@ export type User = {
   first_name: string;
   last_name: string;
 };
-
-export interface Activity {
-  id: number;
-  created_at: string;
-  project_id: number;
-  output_indicator_id: number;
-  activity_description: string;
-  activity_status: string;
-  activity_code: string;
-}
