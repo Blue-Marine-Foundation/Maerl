@@ -7,7 +7,7 @@ import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import AddOutputButton from './add-output-button';
-import OutputIndicatorsDetailsTable from './output-indicators-details-table';
+import OutputIndicatorsDetailsTable from './output-indicators-table';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge, BadgeProps } from '../ui/badge';
 
@@ -48,6 +48,7 @@ export default function OutputCardLogframe({
             <div className='flex w-full justify-between gap-8 bg-card'>
               {output.status && (
                 <div className='flex items-center gap-4'>
+                  <p className='max-w-prose text-sm'>{output.description}</p>
                   <Badge
                     variant={
                       output.status
@@ -57,7 +58,6 @@ export default function OutputCardLogframe({
                   >
                     {output.status}
                   </Badge>
-                  <p className='max-w-prose text-sm'>{output.description}</p>
                 </div>
               )}
 

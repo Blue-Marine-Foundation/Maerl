@@ -84,6 +84,7 @@ export interface Output {
   status: string;
   output_measurables?: OutputMeasurable[];
 }
+
 export interface OutputMeasurable {
   id?: number;
   project_id: number;

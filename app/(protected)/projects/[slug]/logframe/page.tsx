@@ -67,7 +67,7 @@ export default function LogframePage() {
         <div id='impact' className='mt-4 scroll-mt-20'>
           <ImpactCardLogframe impact={impact} projectId={projectId} canEdit />
         </div>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-8'>
           {outcomes.map((outcome) => (
             <div
               key={outcome.id}
@@ -86,7 +86,7 @@ export default function LogframePage() {
             <OutcomeCardLogframe outcome={null} projectId={projectId} canEdit />
           )}
         </div>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-8'>
           {allOutputs.map((output) => (
             <div
               key={output.id}
