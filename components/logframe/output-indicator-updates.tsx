@@ -19,8 +19,9 @@ export default function OutputIndicatorUpdates({
   measurable: OutputMeasurable;
 }) {
   const measurableUpdates = measurable.updates?.sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
+  console.log('measurableUpdates: ', measurableUpdates);
 
   return (
     <div className='mb-8 mt-4 pl-12'>
