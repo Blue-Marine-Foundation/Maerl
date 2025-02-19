@@ -41,7 +41,7 @@ export default function LogframeQuickNav({
               className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:scale-95 active:bg-accent'
             >
               {output.code?.startsWith('U')
-                ? `Unassigned Output ${extractOutputCodeNumber(output.code || '')}`
+                ? `Unplanned Output ${extractOutputCodeNumber(output.code || '')}`
                 : `Output ${extractOutputCodeNumber(output.code || '')}`}
             </a>
           ))}

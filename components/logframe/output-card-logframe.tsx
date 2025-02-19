@@ -5,9 +5,11 @@ import { Output } from '@/utils/types';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
-import OutputIndicatorsTable from './output-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import AddOutputButton from './add-output-button';
+import OutputIndicatorsDetailsTable from './output-indicators-table';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Badge, BadgeProps } from '../ui/badge';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -20,6 +22,7 @@ export default function OutputCardLogframe({
   projectId: number;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
+  const [isTableExpanded, setIsTableExpanded] = useState(true);
 
   return (
     <div className='relative flex flex-col gap-8'>
@@ -35,16 +38,29 @@ export default function OutputCardLogframe({
         <FeatureCardLogframe
           title={
             output.code?.startsWith('U')
-              ? `Unassigned Output  ${extractOutputCodeNumber(output.code)}`
+              ? `Unplanned Output  ${extractOutputCodeNumber(output.code)}`
               : `Output ${extractOutputCodeNumber(output.code)}`
           }
           variant='slate'
           minHeight='100%'
-          href={`/projects/yavin4/logframe/output?id=${output.id}`}
         >
           <div className='flex w-full grow flex-col items-start justify-between gap-6'>
-            <div className='flex w-full flex-row justify-between gap-8 rounded-md bg-card'>
-              <p className='max-w-prose text-sm'>{output.description}</p>
+            <div className='flex w-full justify-between gap-8 bg-card'>
+              {output.status && (
+                <div className='flex items-center gap-4'>
+                  <p className='max-w-prose text-sm'>{output.description}</p>
+                  <Badge
+                    variant={
+                      output.status
+                        .toLowerCase()
+                        .replace(' ', '_') as BadgeProps['variant']
+                    }
+                  >
+                    {output.status}
+                  </Badge>
+                </div>
+              )}
+
               {canEdit && (
                 <div className='flex-shrink-0 space-x-2 text-sm'>
                   <ActionButton
@@ -54,13 +70,38 @@ export default function OutputCardLogframe({
                 </div>
               )}
             </div>
-            <OutputIndicatorsTable
-              measurables={output?.output_measurables || []}
-              outputId={output.id}
-              projectId={projectId}
-            />
+            <div className='w-full'>
+              <button
+                onClick={() => setIsTableExpanded(!isTableExpanded)}
+                className='mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+              >
+                {isTableExpanded ? (
+                  <>
+                    <ChevronDown className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Hide indicators
+                  </>
+                ) : (
+                  <>
+                    <ChevronRight className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Show indicators
+                  </>
+                )}
+              </button>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isTableExpanded
+                    ? 'max-h-[1000px] opacity-100'
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <OutputIndicatorsDetailsTable
+                  measurables={output?.output_measurables || []}
+                  outputId={output.id}
+                  projectId={projectId}
+                />
+              </div>
+            </div>
           </div>
-
           <OutputForm
             isOpen={isOutputDialogOpen}
             onClose={() => setIsOutputDialogOpen(false)}

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { OutputMeasurable } from '@/utils/types';
 
 import ActionButton from '@/components/ui/action-button';
-import { Badge } from '@/components/ui/badge';
 import {
   flexRender,
   getCoreRowModel,
@@ -19,8 +18,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import OutputMeasurableForm from './output-measurable-form';
+import { cn } from '@/utils/cn';
+import { createColumns } from './output-indicators-table-columns';
+import OutputIndicatorUpdates from './output-indicator-updates';
 
-export default function OutputIndicatorsTable({
+export default function OutputIndicatorsDetailsTable({
   measurables,
   outputId,
   projectId,
@@ -32,6 +34,7 @@ export default function OutputIndicatorsTable({
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutputMeasurable | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const handleEditMeasurable = (measurable: OutputMeasurable) => {
     setSelectedMeasurable(measurable);
@@ -52,67 +55,19 @@ export default function OutputIndicatorsTable({
     }
   };
 
-  const columns = [
-    {
-      accessorKey: 'description',
-      header: 'Measurable Indicator',
-      cell: ({ row }: { row: any }) => {
-        return (
-          <div className='flex flex-row gap-4'>
-            <div className='mt-1'>
-              <Badge className='bg-slate-800 py-1.5 font-medium'>
-                {row.original.code}
-              </Badge>
-            </div>
-            <p className='text-sm'>{row.getValue('description')}</p>
-          </div>
-        );
-      },
-      size: 400,
-    },
-    {
-      accessorKey: 'verification',
-      header: 'Verification',
-      size: 200,
-    },
-    {
-      accessorKey: 'assumptions',
-      header: 'Assumptions',
-      size: 200,
-    },
-    {
-      accessorKey: 'target',
-      header: 'Target',
-      size: 200,
-    },
-    {
-      accessorKey: 'impact_indicator_id',
-      header: 'Impact Indicator',
-      cell: ({ row }: { row: any }) => {
-        return (
-          <p
-            title={row.original.impact_indicators?.indicator_title}
-            className='hover:cursor-help'
-          >
-            {row.original.impact_indicators?.indicator_code}
-          </p>
-        );
-      },
-    },
-    {
-      id: 'actions',
-      cell: ({ row }: { row: any }) => (
-        <div className='flex justify-end'>
-          <ActionButton
-            action='edit'
-            variant='icon'
-            onClick={() => handleEditMeasurable(row.original)}
-          />
-        </div>
-      ),
-      size: 10,
-    },
-  ];
+  const toggleRow = (rowId: string) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+  };
+
+  const columns = createColumns(
+    toggleRow,
+    expandedRows,
+    handleEditMeasurable,
+    projectId.toString(),
+  );
 
   const table = useReactTable({
     data: measurables,
@@ -137,8 +92,11 @@ export default function OutputIndicatorsTable({
         </div>
       ) : (
         <div className='flex w-full flex-col items-start gap-6'>
-          <div className='w-full rounded-md border'>
-            <Table style={{ width: '100%' }}>
+          <div
+            className='w-full rounded-md border'
+            style={{ overflow: 'visible' }}
+          >
+            <Table style={{ width: '100%', overflow: 'visible' }}>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -162,22 +120,36 @@ export default function OutputIndicatorsTable({
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className='text-left align-top'
-                        style={{
-                          width: cell.column.getSize(),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <React.Fragment key={row.id}>
+                    <TableRow
+                      className={cn(
+                        'hover:bg-transparent',
+                        expandedRows[row.id] && 'border-b-0',
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell, index) => (
+                        <TableCell
+                          key={cell.id}
+                          className='text-left align-top'
+                          style={{
+                            width: cell.column.getSize(),
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {expandedRows[row.id] && (
+                      <TableRow className='duration-300 ease-in-out animate-in fade-in hover:bg-transparent'>
+                        <TableCell colSpan={columns.length} className='p-0'>
+                          <OutputIndicatorUpdates measurable={row.original} />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
