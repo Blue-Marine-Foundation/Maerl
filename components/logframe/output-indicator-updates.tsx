@@ -78,7 +78,7 @@ export default function OutputIndicatorUpdates({
                               |
                             </span>
                             <span className='text-xs text-muted-foreground'>
-                              {`Deliverables: ${update.value}`}
+                              {`${update.value} ${measurable.impact_indicators?.indicator_unit ?? ''}`}
                             </span>
                           </>
                         ) : null}
