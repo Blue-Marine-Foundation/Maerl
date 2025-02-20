@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { Update } from '@/utils/types';
-import { endOfDay, format, startOfMonth } from 'date-fns';
+import { endOfDay, startOfMonth } from 'date-fns';
 
 export const fetchUpdates = async (
   dateRange?: {
