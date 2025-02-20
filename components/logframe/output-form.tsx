@@ -26,7 +26,7 @@ export default function OutputForm({
   const [code, setCode] = useState(output?.code || '');
   const [status, setStatus] = useState(output?.status || 'Not started');
   const [selectedMeasurableId, setSelectedMeasurableId] = useState<
-    number | undefined
+    number | null | undefined
   >(output?.outcome_measurable_id);
   const [error, setError] = useState<string | null>(null);
 
