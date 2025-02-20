@@ -56,7 +56,9 @@ export default function OutcomeMeasurableSelect({
         value={selectedMeasurable?.id || ''}
         onChange={(e) => handleChange(e.target.value)}
         disabled={isLoading}
+        required={false}
       >
+        <option value=''>Select an outcome measurable...</option>
         {isLoading ? (
           <option>Loading outcome measurables...</option>
         ) : measurables?.length ? (

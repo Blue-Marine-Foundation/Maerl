@@ -44,7 +44,7 @@ export default function OutputForm({
     mutationFn: async (newOutput: Partial<Output>) => {
       const response = await upsertOutput({
         ...newOutput,
-        outcome_measurable_id: selectedMeasurableId,
+        outcome_measurable_id: selectedMeasurableId || null,
       });
 
       if (!response.success) {
@@ -54,7 +54,12 @@ export default function OutputForm({
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['logframe'] });
+      queryClient.invalidateQueries({
+        queryKey: ['logframe'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['unassigned-outputs'],
+      });
       onClose();
     },
     onError: (error: Error) => {

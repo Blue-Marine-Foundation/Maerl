@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Header />
         <QueryProvider>
           <div className='mb-32 px-4'>{children}</div>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryProvider>
         <Footer />
       </body>
