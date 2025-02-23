@@ -58,9 +58,9 @@ export default function OutcomeMeasurableSelect({
         disabled={isLoading}
         required={false}
       >
-        <option value=''>Select an outcome measurable...</option>
+        <option value=''>Select an outcome indicator...</option>
         {isLoading ? (
-          <option>Loading outcome measurables...</option>
+          <option>Loading outcome indicators...</option>
         ) : measurables?.length ? (
           measurables.map((measurable) => (
             <option key={measurable.id} value={measurable.id}>
@@ -68,7 +68,7 @@ export default function OutcomeMeasurableSelect({
             </option>
           ))
         ) : (
-          <option>No outcome measurables found</option>
+          <option>No outcome indicators found</option>
         )}
       </select>
     </div>
