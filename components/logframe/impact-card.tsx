@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import { logframeText } from './logframe-text';
 
 export default function ImpactCard({
   impact,
@@ -19,9 +20,13 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardTheoryOfChange title='Impact' variant='blue' minHeight='100%'>
+    <FeatureCardTheoryOfChange
+      title='Impact'
+      variant='impact'
+      tooltipText={logframeText.impact.description}
+    >
       {!impact && canEdit && (
-        <div className='flex grow flex-col items-center justify-center gap-4'>
+        <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'
             label='Add impact'

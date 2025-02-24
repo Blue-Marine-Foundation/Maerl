@@ -8,6 +8,7 @@ import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutcomeIndicatorsTable from './outcome-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
+import { logframeText } from './logframe-text';
 
 export default function OutcomeCardLogframe({
   canEdit = false,
@@ -33,7 +34,12 @@ export default function OutcomeCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='green'>
+        <FeatureCardLogframe
+          title='Outcome'
+          minHeight='100%'
+          variant='outcome'
+          tooltipText={logframeText.outcome.description}
+        >
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -58,8 +64,9 @@ export default function OutcomeCardLogframe({
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
                 : 'Outcome'
             }
-            variant='green'
+            variant='outcome'
             minHeight='100%'
+            tooltipText={logframeText.outcome.description}
           >
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full flex-row items-center justify-between'>

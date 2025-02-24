@@ -1,16 +1,27 @@
 import { cn } from '@/utils/cn';
+import { Info } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function FeatureCardLogframe({
   title,
   children,
   minHeight,
-  variant = 'default',
+  variant,
+  href,
+  tooltipText,
 }: {
   title?: string;
   minHeight?: string;
   children: React.ReactNode;
   /** card title area background color */
-  variant?: 'default' | 'blue' | 'green' | 'slate';
+  variant: 'impact' | 'outcome' | 'output';
+  href?: string;
+  tooltipText?: string;
 }) {
   return (
     <div
@@ -24,21 +35,27 @@ export default function FeatureCardLogframe({
           className={cn(
             '-mt-0 w-full px-4 py-6',
             'rounded-t-md',
-            variant === 'default' && 'bg-card',
-            variant === 'blue' && 'bg-blue-950/90',
-            variant === 'green' && 'bg-emerald-900/90',
-            variant === 'slate' && 'bg-slate-800',
+            variant === 'impact' && 'bg-blue-950/90',
+            variant === 'outcome' && 'bg-sky-900/90',
+            variant === 'output' && 'bg-sky-600/90',
           )}
         >
           <div className='flex items-center justify-between'>
-            <h3
-              className={cn(
-                'text-sm font-medium',
-                variant === 'default' && 'text-muted-foreground',
+            <div className='flex items-center gap-2'>
+              <h3 className={cn('text-sm font-medium')}>{title}</h3>
+              {tooltipText && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className='h-4 w-4 text-white/60 hover:text-white' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className='max-w-xs text-sm'>{tooltipText}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
-            >
-              {title}
-            </h3>
+            </div>
           </div>
         </div>
       )}

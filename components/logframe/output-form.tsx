@@ -7,6 +7,7 @@ import { Output } from '@/utils/types';
 import { upsertOutput } from './server-actions';
 import OutcomeMeasurableSelect from './outcome-measurable-select';
 import CalloutCard from './callout-card';
+import { logframeText } from './logframe-text';
 
 interface OutputFormProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export default function OutputForm({
   const [code, setCode] = useState(output?.code || '');
   const [status, setStatus] = useState(output?.status || 'Not started');
   const [selectedMeasurableId, setSelectedMeasurableId] = useState<
-    number | undefined
+    number | null | undefined
   >(output?.outcome_measurable_id);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +44,7 @@ export default function OutputForm({
     mutationFn: async (newOutput: Partial<Output>) => {
       const response = await upsertOutput({
         ...newOutput,
-        outcome_measurable_id: selectedMeasurableId,
+        outcome_measurable_id: selectedMeasurableId || null,
       });
 
       if (!response.success) {
@@ -53,7 +54,12 @@ export default function OutputForm({
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['logframe'] });
+      queryClient.invalidateQueries({
+        queryKey: ['logframe'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['unassigned-outputs'],
+      });
       onClose();
     },
     onError: (error: Error) => {
@@ -150,7 +156,7 @@ export default function OutputForm({
           <CalloutCard
             variant='info'
             label='Description'
-            content='Outputs are specific, direct deliverables that result from the project’s activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.    '
+            content={logframeText.output.description}
           />
           <CalloutCard
             variant='info'

@@ -7,6 +7,7 @@ import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
+import { logframeText } from './logframe-text';
 
 export default function OutcomeCard({
   canEdit = false,
@@ -24,8 +25,12 @@ export default function OutcomeCard({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardTheoryOfChange title='Outcome' minHeight='100%'>
-          <div className='flex grow flex-col items-center justify-center gap-4'>
+        <FeatureCardTheoryOfChange
+          title='Outcome'
+          variant='outcome'
+          tooltipText={logframeText.outcome.description}
+        >
+          <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
             <ActionButton
               action='add'
               label='Add outcome'
@@ -49,8 +54,8 @@ export default function OutcomeCard({
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
                 : 'Outcome'
             }
-            variant='green'
-            minHeight='100%'
+            variant='outcome'
+            tooltipText={logframeText.outcome.description}
           >
             <div className='flex grow flex-col items-start justify-between gap-4'>
               <div>

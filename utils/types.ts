@@ -78,7 +78,7 @@ export interface Output {
   created_at: string;
   last_updated: string;
   project_id: number;
-  outcome_measurable_id: number;
+  outcome_measurable_id: number | null;
   code: string;
   description: string;
   status: string;

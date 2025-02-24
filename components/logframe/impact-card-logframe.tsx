@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
+import { logframeText } from './logframe-text';
 
 export default function ImpactCardLogframe({
   impact,
@@ -19,7 +20,12 @@ export default function ImpactCardLogframe({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardLogframe title='Impact' variant='blue' minHeight='100%'>
+    <FeatureCardLogframe
+      title='Impact'
+      variant='impact'
+      minHeight='100%'
+      tooltipText={logframeText.impact.description}
+    >
       {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton

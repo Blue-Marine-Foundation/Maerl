@@ -11,6 +11,8 @@ import OutputCardLogframe from '@/components/logframe/output-card-logframe';
 import OutcomeCardLogframe from '@/components/logframe/outcome-card-logframe';
 import ImpactCardLogframe from '@/components/logframe/impact-card-logframe';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
+import FeatureCardLogframe from '@/components/logframe/feature-card-logframe';
+import { logframeText } from '@/components/logframe/logframe-text';
 
 export default function LogframePage() {
   const { slug } = useParams();
@@ -31,10 +33,8 @@ export default function LogframePage() {
 
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
-  const outputs = [...(data?.data?.outcomes || [])]
-    .flatMap((outcome) => outcome?.outcome_measurables || [])
-    .flatMap((measurable) => measurable?.outputs || [])
-    .filter((output): output is NonNullable<typeof output> => !!output)
+  const outputs = [...(data?.data?.outputs || [])]
+    .filter((output) => output.outcome_measurable_id !== null)
     .sort((a, b) => {
       const aMatch = a.code?.match(/\.(\d+)$/);
       const bMatch = b.code?.match(/\.(\d+)$/);
@@ -49,10 +49,8 @@ export default function LogframePage() {
   ].sort((a, b) => {
     const aMatch = a.code?.match(/\.(\d+)$/);
     const bMatch = b.code?.match(/\.(\d+)$/);
-
     const aNum = aMatch ? parseInt(aMatch[1]) : 0;
     const bNum = bMatch ? parseInt(bMatch[1]) : 0;
-
     return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
   });
   const allOutputs = [...outputs, ...sortedUnassignedOutputs];
@@ -60,20 +58,16 @@ export default function LogframePage() {
 
   return (
     <div className='-mt-4 flex flex-col'>
-      {(impact || outcomes.length > 0 || outputs.length > 0) && (
+      {(impact || outcomes.length > 0 || allOutputs.length > 0) && (
         <LogframeQuickNav outcomes={outcomes} outputs={allOutputs} />
       )}
       <div className='flex flex-col gap-8'>
-        <div id='impact' className='mt-4 scroll-mt-20'>
+        <div id='impact' className='mt-4'>
           <ImpactCardLogframe impact={impact} projectId={projectId} canEdit />
         </div>
         <div className='flex flex-col gap-8'>
           {outcomes.map((outcome) => (
-            <div
-              key={outcome.id}
-              id={`outcome-${outcome.id}`}
-              className='scroll-mt-20'
-            >
+            <div key={outcome.id} id={`outcome-${outcome.id}`}>
               <OutcomeCardLogframe
                 outcome={outcome}
                 outcomes={outcomes}
@@ -88,11 +82,7 @@ export default function LogframePage() {
         </div>
         <div className='flex flex-col gap-8'>
           {allOutputs.map((output) => (
-            <div
-              key={output.id}
-              id={`output-${output.id}`}
-              className='scroll-mt-20'
-            >
+            <div key={output.id} id={`output-${output.id}`}>
               <OutputCardLogframe
                 output={output}
                 projectId={projectId}
@@ -100,7 +90,22 @@ export default function LogframePage() {
               />
             </div>
           ))}
-          <AddOutputButton projectId={projectId} output={null} />
+          {allOutputs.length > 0 && (
+            <div className='mt-4'>
+              <AddOutputButton projectId={projectId} output={null} />
+            </div>
+          )}
+          {allOutputs.length === 0 && (
+            <FeatureCardLogframe
+              title='Outputs'
+              variant='output'
+              tooltipText={logframeText.output.description}
+            >
+              <div className='mt-4'>
+                <AddOutputButton projectId={projectId} output={null} />
+              </div>
+            </FeatureCardLogframe>
+          )}
         </div>
       </div>
     </div>
