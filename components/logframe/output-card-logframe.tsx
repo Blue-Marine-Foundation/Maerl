@@ -99,7 +99,7 @@ export default function OutputCardLogframe({
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     isTableExpanded
-                      ? 'max-h-[1000px] opacity-100'
+                      ? 'max-h-none opacity-100'
                       : 'max-h-0 opacity-0'
                   }`}
                 >
