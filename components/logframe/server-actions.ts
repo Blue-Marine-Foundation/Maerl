@@ -14,8 +14,19 @@ export const fetchLogframe = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, outputs(*, output_measurables(*, impact_indicators(*)))))',
+      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*))), outputs(*, output_measurables(*, impact_indicators(*)))',
     )
+    .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
+    .single();
+
+  return response;
+};
+
+export const fetchTheoryOfChange = async (identifier: number | string) => {
+  const supabase = await createClient();
+  const response = await supabase
+    .from('projects')
+    .select('id, slug, name, impacts(*), outcomes(*), outputs(*)')
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .single();
 
@@ -44,7 +55,11 @@ export const fetchOutputById = async (id: string) => {
       `
       *,
       projects!inner(*),
-      output_measurables(*, impact_indicators(*))
+      output_measurables(
+        *,
+        impact_indicators(*),
+        updates(*),
+      )
     `,
     )
     .eq('id', id)
@@ -144,6 +159,8 @@ export const upsertOutcomeMeasurable = async (
       verification: measurable.verification || '',
       assumptions: measurable.assumptions || '',
       code: measurable.code,
+      target: measurable.target,
+      impact_indicator_id: measurable.impact_indicator_id,
     })
     .select()
     .single();
@@ -171,7 +188,10 @@ export const upsertOutput = async (
 ): Promise<UpsertOutputResponse> => {
   const supabase = await createClient();
 
-  if (!output.outcome_measurable_id || !output.description || !output.code) {
+  // if (!output.outcome_measurable_id || !output.description || !output.code) {
+  //   return { success: false, error: 'Missing required fields' };
+  // }
+  if (!output.description || !output.code) {
     return { success: false, error: 'Missing required fields' };
   }
 

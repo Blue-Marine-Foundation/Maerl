@@ -2,26 +2,35 @@
 
 import { useState } from 'react';
 import { Outcome } from '@/utils/types';
-import FeatureCard from '@/components/ui/feature-card';
+
 import OutcomeForm from './outcome-form';
 import ActionButton from '@/components/ui/action-button';
-import { Badge } from '@/components/ui/badge';
-import OutcomeMeasurableCard from './outcome-measurable-card';
+import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import { extractOutputCodeNumber } from './extractOutputCodeNumber';
+import { logframeText } from './logframe-text';
 
 export default function OutcomeCard({
+  canEdit = false,
   outcome,
+  outcomes,
   projectId,
 }: {
+  /** Enables the Add Impact and Edit Impact buttons*/
+  canEdit?: boolean;
   outcome: Outcome | null;
+  outcomes?: Outcome[];
   projectId: number;
 }) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
-
   return (
-    <div className='relative grid grid-cols-[1fr_2fr] items-start justify-between gap-8'>
-      {!outcome && (
-        <FeatureCard title='Outcome'>
-          <div className='flex grow flex-col items-center justify-center gap-4'>
+    <div className='relative flex flex-col gap-8'>
+      {!outcome && canEdit && (
+        <FeatureCardTheoryOfChange
+          title='Outcome'
+          variant='outcome'
+          tooltipText={logframeText.outcome.description}
+        >
+          <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
             <ActionButton
               action='add'
               label='Add outcome'
@@ -34,42 +43,41 @@ export default function OutcomeCard({
             outcome={outcome}
             projectId={projectId}
           />
-        </FeatureCard>
+        </FeatureCardTheoryOfChange>
       )}
 
-      {outcome && (
+      {outcomes && outcome && (
         <>
-          <div className='sticky top-4'>
-            <FeatureCard title='Outcome'>
-              <div className='flex grow flex-col items-start justify-between gap-4'>
-                <div>
-                  <p className='text-sm'>
-                    <Badge className='mr-2'>{outcome.code}</Badge>
-                    {outcome.description}
-                  </p>
-                </div>
-                <div className='flex w-full justify-end text-sm'>
+          <FeatureCardTheoryOfChange
+            title={
+              outcomes.length > 1
+                ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
+                : 'Outcome'
+            }
+            variant='outcome'
+            tooltipText={logframeText.outcome.description}
+          >
+            <div className='flex grow flex-col items-start justify-between gap-4'>
+              <div>
+                <p className='max-w-prose text-sm'>{outcome.description}</p>
+              </div>
+              {canEdit && (
+                <div className='flex-shrink-0 text-sm'>
                   <ActionButton
                     action='edit'
                     onClick={() => setIsOutcomeDialogOpen(true)}
                   />
                 </div>
-              </div>
+              )}
+            </div>
 
-              <OutcomeForm
-                isOpen={isOutcomeDialogOpen}
-                onClose={() => setIsOutcomeDialogOpen(false)}
-                outcome={outcome}
-                projectId={projectId}
-              />
-            </FeatureCard>
-          </div>
-
-          <OutcomeMeasurableCard
-            measurables={outcome.outcome_measurables}
-            outcomeId={outcome.id}
-            projectId={projectId}
-          />
+            <OutcomeForm
+              isOpen={isOutcomeDialogOpen}
+              onClose={() => setIsOutcomeDialogOpen(false)}
+              outcome={outcome}
+              projectId={projectId}
+            />
+          </FeatureCardTheoryOfChange>
         </>
       )}
     </div>

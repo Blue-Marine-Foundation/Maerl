@@ -5,6 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { upsertOutcome } from './server-actions';
 import { Outcome } from '@/utils/types';
+import CalloutCard from './callout-card';
+import { logframeText } from './logframe-text';
 
 interface OutcomeFormProps {
   isOpen: boolean;
@@ -42,7 +44,7 @@ export default function OutcomeForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-4'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{outcome ? 'Edit Outcome' : 'Add Outcome'}</DialogTitle>
         </DialogHeader>
@@ -72,6 +74,23 @@ export default function OutcomeForm({
             </button>
           </div>
         </form>
+        <div className='mt-16 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='info'
+            label='Description'
+            content={logframeText.outcome.description}
+          />
+          <CalloutCard
+            variant='success'
+            label='Best practice'
+            content='Have one outcome statement that can be measured. It should be within the control of the project, providing it operates within our assumptions.'
+          />
+          <CalloutCard
+            variant='warning'
+            label='Avoid'
+            content='Long, difficult statements or lots of sentences.'
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

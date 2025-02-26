@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { upsertImpact } from './server-actions';
 import { Impact } from '@/utils/types';
+import CalloutCard from './callout-card';
 
 interface ImpactDialogProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export default function ImpactDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col gap-20'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{impact ? 'Edit Impact' : 'Add Impact'}</DialogTitle>
         </DialogHeader>
@@ -61,18 +62,23 @@ export default function ImpactDialog({
             </button>
           </div>
         </form>
-        <div className='flex flex-col gap-4 text-sm text-foreground/90'>
-          <div className='grid grid-cols-[1fr_4fr] rounded border border-green-800 bg-green-500/10 px-4 py-2'>
-            <p className='text-green-400'>Best practice:</p>
-            <p>Use clear, concise language focusing on the desired change.</p>
-          </div>
-          <div className='grid grid-cols-[1fr_4fr] rounded border border-yellow-800 bg-yellow-500/10 px-4 py-2'>
-            <p className='text-yellow-400'>Avoid:</p>
-            <p>
-              Vague statements, focusing on project activities, describing work
-              that needs to be done.
-            </p>
-          </div>
+        <div className='mt-16 flex flex-col gap-4 text-sm text-foreground/90'>
+          <CalloutCard
+            variant='success'
+            label='Best practice'
+            content='Use clear, concise language focusing on the desired change.'
+          />
+          <CalloutCard
+            variant='warning'
+            label='Avoid'
+            content='Vague statements, focusing on project activities, describing work that needs to be done.'
+          />
+
+          <CalloutCard
+            variant='info'
+            label='Example'
+            content='Seagrass ecosystems are protected and restored, providing ecosystem services to improve local community livelihoods and long-term climate change resilience.'
+          />
         </div>
       </DialogContent>
     </Dialog>

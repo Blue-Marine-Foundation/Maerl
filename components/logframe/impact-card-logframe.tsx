@@ -4,10 +4,10 @@ import { Impact } from '@/utils/types';
 import { useState } from 'react';
 import ImpactForm from './impact-form';
 import ActionButton from '../ui/action-button';
-import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
+import FeatureCardLogframe from './feature-card-logframe';
 import { logframeText } from './logframe-text';
 
-export default function ImpactCard({
+export default function ImpactCardLogframe({
   impact,
   projectId,
   canEdit = false,
@@ -20,13 +20,14 @@ export default function ImpactCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardTheoryOfChange
+    <FeatureCardLogframe
       title='Impact'
       variant='impact'
+      minHeight='100%'
       tooltipText={logframeText.impact.description}
     >
       {!impact && canEdit && (
-        <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
+        <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton
             action='add'
             label='Add impact'
@@ -53,6 +54,6 @@ export default function ImpactCard({
         impact={impact}
         projectId={projectId}
       />
-    </FeatureCardTheoryOfChange>
+    </FeatureCardLogframe>
   );
 }
