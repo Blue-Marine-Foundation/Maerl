@@ -38,7 +38,7 @@ export const fetchUnassignedOutputs = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name,  outputs!inner(*, output_measurables(*, impact_indicators(*)))',
+      'id, slug, name,  outputs!inner(*, output_measurables(*, impact_indicators(*), updates(*)))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .is('outputs.outcome_measurable_id', null)
