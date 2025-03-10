@@ -1,4 +1,4 @@
-import { CopyIcon } from 'lucide-react';
+import { CopyIcon, DownloadIcon } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
 
 function escapeCSV(value: any): string {
@@ -67,8 +67,11 @@ export default function ExportButton<T>({
   };
 
   return (
-    <button className='flex items-center gap-2' onClick={downloadCSV}>
-      <CopyIcon className='h-4 w-4' />
+    <button
+      className='flex items-center gap-2 rounded-md border px-2 py-1 text-sm'
+      onClick={downloadCSV}
+    >
+      <DownloadIcon className='h-4 w-4' />
       Export
     </button>
   );
