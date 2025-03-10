@@ -26,6 +26,7 @@ import {
 import ColumnVisibilityToggle from './column-visibility-toggle';
 import ColumnFilter from './column-filter';
 import ListColumnFilter from './list-column-filter';
+import ExportButton from '@/components/data-tables/export-button';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -67,9 +68,12 @@ export function ProjectsDataTable<TData, TValue>({
 
   return (
     <div>
+      <p className='mb-6 max-w-fit rounded-md bg-blue-500/20 px-4 py-3'>
+        Showing {table.getRowModel().rows.length} projects
+      </p>
       <div className='flex items-center justify-between gap-4 pb-4 text-sm'>
-        <ColumnVisibilityToggle table={table} />
         <div className='flex items-center gap-4'>
+          <p className='text-sm'>Filter by:</p>
           <ColumnFilter table={table} columnId='project_type' />
           <ColumnFilter table={table} columnId='project_status' />
           <ColumnFilter table={table} columnId='regional_strategy' />
@@ -83,6 +87,13 @@ export function ProjectsDataTable<TData, TValue>({
               table.getColumn('support')?.setFilterValue(event.target.value);
             }}
             className='max-w-sm rounded-md border bg-background px-2 py-1 text-foreground'
+          />
+        </div>
+        <div className='flex items-center gap-4'>
+          <ColumnVisibilityToggle table={table} />
+          <ExportButton
+            table={table}
+            filename={`${new Date().toISOString().split('T')[0]}-projects-list.csv`}
           />
         </div>
       </div>
