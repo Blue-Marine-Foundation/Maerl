@@ -124,7 +124,7 @@ export default function OutputCardLogframe({
                 </div>
                 <button
                   onClick={() => setIsActivitiesExpanded(!isActivitiesExpanded)}
-                  className='my-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+                  className='my-6 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
                 >
                   {isActivitiesExpanded ? (
                     <>
