@@ -83,6 +83,7 @@ export interface Output {
   description: string;
   status: string;
   output_measurables?: OutputMeasurable[];
+  activities?: OutputActivity[];
 }
 
 export interface OutputMeasurable {
@@ -129,4 +130,14 @@ export type User = {
   id: string;
   first_name: string;
   last_name: string;
+};
+
+export type OutputActivity = {
+  id: number;
+  activity_code: string;
+  activity_description: string;
+  activity_status: string;
+  created_at: string;
+  output_id: number;
+  project_id: number;
 };

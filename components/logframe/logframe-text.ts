@@ -14,4 +14,9 @@ export const logframeText = {
     description:
       "Outputs are specific, direct deliverables that result from the project's activities. The Outputs should be fully within the control of the project, providing the assumptions hold. Taken together, the outputs should provide the conditions necessary to achieve the Outcome. Wherever possible it should be clear who will benefit from the output, and how they will benefit.",
   },
+  activity: {
+    title: 'Activity',
+    description:
+      'Activities are specific actions or tasks that contribute to achieving the output. They should be clear, concrete, and measurable.',
+  },
 };

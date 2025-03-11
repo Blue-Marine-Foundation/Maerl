@@ -6,6 +6,7 @@ import {
   Outcome,
   OutcomeMeasurable,
   Output,
+  OutputActivity,
   OutputMeasurable,
 } from '@/utils/types';
 
@@ -14,7 +15,7 @@ export const fetchLogframe = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*))), outputs(*, output_measurables(*, impact_indicators(*), updates(*)))',
+      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*))), outputs(*, activities(*), output_measurables(*, impact_indicators(*), updates(*)))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .single();
@@ -38,7 +39,7 @@ export const fetchUnassignedOutputs = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name,  outputs!inner(*, output_measurables(*, impact_indicators(*), updates(*)))',
+      'id, slug, name, outputs!inner(*, activities(*), output_measurables(*, impact_indicators(*), updates(*)))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .is('outputs.outcome_measurable_id', null)
@@ -306,3 +307,31 @@ export async function fetchOutcomeMeasurables(projectId: number) {
   if (error) throw error;
   return data;
 }
+
+export const upsertOutputActivity = async (
+  activity: Partial<OutputActivity>,
+) => {
+  const supabase = await createClient();
+
+  if (!activity.activity_description || !activity.output_id) {
+    throw new Error('Missing required fields');
+  }
+
+  const reqBody = {
+    id: activity.id,
+    activity_code: activity.activity_code,
+    activity_description: activity.activity_description,
+    activity_status: activity.activity_status,
+    output_id: activity.output_id,
+    project_id: activity.project_id,
+  };
+
+  const { data, error } = await supabase
+    .from('activities')
+    .upsert(reqBody)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
