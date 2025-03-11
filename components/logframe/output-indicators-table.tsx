@@ -83,7 +83,7 @@ export default function OutputIndicatorsDetailsTable({
   return (
     <>
       {measurables.length === 0 ? (
-        <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
+        <div className='mb-8 flex items-center justify-center rounded-md border border-dashed p-12'>
           <ActionButton
             action='add'
             label='Add output indicator'
