@@ -10,16 +10,11 @@ import { logframeText } from './logframe-text';
 import AddOutputButton from './add-output-button';
 import { isUnplannedOutput } from './isUnplannedOutput';
 import OutputIndicatorsDetailsTable from './output-indicators-table';
-import { ChevronDown, ChevronRight, Info } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge, BadgeProps } from '../ui/badge';
 import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
+import OutputActivitiesList from './output-activities-list';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -150,85 +145,13 @@ export default function OutputCardLogframe({
                       : 'max-h-0 opacity-0'
                   }`}
                 >
-                  <div className='flex flex-col gap-4'>
-                    {activities && activities.length > 0 ? (
-                      <div>
-                        <div className='rounded-md border bg-card p-4'>
-                          <div className='flex items-center gap-2'>
-                            <p className='font-medium text-muted-foreground'>
-                              Activities
-                            </p>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info className='h-4 w-4 text-white/60 hover:text-white' />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className='max-w-xs text-sm'>
-                                    {logframeText.activity.description}
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                          <ol className='mt-2 list-none'>
-                            {activities.map((activity) => (
-                              <li key={activity.id} className='my-4'>
-                                <div className='flex items-start gap-4'>
-                                  <ActionButton
-                                    action='edit'
-                                    variant='icon'
-                                    onClick={() => {
-                                      setSelectedActivity(activity);
-                                      setIsActivityDialogOpen(true);
-                                    }}
-                                  />
-
-                                  <span className='text-sm'>
-                                    {`${extractOutputActivityCodeNumber(
-                                      activity.activity_code,
-                                    )}.`}
-                                  </span>
-                                  <span className='max-w-prose text-sm'>
-                                    {activity.activity_description}
-                                  </span>
-                                  {activity.activity_status && (
-                                    <Badge
-                                      variant={
-                                        activity.activity_status
-                                          .toLowerCase()
-                                          .replace(
-                                            ' ',
-                                            '_',
-                                          ) as BadgeProps['variant']
-                                      }
-                                    >
-                                      {activity.activity_status}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-                        <ActionButton
-                          action='add'
-                          label='Add activity'
-                          onClick={() => setIsActivityDialogOpen(true)}
-                          className='mt-6'
-                        />
-                      </div>
-                    ) : (
-                      <div className='mt-2 flex items-center justify-center rounded-md border border-dashed p-12'>
-                        <ActionButton
-                          action='add'
-                          label='Add activity'
-                          onClick={() => setIsActivityDialogOpen(true)}
-                        />
-                      </div>
-                    )}
-                  </div>
+                  {activities && output && (
+                    <OutputActivitiesList
+                      activities={activities}
+                      output={output}
+                      projectId={projectId}
+                    />
+                  )}
                 </div>
               </div>
             </div>
