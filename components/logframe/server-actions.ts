@@ -313,7 +313,6 @@ export const upsertOutputActivity = async (
 ) => {
   const supabase = await createClient();
 
-  // TODO: can we make the activity associated with the Output instead of output indicator?
   if (!activity.activity_description || !activity.output_id) {
     throw new Error('Missing required fields');
   }

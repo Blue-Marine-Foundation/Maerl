@@ -37,7 +37,6 @@ export default function OutputActivitiesList({
           <div className='rounded-md border bg-card p-4'>
             <div className='flex items-center gap-2'>
               <p className='font-medium text-muted-foreground'>Activities</p>
-
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>

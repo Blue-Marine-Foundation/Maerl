@@ -9,21 +9,21 @@ import { upsertOutputActivity } from './server-actions';
 import { logframeText } from './logframe-text';
 
 interface OutputActivityFormProps {
+  activities: OutputActivity[];
+  activity: OutputActivity | null;
   isOpen: boolean;
   onClose: () => void;
-  activity: OutputActivity | null;
-  activities: OutputActivity[];
-  projectId: number;
   output: Output;
+  projectId: number;
 }
 
 export default function OutputActivityForm({
+  activities,
+  activity,
   isOpen,
   onClose,
-  activity,
-  activities,
-  projectId,
   output,
+  projectId,
 }: OutputActivityFormProps) {
   const [description, setDescription] = useState(
     activity?.activity_description || '',
@@ -35,6 +35,12 @@ export default function OutputActivityForm({
 
   const queryClient = useQueryClient();
 
+  const handleClose = () => {
+    setDescription('');
+    setStatus('Not started');
+    onClose();
+  };
+
   useEffect(() => {
     setDescription(activity?.activity_description || '');
     setStatus(activity?.activity_status || 'Not started');
@@ -45,7 +51,7 @@ export default function OutputActivityForm({
       upsertOutputActivity(newActivity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['logframe'] });
-      onClose();
+      handleClose();
     },
   });
 
@@ -66,7 +72,7 @@ export default function OutputActivityForm({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
