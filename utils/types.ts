@@ -88,17 +88,25 @@ export interface Output {
 
 export interface OutputMeasurable {
   id?: number;
-  project_id: number;
-  output_id: number;
+  assumptions: string;
   code: string;
   description: string;
   impact_indicator_id: number | null;
+  impact_indicators?: ImpactIndicator | null;
+  /** count of the number of impact updates */
+  impact_updates?: number | null;
+  output_id: number;
+  /** as a decimal, calculated as (value / target) */
+  percentage_complete?: number | null;
+  /** count of the number of progress updates */
+  progress_updates?: number | null;
+  project_id: number;
   target: number | null;
   unit: string;
-  verification: string;
-  assumptions: string;
-  impact_indicators?: ImpactIndicator | null;
   updates?: Update[];
+  /** sum of the value of all updates matching the relevant output_measurable */
+  value?: number | null;
+  verification: string;
 }
 
 export type Update = {

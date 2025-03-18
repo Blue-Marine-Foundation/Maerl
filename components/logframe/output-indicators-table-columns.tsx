@@ -49,6 +49,12 @@ export const createColumns = (
     size: 70,
   },
   {
+    accessorKey: 'value',
+    header: 'Actual Value',
+    cell: ({ row }) => <p>{row.original.value ?? 0}</p>,
+    size: 70,
+  },
+  {
     accessorKey: 'impact_indicator_id',
     header: 'Impact Indicator',
     cell: ({ row }) => (
