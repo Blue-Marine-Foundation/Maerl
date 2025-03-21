@@ -67,7 +67,14 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Link href={`/projects/${row.original.slug}`} className='group'>
+        <Link
+          href={
+            row.original.project_type === 'Unit'
+              ? `/units/${row.original.slug}`
+              : `/projects/${row.original.slug}`
+          }
+          className='group'
+        >
           <p
             className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500 group-hover:bg-blue-500/20' : 'border-l-yellow-500 group-hover:bg-yellow-500/20'} pl-2`}
           >
