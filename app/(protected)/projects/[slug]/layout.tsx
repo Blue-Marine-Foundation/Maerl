@@ -6,7 +6,10 @@ import Breadcrumbs from '@/components/ui/breadcrumbs';
 import ProjectNavigation from '@/components/project-page/project-nav';
 
 export async function generateStaticParams() {
-  const { data: projects, error } = await supabase.from('projects').select('*');
+  const { data: projects, error } = await supabase
+    .from('projects')
+    .select('*')
+    .neq('project_type', 'Unit');
 
   if (error) {
     throw new Error(`Failed to fetch projects: ${error.message}`);
@@ -62,6 +65,7 @@ export default async function ProjectLayout({
     .from('projects')
     .select('*')
     .eq('slug', slug)
+    .neq('project_type', 'Unit')
     .single();
 
   if (projectError) {
