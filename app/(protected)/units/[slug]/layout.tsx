@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import PageHeading from '@/components/ui/page-heading';
 import { Metadata } from 'next';
 import Breadcrumbs from '@/components/ui/breadcrumbs';
-import ProjectNavigation from '@/components/project-page/project-nav';
+import UnitNavigation from '@/components/units-page/unit-nav';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase
@@ -100,7 +100,7 @@ export default async function ProjectLayout({
         <Breadcrumbs projectName={project.name} />
         <div className='flex w-full items-baseline justify-start gap-6'>
           <PageHeading>{project.name}</PageHeading>
-          <ProjectNavigation slug={slug} />
+          <UnitNavigation slug={slug} />
         </div>
       </div>
 
