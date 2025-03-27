@@ -46,7 +46,7 @@ export default function UnitNavigation({ slug }: { slug: string }) {
         })}
       </ul>
       <Link
-        href={`/projects/${slug}/add-update`}
+        href={`/units/${slug}/add-update`}
         className='flex items-center gap-2 rounded-md border bg-purple-500/30 px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-foreground/50 hover:text-foreground'
       >
         <PlusCircleIcon className='h-4 w-4' /> Add update

@@ -78,7 +78,7 @@ export default function UpdateForm({
       <div className='grid grid-cols-[200px_1fr] items-baseline gap-4'>
         <p className='text-sm font-medium'>Output Indicator</p>
         <p className='text-sm text-muted-foreground'>
-          {outputMeasurable.description}
+          {outputMeasurable?.description}
         </p>
         {impactIndicator && (
           <>
