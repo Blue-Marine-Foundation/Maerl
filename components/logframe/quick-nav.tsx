@@ -32,8 +32,12 @@ export default function LogframeQuickNav({
       });
     };
 
-    // Initial update with a small delay to ensure accurate measurements
+    // Run multiple times to ensure proper calculation
+    updateScrollMargins();
+    // Run after a short delay
     setTimeout(updateScrollMargins, 100);
+    // Run after content is likely fully loaded
+    setTimeout(updateScrollMargins, 500);
 
     // Also update when the DOM content is loaded
     document.addEventListener('DOMContentLoaded', updateScrollMargins);

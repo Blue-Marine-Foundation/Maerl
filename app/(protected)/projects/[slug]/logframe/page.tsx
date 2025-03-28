@@ -13,6 +13,7 @@ import ImpactCardLogframe from '@/components/logframe/impact-card-logframe';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
 import FeatureCardLogframe from '@/components/logframe/feature-card-logframe';
 import { logframeText } from '@/components/logframe/logframe-text';
+import { useLogframeDeeplinking } from './useLogframeDeeplinking';
 
 export default function LogframePage() {
   const { slug } = useParams();
@@ -26,6 +27,8 @@ export default function LogframePage() {
     queryKey: ['unassigned-outputs', slug],
     queryFn: () => fetchUnassignedOutputs(slug as string),
   });
+
+  useLogframeDeeplinking({ isLoading, data, unassignedOutputs });
 
   if (isLoading) {
     return <div>Loading...</div>;
