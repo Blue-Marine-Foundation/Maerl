@@ -1,21 +1,24 @@
-'use server';
+/**
+ * NOTE: This page is a proof of concept with mock data
+ * and needs to be revisited after db updates done
+ * */
 
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
-import { isUnplannedOutput } from '@/components/logframe/isUnplannedOutput';
-import Link from 'next/link';
+import UnitOutputsDataTable from '@/components/units/unit-outputs-data-table';
 // import { createClient } from '@/utils/supabase/server';
 
 // Mock data structure anticipating possible database updates needed
 // where we can fetch unit outputs
 const mockUnitData = {
   id: 1,
-  name: 'Mock Education Unit',
+  name: 'Education Unit',
   unit_outputs: [
     {
       outputs: {
-        id: 107,
-        code: 'U1.1',
-        description: 'Output description',
+        id: 18,
+        code: 'U2.2',
+        description:
+          'The menu uses only local, organic, delicious, and fresh ingredients.',
         projects: {
           id: 1,
           slug: 'yavin4',
@@ -24,14 +27,14 @@ const mockUnitData = {
         output_measurables: [
           {
             id: 1,
-            description: 'Number of training sessions conducted',
+            description: '76% of dishes use 80% local ingredients',
             target: 12,
             unit: 'sessions',
             value: 10,
           },
           {
             id: 2,
-            description: 'Number of participants trained',
+            description: 'Other ingredients used',
             target: 100,
             unit: 'people',
             value: 55,
@@ -42,8 +45,8 @@ const mockUnitData = {
     {
       outputs: {
         id: 19,
-        code: 'O2.3',
-        description: 'Second test output from different project',
+        code: 'O3.3',
+        description: 'The canteen staff are recruited from the local area',
         projects: {
           id: 2,
           slug: 'yavin4',
@@ -52,7 +55,7 @@ const mockUnitData = {
         output_measurables: [
           {
             id: 3,
-            description: 'Number of resources distributed',
+            description: 'Number of staff interviewed',
             target: 1000,
             unit: 'units',
           },
@@ -63,7 +66,7 @@ const mockUnitData = {
       outputs: {
         id: 3,
         code: 'O3.1',
-        description: 'Third test output with no measurables',
+        description: 'Description here',
         projects: {
           id: 1,
           slug: 'project-alpha',
@@ -102,6 +105,38 @@ async function fetchUnitOutputs(unitSlug: string) {
   return mockUnitData;
 }
 
+// TODO: after db updates done,revisit whether we need to flatten the
+// Modify the return structure to flatten the data for the table
+function flattenOutputsData(outputs: any[]) {
+  return outputs.flatMap((output) =>
+    output.output_measurables.length > 0
+      ? output.output_measurables.map((measurable: any) => ({
+          id: `${output.id}-${measurable.id}`,
+          project: output.projects.name,
+          projectSlug: output.projects.slug,
+          outputId: output.id,
+          outputCode: extractOutputCodeNumber(output.code),
+          outputDescription: output.description,
+          indicator: measurable.description,
+          target: measurable.target,
+          unit: measurable.unit,
+        }))
+      : [
+          {
+            id: `${output.id}-0`,
+            project: output.projects.name,
+            projectSlug: output.projects.slug,
+            outputId: output.id,
+            outputCode: extractOutputCodeNumber(output.code),
+            outputDescription: output.description,
+            indicator: 'No indicators defined',
+            target: null,
+            unit: null,
+          },
+        ],
+  );
+}
+
 export default async function UnitOutputsPage({
   params,
 }: {
@@ -109,55 +144,11 @@ export default async function UnitOutputsPage({
 }) {
   const unitData = await fetchUnitOutputs(params.slug);
   const outputs = unitData?.unit_outputs?.map((uo) => uo.outputs) || [];
+  const flattenedData = flattenOutputsData(outputs);
 
   return (
-    <div className='flex flex-col gap-4'>
-      <h1 className='text-2xl font-bold'>{unitData.name} Outputs</h1>
-
-      {outputs.map((output) => (
-        <div key={output.id} className='rounded-lg border p-4'>
-          <div className='flex items-start justify-between'>
-            <div>
-              <h2 className='font-semibold'>
-                {`${output.projects.name} ${
-                  //@ts-expect-error this output type error should be resolved when we wire up the db updates
-                  isUnplannedOutput(output)
-                    ? `Unplanned Output  ${extractOutputCodeNumber(output.code)}`
-                    : `Output ${extractOutputCodeNumber(output.code)}`
-                }: ${output.description}`}
-              </h2>
-              <p className='text-sm text-gray-600'>
-                Project: {output.projects.name}
-              </p>
-            </div>
-            <Link
-              href={`/projects/${output.projects.slug}/logframe#output-${output.id}`}
-              className='text-sm text-blue-600 hover:underline'
-            >
-              View in Project Logframe
-            </Link>
-          </div>
-
-          {output.output_measurables?.length > 0 && (
-            <div className='mt-4'>
-              <h3 className='mb-2 font-medium'>Output Indicators:</h3>
-              <ul className='list-disc pl-5'>
-                {output.output_measurables.map((measurable) => (
-                  <li key={measurable.id}>
-                    {measurable.description}
-                    {measurable.target && (
-                      <span className='text-gray-600'>
-                        {' '}
-                        (Target: {measurable.target})
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      ))}
+    <div className='flex flex-col gap-6'>
+      <UnitOutputsDataTable data={flattenedData} />
     </div>
   );
 }
