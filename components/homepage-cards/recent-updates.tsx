@@ -8,7 +8,7 @@ export default async function RecentUpdates() {
   const { data: updates, error } = await supabase
     .from('updates')
     .select(
-      '*, projects(name, slug), output_measurables(*), impact_indicators(*)',
+      '*, projects(name, slug, project_type), output_measurables(*), impact_indicators(*)',
     )
     .order('created_at', { ascending: false })
     .limit(10);
