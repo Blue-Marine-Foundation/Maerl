@@ -87,20 +87,6 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'project_type',
-    header: 'Project Type',
-    filterFn: createFilterFn(),
-  },
-  {
-    accessorKey: 'project_status',
-    header: 'Status',
-    filterFn: createFilterFn(),
-  },
-  {
-    accessorKey: 'start_date',
-    header: 'Started',
-  },
-  {
     accessorKey: 'last_updated',
     header: ({ column }) => {
       return (
@@ -124,6 +110,40 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
   },
   {
+    accessorKey: 'project_type',
+    header: 'Project Type',
+    filterFn: createFilterFn(),
+  },
+  {
+    accessorKey: 'project_status',
+    header: 'Status',
+    filterFn: createFilterFn(),
+  },
+  {
+    accessorKey: 'project_tier',
+    header: 'Tier',
+    filterFn: createFilterFn(),
+    cell: ({ row }) => {
+      const tierMap = {
+        t1: 'Tier 1',
+        t2: 'Tier 2',
+        t3: 'Tier 3',
+        t4: 'Tier 4',
+      };
+      const tier = row.getValue('project_tier') as keyof typeof tierMap;
+      return <p className='whitespace-nowrap'>{tier ? tierMap[tier] : ''}</p>;
+    },
+  },
+  {
+    accessorKey: 'start_date',
+    header: 'Started',
+  },
+
+  {
+    accessorKey: 'project_country',
+    header: 'Country',
+  },
+  {
     accessorKey: 'regional_strategy',
     header: ({ column }) => {
       return (
@@ -134,6 +154,11 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
           Region
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className='whitespace-nowrap'>{row.getValue('regional_strategy')}</p>
       );
     },
     filterFn: createFilterFn(),
