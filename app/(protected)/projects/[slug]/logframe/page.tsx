@@ -28,7 +28,7 @@ export default function LogframePage() {
     queryFn: () => fetchUnassignedOutputs(slug as string),
   });
 
-  useLogframeDeeplinking({ isLoading, data, unassignedOutputs });
+  useLogframeDeeplinking();
 
   if (isLoading) {
     return <div>Loading...</div>;

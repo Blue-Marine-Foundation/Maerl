@@ -140,9 +140,10 @@ function flattenOutputsData(outputs: any[]) {
 export default async function UnitOutputsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const unitData = await fetchUnitOutputs(params.slug);
+  const { slug } = await params;
+  const unitData = await fetchUnitOutputs(slug);
   const outputs = unitData?.unit_outputs?.map((uo) => uo.outputs) || [];
   const flattenedData = flattenOutputsData(outputs);
 
