@@ -69,10 +69,12 @@ const columns = [
   {
     accessorKey: 'outputMeasurableTarget',
     header: 'Target',
-  },
-  {
-    accessorKey: 'outputMeasurableUnit',
-    header: 'Unit',
+    cell: ({ row }: { row: any }) => (
+      <span>
+        {row.original.outputMeasurableTarget}{' '}
+        {row.original.outputMeasurableUnit}
+      </span>
+    ),
   },
   {
     accessorKey: 'outputMeasurableValue',
