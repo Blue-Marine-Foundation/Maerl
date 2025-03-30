@@ -36,8 +36,8 @@ export default async function ProjectPage({
           </h3>
           <div className='flex flex-grow flex-col items-center justify-start gap-2 py-4'>
             <p className='text-foreground/80'>
-              Funding requests via Maerl are temporarily disabled. We're working
-              to bring them back soon!
+              Funding requests via Maerl are temporarily disabled. We&apos;re
+              working to bring them back soon!
             </p>
           </div>
         </div>
