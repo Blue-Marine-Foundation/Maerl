@@ -1,4 +1,5 @@
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
+import FeatureCard from '@/components/ui/feature-card';
 import UnitOutputsDataTable from '@/components/units/unit-outputs-data-table';
 import { createClient } from '@/utils/supabase/server';
 
@@ -45,7 +46,9 @@ export default async function UnitOutputsPage({
 
   return (
     <div className='flex flex-col gap-6'>
-      <UnitOutputsDataTable data={parsedData} />
+      <FeatureCard>
+        <UnitOutputsDataTable data={parsedData} />
+      </FeatureCard>
     </div>
   );
 }

@@ -1,23 +1,20 @@
-// TODO: Once db updates done, update data fetchin as needed
-// and test if Edit Update works with editing relevant output indicators
-
-import ProjectUpdatesDataTable from '@/components/updates/project-updates-data-table';
-
 import { createClient } from '@/utils/supabase/server';
+import UnitUpdatesDataTable from '@/components/units/unit-updates-data-table';
+import FeatureCard from '@/components/ui/feature-card';
+
 export default async function UnitUpdatesPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const slug = (await params).slug;
-
+  const { slug } = await params;
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('projects')
-    .select('id')
-    .eq('slug', slug as string)
-    .single();
+    .from('unit_contribution_updates')
+    .select('*')
+    .eq('unit_slug', slug)
+    .order('date', { ascending: false });
 
   if (error) {
     return (
@@ -28,8 +25,10 @@ export default async function UnitUpdatesPage({
   }
 
   return (
-    <div className='flex flex-col gap-4'>
-      <ProjectUpdatesDataTable projectId={data.id} />
+    <div className='flex flex-col gap-6'>
+      <FeatureCard>
+        <UnitUpdatesDataTable data={data} />
+      </FeatureCard>
     </div>
   );
 }
