@@ -99,11 +99,7 @@ export default function LogframePage() {
             </div>
           )}
           {allOutputs.length === 0 && (
-            <FeatureCardLogframe
-              title='Outputs'
-              variant='output'
-              tooltipText={logframeText.output.description}
-            >
+            <FeatureCardLogframe title='Outputs' variant='output'>
               <div className='mt-4'>
                 <AddOutputButton projectId={projectId} output={null} />
               </div>

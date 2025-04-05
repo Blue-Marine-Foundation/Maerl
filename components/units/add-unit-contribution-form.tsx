@@ -40,7 +40,7 @@ export default function AddUnitContributionForm({
         setMessage(null);
       }, 5000);
     }
-  }, [message]);
+  }, [message, error]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
