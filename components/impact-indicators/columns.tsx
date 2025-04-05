@@ -6,6 +6,29 @@ import * as d3 from 'd3';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+const IndicatorTitleCell = ({ row }: { row: any }) => {
+  const code = row.original.indicator_code;
+  const searchParams = useSearchParams();
+  const hasSearchParams = searchParams && searchParams.toString().length > 0;
+
+  return (
+    <div
+      className={`max-w-prose ${
+        code.length < 2 && 'font-medium'
+      } ${code.length < 4 && 'text-muted-foreground'}`}
+    >
+      <Link
+        href={`/impactindicators/${row.original.impact_indicator_id}${
+          hasSearchParams ? `?${searchParams.toString()}` : ''
+        }`}
+        className='hover:underline'
+      >
+        {row.getValue('indicator_title')}
+      </Link>
+    </div>
+  );
+};
+
 export const columns: ColumnDef<ImpactIndicatorSummary>[] = [
   {
     accessorKey: 'indicator_code',
@@ -32,28 +55,7 @@ export const columns: ColumnDef<ImpactIndicatorSummary>[] = [
         .toLowerCase()
         .includes((filterValue as string).toLowerCase());
     },
-    cell: ({ row }) => {
-      const code = row.original.indicator_code;
-      const searchParams = useSearchParams();
-      const hasSearchParams =
-        searchParams && searchParams.toString().length > 0;
-      return (
-        <div
-          className={`max-w-prose ${
-            code.length < 2 && 'font-medium'
-          } ${code.length < 4 && 'text-muted-foreground'}`}
-        >
-          <Link
-            href={`/impactindicators/${row.original.impact_indicator_id}${
-              hasSearchParams ? `?${searchParams.toString()}` : ''
-            }`}
-            className='hover:underline'
-          >
-            {row.getValue('indicator_title')}
-          </Link>
-        </div>
-      );
-    },
+    cell: ({ row }) => <IndicatorTitleCell row={row} />,
   },
   {
     accessorKey: 'valid_updates',

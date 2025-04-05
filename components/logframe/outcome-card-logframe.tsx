@@ -34,12 +34,7 @@ export default function OutcomeCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
-        <FeatureCardLogframe
-          title='Outcome'
-          minHeight='100%'
-          variant='outcome'
-          tooltipText={logframeText.outcome.description}
-        >
+        <FeatureCardLogframe title='Outcome' minHeight='100%' variant='outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <ActionButton
               action='add'
@@ -66,7 +61,6 @@ export default function OutcomeCardLogframe({
             }
             variant='outcome'
             minHeight='100%'
-            tooltipText={logframeText.outcome.description}
           >
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full flex-row items-center justify-between'>

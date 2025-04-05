@@ -29,7 +29,7 @@ export default async function RecentProjects() {
         {projects?.map((project) => (
           <Link
             className='flex items-center justify-between gap-2'
-            href={`/projects/${project.slug}`}
+            href={`/${project.project_type === 'Unit' ? 'units' : 'projects'}/${project.slug}`}
             key={project.id}
           >
             <span className='max-w-48 truncate'>{project.name}</span>

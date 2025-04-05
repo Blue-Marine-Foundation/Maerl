@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import {
   ColumnDef,
@@ -27,6 +27,7 @@ import ColumnVisibilityToggle from './column-visibility-toggle';
 import ColumnFilter from './column-filter';
 import ListColumnFilter from './list-column-filter';
 import ExportButton from '@/components/data-tables/export-button';
+import { ColumnCount } from '@/components/data-tables/column-count';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,10 +102,10 @@ export function ProjectsDataTable<TData, TValue>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className='border-b-transparent'>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className='px-3 py-2'>
+                    <TableHead key={header.id} className='px-3'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -116,6 +117,30 @@ export function ProjectsDataTable<TData, TValue>({
                 })}
               </TableRow>
             ))}
+            <TableRow className='border-b'>
+              {table.getHeaderGroups()[0].headers.map((header) => {
+                const columnId = header.column.id;
+                const shouldShowCount = [
+                  'name',
+                  'project_country',
+                  'regional_strategy',
+                  'pm',
+                ].includes(columnId);
+
+                return (
+                  <TableHead
+                    key={`${header.id}-count`}
+                    className='h-auto px-3 pb-3 text-xs text-muted-foreground'
+                  >
+                    {shouldShowCount ? (
+                      <ColumnCount table={table} columnId={columnId} />
+                    ) : (
+                      ''
+                    )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (

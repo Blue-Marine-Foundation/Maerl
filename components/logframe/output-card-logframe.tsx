@@ -6,7 +6,6 @@ import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutputForm from './output-form';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
-import { logframeText } from './logframe-text';
 import AddOutputButton from './add-output-button';
 import { isUnplannedOutput } from './isUnplannedOutput';
 import OutputIndicatorsDetailsTable from './output-indicators-table';
@@ -15,6 +14,7 @@ import { Badge, BadgeProps } from '../ui/badge';
 import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
 import OutputActivitiesList from './output-activities-list';
+import { cn } from '@/utils/cn';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -42,12 +42,7 @@ export default function OutputCardLogframe({
   return (
     <div className='relative flex flex-col gap-8'>
       {!output && canEdit && (
-        <FeatureCardLogframe
-          title='Output'
-          minHeight='100%'
-          variant='output'
-          tooltipText={logframeText.output.description}
-        >
+        <FeatureCardLogframe title='Output' minHeight='100%' variant='output'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
             <AddOutputButton projectId={projectId} output={output} />
           </div>
@@ -55,43 +50,44 @@ export default function OutputCardLogframe({
       )}
 
       {output && (
-        <div id={`output-${output.id}`}>
-          <FeatureCardLogframe
-            title={
-              isUnplannedOutput(output)
-                ? `Unplanned Output  ${extractOutputCodeNumber(output.code)}`
-                : `Output ${extractOutputCodeNumber(output.code)}`
-            }
-            variant='output'
-            minHeight='100%'
-            tooltipText={logframeText.output.description}
-          >
-            <div className='flex w-full grow flex-col items-start justify-between gap-6'>
-              <div className='flex w-full justify-between gap-8 bg-card'>
-                {output.status && (
-                  <div className='flex items-center gap-4'>
-                    <p className='max-w-prose text-sm'>{output.description}</p>
-                    <Badge
-                      variant={
-                        output.status
-                          .toLowerCase()
-                          .replace(' ', '_') as BadgeProps['variant']
-                      }
-                    >
-                      {output.status}
-                    </Badge>
-                  </div>
-                )}
-
-                {canEdit && (
-                  <div className='flex-shrink-0 space-x-2 text-sm'>
-                    <ActionButton
-                      action='edit'
-                      onClick={() => setIsOutputDialogOpen(true)}
-                    />
-                  </div>
-                )}
+        <div id={`output-${output.id}`} className='rounded-md bg-card'>
+          <div className='-mt-0 w-full rounded-t-md bg-sky-600/50 px-4 py-6'>
+            <div className='flex items-center justify-between gap-8'>
+              <div className='flex items-baseline justify-start gap-8'>
+                <div className='flex items-center gap-4'>
+                  <h3 className='text-sm font-medium'>
+                    {isUnplannedOutput(output)
+                      ? `Unplanned Output  ${extractOutputCodeNumber(output.code)}`
+                      : `Output ${extractOutputCodeNumber(output.code)}`}
+                  </h3>
+                  {output.status && (
+                    <div className='flex items-center gap-4'>
+                      <Badge
+                        variant={
+                          output.status
+                            .toLowerCase()
+                            .replace(' ', '_') as BadgeProps['variant']
+                        }
+                      >
+                        {output.status}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+                <p className='max-w-prose text-sm'>{output.description}</p>
               </div>
+              {canEdit && (
+                <ActionButton
+                  action='edit'
+                  onClick={() => setIsOutputDialogOpen(true)}
+                  className='border-foreground/80 text-sm hover:bg-foreground/10'
+                />
+              )}
+            </div>
+          </div>
+          <div className='px-4'>
+            <div className='flex w-full grow flex-col items-start justify-between gap-6'>
+              <div className='flex w-full justify-between gap-8 bg-card'></div>
               <div className='w-full'>
                 <button
                   onClick={() => setIsTableExpanded(!isTableExpanded)}
@@ -172,7 +168,7 @@ export default function OutputCardLogframe({
               projectId={projectId}
               output={output}
             />
-          </FeatureCardLogframe>
+          </div>
         </div>
       )}
     </div>

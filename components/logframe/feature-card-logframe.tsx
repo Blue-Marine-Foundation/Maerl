@@ -1,27 +1,18 @@
 import { cn } from '@/utils/cn';
-import { Info } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 export default function FeatureCardLogframe({
   title,
   children,
   minHeight,
   variant,
-  href,
-  tooltipText,
 }: {
   title?: string;
   minHeight?: string;
   children: React.ReactNode;
-  /** card title area background color */
-  variant: 'impact' | 'outcome' | 'output';
-  href?: string;
-  tooltipText?: string;
+  variant:
+    | 'impact'
+    | 'outcome'
+    | 'output' /** card title area background color */;
 }) {
   return (
     <div
@@ -43,18 +34,6 @@ export default function FeatureCardLogframe({
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <h3 className={cn('text-sm font-medium')}>{title}</h3>
-              {tooltipText && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className='h-4 w-4 text-white/60 hover:text-white' />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className='max-w-xs text-sm'>{tooltipText}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
             </div>
           </div>
         </div>

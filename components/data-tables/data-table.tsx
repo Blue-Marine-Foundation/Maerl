@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
+  Table as TableType,
 } from '@tanstack/react-table';
 import {
   Table,
@@ -23,6 +24,8 @@ import ColumnFilter from './column-filter';
 import SetDateRange from '../date-filtering/set-date-range';
 import CopyToCsvButton from './export-data';
 import * as d3 from 'd3';
+import { cn } from '@/utils/cn';
+
 interface DataTableProps<TData> {
   data: TData[];
   columns: ColumnDef<TData>[];
@@ -34,6 +37,10 @@ interface DataTableProps<TData> {
   }[];
   enableDateFilter?: boolean;
   enableExport?: boolean;
+  renderColumnCount?: (
+    table: TableType<TData>,
+    columnId: string,
+  ) => React.ReactNode;
 }
 
 export function DataTable<TData>({
@@ -42,6 +49,7 @@ export function DataTable<TData>({
   filterableColumns = [],
   enableDateFilter = false,
   enableExport = true,
+  renderColumnCount,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -64,16 +72,22 @@ export function DataTable<TData>({
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between gap-4'>
         <div className='flex items-center justify-start gap-4'>
-          {filterableColumns?.map(({ id, label, type, placeholder }) => (
-            <ColumnFilter
-              key={id}
-              table={table}
-              columnId={id}
-              label={label}
-              type={type}
-              placeholder={placeholder}
-            />
-          ))}
+          {filterableColumns && (
+            <>
+              <p className='text-sm font-medium'>Filter by</p>
+              {filterableColumns?.map(({ id, label, type, placeholder }) => (
+                <ColumnFilter
+                  key={id}
+                  table={table}
+                  columnId={id}
+                  label={label}
+                  type={type}
+                  placeholder={placeholder}
+                />
+              ))}
+            </>
+          )}
+
           {enableDateFilter && <SetDateRange />}
         </div>
 
@@ -91,7 +105,10 @@ export function DataTable<TData>({
         <Table className='overflow-x-auto'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className={cn(renderColumnCount && 'border-b-transparent')}
+              >
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
@@ -108,6 +125,18 @@ export function DataTable<TData>({
                 ))}
               </TableRow>
             ))}
+            {renderColumnCount && (
+              <TableRow>
+                {table.getHeaderGroups()[0].headers.map((header) => (
+                  <TableHead
+                    key={`${header.id}-count`}
+                    className='h-auto px-4 pb-3 text-xs text-muted-foreground'
+                  >
+                    {renderColumnCount(table, header.column.id)}
+                  </TableHead>
+                ))}
+              </TableRow>
+            )}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (

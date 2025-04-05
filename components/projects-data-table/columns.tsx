@@ -67,7 +67,14 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Link href={`/projects/${row.original.slug}`} className='group'>
+        <Link
+          href={
+            row.original.project_type === 'Unit'
+              ? `/units/${row.original.slug}`
+              : `/projects/${row.original.slug}`
+          }
+          className='group'
+        >
           <p
             className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500 group-hover:bg-blue-500/20' : 'border-l-yellow-500 group-hover:bg-yellow-500/20'} pl-2`}
           >
@@ -78,20 +85,6 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
       );
     },
     enableHiding: false,
-  },
-  {
-    accessorKey: 'project_type',
-    header: 'Project Type',
-    filterFn: createFilterFn(),
-  },
-  {
-    accessorKey: 'project_status',
-    header: 'Status',
-    filterFn: createFilterFn(),
-  },
-  {
-    accessorKey: 'start_date',
-    header: 'Started',
   },
   {
     accessorKey: 'last_updated',
@@ -117,6 +110,40 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
     },
   },
   {
+    accessorKey: 'project_type',
+    header: 'Project Type',
+    filterFn: createFilterFn(),
+  },
+  {
+    accessorKey: 'project_status',
+    header: 'Status',
+    filterFn: createFilterFn(),
+  },
+  {
+    accessorKey: 'project_tier',
+    header: 'Tier',
+    filterFn: createFilterFn(),
+    cell: ({ row }) => {
+      const tierMap = {
+        t1: 'Tier 1',
+        t2: 'Tier 2',
+        t3: 'Tier 3',
+        t4: 'Tier 4',
+      };
+      const tier = row.getValue('project_tier') as keyof typeof tierMap;
+      return <p className='whitespace-nowrap'>{tier ? tierMap[tier] : ''}</p>;
+    },
+  },
+  {
+    accessorKey: 'start_date',
+    header: 'Started',
+  },
+
+  {
+    accessorKey: 'project_country',
+    header: 'Country',
+  },
+  {
     accessorKey: 'regional_strategy',
     header: ({ column }) => {
       return (
@@ -127,6 +154,11 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
           Region
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className='whitespace-nowrap'>{row.getValue('regional_strategy')}</p>
       );
     },
     filterFn: createFilterFn(),

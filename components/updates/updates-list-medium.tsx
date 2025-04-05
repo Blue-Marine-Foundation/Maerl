@@ -3,6 +3,8 @@ import Link from 'next/link';
 import * as d3 from 'd3';
 
 export default function UpdatesListMedium({ updates }: { updates: Update[] }) {
+  console.log(updates[0].projects);
+
   return (
     <div className='flex flex-col'>
       {updates?.map((update) => (
@@ -13,7 +15,7 @@ export default function UpdatesListMedium({ updates }: { updates: Update[] }) {
           <div className='flex flex-col gap-2'>
             <Link
               className='max-w-[124px] truncate text-sm font-medium hover:underline'
-              href={`/projects/${update.projects?.slug}`}
+              href={`/${update.projects?.project_type === 'Unit' ? 'units' : 'projects'}/${update.projects?.slug}`}
             >
               {update.projects?.name}
             </Link>

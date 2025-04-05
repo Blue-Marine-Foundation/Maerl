@@ -20,12 +20,7 @@ export default function ImpactCardLogframe({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <FeatureCardLogframe
-      title='Impact'
-      variant='impact'
-      minHeight='100%'
-      tooltipText={logframeText.impact.description}
-    >
+    <FeatureCardLogframe title='Impact' variant='impact' minHeight='100%'>
       {!impact && canEdit && (
         <div className='flex grow flex-col items-center justify-center gap-4'>
           <ActionButton

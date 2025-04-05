@@ -7,7 +7,9 @@ export type ProjectMetadata = {
   start_date: string | null;
   last_updated: string | null;
   project_status: string | null;
+  project_tier: 't1' | 't2' | 't3' | 't4' | null;
   project_type: string | null;
+  project_country: string | null;
   regional_strategy: string | null;
   unit_requirements: string | null;
   pillars: string | null;
@@ -25,6 +27,10 @@ export type ProjectMetadata = {
     last_name: string;
     role: string;
   }[];
+};
+
+export type ProjectWithOutputs = ProjectMetadata & {
+  outputs: Output[];
 };
 
 export type ImpactIndicator = {

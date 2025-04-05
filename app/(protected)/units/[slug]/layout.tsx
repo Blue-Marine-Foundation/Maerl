@@ -3,13 +3,13 @@ import { createClient } from '@/utils/supabase/server';
 import PageHeading from '@/components/ui/page-heading';
 import { Metadata } from 'next';
 import Breadcrumbs from '@/components/ui/breadcrumbs';
-import ProjectNavigation from '@/components/project-page/project-nav';
+import UnitNavigation from '@/components/units-page/unit-nav';
 
 export async function generateStaticParams() {
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
-    .neq('project_type', 'Unit');
+    .eq('project_type', 'Unit');
 
   if (error) {
     throw new Error(`Failed to fetch projects: ${error.message}`);
@@ -65,7 +65,7 @@ export default async function ProjectLayout({
     .from('projects')
     .select('*')
     .eq('slug', slug)
-    .neq('project_type', 'Unit')
+    .eq('project_type', 'Unit')
     .single();
 
   if (projectError) {
@@ -100,7 +100,7 @@ export default async function ProjectLayout({
         <Breadcrumbs projectName={project.name} />
         <div className='flex w-full items-baseline justify-start gap-6'>
           <PageHeading>{project.name}</PageHeading>
-          <ProjectNavigation slug={slug} />
+          <UnitNavigation slug={slug} />
         </div>
       </div>
 

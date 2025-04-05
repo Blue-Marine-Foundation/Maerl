@@ -1,6 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
 import ProjectMetadataDisplay from '@/components/project-metadata/project-metadata-display';
-import LogframeCard from '@/components/project-page/logframe-card';
 import ProjectUpdatesCard from '@/components/project-page/updates-card';
 
 export default async function ProjectPage({
@@ -29,8 +28,6 @@ export default async function ProjectPage({
   return (
     <div className='grid grid-cols-3 items-start gap-4'>
       <ProjectMetadataDisplay project={project} />
-
-      <LogframeCard projectId={project.id} slug={slug} />
       <div className='flex flex-col gap-4'>
         <ProjectUpdatesCard projectId={project.id} />
         <div className='flex flex-col rounded-md bg-card p-4'>
@@ -42,9 +39,6 @@ export default async function ProjectPage({
               Funding requests via Maerl are temporarily disabled. We&apos;re
               working to bring them back soon!
             </p>
-            {/* <button className='mt-2 flex items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm text-foreground/80 transition-all hover:border-solid hover:border-foreground/50 hover:text-foreground'>
-              <PlusCircleIcon className='h-4 w-4' /> Create funding request
-            </button> */}
           </div>
         </div>
       </div>

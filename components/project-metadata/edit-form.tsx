@@ -101,6 +101,41 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         placeholder={''}
       />
 
+      <SelectInput
+        label='Project Tier'
+        name='project_tier'
+        value={formState.project_tier || ''}
+        onChange={handleChange}
+        options={[
+          { value: '', label: 'Select a tier' },
+          { value: 't1', label: 'Tier 1: Boots on the ground' },
+          {
+            value: 't2',
+            label:
+              'Tier 2: Unit usage, political support, capacity building of local partners',
+          },
+          {
+            value: 't3',
+            label:
+              'Tier 3: Light touch guidance/technical support alongside financial support',
+          },
+          {
+            value: 't4',
+            label:
+              'Tier 4: On hold - dormant project waiting for opportune moment to reengage',
+          },
+        ]}
+        placeholder={'Select project tier'}
+      />
+
+      <TextInput
+        label='Project Country'
+        name='project_country'
+        value={formState.project_country}
+        onChange={handleChange}
+        placeholder='Enter project country'
+      />
+
       <TextInput
         label='Regional Strategy'
         name='regional_strategy'
