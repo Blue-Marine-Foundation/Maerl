@@ -29,6 +29,10 @@ export type ProjectMetadata = {
   }[];
 };
 
+export type ProjectWithOutputs = ProjectMetadata & {
+  outputs: Output[];
+};
+
 export type ImpactIndicator = {
   id: number;
   created_at: string;

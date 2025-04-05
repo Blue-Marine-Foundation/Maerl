@@ -1,7 +1,9 @@
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
+import ActionButton from '@/components/ui/action-button';
 import FeatureCard from '@/components/ui/feature-card';
 import UnitOutputsDataTable from '@/components/units/unit-outputs-data-table';
 import { createClient } from '@/utils/supabase/server';
+import Link from 'next/link';
 
 function parseData(data: any[]) {
   return data.map((item) => ({
@@ -44,8 +46,24 @@ export default async function UnitOutputsPage({
 
   const parsedData = parseData(data);
 
+  const uniqueProjects = Array.from(
+    new Set(parsedData.map((item) => item.projectName)),
+  );
+
   return (
     <div className='flex flex-col gap-6'>
+      <div className='flex items-center justify-between gap-2'>
+        <h3 className='text-lg font-bold'>
+          Contributing to {parsedData.length} output
+          {parsedData.length === 1 ? '' : 's'} on {uniqueProjects.length}{' '}
+          project
+          {uniqueProjects.length === 1 ? '' : 's'}
+        </h3>
+
+        <Link href={`/units/${slug}/outputs/add`}>
+          <ActionButton action='add' label='Add output' />
+        </Link>
+      </div>
       <FeatureCard>
         <UnitOutputsDataTable data={parsedData} />
       </FeatureCard>
