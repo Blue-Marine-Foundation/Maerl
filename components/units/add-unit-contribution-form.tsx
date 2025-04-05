@@ -1,89 +1,128 @@
 'use client';
 
 import { ProjectMetadata, ProjectWithOutputs, Output } from '@/utils/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  ProjectSelect,
+  OutputSelect,
+  DropdownProvider,
+  OutputMeasurableCheckboxes,
+} from './contribution-form-fields';
+import { addUnitContribution } from './server-actions';
+import { Loader } from 'lucide-react';
+import { cn } from '@/utils/cn';
+
 export default function AddUnitContributionForm({
   projects,
+  activeUnit,
 }: {
   projects: ProjectWithOutputs[];
   activeUnit: ProjectMetadata;
 }) {
   const [selectedProject, setSelectedProject] =
     useState<ProjectWithOutputs | null>(null);
-
   const [selectedOutput, setSelectedOutput] = useState<Output | null>(null);
+  const [selectedMeasurables, setSelectedMeasurables] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelectedOutput(null);
+    setSelectedMeasurables([]);
+    setMessage(null);
+    setError(false);
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (message && !error) {
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    }
+  }, [message]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(false);
+
+    const contributions = selectedMeasurables.map((measurableId) => ({
+      unit_id: activeUnit.id,
+      output_measurable_id: measurableId,
+    }));
+
+    const { data, error } = await addUnitContribution(contributions);
+
+    if (error) {
+      setError(true);
+      setMessage(`Error adding output: ${error.message}`);
+    } else {
+      setMessage('✅ Output added successfully');
+    }
+
+    setIsLoading(false);
+    setSelectedMeasurables([]);
+    setSelectedOutput(null);
+  };
+
+  // Check if form can be submitted
+  const canSubmit = selectedMeasurables.length > 0;
 
   return (
-    <div>
+    <DropdownProvider>
       <form
-        action={() => console.log('submitted')}
-        className='flex flex-col gap-6'
+        onSubmit={handleSubmit}
+        className='mx-auto flex min-h-[350px] w-full max-w-2xl flex-col gap-6 pb-8'
       >
-        {/* ********************************** Select project ********************************** */}
+        <ProjectSelect
+          projects={projects}
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
+        />
 
-        <div className='flex items-center gap-8'>
-          <label className='w-40 text-right' htmlFor='project'>
-            Project:
-          </label>
-          <select
-            name='project'
-            id='project'
-            value={selectedProject?.id}
-            className='w-full max-w-lg rounded-md border bg-muted px-3 py-2 text-sm'
-            onChange={(e) => {
-              const project = projects.find(
-                (p) => p.id === Number(e.target.value),
-              );
-              if (project) {
-                setSelectedProject(project);
-              }
-            }}
+        {selectedProject && (
+          <OutputSelect
+            outputs={selectedProject.outputs}
+            selectedOutput={selectedOutput}
+            setSelectedOutput={setSelectedOutput}
+            projectSlug={selectedProject.slug}
+          />
+        )}
+
+        {selectedOutput && (
+          <OutputMeasurableCheckboxes
+            selectedOutput={selectedOutput}
+            selectedMeasurables={selectedMeasurables}
+            onMeasurablesChange={setSelectedMeasurables}
+          />
+        )}
+
+        {canSubmit && (
+          <button
+            type='submit'
+            className={`flex w-full max-w-xs items-center justify-center gap-2 rounded-md px-4 py-2 text-sm text-white ${
+              canSubmit
+                ? 'bg-sky-500/50 transition-all duration-300 hover:bg-sky-500/70'
+                : 'cursor-not-allowed bg-gray-400'
+            }`}
+            disabled={isLoading}
           >
-            <option value=''>Select project</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            {isLoading ? <Loader className='animate-spin' /> : 'Add output'}
+          </button>
+        )}
 
-        {/* ********************************** Select output ********************************** */}
-
-        <div className='flex items-center gap-8'>
-          <label className='w-40 text-right' htmlFor='output'>
-            Output:
-          </label>
-          <select
-            name='output'
-            id='output'
-            value={selectedOutput?.id}
-            className='w-full max-w-lg rounded-md border bg-muted px-3 py-2 text-sm'
-            onChange={(e) => {
-              const output = selectedProject?.outputs.find(
-                (o) => o.id === Number(e.target.value),
-              );
-              if (output) {
-                setSelectedOutput(output);
-              }
-            }}
+        {message && (
+          <p
+            className={cn(
+              'rounded border p-3',
+              error ? 'bg-rose-500/10' : 'bg-green-500/10',
+            )}
           >
-            <option value=''>Select output</option>
-            {selectedProject?.outputs.map((output) => (
-              <option key={output.id} value={output.id}>
-                {output.description}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          type='submit'
-          className='ml-48 w-full max-w-xs rounded-md bg-pink-500 px-4 py-2 text-sm text-white'
-        >
-          Go
-        </button>
+            {message}
+          </p>
+        )}
       </form>
-    </div>
+    </DropdownProvider>
   );
 }
