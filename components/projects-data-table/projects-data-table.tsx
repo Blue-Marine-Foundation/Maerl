@@ -146,7 +146,7 @@ export function ProjectsDataTable<TData, TValue>({
                     key={`${header.id}-count`}
                     className='h-auto px-3 pb-3 text-xs text-muted-foreground'
                   >
-                    {shouldShowCount ? `${uniqueCount} unique` : ''}
+                    {shouldShowCount ? `Count: ${uniqueCount}` : ''}
                   </TableHead>
                 );
               })}
