@@ -2,6 +2,8 @@
 
 import { DataTable } from '../data-tables/data-table';
 import Link from 'next/link';
+import { ColumnCount } from '@/components/data-tables/column-count';
+import { Table } from '@tanstack/react-table';
 
 type OutputRow = {
   id: string;
@@ -91,6 +93,15 @@ export default function UnitOutputsDataTable({ data }: { data: OutputRow[] }) {
       columns={columns}
       filterableColumns={filterableColumns}
       enableExport
+      renderColumnCount={(table: Table<OutputRow>, columnId: string) => {
+        const shouldShowCount = [
+          'projectName',
+          'outputMeasurableCode',
+        ].includes(columnId);
+        return shouldShowCount ? (
+          <ColumnCount table={table} columnId={columnId} />
+        ) : null;
+      }}
     />
   );
 }

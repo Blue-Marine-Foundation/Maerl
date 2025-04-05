@@ -27,6 +27,7 @@ import ColumnVisibilityToggle from './column-visibility-toggle';
 import ColumnFilter from './column-filter';
 import ListColumnFilter from './list-column-filter';
 import ExportButton from '@/components/data-tables/export-button';
+import { ColumnCount } from '@/components/data-tables/column-count';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -126,27 +127,16 @@ export function ProjectsDataTable<TData, TValue>({
                   'pm',
                 ].includes(columnId);
 
-                const uniqueCount = useMemo(() => {
-                  if (!shouldShowCount) return null;
-
-                  const uniqueValues = new Set(
-                    table
-                      .getFilteredRowModel()
-                      .rows.map((row) => row.getValue(columnId))
-                      .filter(
-                        (value) =>
-                          value !== null && value !== undefined && value !== '',
-                      ),
-                  );
-                  return uniqueValues.size;
-                }, [table.getFilteredRowModel().rows, columnId]);
-
                 return (
                   <TableHead
                     key={`${header.id}-count`}
                     className='h-auto px-3 pb-3 text-xs text-muted-foreground'
                   >
-                    {shouldShowCount ? `Count: ${uniqueCount}` : ''}
+                    {shouldShowCount ? (
+                      <ColumnCount table={table} columnId={columnId} />
+                    ) : (
+                      ''
+                    )}
                   </TableHead>
                 );
               })}
