@@ -3,8 +3,6 @@ import Link from 'next/link';
 import * as d3 from 'd3';
 
 export default function UpdatesListMedium({ updates }: { updates: Update[] }) {
-  console.log(updates[0].projects);
-
   return (
     <div className='flex flex-col'>
       {updates?.map((update) => (
