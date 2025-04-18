@@ -8,11 +8,13 @@ import { Output } from '@/utils/types';
 type AddOutputButtonProps = {
   projectId: number;
   output: Output | null;
+  existingCodes?: string[];
 };
 
 export default function AddOutputButton({
   projectId,
   output,
+  existingCodes = [],
 }: AddOutputButtonProps) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
 
@@ -28,6 +30,7 @@ export default function AddOutputButton({
         onClose={() => setIsOutputDialogOpen(false)}
         output={output}
         projectId={projectId}
+        existingCodes={existingCodes}
       />
     </div>
   );

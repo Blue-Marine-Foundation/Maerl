@@ -55,7 +55,11 @@ export default function OutputsContainer({
           variant='output'
           tooltipText={logframeText.output.description}
         >
-          <AddOutputButton projectId={projectId} output={null} />
+          <AddOutputButton
+            projectId={projectId}
+            output={null}
+            existingCodes={outputs.map((o) => o.code)}
+          />
         </FeatureCardTheoryOfChange>
       )}
     </div>

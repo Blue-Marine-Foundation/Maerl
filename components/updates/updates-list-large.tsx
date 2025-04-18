@@ -29,7 +29,7 @@ export default function UpdatesListLarge({ updates }: { updates: Update[] }) {
               >
                 {update.output_measurables.output_id ? (
                   <Link
-                    href={`/projects/${update.projects?.slug}/logframe/output?id=${update.output_measurables.output_id}`}
+                    href={`/projects/${update.projects?.slug}/logframe#output-${update.output_measurables.output_id}`}
                   >
                     Output {update.output_measurables.code}
                   </Link>

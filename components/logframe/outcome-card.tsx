@@ -42,6 +42,7 @@ export default function OutcomeCard({
             onClose={() => setIsOutcomeDialogOpen(false)}
             outcome={outcome}
             projectId={projectId}
+            existingCodes={outcomes?.map((o) => o.code) || []}
           />
         </FeatureCardTheoryOfChange>
       )}
@@ -76,6 +77,7 @@ export default function OutcomeCard({
               onClose={() => setIsOutcomeDialogOpen(false)}
               outcome={outcome}
               projectId={projectId}
+              existingCodes={outcomes?.map((o) => o.code) || []}
             />
           </FeatureCardTheoryOfChange>
         </>
