@@ -5,7 +5,7 @@ import { ArrowUpDown } from 'lucide-react';
 import { ProjectMetadata } from '@/utils/types';
 import Link from 'next/link';
 import ProjectActionButtons from './project-action-buttons';
-
+import { cn } from '@/utils/cn';
 const createFilterFn = () => {
   return (row: any, columnId: string, filterValue: string[]) => {
     if (!filterValue || filterValue.length === 0) return false;
@@ -76,7 +76,15 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
           className='group'
         >
           <p
-            className={`border-l-2 ${row.original.project_type === 'Project' ? 'border-l-blue-500 group-hover:bg-blue-500/20' : 'border-l-yellow-500 group-hover:bg-yellow-500/20'} pl-2`}
+            className={cn(
+              'border-l-2 pl-2',
+              row.original.project_type === 'Project' &&
+                'border-l-blue-500 group-hover:bg-blue-500/20',
+              row.original.project_type === 'Workstream' &&
+                'border-l-yellow-500 group-hover:bg-yellow-500/20',
+              row.original.project_type === 'Unit' &&
+                'border-l-green-500 group-hover:bg-green-500/20',
+            )}
           >
             {row.original.name.slice(0, 25)}
             {row.original.name.length > 25 && '...'}
