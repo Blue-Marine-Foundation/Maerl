@@ -195,6 +195,8 @@ export default function OutputMeasurableTable({ output }: { output: Output }) {
         measurable={selectedMeasurable}
         outputId={output.id}
         projectId={output.project_id}
+        existingCodes={output.output_measurables?.map((m) => m.code) || []}
+        outputCode={output.code}
       />
     </div>
   );

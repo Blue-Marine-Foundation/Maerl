@@ -118,6 +118,7 @@ export default function OutputCardLogframe({
                     measurables={output?.output_measurables || []}
                     outputId={output.id}
                     projectId={projectId}
+                    outputCode={output.code}
                   />
                 </div>
                 <button

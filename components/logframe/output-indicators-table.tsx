@@ -26,10 +26,12 @@ export default function OutputIndicatorsDetailsTable({
   measurables,
   outputId,
   projectId,
+  outputCode,
 }: {
   measurables: OutputMeasurable[];
   outputId: number;
   projectId: number;
+  outputCode: string;
 }) {
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
@@ -44,15 +46,6 @@ export default function OutputIndicatorsDetailsTable({
   const handleCloseMeasurableDialog = () => {
     setIsMeasurableDialogOpen(false);
     setSelectedMeasurable(null);
-  };
-
-  const handleAddMeasurable = () => {
-    if (measurables) {
-      const nextIndex = (measurables.length || 0) + 1;
-      const nextCode = `OP0.${nextIndex}`;
-      setSelectedMeasurable({ code: nextCode } as OutputMeasurable);
-      setIsMeasurableDialogOpen(true);
-    }
   };
 
   const toggleRow = (rowId: string) => {
@@ -87,7 +80,10 @@ export default function OutputIndicatorsDetailsTable({
           <ActionButton
             action='add'
             label='Add output indicator'
-            onClick={handleAddMeasurable}
+            onClick={() => {
+              setSelectedMeasurable(null);
+              setIsMeasurableDialogOpen(true);
+            }}
           />
         </div>
       ) : (
@@ -158,7 +154,10 @@ export default function OutputIndicatorsDetailsTable({
             <ActionButton
               action='add'
               label='Add output indicator'
-              onClick={handleAddMeasurable}
+              onClick={() => {
+                setSelectedMeasurable(null);
+                setIsMeasurableDialogOpen(true);
+              }}
             />
           </div>
         </div>
@@ -170,6 +169,8 @@ export default function OutputIndicatorsDetailsTable({
         measurable={selectedMeasurable}
         outputId={outputId}
         projectId={projectId}
+        existingCodes={measurables.map((m) => m.code)}
+        outputCode={outputCode}
       />
     </>
   );

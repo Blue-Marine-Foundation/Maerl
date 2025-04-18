@@ -7,6 +7,7 @@ import { OutputMeasurable, ImpactIndicator } from '@/utils/types';
 import { upsertOutputMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '@/components/impact-indicators/impact-indicator-select';
 import CalloutCard from './callout-card';
+import { Badge } from '@/components/ui/badge';
 
 interface OutputMeasurableFormProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ interface OutputMeasurableFormProps {
   measurable: OutputMeasurable | null;
   outputId: number;
   projectId: number;
+  existingCodes?: string[];
+  outputCode?: string;
 }
 
 export default function OutputMeasurableForm({
@@ -22,6 +25,8 @@ export default function OutputMeasurableForm({
   measurable,
   outputId,
   projectId,
+  existingCodes = [],
+  outputCode = '',
 }: OutputMeasurableFormProps) {
   const [code, setCode] = useState(measurable?.code || '');
   const [description, setDescription] = useState(measurable?.description || '');
@@ -38,13 +43,39 @@ export default function OutputMeasurableForm({
     useState<ImpactIndicator | null>(null);
 
   useEffect(() => {
-    setCode(measurable?.code || '');
     setDescription(measurable?.description || '');
     setImpactIndicatorId(measurable?.impact_indicator_id || null);
     setTarget(measurable?.target || null);
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
-  }, [measurable]);
+    // Auto-assign code for new measurable
+    if (!measurable) {
+      // Try to get the output code prefix (O.x)
+      let prefix = '';
+      if (outputCode && outputCode.startsWith('O.')) {
+        prefix = outputCode;
+      } else if (existingCodes.length > 0) {
+        const match = existingCodes[0]?.match(/^(O\.\d+)\./);
+        if (match) prefix = match[1];
+      }
+      // fallback: try to extract from outputId (not robust, but fallback)
+      if (!prefix) prefix = `O.${outputId}`;
+      // Find all y's for this output
+      const yNumbers = existingCodes
+        .filter((c) => typeof c === 'string' && c.startsWith(`${prefix}.`))
+        .map((c) => {
+          const parts = c.split('.');
+          const n = parseInt(parts[2]);
+          return isNaN(n) ? null : n;
+        })
+        .filter((n): n is number => n !== null);
+      let nextY = 1;
+      while (yNumbers.includes(nextY)) nextY++;
+      setCode(`${prefix}.${nextY}`);
+    } else {
+      setCode(measurable.code || '');
+    }
+  }, [measurable, existingCodes, outputCode, outputId]);
 
   const queryClient = useQueryClient();
 
@@ -84,17 +115,9 @@ export default function OutputMeasurableForm({
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-          <div>
-            <label htmlFor='code' className='mb-1 block text-sm font-medium'>
-              Code
-            </label>
-            <input
-              id='code'
-              className='w-full rounded-md border bg-background px-4 py-2'
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder='Enter indicator code'
-            />
+          <div className='mb-1 flex items-center gap-2 text-sm font-medium'>
+            <span>Indicator code</span>
+            <Badge className='text-base'>{code}</Badge>
           </div>
 
           <div>
