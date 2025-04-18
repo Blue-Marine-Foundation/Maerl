@@ -7,6 +7,7 @@ import FeatureCardTheoryOfChange from './feature-card-theory-of-change';
 import { logframeText } from './logframe-text';
 import AddOutputButton from './add-output-button';
 import { isUnplannedOutput } from './isUnplannedOutput';
+import OutputCardLogframe from './output-card-logframe';
 
 export default function OutputsContainer({
   outputs,
@@ -46,6 +47,12 @@ export default function OutputsContainer({
                   </div>
                 )}
               </div>
+              <OutputCardLogframe
+                canEdit={true}
+                output={output}
+                projectId={projectId}
+                existingCodes={outputs.map((o) => o.code)}
+              />
             </FeatureCardTheoryOfChange>
           </div>
         ))
@@ -55,7 +62,11 @@ export default function OutputsContainer({
           variant='output'
           tooltipText={logframeText.output.description}
         >
-          <AddOutputButton projectId={projectId} output={null} />
+          <AddOutputButton
+            projectId={projectId}
+            output={null}
+            existingCodes={outputs.map((o) => o.code)}
+          />
         </FeatureCardTheoryOfChange>
       )}
     </div>

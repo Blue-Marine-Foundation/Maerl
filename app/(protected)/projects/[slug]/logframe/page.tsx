@@ -12,7 +12,6 @@ import OutcomeCardLogframe from '@/components/logframe/outcome-card-logframe';
 import ImpactCardLogframe from '@/components/logframe/impact-card-logframe';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
 import FeatureCardLogframe from '@/components/logframe/feature-card-logframe';
-import { logframeText } from '@/components/logframe/logframe-text';
 import { useLogframeDeeplinking } from './useLogframeDeeplinking';
 
 export default function LogframePage() {
@@ -95,13 +94,21 @@ export default function LogframePage() {
           ))}
           {allOutputs.length > 0 && (
             <div className='mt-4'>
-              <AddOutputButton projectId={projectId} output={null} />
+              <AddOutputButton
+                projectId={projectId}
+                output={null}
+                existingCodes={allOutputs.map((o) => o.code)}
+              />
             </div>
           )}
           {allOutputs.length === 0 && (
             <FeatureCardLogframe title='Outputs' variant='output'>
               <div className='mt-4'>
-                <AddOutputButton projectId={projectId} output={null} />
+                <AddOutputButton
+                  projectId={projectId}
+                  output={null}
+                  existingCodes={allOutputs.map((o) => o.code)}
+                />
               </div>
             </FeatureCardLogframe>
           )}

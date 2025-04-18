@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Output } from '@/utils/types';
@@ -8,12 +8,14 @@ import { upsertOutput } from './server-actions';
 import OutcomeMeasurableSelect from './outcome-measurable-select';
 import CalloutCard from './callout-card';
 import { logframeText } from './logframe-text';
+import { Badge } from '../ui/badge';
 
 interface OutputFormProps {
   isOpen: boolean;
   onClose: () => void;
   output: Output | null;
   projectId: number;
+  existingCodes?: string[];
 }
 
 export default function OutputForm({
@@ -21,6 +23,7 @@ export default function OutputForm({
   onClose,
   output,
   projectId,
+  existingCodes = [],
 }: OutputFormProps) {
   const [description, setDescription] = useState(output?.description || '');
   const [code, setCode] = useState(output?.code || '');
@@ -34,11 +37,25 @@ export default function OutputForm({
 
   useEffect(() => {
     setDescription(output?.description || '');
-    setCode(output?.code || '');
+    if (!output) {
+      // Auto-assign next available code for new outputs, format O.x
+      const numericCodes = existingCodes
+        .filter((c) => typeof c === 'string' && c.startsWith('O.'))
+        .map((c) => {
+          const n = parseInt(c.slice(2));
+          return isNaN(n) ? null : n;
+        })
+        .filter((n): n is number => n !== null);
+      let nextNum = 1;
+      while (numericCodes.includes(nextNum)) nextNum++;
+      setCode(`O.${nextNum}`);
+    } else {
+      setCode(output.code || '');
+    }
     setStatus(output?.status || 'Not started');
     setSelectedMeasurableId(output?.outcome_measurable_id);
     setError(null);
-  }, [output]);
+  }, [output, existingCodes]);
 
   const mutation = useMutation({
     mutationFn: async (newOutput: Partial<Output>) => {
@@ -70,7 +87,6 @@ export default function OutputForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
     mutation.mutate({
       id: output?.id,
       project_id: projectId,
@@ -88,23 +104,15 @@ export default function OutputForm({
           <DialogTitle>{output ? 'Edit Output' : 'Add Output'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <div className='mb-1 flex items-center gap-2 text-sm font-medium'>
+            <span>Output code</span>
+            <Badge className='text-base'>{code}</Badge>
+          </div>
           <OutcomeMeasurableSelect
             value={selectedMeasurableId || 0}
             projectId={projectId}
             onChange={(measurable) => setSelectedMeasurableId(measurable?.id)}
           />
-          <div>
-            <label htmlFor='code' className='mb-1 block text-sm font-medium'>
-              Code
-            </label>
-            <input
-              id='code'
-              className='w-full rounded-md border bg-background px-4 py-2'
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder='Enter output code (e.g. 0.10 for Output 10)'
-            />
-          </div>
           <div>
             <label
               htmlFor='description'

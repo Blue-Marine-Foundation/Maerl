@@ -20,11 +20,13 @@ export default function OutputCardLogframe({
   canEdit = false,
   output,
   projectId,
+  existingCodes = [],
 }: {
   /** Enables the Add Output and Edit Output buttons*/
   canEdit?: boolean;
   output: Output | null;
   projectId: number;
+  existingCodes?: string[];
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(true);
@@ -156,6 +158,7 @@ export default function OutputCardLogframe({
               onClose={() => setIsOutputDialogOpen(false)}
               output={output}
               projectId={projectId}
+              existingCodes={existingCodes}
             />
             <OutputActivityForm
               isOpen={isActivityDialogOpen}
