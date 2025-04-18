@@ -1,18 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { upsertOutcome } from './server-actions';
 import { Outcome } from '@/utils/types';
 import CalloutCard from './callout-card';
 import { logframeText } from './logframe-text';
+import { Badge } from '../ui/badge';
 
 interface OutcomeFormProps {
   isOpen: boolean;
   onClose: () => void;
   outcome: Outcome | null;
   projectId: number;
+  existingCodes?: string[];
 }
 
 export default function OutcomeForm({
@@ -20,9 +22,29 @@ export default function OutcomeForm({
   onClose,
   outcome,
   projectId,
+  existingCodes = [],
 }: OutcomeFormProps) {
   const [description, setDescription] = useState(outcome?.description || '');
+  const [code, setCode] = useState(outcome?.code || '');
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setDescription(outcome?.description || '');
+    if (!outcome) {
+      const numericCodes = existingCodes
+        .filter((c) => typeof c === 'string' && c.startsWith('OC.'))
+        .map((c) => {
+          const n = parseInt(c.slice(3));
+          return isNaN(n) ? null : n;
+        })
+        .filter((n): n is number => n !== null);
+      let nextNum = 0;
+      while (numericCodes.includes(nextNum)) nextNum++;
+      setCode(`OC.${nextNum}`);
+    } else {
+      setCode(outcome.code || '');
+    }
+  }, [outcome, existingCodes]);
 
   const mutation = useMutation({
     mutationFn: (newOutcome: Partial<Outcome>) => upsertOutcome(newOutcome),
@@ -38,7 +60,7 @@ export default function OutcomeForm({
       id: outcome?.id,
       project_id: projectId,
       description,
-      code: outcome?.code || 'OC.0',
+      code,
     });
   };
 
@@ -49,6 +71,10 @@ export default function OutcomeForm({
           <DialogTitle>{outcome ? 'Edit Outcome' : 'Add Outcome'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <div className='mb-1 flex items-center gap-2 text-sm font-medium'>
+            <span>Outcome code</span>
+            <Badge className='text-base'>{code}</Badge>
+          </div>
           <div>
             <label
               htmlFor='description'

@@ -47,6 +47,7 @@ export default function OutcomeCardLogframe({
             onClose={() => setIsOutcomeDialogOpen(false)}
             outcome={outcome}
             projectId={projectId}
+            existingCodes={outcomes?.map((o) => o.code) || []}
           />
         </FeatureCardLogframe>
       )}
@@ -108,6 +109,7 @@ export default function OutcomeCardLogframe({
               onClose={() => setIsOutcomeDialogOpen(false)}
               outcome={outcome}
               projectId={projectId}
+              existingCodes={outcomes?.map((o) => o.code) || []}
             />
           </FeatureCardLogframe>
         </>

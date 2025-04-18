@@ -7,6 +7,7 @@ import { ImpactIndicator, OutcomeMeasurable } from '@/utils/types';
 import { upsertOutcomeMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '../impact-indicators/impact-indicator-select';
 import CalloutCard from './callout-card';
+import { Badge } from '../ui/badge';
 
 interface OutcomeMeasurableFormProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface OutcomeMeasurableFormProps {
   measurable: OutcomeMeasurable | null;
   outcomeId: number;
   projectId: number;
+  existingCodes?: string[];
 }
 
 export default function OutcomeMeasurableForm({
@@ -22,6 +24,7 @@ export default function OutcomeMeasurableForm({
   measurable,
   outcomeId,
   projectId,
+  existingCodes = [],
 }: OutcomeMeasurableFormProps) {
   // Initialize state with measurable values if editing
   const [description, setDescription] = useState(measurable?.description || '');
@@ -33,6 +36,7 @@ export default function OutcomeMeasurableForm({
   const [impactIndicatorId, setImpactIndicatorId] = useState<number | null>(
     measurable?.impact_indicator_id || null,
   );
+  const [code, setCode] = useState(measurable?.code || '');
 
   const [selectedIndicator, setSelectedIndicator] =
     useState<ImpactIndicator | null>(null);
@@ -44,7 +48,32 @@ export default function OutcomeMeasurableForm({
     setAssumptions(measurable?.assumptions || '');
     setTarget(measurable?.target?.toString() || '');
     setImpactIndicatorId(measurable?.impact_indicator_id || null);
-  }, [measurable]);
+    // Auto-assign code for new measurable
+    if (!measurable) {
+      // Try to get the outcome code prefix (OC.x)
+      let outcomeCode = '';
+      if (existingCodes.length > 0) {
+        // Use the first code as a template
+        const match = existingCodes[0]?.match(/^(OC\.\d+)\./);
+        if (match) outcomeCode = match[1];
+      }
+      if (!outcomeCode) outcomeCode = `OC.${outcomeId}`;
+      // Find all y's for this outcome
+      const yNumbers = existingCodes
+        .filter((c) => typeof c === 'string' && c.startsWith(`${outcomeCode}.`))
+        .map((c) => {
+          const parts = c.split('.');
+          const n = parseInt(parts[2]);
+          return isNaN(n) ? null : n;
+        })
+        .filter((n): n is number => n !== null);
+      let nextY = 1;
+      while (yNumbers.includes(nextY)) nextY++;
+      setCode(`${outcomeCode}.${nextY}`);
+    } else {
+      setCode(measurable.code || '');
+    }
+  }, [measurable, existingCodes, outcomeId]);
 
   const queryClient = useQueryClient();
 
@@ -65,7 +94,7 @@ export default function OutcomeMeasurableForm({
     mutation.mutate({
       id: measurable?.id,
       assumptions,
-      code: measurable?.code,
+      code,
       description,
       impact_indicator_id: impactIndicatorId,
       project_id: projectId,
@@ -83,6 +112,10 @@ export default function OutcomeMeasurableForm({
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <div className='mb-1 flex items-center gap-2 text-sm font-medium'>
+            <span>Indicator code</span>
+            <Badge className='text-base'>{code}</Badge>
+          </div>
           <div>
             <label
               htmlFor='description'

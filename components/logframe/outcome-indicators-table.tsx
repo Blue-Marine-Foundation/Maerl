@@ -184,6 +184,7 @@ export default function OutcomeIndicatorsTable({
         measurable={selectedMeasurable}
         outcomeId={outcomeId}
         projectId={projectId}
+        existingCodes={measurables.map((m) => m.code)}
       />
     </>
   );
