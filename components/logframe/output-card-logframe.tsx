@@ -78,13 +78,22 @@ export default function OutputCardLogframe({
                 </div>
                 <p className='max-w-prose text-sm'>{output.description}</p>
               </div>
-              {canEdit && (
-                <ActionButton
-                  action='edit'
-                  onClick={() => setIsOutputDialogOpen(true)}
-                  className='border-foreground/80 text-sm hover:bg-foreground/10'
-                />
-              )}
+              <div className='flex items-center gap-2'>
+                {canEdit && (
+                  <ActionButton
+                    action='edit'
+                    onClick={() => setIsOutputDialogOpen(true)}
+                    className='border-foreground/80 text-sm hover:bg-foreground/10'
+                  />
+                )}
+                {canEdit && (
+                  <ActionButton
+                    action='archive'
+                    onClick={() => alert('Archive')}
+                    className='border-foreground/80 text-sm hover:bg-foreground/10'
+                  />
+                )}
+              </div>
             </div>
           </div>
           <div className='px-4'>
