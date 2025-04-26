@@ -88,6 +88,7 @@ export interface Output {
   code: string;
   description: string;
   status: string;
+  archived: boolean;
   output_measurables?: OutputMeasurable[];
   activities?: OutputActivity[];
 }

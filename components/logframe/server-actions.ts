@@ -348,11 +348,11 @@ export const archiveOutput = async (
 ): Promise<ArchiveOutputResponse> => {
   const supabase = await createClient();
 
-  // Update output status to archived
+  // Set output as archived
   const { data, error } = await supabase
     .from('outputs')
     .update({
-      status: 'Archived',
+      archived: true,
       last_updated: new Date().toISOString(),
     })
     .eq('id', outputId)
@@ -384,11 +384,11 @@ export const unarchiveOutput = async (
 ): Promise<ArchiveOutputResponse> => {
   const supabase = await createClient();
 
-  // Update output status to not archived
+  // Set output as not archived
   const { data, error } = await supabase
     .from('outputs')
     .update({
-      status: 'Not started',
+      archived: false,
       last_updated: new Date().toISOString(),
     })
     .eq('id', outputId)

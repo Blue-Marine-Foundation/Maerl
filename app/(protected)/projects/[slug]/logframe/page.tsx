@@ -84,7 +84,7 @@ export default function LogframePage() {
         </div>
         <div className='flex flex-col gap-8'>
           {allOutputs
-            .filter((output) => output.archived !== false)
+            .filter((output) => !output.archived)
             .map((output) => (
               <div key={output.id} id={`output-${output.id}`}>
                 <OutputCardLogframe

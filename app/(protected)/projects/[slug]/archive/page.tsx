@@ -28,18 +28,27 @@ export default function TheoryOfChangePage() {
       (a, b) =>
         extractOutputCodeNumber(a.code) - extractOutputCodeNumber(b.code),
     )
-    .filter((output) => !output.code.startsWith('U'));
+    .filter(
+      (output) => !output.code.startsWith('U') && output.archived === true,
+    );
+
   const projectId = data?.data?.id;
 
   console.log(outputs);
 
   return (
-    <div className='-mt-4 flex w-full flex-col text-sm'>
+    <div className='flex w-full flex-col text-sm'>
+      <h2 className='mb-8 text-xl font-semibold'>Archived outputs</h2>
       {outputs.map((output) => (
         <div key={output.id} id={`output-${output.id}`}>
           <OutputCardLogframe output={output} projectId={projectId} canEdit />
         </div>
       ))}
+      {outputs.length === 0 && (
+        <div className='rounded-md border p-4 py-12 text-center text-sm text-muted-foreground'>
+          No archived outputs for this project
+        </div>
+      )}
     </div>
   );
 }

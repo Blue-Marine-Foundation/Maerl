@@ -138,14 +138,14 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                {canEdit && output?.status !== 'Archived' && (
+                {canEdit && !output?.archived && (
                   <ActionButton
                     action='archive'
                     onClick={() => setIsArchiveDialogOpen(true)}
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                {canEdit && output?.status === 'Archived' && (
+                {canEdit && output?.archived && (
                   <ActionButton
                     action='unarchive'
                     onClick={() => unarchiveMutation.mutate()}
