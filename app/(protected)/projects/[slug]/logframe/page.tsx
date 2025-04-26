@@ -83,15 +83,17 @@ export default function LogframePage() {
           )}
         </div>
         <div className='flex flex-col gap-8'>
-          {allOutputs.map((output) => (
-            <div key={output.id} id={`output-${output.id}`}>
-              <OutputCardLogframe
-                output={output}
-                projectId={projectId}
-                canEdit
-              />
-            </div>
-          ))}
+          {allOutputs
+            .filter((output) => output.archived !== false)
+            .map((output) => (
+              <div key={output.id} id={`output-${output.id}`}>
+                <OutputCardLogframe
+                  output={output}
+                  projectId={projectId}
+                  canEdit
+                />
+              </div>
+            ))}
           {allOutputs.length > 0 && (
             <div className='mt-4'>
               <AddOutputButton
