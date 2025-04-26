@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/utils/cn';
 
 interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  action?: 'edit' | 'add' | 'archive';
+  action?: 'edit' | 'add' | 'archive' | 'unarchive';
   variant?: 'default' | 'icon';
   label?: string;
 }
@@ -40,6 +40,12 @@ export default function ActionButton({
         <>
           <Archive className='h-3 w-3' />
           {variant === 'default' && (label || 'Archive')}
+        </>
+      )}
+      {action === 'unarchive' && (
+        <>
+          <Archive className='h-3 w-3' />
+          {variant === 'default' && (label || 'Unarchive')}
         </>
       )}
     </button>

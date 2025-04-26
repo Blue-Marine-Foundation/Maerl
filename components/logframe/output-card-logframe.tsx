@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Output, OutputActivity } from '@/utils/types';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
@@ -15,6 +16,15 @@ import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
 import OutputActivitiesList from './output-activities-list';
 import { cn } from '@/utils/cn';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { archiveOutput, unarchiveOutput } from './server-actions';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -32,14 +42,56 @@ export default function OutputCardLogframe({
   const [isTableExpanded, setIsTableExpanded] = useState(true);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(false);
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+  const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] =
     useState<OutputActivity | null>(null);
+  const [archiveError, setArchiveError] = useState<string | null>(null);
+
+  const queryClient = useQueryClient();
 
   const activities = output?.activities?.sort(
     (a, b) =>
       extractOutputActivityCodeNumber(a.activity_code) -
       extractOutputActivityCodeNumber(b.activity_code),
   );
+
+  const archiveMutation = useMutation({
+    mutationFn: async () => {
+      if (!output?.id) return;
+      const response = await archiveOutput(output.id, projectId);
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['logframe'] });
+      queryClient.invalidateQueries({ queryKey: ['unassigned-outputs'] });
+      setIsArchiveDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      setArchiveError(error.message || 'Failed to archive output');
+    },
+  });
+
+  const unarchiveMutation = useMutation({
+    mutationFn: async () => {
+      if (!output?.id) return;
+      const response = await unarchiveOutput(output.id, projectId);
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['logframe'] });
+      queryClient.invalidateQueries({ queryKey: ['unassigned-outputs'] });
+      setIsArchiveDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      setArchiveError(error.message || 'Failed to unarchive output');
+    },
+  });
 
   return (
     <div className='relative flex flex-col gap-8'>
@@ -86,10 +138,17 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                {canEdit && (
+                {canEdit && output?.status !== 'Archived' && (
                   <ActionButton
                     action='archive'
-                    onClick={() => alert('Archive')}
+                    onClick={() => setIsArchiveDialogOpen(true)}
+                    className='border-foreground/80 text-sm hover:bg-foreground/10'
+                  />
+                )}
+                {canEdit && output?.status === 'Archived' && (
+                  <ActionButton
+                    action='unarchive'
+                    onClick={() => unarchiveMutation.mutate()}
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
@@ -181,6 +240,43 @@ export default function OutputCardLogframe({
               projectId={projectId}
               output={output}
             />
+
+            <Dialog
+              open={isArchiveDialogOpen}
+              onOpenChange={setIsArchiveDialogOpen}
+            >
+              <DialogContent className='sm:max-w-md'>
+                <DialogHeader>
+                  <DialogTitle>Archive Output</DialogTitle>
+                </DialogHeader>
+                <div className='py-4'>
+                  <p>Are you sure you want to archive this output?</p>
+                  <p className='mt-2 text-sm text-muted-foreground'>
+                    This will mark the output as archived and change its status.
+                  </p>
+                  {archiveError && (
+                    <p className='mt-2 text-sm text-destructive'>
+                      {archiveError}
+                    </p>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant='outline'
+                    onClick={() => setIsArchiveDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant='destructive'
+                    onClick={() => archiveMutation.mutate()}
+                    disabled={archiveMutation.isPending}
+                  >
+                    {archiveMutation.isPending ? 'Archiving...' : 'Archive'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       )}

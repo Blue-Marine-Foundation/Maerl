@@ -335,3 +335,81 @@ export const upsertOutputActivity = async (
   if (error) throw error;
   return data;
 };
+
+type ArchiveOutputResponse = {
+  success: boolean;
+  data?: Output;
+  error?: string;
+};
+
+export const archiveOutput = async (
+  outputId: number,
+  projectId: number,
+): Promise<ArchiveOutputResponse> => {
+  const supabase = await createClient();
+
+  // Update output status to archived
+  const { data, error } = await supabase
+    .from('outputs')
+    .update({
+      status: 'Archived',
+      last_updated: new Date().toISOString(),
+    })
+    .eq('id', outputId)
+    .select()
+    .single();
+
+  if (error) {
+    return { success: false, error: 'Failed to archive output.' };
+  }
+
+  // Update project last_updated timestamp
+  const { data: updatedProject, error: projectError } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (projectError) {
+    return { success: false, error: 'Failed to update project timestamp.' };
+  }
+
+  return { success: true, data };
+};
+
+export const unarchiveOutput = async (
+  outputId: number,
+  projectId: number,
+): Promise<ArchiveOutputResponse> => {
+  const supabase = await createClient();
+
+  // Update output status to not archived
+  const { data, error } = await supabase
+    .from('outputs')
+    .update({
+      status: 'Not started',
+      last_updated: new Date().toISOString(),
+    })
+    .eq('id', outputId)
+    .select()
+    .single();
+
+  if (error) {
+    return { success: false, error: 'Failed to unarchive output.' };
+  }
+
+  // Update project last_updated timestamp
+  const { data: updatedProject, error: projectError } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (projectError) {
+    return { success: false, error: 'Failed to update project timestamp.' };
+  }
+
+  return { success: true, data };
+};
