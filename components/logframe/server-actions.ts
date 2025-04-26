@@ -413,3 +413,75 @@ export const unarchiveOutput = async (
 
   return { success: true, data };
 };
+
+export const archiveOutputMeasurable = async (
+  measurableId: number,
+  projectId: number,
+): Promise<ArchiveOutputResponse> => {
+  const supabase = await createClient();
+
+  // Set measurable as archived
+  const { data, error } = await supabase
+    .from('output_measurables')
+    .update({
+      archived: true,
+      last_updated: new Date().toISOString(),
+    })
+    .eq('id', measurableId)
+    .select()
+    .single();
+
+  if (error) {
+    return { success: false, error: 'Failed to archive measurable.' };
+  }
+
+  // Update project last_updated timestamp
+  const { data: updatedProject, error: projectError } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (projectError) {
+    return { success: false, error: 'Failed to update project timestamp.' };
+  }
+
+  return { success: true, data };
+};
+
+export const unarchiveOutputMeasurable = async (
+  measurableId: number,
+  projectId: number,
+): Promise<ArchiveOutputResponse> => {
+  const supabase = await createClient();
+
+  // Set measurable as not archived
+  const { data, error } = await supabase
+    .from('output_measurables')
+    .update({
+      archived: false,
+      last_updated: new Date().toISOString(),
+    })
+    .eq('id', measurableId)
+    .select()
+    .single();
+
+  if (error) {
+    return { success: false, error: 'Failed to unarchive measurable.' };
+  }
+
+  // Update project last_updated timestamp
+  const { data: updatedProject, error: projectError } = await supabase
+    .from('projects')
+    .update({ last_updated: new Date().toISOString() })
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (projectError) {
+    return { success: false, error: 'Failed to update project timestamp.' };
+  }
+
+  return { success: true, data };
+};

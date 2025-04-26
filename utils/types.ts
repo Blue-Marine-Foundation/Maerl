@@ -114,6 +114,7 @@ export interface OutputMeasurable {
   /** sum of the value of all updates matching the relevant output_measurable */
   value?: number | null;
   verification: string;
+  archived: boolean;
 }
 
 export type Update = {
