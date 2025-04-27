@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { cn } from '@/utils/cn';
 import ActionButton from '@/components/ui/action-button';
 import {
   archiveOutput,
@@ -15,10 +16,10 @@ import {
   DialogTitle,
 } from '../ui/dialog';
 import { Button } from '../ui/button';
-
+import { Output, OutputMeasurable } from '@/utils/types';
 interface ArchiveToggleProps {
   outputType: 'output' | 'output_indicator';
-  data: any; // Use appropriate type for output or output_indicator
+  data: Output | OutputMeasurable;
 }
 
 export default function ArchiveToggle({
@@ -33,19 +34,18 @@ export default function ArchiveToggle({
     mutationFn: async () => {
       console.log('Archiving:', outputType, data);
       if (outputType === 'output') {
-        return archiveOutput(data.id, data.projectId);
+        return archiveOutput(data.id!, data.project_id);
       } else {
-        return archiveOutputMeasurable(data.id, data.projectId);
+        return archiveOutputMeasurable(data.id!, data.project_id);
       }
     },
-    onSuccess: () => {
-      console.log('Archive successful:', outputType, data);
-      queryClient.invalidateQueries({ queryKey: ['logframe'] });
-      setIsDialogOpen(false);
-    },
-    onError: (error: Error) => {
-      console.error('Archive error:', error);
-      setError(error.message || 'Failed to archive');
+    onSettled: (response) => {
+      if (response?.success) {
+        queryClient.invalidateQueries({ queryKey: ['logframe'] });
+        setIsDialogOpen(false);
+      } else {
+        setError(response?.error || 'An error occurred');
+      }
     },
   });
 
@@ -53,9 +53,9 @@ export default function ArchiveToggle({
     mutationFn: async () => {
       console.log('Unarchiving:', outputType, data);
       if (outputType === 'output') {
-        return unarchiveOutput(data.id, data.projectId);
+        return unarchiveOutput(data.id!, data.project_id);
       } else {
-        return unarchiveOutputMeasurable(data.id, data.projectId);
+        return unarchiveOutputMeasurable(data.id!, data.project_id);
       }
     },
     onSuccess: (response) => {
@@ -79,13 +79,13 @@ export default function ArchiveToggle({
       <ActionButton
         action={data.archived ? 'unarchive' : 'archive'}
         onClick={() => setIsDialogOpen(true)}
-        className='border-foreground/80 text-sm hover:bg-foreground/10'
+        className={cn(
+          'border text-sm hover:bg-foreground/10',
+          outputType === 'output' && 'border-foreground/80',
+        )}
+        variant={outputType === 'output' ? 'default' : 'icon'}
       />
-      {error && (
-        <div className='rounded-md border border-red-800 bg-red-600/10 px-4 py-2 text-sm'>
-          <p>{error}</p>
-        </div>
-      )}
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
@@ -94,16 +94,19 @@ export default function ArchiveToggle({
               {outputType === 'output' ? 'Output' : 'Output Indicator'}
             </DialogTitle>
           </DialogHeader>
-          <div className='py-4'>
+          <div className='space-y-4 py-4'>
             <p>
               Are you sure you want to {data.archived ? 'unarchive' : 'archive'}{' '}
               this {outputType === 'output' ? 'output' : 'output indicator'}?
             </p>
-            <p className='mt-2 text-sm text-muted-foreground'>
-              This will mark the{' '}
-              {outputType === 'output' ? 'output' : 'output indicator'} as{' '}
-              {data.archived ? 'unarchived' : 'archived'} and change its status.
-            </p>
+            {error && (
+              <div className='rounded-md border border-red-800 bg-red-600/10 px-4 py-2 text-sm'>
+                <p>
+                  Error attempting to {data.archived ? 'unarchive' : 'archive'}:{' '}
+                  {error}
+                </p>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant='outline' onClick={() => setIsDialogOpen(false)}>

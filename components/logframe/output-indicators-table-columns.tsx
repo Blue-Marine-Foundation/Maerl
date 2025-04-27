@@ -17,7 +17,6 @@ export const createColumns = (
   toggleRow: (rowId: string) => void,
   expandedRows: Record<string, boolean>,
   handleEditMeasurable: (measurable: OutputMeasurable) => void,
-  handleArchiveMeasurable: (measurable: OutputMeasurable) => void,
   projectId: string,
 ): ColumnDef<OutputMeasurable, any>[] => [
   {
