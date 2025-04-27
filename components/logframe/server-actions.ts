@@ -432,7 +432,11 @@ export const archiveOutputMeasurable = async (
     .single();
 
   if (error) {
-    return { success: false, error: 'Failed to archive measurable.' };
+    console.error('Error archiving measurable:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to archive measurable.',
+    };
   }
 
   // Update project last_updated timestamp
@@ -444,7 +448,11 @@ export const archiveOutputMeasurable = async (
     .single();
 
   if (projectError) {
-    return { success: false, error: 'Failed to update project timestamp.' };
+    console.error('Error updating project timestamp:', projectError);
+    return {
+      success: false,
+      error: projectError.message || 'Failed to update project timestamp.',
+    };
   }
 
   return { success: true, data };
@@ -468,7 +476,11 @@ export const unarchiveOutputMeasurable = async (
     .single();
 
   if (error) {
-    return { success: false, error: 'Failed to unarchive measurable.' };
+    console.error('Error unarchiving measurable:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to unarchive measurable.',
+    };
   }
 
   // Update project last_updated timestamp
@@ -480,7 +492,11 @@ export const unarchiveOutputMeasurable = async (
     .single();
 
   if (projectError) {
-    return { success: false, error: 'Failed to update project timestamp.' };
+    console.error('Error updating project timestamp:', projectError);
+    return {
+      success: false,
+      error: projectError.message || 'Failed to update project timestamp.',
+    };
   }
 
   return { success: true, data };

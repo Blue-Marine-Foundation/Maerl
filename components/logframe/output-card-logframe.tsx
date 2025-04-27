@@ -25,6 +25,7 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { archiveOutput, unarchiveOutput } from './server-actions';
+import ArchiveToggle from './archive-toggle';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -140,20 +141,7 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                {canEdit && !output?.archived && (
-                  <ActionButton
-                    action='archive'
-                    onClick={() => setIsArchiveDialogOpen(true)}
-                    className='border-foreground/80 text-sm hover:bg-foreground/10'
-                  />
-                )}
-                {canEdit && output?.archived && (
-                  <ActionButton
-                    action='unarchive'
-                    onClick={() => unarchiveMutation.mutate()}
-                    className='border-foreground/80 text-sm hover:bg-foreground/10'
-                  />
-                )}
+                <ArchiveToggle outputType='output' data={output} />
               </div>
             </div>
           </div>
