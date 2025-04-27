@@ -56,16 +56,7 @@ export default function OutcomeIndicatorsTable({
       header: 'Measurable Indicator',
       size: 400,
       cell: ({ row }: { row: any }) => (
-        <div className='flex flex-row gap-4'>
-          <div className='mt-1'>
-            <ActionButton
-              action='edit'
-              variant='icon'
-              onClick={() => handleEditMeasurable(row.original)}
-            />
-          </div>
-          <p className='text-sm'>{row.getValue('description')}</p>
-        </div>
+        <p className='text-sm'>{row.getValue('description')}</p>
       ),
     },
     {
@@ -81,12 +72,10 @@ export default function OutcomeIndicatorsTable({
     {
       accessorKey: 'target',
       header: 'Target',
-      size: 70,
     },
     {
       accessorKey: 'impact_indicator_id',
       header: 'Impact Indicator',
-      size: 70,
       cell: ({ row }: { row: any }) => {
         return (
           <p
@@ -97,6 +86,19 @@ export default function OutcomeIndicatorsTable({
           </p>
         );
       },
+    },
+    {
+      accessorKey: 'actions',
+      header: '',
+      size: 70,
+      cell: ({ row }: { row: any }) => (
+        <ActionButton
+          action='edit'
+          variant='icon'
+          className='-mt-1'
+          onClick={() => handleEditMeasurable(row.original)}
+        />
+      ),
     },
   ];
 
