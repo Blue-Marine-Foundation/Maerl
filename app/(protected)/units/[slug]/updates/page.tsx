@@ -115,6 +115,7 @@ export default async function UnitUpdatesPage({
         target: update.output_measurable_target,
         unit: update.output_measurable_unit,
         verification: '',
+        archived: false,
       },
       impact_indicators: {
         id: update.impact_indicator_id,
