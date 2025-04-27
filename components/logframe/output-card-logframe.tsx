@@ -31,15 +31,17 @@ export default function OutputCardLogframe({
   output,
   projectId,
   existingCodes = [],
+  showIndicator = true,
 }: {
   /** Enables the Add Output and Edit Output buttons*/
   canEdit?: boolean;
   output: Output | null;
   projectId: number;
   existingCodes?: string[];
+  showIndicator?: boolean;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
-  const [isTableExpanded, setIsTableExpanded] = useState(true);
+  const [isTableExpanded, setIsTableExpanded] = useState(showIndicator);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(false);
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
@@ -155,7 +157,7 @@ export default function OutputCardLogframe({
               </div>
             </div>
           </div>
-          <div className='px-4'>
+          <div className='px-4 pb-4'>
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full justify-between gap-8 bg-card'></div>
               <div className='w-full'>
