@@ -14,14 +14,6 @@ import { Badge, BadgeProps } from '../ui/badge';
 import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
 import OutputActivitiesList from './output-activities-list';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
 import ArchiveToggle from './archive-toggle';
 
 export default function OutputCardLogframe({
@@ -42,10 +34,8 @@ export default function OutputCardLogframe({
   const [isTableExpanded, setIsTableExpanded] = useState(showIndicator);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(false);
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
-  const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] =
     useState<OutputActivity | null>(null);
-  const [archiveError, setArchiveError] = useState<string | null>(null);
 
   const activities = output?.activities?.sort(
     (a, b) =>
