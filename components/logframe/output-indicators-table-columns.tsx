@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import ActionButton from '../ui/action-button';
 import UpdateForm from '@/components/updates/update-form';
-import ArchiveToggle from './archive-toggle';
+import ArchiveToggle from '../archive-toggle/archive-toggle';
 
 export const createColumns = (
   toggleRow: (rowId: string) => void,

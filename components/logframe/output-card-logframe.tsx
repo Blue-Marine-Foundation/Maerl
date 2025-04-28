@@ -14,7 +14,7 @@ import { Badge, BadgeProps } from '../ui/badge';
 import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
 import OutputActivitiesList from './output-activities-list';
-import ArchiveToggle from './archive-toggle';
+import ArchiveToggle from '@/components/archive-toggle/archive-toggle';
 
 export default function OutputCardLogframe({
   canEdit = false,
@@ -36,6 +36,8 @@ export default function OutputCardLogframe({
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] =
     useState<OutputActivity | null>(null);
+
+  const measurables = output?.output_measurables?.filter((m) => !m.archived);
 
   const activities = output?.activities?.sort(
     (a, b) =>
@@ -120,7 +122,7 @@ export default function OutputCardLogframe({
                   }`}
                 >
                   <OutputIndicatorsDetailsTable
-                    measurables={output?.output_measurables || []}
+                    measurables={measurables || []}
                     outputId={output.id}
                     projectId={projectId}
                     outputCode={output.code}
