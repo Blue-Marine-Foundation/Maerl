@@ -90,6 +90,7 @@ export default function LogframePage() {
                 <OutputCardLogframe
                   output={output}
                   projectId={projectId}
+                  projectSlug={slug as string}
                   canEdit
                 />
               </div>

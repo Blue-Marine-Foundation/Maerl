@@ -17,7 +17,7 @@ interface FlatOutputIndicator extends OutputMeasurable {
 
 export default function ArchivedOutputIndicators({ slug }: { slug: string }) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['archived-output-indicators', slug],
+    queryKey: ['archived-output-indicators'],
     queryFn: () => getArchivedOutputIndicators(slug as string),
   });
 

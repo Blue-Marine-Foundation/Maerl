@@ -17,15 +17,20 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Output, OutputMeasurable } from '@/utils/types';
+import { useParams } from 'next/navigation';
 interface ArchiveToggleProps {
   outputType: 'output' | 'output_indicator';
   data: Output | OutputMeasurable;
+  invalidateQueryKey: unknown[];
 }
 
 export default function ArchiveToggle({
   outputType,
   data,
+  invalidateQueryKey,
 }: ArchiveToggleProps) {
+  const slug = useParams().slug as string;
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -41,7 +46,10 @@ export default function ArchiveToggle({
     },
     onSettled: (response) => {
       if (response?.success) {
-        queryClient.invalidateQueries({ queryKey: ['logframe'] });
+        queryClient.invalidateQueries({
+          queryKey: ['logframe', slug],
+          exact: false,
+        });
         setIsDialogOpen(false);
       } else {
         setError(response?.error || 'An error occurred');
@@ -61,7 +69,13 @@ export default function ArchiveToggle({
     onSuccess: (response) => {
       if (response.success) {
         console.log('Unarchive successful:', outputType, data);
-        queryClient.invalidateQueries({ queryKey: ['logframe'] });
+        queryClient.invalidateQueries({
+          queryKey:
+            outputType === 'output'
+              ? ['logframe', slug]
+              : ['archived-output-indicators'],
+          exact: false,
+        });
         setIsDialogOpen(false);
       } else {
         console.error('Unarchive failed:', response.error);

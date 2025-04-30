@@ -20,6 +20,7 @@ export default function OutputCardLogframe({
   canEdit = false,
   output,
   projectId,
+  projectSlug,
   existingCodes = [],
   showIndicator = true,
 }: {
@@ -27,6 +28,7 @@ export default function OutputCardLogframe({
   canEdit?: boolean;
   output: Output | null;
   projectId: number;
+  projectSlug: string;
   existingCodes?: string[];
   showIndicator?: boolean;
 }) {
@@ -90,7 +92,11 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                <ArchiveToggle outputType='output' data={output} />
+                <ArchiveToggle
+                  outputType='output'
+                  data={output}
+                  invalidateQueryKey={['logframe', projectSlug]}
+                />
               </div>
             </div>
           </div>

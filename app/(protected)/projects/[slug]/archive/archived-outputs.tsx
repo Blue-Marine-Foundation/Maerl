@@ -43,12 +43,13 @@ export default function ArchivedOutputs({ slug }: { slug: string }) {
   }
 
   return (
-    <div className='flex w-full flex-col text-sm'>
+    <div className='space-y-4'>
       {outputs.map((output) => (
         <div key={output.id} id={`output-${output.id}`}>
           <OutputCardLogframe
             output={output}
             projectId={projectId}
+            projectSlug={slug as string}
             canEdit
             showIndicator={false}
           />
