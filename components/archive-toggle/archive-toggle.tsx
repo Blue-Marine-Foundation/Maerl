@@ -18,16 +18,15 @@ import {
 import { Button } from '../ui/button';
 import { Output, OutputMeasurable } from '@/utils/types';
 import { useParams } from 'next/navigation';
+
 interface ArchiveToggleProps {
   outputType: 'output' | 'output_indicator';
   data: Output | OutputMeasurable;
-  invalidateQueryKey: unknown[];
 }
 
 export default function ArchiveToggle({
   outputType,
   data,
-  invalidateQueryKey,
 }: ArchiveToggleProps) {
   const slug = useParams().slug as string;
 
@@ -35,9 +34,30 @@ export default function ArchiveToggle({
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
+  const invalidateRelevantQueries = () => {
+    if (outputType === 'output') {
+      queryClient.invalidateQueries({
+        queryKey: ['logframe', slug],
+        exact: false,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['unassigned-outputs', slug],
+        exact: false,
+      });
+    } else {
+      queryClient.invalidateQueries({
+        queryKey: ['logframe', slug],
+        exact: false,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['archived-output-indicators'],
+        exact: false,
+      });
+    }
+  };
+
   const archiveMutation = useMutation({
     mutationFn: async () => {
-      console.log('Archiving:', outputType, data);
       if (outputType === 'output') {
         return archiveOutput(data.id!, data.project_id);
       } else {
@@ -46,10 +66,7 @@ export default function ArchiveToggle({
     },
     onSettled: (response) => {
       if (response?.success) {
-        queryClient.invalidateQueries({
-          queryKey: ['logframe', slug],
-          exact: false,
-        });
+        invalidateRelevantQueries();
         setIsDialogOpen(false);
       } else {
         setError(response?.error || 'An error occurred');
@@ -59,7 +76,6 @@ export default function ArchiveToggle({
 
   const unarchiveMutation = useMutation({
     mutationFn: async () => {
-      console.log('Unarchiving:', outputType, data);
       if (outputType === 'output') {
         return unarchiveOutput(data.id!, data.project_id);
       } else {
@@ -68,22 +84,13 @@ export default function ArchiveToggle({
     },
     onSuccess: (response) => {
       if (response.success) {
-        console.log('Unarchive successful:', outputType, data);
-        queryClient.invalidateQueries({
-          queryKey:
-            outputType === 'output'
-              ? ['logframe', slug]
-              : ['archived-output-indicators'],
-          exact: false,
-        });
+        invalidateRelevantQueries();
         setIsDialogOpen(false);
       } else {
-        console.error('Unarchive failed:', response.error);
         setError(response.error || 'An error occurred');
       }
     },
     onError: (error: Error) => {
-      console.error('Unarchive error:', error);
       setError(error.message || 'Failed to unarchive');
     },
   });

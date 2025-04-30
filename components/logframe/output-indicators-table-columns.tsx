@@ -116,11 +116,7 @@ export const createColumns = (
           variant='icon'
           onClick={() => handleEditMeasurable(row.original)}
         />
-        <ArchiveToggle
-          outputType='output_indicator'
-          data={row.original}
-          invalidateQueryKey={['archived-output-indicators']}
-        />
+        <ArchiveToggle outputType='output_indicator' data={row.original} />
       </div>
     ),
   },

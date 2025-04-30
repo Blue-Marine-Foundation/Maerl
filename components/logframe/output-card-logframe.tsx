@@ -92,11 +92,7 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                <ArchiveToggle
-                  outputType='output'
-                  data={output}
-                  invalidateQueryKey={['logframe', projectSlug]}
-                />
+                <ArchiveToggle outputType='output' data={output} />
               </div>
             </div>
           </div>
