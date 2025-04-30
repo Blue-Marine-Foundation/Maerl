@@ -14,26 +14,32 @@ import { Badge, BadgeProps } from '../ui/badge';
 import OutputActivityForm from './output-activity-form';
 import { extractOutputActivityCodeNumber } from './extractOutputActivityCodeNumber';
 import OutputActivitiesList from './output-activities-list';
-import { cn } from '@/utils/cn';
+import ArchiveToggle from '@/components/archive-toggle/archive-toggle';
 
 export default function OutputCardLogframe({
   canEdit = false,
   output,
   projectId,
+  projectSlug,
   existingCodes = [],
+  showIndicator = true,
 }: {
   /** Enables the Add Output and Edit Output buttons*/
   canEdit?: boolean;
   output: Output | null;
   projectId: number;
+  projectSlug: string;
   existingCodes?: string[];
+  showIndicator?: boolean;
 }) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
-  const [isTableExpanded, setIsTableExpanded] = useState(true);
+  const [isTableExpanded, setIsTableExpanded] = useState(showIndicator);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(false);
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] =
     useState<OutputActivity | null>(null);
+
+  const measurables = output?.output_measurables?.filter((m) => !m.archived);
 
   const activities = output?.activities?.sort(
     (a, b) =>
@@ -78,16 +84,19 @@ export default function OutputCardLogframe({
                 </div>
                 <p className='max-w-prose text-sm'>{output.description}</p>
               </div>
-              {canEdit && (
-                <ActionButton
-                  action='edit'
-                  onClick={() => setIsOutputDialogOpen(true)}
-                  className='border-foreground/80 text-sm hover:bg-foreground/10'
-                />
-              )}
+              <div className='flex items-center gap-2'>
+                {canEdit && (
+                  <ActionButton
+                    action='edit'
+                    onClick={() => setIsOutputDialogOpen(true)}
+                    className='border-foreground/80 text-sm hover:bg-foreground/10'
+                  />
+                )}
+                <ArchiveToggle outputType='output' data={output} />
+              </div>
             </div>
           </div>
-          <div className='px-4'>
+          <div className='px-4 pb-4'>
             <div className='flex w-full grow flex-col items-start justify-between gap-6'>
               <div className='flex w-full justify-between gap-8 bg-card'></div>
               <div className='w-full'>
@@ -115,7 +124,7 @@ export default function OutputCardLogframe({
                   }`}
                 >
                   <OutputIndicatorsDetailsTable
-                    measurables={output?.output_measurables || []}
+                    measurables={measurables || []}
                     outputId={output.id}
                     projectId={projectId}
                     outputCode={output.code}

@@ -35,27 +35,26 @@ export default function LogframePage() {
 
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
-  const outputs = [...(data?.data?.outputs || [])]
-    .filter((output) => output.outcome_measurable_id !== null)
-    .sort((a, b) => {
-      const aMatch = a.code?.match(/\.(\d+)$/);
-      const bMatch = b.code?.match(/\.(\d+)$/);
-
-      const aNum = aMatch ? parseInt(aMatch[1]) : 0;
-      const bNum = bMatch ? parseInt(bMatch[1]) : 0;
-
-      return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
-    });
-  const sortedUnassignedOutputs = [
+  const mergedOutputs = [
+    ...(data?.data?.outputs || []),
     ...(unassignedOutputs?.data?.outputs || []),
-  ].sort((a, b) => {
-    const aMatch = a.code?.match(/\.(\d+)$/);
-    const bMatch = b.code?.match(/\.(\d+)$/);
-    const aNum = aMatch ? parseInt(aMatch[1]) : 0;
-    const bNum = bMatch ? parseInt(bMatch[1]) : 0;
-    return isNaN(aNum) || isNaN(bNum) ? 0 : aNum - bNum;
+  ];
+  const uniqueOutputs = Array.from(
+    new Map(mergedOutputs.map((output) => [output.id, output])).values(),
+  );
+  const allOutputs = uniqueOutputs.sort((a, b) => {
+    const getPrefix = (code: string) => code?.split('.')[0] || '';
+    const getNum = (code: string) => {
+      const match = code?.match(/\.(\d+)$/);
+      return match ? parseInt(match[1]) : Infinity;
+    };
+    const prefixA = getPrefix(a.code);
+    const prefixB = getPrefix(b.code);
+    if (prefixA !== prefixB) {
+      return prefixA.localeCompare(prefixB);
+    }
+    return getNum(a.code) - getNum(b.code);
   });
-  const allOutputs = [...outputs, ...sortedUnassignedOutputs];
   const projectId = data?.data?.id;
 
   return (
@@ -83,15 +82,18 @@ export default function LogframePage() {
           )}
         </div>
         <div className='flex flex-col gap-8'>
-          {allOutputs.map((output) => (
-            <div key={output.id} id={`output-${output.id}`}>
-              <OutputCardLogframe
-                output={output}
-                projectId={projectId}
-                canEdit
-              />
-            </div>
-          ))}
+          {allOutputs
+            .filter((output) => !output.archived)
+            .map((output) => (
+              <div key={output.id} id={`output-${output.id}`}>
+                <OutputCardLogframe
+                  output={output}
+                  projectId={projectId}
+                  projectSlug={slug as string}
+                  canEdit
+                />
+              </div>
+            ))}
           {allOutputs.length > 0 && (
             <div className='mt-4'>
               <AddOutputButton

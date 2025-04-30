@@ -28,6 +28,10 @@ export default function ProjectNavigation({ slug }: { slug: string }) {
       name: 'Updates',
       href: `/projects/${slug}/updates`,
     },
+    {
+      name: 'Archive',
+      href: `/projects/${slug}/archive`,
+    },
   ];
 
   return (

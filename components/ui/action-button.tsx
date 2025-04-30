@@ -1,9 +1,9 @@
-import { Pencil, PlusCircle } from 'lucide-react';
+import { Pencil, PlusCircle, Archive } from 'lucide-react';
 import { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/utils/cn';
 
 interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  action?: 'edit' | 'add';
+  action?: 'edit' | 'add' | 'archive' | 'unarchive';
   variant?: 'default' | 'icon';
   label?: string;
 }
@@ -24,15 +24,28 @@ export default function ActionButton({
       )}
       {...props}
     >
-      {action === 'edit' ? (
+      {action === 'add' && (
+        <>
+          <PlusCircle className='h-4 w-4' />
+          {variant === 'default' && (label || 'Add')}
+        </>
+      )}
+      {action === 'edit' && (
         <>
           <Pencil className='h-3 w-3' />
           {variant === 'default' && (label || 'Edit')}
         </>
-      ) : (
+      )}
+      {action === 'archive' && (
         <>
-          <PlusCircle className='h-4 w-4' />
-          {variant === 'default' && (label || 'Add')}
+          <Archive className='h-3 w-3' />
+          {variant === 'default' && (label || 'Archive')}
+        </>
+      )}
+      {action === 'unarchive' && (
+        <>
+          <Archive className='h-3 w-3' />
+          {variant === 'default' && (label || 'Unarchive')}
         </>
       )}
     </button>

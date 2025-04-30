@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import ActionButton from '../ui/action-button';
 import UpdateForm from '@/components/updates/update-form';
+import ArchiveToggle from '../archive-toggle/archive-toggle';
 
 export const createColumns = (
   toggleRow: (rowId: string) => void,
@@ -21,16 +22,7 @@ export const createColumns = (
   {
     accessorKey: 'description',
     header: 'Measurable Indicator',
-    cell: ({ row }) => (
-      <div className='flex flex-row items-start gap-4'>
-        <ActionButton
-          action='edit'
-          variant='icon'
-          onClick={() => handleEditMeasurable(row.original)}
-        />
-        <p className='text-sm'>{row.getValue('description')}</p>
-      </div>
-    ),
+    cell: ({ row }) => <p className='text-sm'>{row.getValue('description')}</p>,
     size: 300,
   },
   {
@@ -68,7 +60,7 @@ export const createColumns = (
     size: 70,
   },
   {
-    id: 'actions',
+    id: 'updates',
     header: '',
     cell: ({ row }) => {
       const measurable = row.original;
@@ -112,5 +104,20 @@ export const createColumns = (
         </div>
       );
     },
+  },
+  {
+    accessorKey: 'actions',
+    header: '',
+    size: 70,
+    cell: ({ row }: { row: any }) => (
+      <div className='flex items-center gap-2 pt-0.5'>
+        <ActionButton
+          action='edit'
+          variant='icon'
+          onClick={() => handleEditMeasurable(row.original)}
+        />
+        <ArchiveToggle outputType='output_indicator' data={row.original} />
+      </div>
+    ),
   },
 ];

@@ -27,11 +27,13 @@ export default function OutputIndicatorsDetailsTable({
   outputId,
   projectId,
   outputCode,
+  showAddButton = true,
 }: {
   measurables: OutputMeasurable[];
   outputId: number;
   projectId: number;
   outputCode: string;
+  showAddButton?: boolean;
 }) {
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
@@ -150,16 +152,18 @@ export default function OutputIndicatorsDetailsTable({
               </TableBody>
             </Table>
           </div>
-          <div className='flex w-full flex-row items-center justify-start'>
-            <ActionButton
-              action='add'
-              label='Add output indicator'
-              onClick={() => {
-                setSelectedMeasurable(null);
-                setIsMeasurableDialogOpen(true);
-              }}
-            />
-          </div>
+          {showAddButton && (
+            <div className='flex w-full flex-row items-center justify-start'>
+              <ActionButton
+                action='add'
+                label='Add output indicator'
+                onClick={() => {
+                  setSelectedMeasurable(null);
+                  setIsMeasurableDialogOpen(true);
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 
