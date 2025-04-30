@@ -3,8 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchLogframe } from '@/components/logframe/server-actions';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
-import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skeleton';
 import OutputCardLogframe from '@/components/logframe/output-card-logframe';
+import { LoadingCard } from '@/components/base-states/base-states';
 
 export default function ArchivedOutputs({ slug }: { slug: string }) {
   // Use this queryFn rather than a specific archived output function because the data is most likely already cached
@@ -14,7 +14,7 @@ export default function ArchivedOutputs({ slug }: { slug: string }) {
   });
 
   if (isLoading) {
-    return <TheoryOfChangeSkeleton />;
+    return <LoadingCard />;
   }
 
   if (error) {

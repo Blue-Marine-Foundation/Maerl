@@ -7,7 +7,7 @@ export async function getArchivedOutputIndicators(slug: string) {
 
   const { data, error } = await supabase
     .from('output_measurables')
-    .select('*, projects!inner(slug)')
+    .select('*, projects!inner(id, name, slug), outputs(*)')
     .eq('archived', true)
     .eq('projects.slug', slug);
 
@@ -15,5 +15,15 @@ export async function getArchivedOutputIndicators(slug: string) {
     throw error;
   }
 
-  return data;
+  const flattenedData = data.map(({ projects, outputs, ...item }) => ({
+    projectId: projects.id,
+    projectName: projects.name,
+    projectSlug: projects.slug,
+    outputId: outputs.id,
+    outputCode: outputs.code,
+    outputDescription: outputs.description,
+    ...item,
+  }));
+
+  return flattenedData;
 }
