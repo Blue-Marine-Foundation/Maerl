@@ -16,7 +16,6 @@ export type UnitUpdate = {
   year: number;
   update_impact_indicator_id: number;
   source: string;
-  original: boolean;
   duplicate: boolean;
   verified: boolean;
   valid: boolean;
@@ -78,7 +77,6 @@ export default async function UnitUpdatesPage({
       year: update.year,
       impact_indicator_id: update.impact_indicator_id,
       source: update.source,
-      original: update.original,
       duplicate: update.duplicate,
       verified: update.verified,
       valid: update.valid,

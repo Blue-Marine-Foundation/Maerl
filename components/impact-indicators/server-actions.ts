@@ -44,7 +44,7 @@ export async function fetchImpactIndicatorUpdates(
     .select(
       '*, projects(slug, name), output_measurables(*), impact_indicators(id, indicator_unit), users(*)',
     )
-    .match({ impact_indicator_id: id, original: true, valid: true })
+    .match({ impact_indicator_id: id, duplicate: false, valid: true })
     .gte('date', fromDate)
     .lte('date', toDate)
     .order('date', { ascending: false });

@@ -8,7 +8,7 @@ export default function ImpactIndicatorsPage() {
       <PageHeading>Impact Indicators</PageHeading>
       <p>
         Summarised values are collated from updates that are{' '}
-        <strong>valid</strong> and <strong>original</strong>. Duplicates and
+        <strong>valid</strong>. Duplicates and
         invalid updates are excluded.
       </p>
       <FeatureCard>

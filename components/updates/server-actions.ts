@@ -33,7 +33,7 @@ export const fetchUpdates = async (
     .match({
       ...(projectId ? { project_id: projectId } : {}),
       valid: true,
-      original: true,
+      duplicate: false,
     })
     .order('date', { ascending: false });
 
@@ -83,7 +83,6 @@ export const upsertUpdate = async (update: Partial<Update>) => {
       year: update.year || new Date().getFullYear(),
       impact_indicator_id: update.impact_indicator_id,
       source: update.source || 'Maerl',
-      original: update.original ?? true,
       duplicate: update.duplicate ?? false,
       verified: update.verified ?? false,
       valid: update.valid ?? true,
