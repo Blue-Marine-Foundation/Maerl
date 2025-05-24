@@ -7,6 +7,7 @@ import {
   isBefore,
   isEqual,
   startOfDay,
+  startOfYear,
   subDays,
 } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -112,7 +113,7 @@ export const useUrlDates = (): UrlDates => {
   }
 
   const defaultTo = endOfDay(new Date());
-  const defaultFrom = startOfDay(subDays(defaultTo, 30));
+  const defaultFrom = startOfDay(startOfYear(defaultTo));
 
   const { from: comparisonFrom, to: comparisonTo } =
     calculateComparisonDateRange(defaultFrom, defaultTo);
