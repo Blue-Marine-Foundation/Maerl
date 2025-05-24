@@ -16,8 +16,7 @@ export default async function Index() {
   }
 
   return (
-    <div className={`max-w-app mx-auto flex w-full flex-col gap-8 py-8`}>
-      <p>Monitoring and evaluation for Blue Marine Foundation</p>
+    <div className="max-w-app mx-auto flex w-full flex-col gap-8 py-8">
       <div className='grid grid-cols-[3fr_6fr] items-start gap-8'>
         <div className='flex flex-col justify-start gap-8'>
           <RecentProjects />
