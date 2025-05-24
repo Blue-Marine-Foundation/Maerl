@@ -56,6 +56,18 @@ export const upsertUpdate = async (update: Partial<Update>) => {
   // Only include posted_by if this is a new update (no id)
   const posted_by = update.id ? undefined : user?.id || null;
 
+  // Debug logging
+  console.log('Debug - Update attempt:', {
+    userId: user?.id,
+    updateData: {
+      id: update.id,
+      project_id: update.project_id,
+      output_measurable_id: update.output_measurable_id,
+      description: update.description,
+      posted_by
+    }
+  });
+
   const { data, error } = await supabase
     .from('updates')
     .upsert({
@@ -80,6 +92,16 @@ export const upsertUpdate = async (update: Partial<Update>) => {
     .single();
 
   if (error) {
+    // Debug logging
+    console.log('Debug - Update error:', {
+      error: {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      },
+      attemptedBy: user?.id
+    });
+    
     // Handle specific error cases
     if (error.code === '42501') { // PostgreSQL permission denied error
       throw new Error('You do not have permission to edit this update. Please contact the M&E team.');
