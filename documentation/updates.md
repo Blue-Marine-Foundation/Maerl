@@ -28,9 +28,43 @@ Reference: [Issue #180](https://github.com/orgs/Blue-Marine-Foundation/projects/
 
 ## Changes in May 2025
 
+### Identification of possible duplicates 
+361 updates were flagged as 
+
+```sql 
+    duplicate = true 
+    AND value IS NOT NULL 
+    AND valid = true 
+    AND original = true 
+    AND verified = true;
+```
+
+And should be double checked. They have been marked as `duplicate = false` and can be identified as `review_note` starting with "Possible duplicate". They were updated with the query:
+
+```sql
+UPDATE updates
+SET 
+    duplicate = false,
+    review_note = CASE 
+        WHEN review_note IS NULL THEN 'Possible duplicate'
+        ELSE 'Possible duplicate - ' || review_note
+    END
+WHERE 
+    duplicate = true 
+    AND value IS NOT NULL 
+    AND valid = true 
+    AND original = true 
+    AND verified = true;
+```
+
 ### Field Changes
 1. **Deprecation of `original` field**
    - Previous entries with `original = false` are now marked as `duplicate = true`
+
+1. **Depreciation of `verification` field**
+   - Only lead `517` and `2806` had valid data for this field; both were moved to `link`
+
+1. **`notes` field renamed `review_note`**
 
 2. **Changes to `verified` field**
    - Previously: Updates from 'Historic' or 'Logframe' sources required manual verification
