@@ -79,7 +79,21 @@ export const upsertUpdate = async (update: Partial<Update>) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    // Handle specific error cases
+    if (error.code === '42501') { // PostgreSQL permission denied error
+      throw new Error('You do not have permission to edit this update. Please contact the M&E team.');
+    }
+    if (error.code === '23503') { // Foreign key violation
+      throw new Error('Invalid project or measurable reference. Please refresh and try again.');
+    }
+    if (error.code === '23505') { // Unique violation
+      throw new Error('This update already exists.');
+    }
+    // For any other errors, provide a generic message but log the full error
+    console.error('Update error:', error);
+    throw new Error('Unable to save update. Please try again or contact the M&E team if the problem persists.');
+  }
 
   // Update the project's last_updated timestamp
   await supabase
