@@ -16,8 +16,8 @@ export default function AdminUpdates() {
     }
 
     return (
-        <div>
-            <p>Updates: {updates.length}</p>
+        <div className='space-y-4 rounded-md border bg-card'>
+            <p className="p-4">Updates: {updates.length}</p>
         </div>
     )
 }
