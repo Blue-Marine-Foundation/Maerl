@@ -27,8 +27,9 @@ export const fetchTheoryOfChange = async (identifier: number | string) => {
   const supabase = await createClient();
   const response = await supabase
     .from('projects')
-    .select('id, slug, name, impacts(*), outcomes(*), outputs(*)')
+    .select('id, slug, name, impacts(*), outcomes(*), outputs!inner(*)')
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
+    .neq('outputs.archived', true)
     .single();
 
   return response;
