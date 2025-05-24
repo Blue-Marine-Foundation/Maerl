@@ -190,7 +190,7 @@ export const columns: ColumnDef<Update>[] = [
             <UpdateForm
               outputMeasurable={row.original.output_measurables!}
               impactIndicator={row.original.impact_indicators!}
-              projectId={row.original.projects?.id!}
+              projectId={row.original.project_id}
               update={row.original}
             />
           </DialogContent>

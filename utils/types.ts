@@ -132,7 +132,6 @@ export type Update = {
   year: number;
   impact_indicator_id: number | null;
   source: string;
-  original: boolean;
   duplicate: boolean;
   verified: boolean;
   valid: boolean;

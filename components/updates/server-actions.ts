@@ -33,7 +33,7 @@ export const fetchUpdates = async (
     .match({
       ...(projectId ? { project_id: projectId } : {}),
       valid: true,
-      original: true,
+      duplicate: false,
     })
     .order('date', { ascending: false });
 
@@ -56,6 +56,18 @@ export const upsertUpdate = async (update: Partial<Update>) => {
   // Only include posted_by if this is a new update (no id)
   const posted_by = update.id ? undefined : user?.id || null;
 
+  // Debug logging
+  console.log('Debug - Update attempt:', {
+    userId: user?.id,
+    updateData: {
+      id: update.id,
+      project_id: update.project_id,
+      output_measurable_id: update.output_measurable_id,
+      description: update.description,
+      posted_by
+    }
+  });
+
   const { data, error } = await supabase
     .from('updates')
     .upsert({
@@ -71,7 +83,6 @@ export const upsertUpdate = async (update: Partial<Update>) => {
       year: update.year || new Date().getFullYear(),
       impact_indicator_id: update.impact_indicator_id,
       source: update.source || 'Maerl',
-      original: update.original ?? true,
       duplicate: update.duplicate ?? false,
       verified: update.verified ?? false,
       valid: update.valid ?? true,
@@ -79,7 +90,31 @@ export const upsertUpdate = async (update: Partial<Update>) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    // Debug logging
+    console.log('Debug - Update error:', {
+      error: {
+        code: error.code,
+        message: error.message,
+        details: error.details
+      },
+      attemptedBy: user?.id
+    });
+    
+    // Handle specific error cases
+    if (error.code === '42501') { // PostgreSQL permission denied error
+      throw new Error('You do not have permission to edit this update. Please contact the M&E team.');
+    }
+    if (error.code === '23503') { // Foreign key violation
+      throw new Error('Invalid project or measurable reference. Please refresh and try again.');
+    }
+    if (error.code === '23505') { // Unique violation
+      throw new Error('This update already exists.');
+    }
+    // For any other errors, provide a generic message but log the full error
+    console.error('Update error:', error);
+    throw new Error('Unable to save update. Please try again or contact the M&E team if the problem persists.');
+  }
 
   // Update the project's last_updated timestamp
   await supabase
