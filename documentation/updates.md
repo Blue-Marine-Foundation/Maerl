@@ -16,6 +16,7 @@ The `source` field indicates the origin of an update:
 - **duplicate** (`true`/`false`): Flags duplicate entries (default: `false`)
 - **valid** (`true`/`false`): An update is valid when `verified = true` AND `duplicate = false`
 - **admin_reviewed** (`true`/`false`): Indicates whether an admin has reviewed the update
+- **review_note** (`string`): Notes from admin on review
 
 ## Default Behavior for New Updates
 
