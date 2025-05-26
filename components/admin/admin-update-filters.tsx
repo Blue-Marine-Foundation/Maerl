@@ -2,50 +2,28 @@
 
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
-import { useState } from 'react';
 import { Button } from '../ui/button';
+import React from 'react';
 
-export default function AdminUpdateFilters() {
-  const filterTypes = [
-    {
-      label: 'Project',
-      options: [
-        'Jersey',
-        'Berwickshire',
-        'Zereshire',
-        'Solent',
-        'Dogger Bank',
-        'SE Iceland',
-        'Faroes',
-        'Finisterre',
-        'Fastnet',
-        'Rockall',
-      ],
-    },
-    {
-      label: 'Impact Indicator',
-      options: ['1.1.1', '1.1.2', '1.1.3'],
-    },
-    {
-      label: 'Update Type',
-      options: ['Progress', 'Impact'],
-    },
-    {
-      label: 'Metadata',
-      options: ['Has link', 'Verified', 'Duplicate', 'Valid', 'Admin Reviewed'],
-    },
-  ];
+interface FilterType {
+  label: string;
+  options: string[];
+}
 
-  // State: { [filterLabel]: Set of selected options }
-  const [selected, setSelected] = useState(() => {
-    const initial: Record<string, Set<string>> = {};
-    filterTypes.forEach((f) => {
-      initial[f.label] = new Set();
-    });
-    return initial;
-  });
+interface AdminUpdateFiltersProps {
+  filterTypes: FilterType[];
+  selected: Record<string, Set<string>>;
+  setSelected: React.Dispatch<
+    React.SetStateAction<Record<string, Set<string>>>
+  >;
+}
 
-  const [showFilters, setShowFilters] = useState(true);
+export default function AdminUpdateFilters({
+  filterTypes,
+  selected,
+  setSelected,
+}: AdminUpdateFiltersProps) {
+  const [showFilters, setShowFilters] = React.useState(true);
 
   const handleChange =
     (filterLabel: string, option: string) => (checked: boolean) => {
@@ -81,7 +59,6 @@ export default function AdminUpdateFilters() {
                 {selected[filter.label]?.size !== 0
                   ? `${selected[filter.label]?.size}`
                   : 'All'}
-                )
               </span>
               {selected[filter.label]?.size !== 0 && (
                 <Button
