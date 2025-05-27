@@ -40,7 +40,7 @@ export default function AdminUpdatesDataTable({
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                  className='cursor-pointer text-xs'
+                  className='h-auto cursor-pointer whitespace-nowrap border-r bg-card px-3 py-2 text-xs first:rounded-tl-md last:rounded-tr-md last:border-r-0'
                 >
                   {header.isPlaceholder
                     ? null
@@ -61,7 +61,10 @@ export default function AdminUpdatesDataTable({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className='align-baseline text-xs'>
+                  <TableCell
+                    key={cell.id}
+                    className='px-3 py-2 align-baseline text-xs'
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
