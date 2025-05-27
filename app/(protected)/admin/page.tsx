@@ -11,26 +11,27 @@ import {
 } from '@/components/base-states/base-states';
 
 export default function AdminPage() {
+  const { updates, isLoading, error } = useUpdates();
+
+  // Compute unique project names and impact indicator codes
+  const projectOptions = Array.from(
+    new Set(updates.map((u) => u.projects?.name).filter(Boolean)),
+  ).sort() as string[];
+  const indicatorOptions = Array.from(
+    new Set(
+      updates.map((u) => u.impact_indicators?.indicator_code).filter(Boolean),
+    ),
+  ).sort() as string[];
+
   // Define filter types and options here so both filters and updates can use them
   const filterTypes = [
     {
       label: 'Project',
-      options: [
-        'Jersey',
-        'Berwickshire',
-        'Zereshire',
-        'Solent',
-        'Dogger Bank',
-        'SE Iceland',
-        'Faroes',
-        'Finisterre',
-        'Fastnet',
-        'Rockall',
-      ],
+      options: projectOptions,
     },
     {
       label: 'Impact Indicator',
-      options: ['1.1.1', '1.1.2', '1.1.3'],
+      options: indicatorOptions,
     },
     {
       label: 'Update Type',
@@ -50,8 +51,6 @@ export default function AdminPage() {
     });
     return initial;
   });
-
-  const { updates, isLoading, error } = useUpdates();
 
   // Filtering logic
   const filteredUpdates = updates.filter((update) => {

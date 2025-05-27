@@ -23,7 +23,7 @@ export default function AdminUpdateFilters({
   selected,
   setSelected,
 }: AdminUpdateFiltersProps) {
-  const [showFilters, setShowFilters] = React.useState(true);
+  const [showFilters, setShowFilters] = React.useState(false);
 
   const handleChange =
     (filterLabel: string, option: string) => (checked: boolean) => {
@@ -59,6 +59,7 @@ export default function AdminUpdateFilters({
                 {selected[filter.label]?.size !== 0
                   ? `${selected[filter.label]?.size}`
                   : 'All'}
+                )
               </span>
               {selected[filter.label]?.size !== 0 && (
                 <Button
@@ -86,7 +87,10 @@ export default function AdminUpdateFilters({
                       checked={selected[filter.label]?.has(option) || false}
                       onCheckedChange={handleChange(filter.label, option)}
                     />
-                    <Label htmlFor={option} className='font-normal'>
+                    <Label
+                      htmlFor={option}
+                      className='line-clamp-1 overflow-ellipsis font-normal leading-normal'
+                    >
                       {option}
                     </Label>
                   </div>
