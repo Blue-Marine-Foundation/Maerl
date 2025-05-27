@@ -9,6 +9,7 @@ import {
   LoadingStateCard,
   ErrorStateCard,
 } from '@/components/base-states/base-states';
+import CopyToCsvButton from '@/components/data-tables/export-data';
 
 export default function AdminPage() {
   const { updates, isLoading, error } = useUpdates();
@@ -93,33 +94,35 @@ export default function AdminPage() {
         <SetDateRange />
       </div>
 
-      <div className='space-y-4'>
+      <div className='flex items-center justify-between rounded-md border bg-card'>
         <AdminUpdateFilters
           filterTypes={filterTypes}
           selected={selectedFilters}
           setSelected={setSelectedFilters}
         />
-        {isLoading ? (
-          <LoadingStateCard
-            title='Loading updates'
-            description="How's the weather?"
-          />
-        ) : error ? (
-          <ErrorStateCard
-            title='Error loading updates'
-            errorMessage={error.message}
-            description='Sometimes refreshing the page can resolve the error.'
-          />
-        ) : (
-          <>
-            <p className='px-4 text-sm'>
-              Filters match {filteredUpdates.length} update
-              {filteredUpdates.length === 1 ? '' : 's'}
-            </p>
-            <AdminUpdatesDataTable updates={filteredUpdates} />
-          </>
-        )}
+        <div className='flex items-center gap-4 px-4'>
+          <p className='text-sm font-medium'>
+            {filteredUpdates.length} update
+            {filteredUpdates.length === 1 ? '' : 's'}
+          </p>
+          <CopyToCsvButton data={filteredUpdates} />
+        </div>
       </div>
+
+      {isLoading ? (
+        <LoadingStateCard
+          title='Loading updates'
+          description="How's the weather?"
+        />
+      ) : error ? (
+        <ErrorStateCard
+          title='Error loading updates'
+          errorMessage={error.message}
+          description='Sometimes refreshing the page can resolve the error.'
+        />
+      ) : (
+        <AdminUpdatesDataTable updates={filteredUpdates} />
+      )}
     </div>
   );
 }

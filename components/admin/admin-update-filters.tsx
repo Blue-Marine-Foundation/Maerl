@@ -4,6 +4,8 @@ import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 
 interface FilterType {
   label: string;
@@ -40,18 +42,13 @@ export default function AdminUpdateFilters({
     };
 
   return (
-    <div className='flex items-start justify-between rounded-md border bg-card p-2'>
-      <Button
-        variant='ghost'
-        size='sm'
-        type='button'
-        onClick={() => setShowFilters((v) => !v)}
-      >
-        {showFilters ? 'Hide filters' : 'Show filters'}
-      </Button>
-      <div className='flex items-start justify-end'>
-        {filterTypes.map((filter) => (
-          <div key={filter.label} className='w-64 space-y-4 px-4 py-2 text-sm'>
+    <div className='flex items-start justify-end'>
+      {filterTypes.map((filter) => (
+        <div
+          key={filter.label}
+          className='w-60 space-y-4 border-r px-4 py-2 text-sm'
+        >
+          <div className='flex items-center justify-between'>
             <h3 className='flex items-baseline gap-2 font-medium'>
               {filter.label}{' '}
               <span className='font-mono text-xs'>
@@ -78,28 +75,37 @@ export default function AdminUpdateFilters({
                 </Button>
               )}
             </h3>
-            {showFilters && (
-              <div className='flex h-48 flex-col gap-2 overflow-y-scroll'>
-                {filter.options.map((option) => (
-                  <div key={option} className='flex items-center gap-3'>
-                    <Checkbox
-                      id={option}
-                      checked={selected[filter.label]?.has(option) || false}
-                      onCheckedChange={handleChange(filter.label, option)}
-                    />
-                    <Label
-                      htmlFor={option}
-                      className='line-clamp-1 overflow-ellipsis font-normal leading-normal'
-                    >
-                      {option}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            )}
+            <Button
+              variant='ghost'
+              size='sm'
+              type='button'
+              onClick={() => setShowFilters((v) => !v)}
+            >
+              {showFilters ? <ChevronUp /> : <ChevronDown />}
+            </Button>
           </div>
-        ))}
-      </div>
+
+          {showFilters && (
+            <div className='flex h-48 flex-col gap-2 overflow-y-scroll'>
+              {filter.options.map((option) => (
+                <div key={option} className='flex items-center gap-3'>
+                  <Checkbox
+                    id={option}
+                    checked={selected[filter.label]?.has(option) || false}
+                    onCheckedChange={handleChange(filter.label, option)}
+                  />
+                  <Label
+                    htmlFor={option}
+                    className='line-clamp-1 overflow-ellipsis font-normal leading-normal'
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
