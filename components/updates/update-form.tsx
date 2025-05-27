@@ -190,6 +190,7 @@ export default function UpdateForm({
               id='admin_reviewed'
               checked={adminReviewed}
               onChange={(e) => setAdminReviewed(e.target.checked)}
+              className='mr-auto'
             />
             <label htmlFor='review_note' className='text-sm font-medium'>
               Review Note
@@ -209,6 +210,7 @@ export default function UpdateForm({
               id='verified'
               checked={verified}
               onChange={(e) => setVerified(e.target.checked)}
+              className='mr-auto'
             />
             <label htmlFor='duplicate' className='text-sm font-medium'>
               Duplicate
@@ -218,6 +220,7 @@ export default function UpdateForm({
               id='duplicate'
               checked={duplicate}
               onChange={(e) => setDuplicate(e.target.checked)}
+              className='mr-auto'
             />
             <label htmlFor='valid' className='text-sm font-medium'>
               Valid
@@ -227,6 +230,7 @@ export default function UpdateForm({
               id='valid'
               checked={valid}
               onChange={(e) => setValid(e.target.checked)}
+              className='mr-auto'
             />
           </>
         )}
