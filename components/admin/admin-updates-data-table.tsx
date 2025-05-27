@@ -63,7 +63,7 @@ export default function AdminUpdatesDataTable({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className='px-3 py-2 align-baseline text-xs'
+                    className='border-r border-r-border/25 px-3 py-2 text-xs last:border-r-0'
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

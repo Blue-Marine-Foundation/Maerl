@@ -17,6 +17,13 @@ import UpdateForm from '@/components/updates/update-form';
 
 export const columns: ColumnDef<Update>[] = [
   {
+    header: 'Date',
+    accessorKey: 'date',
+    cell: ({ row }) => (
+      <p className='w-20'>{format(row.original.date, 'dd MMM yyyy')}</p>
+    ),
+  },
+  {
     header: 'Project',
     accessorKey: 'projects.name',
     cell: ({ row }) => (
@@ -25,13 +32,6 @@ export const columns: ColumnDef<Update>[] = [
           {row.original.projects?.name}
         </p>
       </div>
-    ),
-  },
-  {
-    header: 'Date',
-    accessorKey: 'date',
-    cell: ({ row }) => (
-      <p className='w-20'>{format(row.original.date, 'dd MMM yyyy')}</p>
     ),
   },
   {
@@ -49,7 +49,7 @@ export const columns: ColumnDef<Update>[] = [
     ),
   },
   {
-    header: 'Impact Indicator',
+    header: 'II Code',
     accessorKey: 'impact_indicators.indicator_code',
     cell: ({ row }) => (
       <HoverCard>
@@ -63,20 +63,18 @@ export const columns: ColumnDef<Update>[] = [
     ),
   },
   {
-    header: 'Update Type',
+    header: 'Type',
     accessorKey: 'type',
   },
   {
     header: 'Description',
     accessorKey: 'description',
     cell: ({ row }) => (
-      <div className='flex flex-col gap-1'>
-        <p className='' title={row.original.description}>
-          {row.original.description}
-        </p>
+      <div>
+        <p>{row.original.description}</p>
 
         {row.original.link && (
-          <p className='text-blue-400 hover:underline'>
+          <p className='mt-1 text-blue-400 hover:underline'>
             <a href={row.original.link} target='_blank'>
               View linked evidence
             </a>
@@ -92,11 +90,13 @@ export const columns: ColumnDef<Update>[] = [
       const value = row.original.value;
       const unit = row.original.impact_indicators?.indicator_unit ?? '';
       return (
-        <p
-          className='w-36 truncate'
-          title={value ? `${value.toLocaleString()} ${unit}` : ''}
-        >
-          {value ? `${value.toLocaleString()} ${unit}` : ''}
+        <p className='w-36 truncate' title={unit}>
+          {value && (
+            <>
+              {value.toLocaleString()}{' '}
+              <span className='text-muted-foreground'>{unit}</span>
+            </>
+          )}
         </p>
       );
     },
@@ -114,7 +114,7 @@ export const columns: ColumnDef<Update>[] = [
     accessorKey: 'valid',
   },
   {
-    header: 'Admin Reviewed',
+    header: 'Reviewed',
     accessorKey: 'admin_reviewed',
   },
   {
