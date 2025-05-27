@@ -6,6 +6,14 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { format } from 'date-fns';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import UpdateForm from '@/components/updates/update-form';
 
 export const columns: ColumnDef<Update>[] = [
   {
@@ -112,5 +120,29 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Review note',
     accessorKey: 'review_note',
+  },
+  {
+    id: 'edit',
+    cell: ({ row }) => (
+      <Dialog>
+        <DialogTrigger asChild>
+          <button className='rounded-md border px-2 py-1 text-muted-foreground'>
+            Edit
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit update</DialogTitle>
+          </DialogHeader>
+          <UpdateForm
+            outputMeasurable={row.original.output_measurables!}
+            impactIndicator={row.original.impact_indicators!}
+            projectId={row.original.project_id}
+            update={row.original}
+            isAdmin={true}
+          />
+        </DialogContent>
+      </Dialog>
+    ),
   },
 ];

@@ -135,6 +135,8 @@ export type Update = {
   duplicate: boolean;
   verified: boolean;
   valid: boolean;
+  admin_reviewed: boolean;
+  review_note: string;
   projects?: ProjectMetadata;
   output_measurables?: OutputMeasurable;
   impact_indicators?: ImpactIndicator;
