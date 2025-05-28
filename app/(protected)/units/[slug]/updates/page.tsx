@@ -19,6 +19,8 @@ export type UnitUpdate = {
   duplicate: boolean;
   verified: boolean;
   valid: boolean;
+  admin_reviewed: boolean;
+  review_note: string;
   unit_id: number;
   unit_name: string;
   unit_slug: string;
@@ -80,6 +82,8 @@ export default async function UnitUpdatesPage({
       duplicate: update.duplicate,
       verified: update.verified,
       valid: update.valid,
+      admin_reviewed: update.admin_reviewed,
+      review_note: update.review_note,
       projects: {
         id: update.project_id,
         name: update.project_name,
