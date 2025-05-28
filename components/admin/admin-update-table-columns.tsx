@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import UpdateForm from '@/components/updates/update-form';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Update>[] = [
   // {
@@ -54,16 +55,28 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Output',
     accessorKey: 'output_measurable_id',
-    cell: ({ row }) => (
-      <HoverCard>
-        <HoverCardTrigger>
-          {row.original.output_measurables?.code}
-        </HoverCardTrigger>
-        <HoverCardContent>
-          {row.original.output_measurables?.description}
-        </HoverCardContent>
-      </HoverCard>
-    ),
+    cell: ({ row }) => {
+      const project = row.original.projects?.slug;
+      const projectType = row.original.projects?.project_type?.toLowerCase();
+      const outputId = row.original.output_measurables?.output_id;
+      const link = `/${projectType}s/${project}/logframe#output-${outputId}`;
+      return (
+        <HoverCard>
+          <HoverCardTrigger>
+            {row.original.output_measurables?.code}
+          </HoverCardTrigger>
+          <HoverCardContent className='flex flex-col gap-2'>
+            <p>{row.original.output_measurables?.description}</p>
+            <Link
+              href={link}
+              className='text-right text-xs text-blue-400 hover:underline'
+            >
+              View in logframe
+            </Link>
+          </HoverCardContent>
+        </HoverCard>
+      );
+    },
   },
   {
     header: 'II Code',
