@@ -8,7 +8,7 @@ import { Update } from '@/utils/types';
 import { useParams } from 'next/navigation';
 import useUrlDateState from '@/components/date-filtering/use-url-date-state';
 import FeatureCard from '../ui/feature-card';
-import { rollup } from 'd3-array';
+import { rollup } from 'd3';
 import * as d3 from 'd3';
 import { columns as projectSummariesColumns } from '@/components/impact-indicators/indicator-projects-columns';
 
