@@ -33,7 +33,12 @@ export const columns: ColumnDef<Update>[] = [
           className='truncate text-sm font-medium'
           title={row.original.projects?.name}
         >
-          {row.original.projects?.name}
+          <Link
+            href={`/${row.original.projects?.project_type?.toLowerCase()}s/${row.original.projects?.slug}`}
+            className='hover:underline'
+          >
+            {row.original.projects?.name}
+          </Link>
         </p>
         <p className='text-muted-foreground'>
           {format(row.original.date, 'dd MMM yyyy')}
@@ -41,17 +46,6 @@ export const columns: ColumnDef<Update>[] = [
       </div>
     ),
   },
-  // {
-  //   header: 'Project',
-  //   accessorKey: 'projects.name',
-  //   cell: ({ row }) => (
-  //     <div className='flex w-28 flex-col gap-1'>
-  //       <p className='truncate font-medium' title={row.original.projects?.name}>
-  //         {row.original.projects?.name}
-  //       </p>
-  //     </div>
-  //   ),
-  // },
   {
     header: 'Output',
     accessorKey: 'output_measurable_id',
@@ -79,6 +73,10 @@ export const columns: ColumnDef<Update>[] = [
     },
   },
   {
+    header: 'Update Type',
+    accessorKey: 'type',
+  },
+  {
     header: 'II Code',
     accessorKey: 'impact_indicators.indicator_code',
     cell: ({ row }) => (
@@ -97,11 +95,14 @@ export const columns: ColumnDef<Update>[] = [
     header: 'Description',
     accessorKey: 'description',
     cell: ({ row }) => (
-      <div>
-        <p className='w-[300px]'>{row.original.description}</p>
-
+      <div className='flex flex-col gap-1'>
+        <p className='w-[270px]'>{row.original.description}</p>
+        <p className='text-muted-foreground'>
+          Posted by {row.original.users?.first_name}{' '}
+          {row.original.users?.last_name}
+        </p>
         {row.original.link && (
-          <p className='mt-1 text-blue-400 hover:underline'>
+          <p className='text-blue-400 hover:underline'>
             <a href={row.original.link} target='_blank'>
               View linked evidence
             </a>
@@ -131,18 +132,78 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Verified',
     accessorKey: 'verified',
+    cell: ({ row }) => {
+      const verified = row.original.verified;
+      return (
+        <p className='text-center'>
+          {verified ? (
+            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
+              Yes
+            </span>
+          ) : (
+            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
+              No
+            </span>
+          )}
+        </p>
+      );
+    },
   },
   {
     header: 'Duplicate',
     accessorKey: 'duplicate',
+    cell: ({ row }) => {
+      const duplicate = row.original.duplicate;
+      return (
+        <p className='text-center'>
+          {duplicate && (
+            <span className='rounded border border-yellow-500/20 bg-yellow-500/10 px-2 py-1 text-yellow-300'>
+              Duplicate
+            </span>
+          )}
+        </p>
+      );
+    },
   },
   {
     header: 'Valid',
     accessorKey: 'valid',
+    cell: ({ row }) => {
+      const valid = row.original.valid;
+      return (
+        <p className='text-center'>
+          {valid ? (
+            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
+              Yes
+            </span>
+          ) : (
+            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
+              No
+            </span>
+          )}
+        </p>
+      );
+    },
   },
   {
     header: 'Reviewed',
     accessorKey: 'admin_reviewed',
+    cell: ({ row }) => {
+      const adminReviewed = row.original.admin_reviewed;
+      return (
+        <p className='text-center'>
+          {adminReviewed ? (
+            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
+              Yes
+            </span>
+          ) : (
+            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
+              No
+            </span>
+          )}
+        </p>
+      );
+    },
   },
   {
     header: 'Review note',
