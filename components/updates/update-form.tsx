@@ -11,6 +11,7 @@ interface UpdateFormProps {
   impactIndicator: ImpactIndicator;
   projectId: number;
   update?: Update;
+  isAdmin?: boolean;
 }
 
 export default function UpdateForm({
@@ -18,6 +19,7 @@ export default function UpdateForm({
   impactIndicator,
   projectId,
   update,
+  isAdmin = false,
 }: UpdateFormProps) {
   const [description, setDescription] = useState(update?.description || '');
   const [value, setValue] = useState<number | null>(update?.value || null);
@@ -29,6 +31,13 @@ export default function UpdateForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [adminReviewed, setAdminReviewed] = useState(
+    update?.admin_reviewed || false,
+  );
+  const [reviewNote, setReviewNote] = useState(update?.review_note || '');
+  const [verified, setVerified] = useState(update?.verified || false);
+  const [duplicate, setDuplicate] = useState(update?.duplicate || false);
+  const [valid, setValid] = useState(update?.valid || false);
 
   const queryClient = useQueryClient();
 
@@ -70,6 +79,13 @@ export default function UpdateForm({
       link,
       source,
       date,
+      ...(isAdmin && {
+        admin_reviewed: adminReviewed,
+        review_note: reviewNote,
+        verified,
+        duplicate,
+        valid,
+      }),
     });
   };
 
@@ -163,12 +179,67 @@ export default function UpdateForm({
             />
           </>
         )}
+
+        {isAdmin && (
+          <>
+            <label htmlFor='admin_reviewed' className='text-sm font-medium'>
+              Admin Reviewed
+            </label>
+            <input
+              type='checkbox'
+              id='admin_reviewed'
+              checked={adminReviewed}
+              onChange={(e) => setAdminReviewed(e.target.checked)}
+              className='mr-auto'
+            />
+            <label htmlFor='review_note' className='text-sm font-medium'>
+              Review Note
+            </label>
+            <textarea
+              id='review_note'
+              className='min-h-12 rounded-md border bg-background px-4 py-2'
+              value={reviewNote}
+              onChange={(e) => setReviewNote(e.target.value)}
+              placeholder='Add a review note (optional)'
+            />
+            <label htmlFor='verified' className='text-sm font-medium'>
+              Verified
+            </label>
+            <input
+              type='checkbox'
+              id='verified'
+              checked={verified}
+              onChange={(e) => setVerified(e.target.checked)}
+              className='mr-auto'
+            />
+            <label htmlFor='duplicate' className='text-sm font-medium'>
+              Duplicate
+            </label>
+            <input
+              type='checkbox'
+              id='duplicate'
+              checked={duplicate}
+              onChange={(e) => setDuplicate(e.target.checked)}
+              className='mr-auto'
+            />
+            <label htmlFor='valid' className='text-sm font-medium'>
+              Valid
+            </label>
+            <input
+              type='checkbox'
+              id='valid'
+              checked={valid}
+              onChange={(e) => setValid(e.target.checked)}
+              className='mr-auto'
+            />
+          </>
+        )}
       </div>
 
       <div className='flex items-center justify-end gap-6'>
         {error && (
           <div className='rounded-md border border-red-600/50 bg-red-500/10 px-4 py-2 text-sm'>
-            <p className="text-red-200">{error}</p>
+            <p className='text-red-200'>{error}</p>
           </div>
         )}
         {success && (
