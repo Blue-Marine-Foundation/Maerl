@@ -16,24 +16,41 @@ import {
 import UpdateForm from '@/components/updates/update-form';
 
 export const columns: ColumnDef<Update>[] = [
+  // {
+  //   header: 'Date',
+  //   accessorKey: 'date',
+  //   cell: ({ row }) => (
+  //     <p className='w-20'>{format(row.original.date, 'dd MMM yyyy')}</p>
+  //   ),
+  // },
   {
-    header: 'Date',
-    accessorKey: 'date',
-    cell: ({ row }) => (
-      <p className='w-20'>{format(row.original.date, 'dd MMM yyyy')}</p>
-    ),
-  },
-  {
-    header: 'Project',
+    header: 'Project / Date',
     accessorKey: 'projects.name',
     cell: ({ row }) => (
-      <div className='flex w-28 flex-col gap-1'>
-        <p className='truncate font-medium' title={row.original.projects?.name}>
+      <div className='flex w-36 flex-col gap-2'>
+        <p
+          className='truncate text-sm font-medium'
+          title={row.original.projects?.name}
+        >
           {row.original.projects?.name}
+        </p>
+        <p className='text-muted-foreground'>
+          {format(row.original.date, 'dd MMM yyyy')}
         </p>
       </div>
     ),
   },
+  // {
+  //   header: 'Project',
+  //   accessorKey: 'projects.name',
+  //   cell: ({ row }) => (
+  //     <div className='flex w-28 flex-col gap-1'>
+  //       <p className='truncate font-medium' title={row.original.projects?.name}>
+  //         {row.original.projects?.name}
+  //       </p>
+  //     </div>
+  //   ),
+  // },
   {
     header: 'Output',
     accessorKey: 'output_measurable_id',
@@ -62,16 +79,13 @@ export const columns: ColumnDef<Update>[] = [
       </HoverCard>
     ),
   },
-  {
-    header: 'Type',
-    accessorKey: 'type',
-  },
+
   {
     header: 'Description',
     accessorKey: 'description',
     cell: ({ row }) => (
       <div>
-        <p>{row.original.description}</p>
+        <p className='w-[300px]'>{row.original.description}</p>
 
         {row.original.link && (
           <p className='mt-1 text-blue-400 hover:underline'>
