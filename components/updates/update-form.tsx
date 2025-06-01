@@ -71,8 +71,12 @@ export default function UpdateForm({
     mutation.mutate({
       id: update?.id, // Include the id if we're editing
       project_id: projectId,
-      output_measurable_id: outputMeasurable.id!,
-      impact_indicator_id: impactIndicator.id!,
+      ...(outputMeasurable?.id !== undefined
+        ? { output_measurable_id: outputMeasurable.id }
+        : {}),
+      ...(impactIndicator?.id !== undefined
+        ? { impact_indicator_id: impactIndicator.id }
+        : {}),
       description,
       value: Number(value),
       type,
