@@ -27,8 +27,9 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Project / Date',
     accessorKey: 'projects.name',
+    meta: { widthClass: 'w-36' },
     cell: ({ row }) => (
-      <div className='flex w-36 flex-col gap-2'>
+      <div className='flex flex-col gap-2'>
         <p
           className='truncate text-sm font-medium'
           title={row.original.projects?.name}
@@ -49,6 +50,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Output',
     accessorKey: 'output_measurable_id',
+    meta: { widthClass: 'w-20' },
     cell: ({ row }) => {
       const project = row.original.projects?.slug;
       const projectType = row.original.projects?.project_type?.toLowerCase();
@@ -75,10 +77,12 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Update Type',
     accessorKey: 'type',
+    meta: { widthClass: 'w-24' },
   },
   {
     header: 'II Code',
     accessorKey: 'impact_indicators.indicator_code',
+    meta: { widthClass: 'w-20' },
     cell: ({ row }) => (
       <HoverCard>
         <HoverCardTrigger>
@@ -94,9 +98,10 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Description',
     accessorKey: 'description',
+    meta: { widthClass: 'w-[300px]' },
     cell: ({ row }) => (
       <div className='flex flex-col gap-1'>
-        <p className='w-[270px]'>{row.original.description}</p>
+        <p>{row.original.description}</p>
         <p className='text-muted-foreground'>
           Posted by {row.original.users?.first_name}{' '}
           {row.original.users?.last_name}
@@ -114,11 +119,12 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Impact',
     accessorKey: 'value',
+    meta: { widthClass: 'w-36' },
     cell: ({ row }) => {
       const value = row.original.value;
       const unit = row.original.impact_indicators?.indicator_unit ?? '';
       return (
-        <p className='w-36 truncate' title={unit}>
+        <p className='truncate' title={unit}>
           {value && (
             <>
               {value.toLocaleString()}{' '}
@@ -132,6 +138,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Verified',
     accessorKey: 'verified',
+    meta: { widthClass: 'w-20' },
     cell: ({ row }) => {
       const verified = row.original.verified;
       return (
@@ -152,6 +159,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Duplicate',
     accessorKey: 'duplicate',
+    meta: { widthClass: 'w-24' },
     cell: ({ row }) => {
       const duplicate = row.original.duplicate;
       return (
@@ -168,6 +176,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Valid',
     accessorKey: 'valid',
+    meta: { widthClass: 'w-16' },
     cell: ({ row }) => {
       const valid = row.original.valid;
       return (
@@ -188,6 +197,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Reviewed',
     accessorKey: 'admin_reviewed',
+    meta: { widthClass: 'w-20' },
     cell: ({ row }) => {
       const adminReviewed = row.original.admin_reviewed;
       return (
@@ -208,9 +218,11 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Review note',
     accessorKey: 'review_note',
+    meta: { widthClass: 'w-32' },
   },
   {
     id: 'edit',
+    meta: { widthClass: 'w-16' },
     cell: ({ row }) => (
       <Dialog>
         <DialogTrigger asChild>
