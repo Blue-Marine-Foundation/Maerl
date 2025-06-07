@@ -118,18 +118,26 @@ function ToggleFilter({ options, values, onChange }: ToggleFilterProps) {
             }}
             className='flex items-center gap-1'
           >
-            <ToggleGroupItem value='yes' size='sm' className='h-6 px-2 text-xs'>
+            <ToggleGroupItem
+              value='yes'
+              size='sm'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-green-500/20 data-[state=on]:bg-green-500/10 data-[state=on]:text-green-300'
+            >
               Yes
-            </ToggleGroupItem>
-            <ToggleGroupItem value='no' size='sm' className='h-6 px-2 text-xs'>
-              No
             </ToggleGroupItem>
             <ToggleGroupItem
               value='either'
               size='sm'
-              className='h-6 px-2 text-xs'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-blue-500/20 data-[state=on]:bg-blue-500/10 data-[state=on]:text-blue-300'
             >
               Either
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value='no'
+              size='sm'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-red-500/20 data-[state=on]:bg-red-500/10 data-[state=on]:text-red-300'
+            >
+              No
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
