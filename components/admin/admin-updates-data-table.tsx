@@ -27,8 +27,6 @@ export default function AdminUpdatesDataTable({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  console.log(updates[0]);
-
   return (
     <div className='relative h-[calc(100svh-4rem)] overflow-y-auto rounded-md border'>
       <Table className='min-w-full'>
