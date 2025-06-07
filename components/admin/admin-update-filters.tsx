@@ -32,7 +32,7 @@ function FilterSection({
   onReset,
 }: FilterSectionProps) {
   return (
-    <div className='w-60 space-y-4 border-r px-4 py-2 text-sm'>
+    <div className='w-[280px] space-y-4 border-r py-2 pl-4 pr-2 text-sm'>
       <div className='flex items-center justify-between'>
         <h3 className='flex items-baseline gap-2 font-medium'>
           {label}{' '}
