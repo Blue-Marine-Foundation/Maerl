@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import AdminUpdateFilters from '@/components/admin/admin-update-filters';
+import AdminUpdateFilters, {
+  FilterType,
+} from '@/components/admin/admin-update-filters';
 import SetDateRange from '@/components/date-filtering/set-date-range';
 import { useUpdates } from '@/hooks/use-updates';
 import AdminUpdatesDataTable from '@/components/admin/admin-updates-data-table';
@@ -25,22 +27,26 @@ export default function AdminPage() {
   ).sort() as string[];
 
   // Define filter types and options here so both filters and updates can use them
-  const filterTypes = [
+  const filterTypes: FilterType[] = [
     {
       label: 'Project',
       options: projectOptions,
+      type: 'checkbox',
     },
     {
       label: 'Impact Indicator',
       options: indicatorOptions,
+      type: 'checkbox',
     },
     {
       label: 'Update Type',
       options: ['Progress', 'Impact'],
+      type: 'checkbox',
     },
     {
       label: 'Metadata',
       options: ['Has link', 'Verified', 'Duplicate', 'Valid', 'Admin Reviewed'],
+      type: 'toggle',
     },
   ];
 
@@ -50,6 +56,17 @@ export default function AdminPage() {
     filterTypes.forEach((f) => {
       initial[f.label] = new Set();
     });
+    return initial;
+  });
+
+  // State for metadata toggles
+  const [metadataToggles, setMetadataToggles] = useState(() => {
+    const initial: Record<string, 'yes' | 'no' | 'either'> = {};
+    filterTypes
+      .find((f) => f.label === 'Metadata')
+      ?.options.forEach((option) => {
+        initial[option] = option === 'Admin Reviewed' ? 'no' : 'either';
+      });
     return initial;
   });
 
@@ -75,15 +92,30 @@ export default function AdminPage() {
     ) {
       return false;
     }
-    if (selectedFilters['Metadata']?.size) {
-      for (const meta of Array.from(selectedFilters['Metadata'])) {
-        if (meta === 'Has link' && !update.link) return false;
-        if (meta === 'Verified' && !update.verified) return false;
-        if (meta === 'Duplicate' && !update.duplicate) return false;
-        if (meta === 'Valid' && !update.valid) return false;
-        if (meta === 'Admin Reviewed' && !update.admin_reviewed) return false;
-      }
+
+    // Metadata toggle filtering
+    for (const [field, value] of Object.entries(metadataToggles)) {
+      if (value === 'either') continue;
+
+      const updateValue =
+        field === 'Has link'
+          ? !!update.link
+          : field === 'Verified'
+            ? update.verified
+            : field === 'Duplicate'
+              ? update.duplicate
+              : field === 'Valid'
+                ? update.valid
+                : field === 'Admin Reviewed'
+                  ? update.admin_reviewed
+                  : null;
+
+      if (updateValue === null) continue;
+
+      if (value === 'yes' && !updateValue) return false;
+      if (value === 'no' && updateValue) return false;
     }
+
     return true;
   });
 
@@ -99,6 +131,8 @@ export default function AdminPage() {
           filterTypes={filterTypes}
           selected={selectedFilters}
           setSelected={setSelectedFilters}
+          metadataToggles={metadataToggles}
+          setMetadataToggles={setMetadataToggles}
         />
         <div className='flex items-center gap-4 px-4'>
           <p className='text-sm font-medium'>

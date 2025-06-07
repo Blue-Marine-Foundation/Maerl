@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -27,8 +26,6 @@ export default function AdminUpdatesDataTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  console.log(updates[0]);
 
   return (
     <div className='relative h-[calc(100svh-4rem)] overflow-y-auto rounded-md border'>
