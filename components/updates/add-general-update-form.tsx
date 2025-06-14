@@ -224,7 +224,7 @@ export default function AddGeneralUpdateForm({
                     setValue(e.target.value ? Number(e.target.value) : null)
                   }
                   min={0}
-                  step={0.01}
+                  step={0.001}
                   placeholder='Enter value'
                 />
               </div>
@@ -244,11 +244,11 @@ export default function AddGeneralUpdateForm({
         </div>
 
         <div className='flex items-center justify-end gap-6'>
-        {error && (
-          <div className='rounded-md border border-red-600/50 bg-red-500/10 px-4 py-2 text-sm'>
-            <p className="text-red-200">{error}</p>
-          </div>
-        )}
+          {error && (
+            <div className='rounded-md border border-red-600/50 bg-red-500/10 px-4 py-2 text-sm'>
+              <p className='text-red-200'>{error}</p>
+            </div>
+          )}
           <button
             className='flex items-center gap-2 rounded-md border border-blue-400 bg-blue-600 px-3 py-1 text-foreground transition-all hover:bg-blue-700'
             type='submit'
