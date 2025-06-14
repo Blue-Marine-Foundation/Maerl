@@ -18,9 +18,13 @@ export default function OutputIndicatorUpdates({
 }: {
   measurable: OutputMeasurable;
 }) {
-  const measurableUpdates = measurable.updates?.sort((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
+  const measurableUpdates = measurable.updates
+    ?.filter((update) => !update.duplicate && update.valid)
+    .sort((a, b) => {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
 
   return (
     <div className='mb-8 mt-4 pl-12'>

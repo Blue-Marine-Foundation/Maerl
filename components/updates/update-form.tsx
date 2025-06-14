@@ -165,7 +165,7 @@ export default function UpdateForm({
                   setValue(e.target.value ? Number(e.target.value) : null)
                 }
                 min={0}
-                step={0.01}
+                step={0.001}
                 placeholder='Enter value'
               />
             </div>
