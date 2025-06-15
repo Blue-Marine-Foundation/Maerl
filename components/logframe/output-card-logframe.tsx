@@ -20,7 +20,6 @@ export default function OutputCardLogframe({
   canEdit = false,
   output,
   projectId,
-  projectSlug,
   existingCodes = [],
   showIndicator = true,
 }: {
