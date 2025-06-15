@@ -120,26 +120,28 @@ export default function AdminPage() {
   });
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-2'>
       <div className='flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>Admin: manage updates</h2>
         <SetDateRange />
       </div>
 
-      <div className='flex items-center justify-between rounded-md border bg-card'>
-        <AdminUpdateFilters
-          filterTypes={filterTypes}
-          selected={selectedFilters}
-          setSelected={setSelectedFilters}
-          metadataToggles={metadataToggles}
-          setMetadataToggles={setMetadataToggles}
-        />
-        <div className='flex items-center gap-4 px-4'>
-          <p className='text-sm font-medium'>
-            {filteredUpdates.length} update
-            {filteredUpdates.length === 1 ? '' : 's'}
-          </p>
-          <CopyToCsvButton data={filteredUpdates} />
+      <div className='sticky top-0 z-20 bg-background pb-4 pt-2'>
+        <div className='flex items-center justify-between rounded-md border bg-card'>
+          <AdminUpdateFilters
+            filterTypes={filterTypes}
+            selected={selectedFilters}
+            setSelected={setSelectedFilters}
+            metadataToggles={metadataToggles}
+            setMetadataToggles={setMetadataToggles}
+          />
+          <div className='flex items-center gap-4 px-4'>
+            <p className='text-sm font-medium'>
+              {filteredUpdates.length} update
+              {filteredUpdates.length === 1 ? '' : 's'}
+            </p>
+            <CopyToCsvButton data={filteredUpdates} />
+          </div>
         </div>
       </div>
 
