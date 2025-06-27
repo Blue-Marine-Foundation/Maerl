@@ -80,7 +80,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
               'border-l-2 pl-2',
               row.original.project_type === 'Project' &&
                 'border-l-blue-500 group-hover:bg-blue-500/20',
-              row.original.project_type === 'Workstream' &&
+              row.original.project_type === 'Unit led project' &&
                 'border-l-yellow-500 group-hover:bg-yellow-500/20',
               row.original.project_type === 'Unit' &&
                 'border-l-green-500 group-hover:bg-green-500/20',
