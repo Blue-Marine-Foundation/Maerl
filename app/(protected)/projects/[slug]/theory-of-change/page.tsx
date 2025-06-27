@@ -26,6 +26,10 @@ export default function TheoryOfChangePage() {
     return <div>Error: {(error as Error).message}</div>;
   }
 
+  if (!isLoading && !error && data && data.data === null) {
+    return <p>Error: Theory of change incorrectly fetched from database</p>
+  }
+
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
   const outputs = (data?.data?.outputs || [])
