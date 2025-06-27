@@ -25,7 +25,7 @@ export default function ProjectsDataTableWrapper() {
       <div className='flex min-h-screen flex-col items-center justify-start gap-6 rounded-md bg-card p-28'>
         <p className='text-lg font-semibold'>Loading</p>
         <p className='text-sm text-muted-foreground'>
-          Fetching all projects and workstreams...
+          Fetching all projects and units...
         </p>
       </div>
     );

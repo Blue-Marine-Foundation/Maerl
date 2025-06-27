@@ -54,7 +54,7 @@ export default function LogframePage() {
       return prefixA.localeCompare(prefixB);
     }
     return getNum(a.code) - getNum(b.code);
-  });
+  }).filter((output) => !output.archived)
   const projectId = data?.data?.id;
 
   return (
@@ -83,7 +83,6 @@ export default function LogframePage() {
         </div>
         <div className='flex flex-col gap-8'>
           {allOutputs
-            .filter((output) => !output.archived)
             .map((output) => (
               <div key={output.id} id={`output-${output.id}`}>
                 <OutputCardLogframe

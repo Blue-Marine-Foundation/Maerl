@@ -4,6 +4,7 @@ import { Outcome, Output } from '@/utils/types';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
 import { isUnplannedOutput } from './isUnplannedOutput';
 import { useEffect, useRef } from 'react';
+import { sortOutputs } from '@/utils/sort-outputs';
 
 type LogframeQuickNavProps = {
   outcomes: Outcome[];
@@ -75,7 +76,7 @@ export default function LogframeQuickNav({
                 : 'Outcome'}
             </a>
           ))}
-          {outputs.map((output) => (
+          {sortOutputs(outputs).map((output) => (
             <a
               key={output.id}
               href={`#output-${output.id}`}
