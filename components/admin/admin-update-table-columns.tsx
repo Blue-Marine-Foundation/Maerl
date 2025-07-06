@@ -16,6 +16,124 @@ import {
 import UpdateForm from '@/components/updates/update-form';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useDebouncedUpdates } from '@/hooks/use-debounced-updates';
+
+// Interactive cell components
+const InteractiveVerifiedCell = ({ row }: { row: any }) => {
+  const { updateField, isUpdating, getOptimisticValue } = useDebouncedUpdates();
+  const updateId = row.original.id;
+  const serverValue = row.original.verified;
+  const verified = getOptimisticValue(updateId, 'verified', serverValue);
+
+  const handleClick = () => {
+    if (isUpdating) return;
+    updateField(updateId, 'verified', !verified);
+  };
+
+  return (
+    <div className='text-center'>
+      <button
+        onClick={handleClick}
+        disabled={isUpdating}
+        className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
+          verified
+            ? 'border-green-500/20 bg-green-500/10 text-green-300'
+            : 'border-red-500/20 bg-red-500/10 text-red-300'
+        }`}
+      >
+        {verified ? 'Yes' : 'No'}
+      </button>
+    </div>
+  );
+};
+
+const InteractiveDuplicateCell = ({ row }: { row: any }) => {
+  const { updateField, isUpdating, getOptimisticValue } = useDebouncedUpdates();
+  const updateId = row.original.id;
+  const serverValue = row.original.duplicate;
+  const duplicate = getOptimisticValue(updateId, 'duplicate', serverValue);
+
+  const handleClick = () => {
+    if (isUpdating) return;
+    updateField(updateId, 'duplicate', !duplicate);
+  };
+
+  return (
+    <div className='text-center'>
+      <button
+        onClick={handleClick}
+        disabled={isUpdating}
+        className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
+          duplicate
+            ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-300'
+            : 'border-gray-500/20 bg-gray-500/10 text-gray-300'
+        }`}
+      >
+        {duplicate ? 'Duplicate' : 'No'}
+      </button>
+    </div>
+  );
+};
+
+const InteractiveValidCell = ({ row }: { row: any }) => {
+  const { updateField, isUpdating, getOptimisticValue } = useDebouncedUpdates();
+  const updateId = row.original.id;
+  const serverValue = row.original.valid;
+  const valid = getOptimisticValue(updateId, 'valid', serverValue);
+
+  const handleClick = () => {
+    if (isUpdating) return;
+    updateField(updateId, 'valid', !valid);
+  };
+
+  return (
+    <div className='text-center'>
+      <button
+        onClick={handleClick}
+        disabled={isUpdating}
+        className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
+          valid
+            ? 'border-green-500/20 bg-green-500/10 text-green-300'
+            : 'border-red-500/20 bg-red-500/10 text-red-300'
+        }`}
+      >
+        {valid ? 'Yes' : 'No'}
+      </button>
+    </div>
+  );
+};
+
+const InteractiveAdminReviewedCell = ({ row }: { row: any }) => {
+  const { updateField, isUpdating, getOptimisticValue } = useDebouncedUpdates();
+  const updateId = row.original.id;
+  const serverValue = row.original.admin_reviewed;
+  const adminReviewed = getOptimisticValue(
+    updateId,
+    'admin_reviewed',
+    serverValue,
+  );
+
+  const handleClick = () => {
+    if (isUpdating) return;
+    updateField(updateId, 'admin_reviewed', !adminReviewed);
+  };
+
+  return (
+    <div className='text-center'>
+      <button
+        onClick={handleClick}
+        disabled={isUpdating}
+        className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
+          adminReviewed
+            ? 'border-green-500/20 bg-green-500/10 text-green-300'
+            : 'border-red-500/20 bg-red-500/10 text-red-300'
+        }`}
+      >
+        {adminReviewed ? 'Yes' : 'No'}
+      </button>
+    </div>
+  );
+};
 
 export const columns: ColumnDef<Update>[] = [
   {
@@ -133,81 +251,25 @@ export const columns: ColumnDef<Update>[] = [
     header: 'Verified',
     accessorKey: 'verified',
     meta: { widthClass: 'w-20' },
-    cell: ({ row }) => {
-      const verified = row.original.verified;
-      return (
-        <p className='text-center'>
-          {verified ? (
-            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
-              Yes
-            </span>
-          ) : (
-            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
-              No
-            </span>
-          )}
-        </p>
-      );
-    },
+    cell: ({ row }) => <InteractiveVerifiedCell row={row} />,
   },
   {
     header: 'Duplicate',
     accessorKey: 'duplicate',
     meta: { widthClass: 'w-24' },
-    cell: ({ row }) => {
-      const duplicate = row.original.duplicate;
-      return (
-        <p className='text-center'>
-          {duplicate && (
-            <span className='rounded border border-yellow-500/20 bg-yellow-500/10 px-2 py-1 text-yellow-300'>
-              Duplicate
-            </span>
-          )}
-        </p>
-      );
-    },
+    cell: ({ row }) => <InteractiveDuplicateCell row={row} />,
   },
   {
     header: 'Valid',
     accessorKey: 'valid',
     meta: { widthClass: 'w-16' },
-    cell: ({ row }) => {
-      const valid = row.original.valid;
-      return (
-        <p className='text-center'>
-          {valid ? (
-            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
-              Yes
-            </span>
-          ) : (
-            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
-              No
-            </span>
-          )}
-        </p>
-      );
-    },
+    cell: ({ row }) => <InteractiveValidCell row={row} />,
   },
   {
     header: 'Reviewed',
     accessorKey: 'admin_reviewed',
     meta: { widthClass: 'w-20' },
-    cell: ({ row }) => {
-      const adminReviewed = row.original.admin_reviewed;
-      return (
-        <p className='text-center'>
-          {adminReviewed ? (
-            <span className='rounded border border-green-500/20 bg-green-500/10 px-2 py-1 text-green-300'>
-              Yes
-            </span>
-          ) : (
-            <span className='rounded border border-red-500/20 bg-red-500/10 px-2 py-1 text-red-300'>
-              No
-            </span>
-          )}
-        </p>
-      );
-    },
+    cell: ({ row }) => <InteractiveAdminReviewedCell row={row} />,
   },
   {
     header: 'Review note',
