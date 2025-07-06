@@ -28,12 +28,17 @@ export const updateUpdateFields = async (updates: UpdateField[]) => {
       // Prepare the update data
       const updateData: any = {
         [field]: value,
-        admin_reviewed: true, // Always mark as reviewed when admin makes changes
       };
 
       // Apply business logic
       if (field === 'duplicate' && value === true) {
         updateData.valid = false; // If marked as duplicate, set valid to false
+      }
+
+      // Only set admin_reviewed to true when other fields are changed
+      // (not when admin_reviewed itself is being updated)
+      if (field !== 'admin_reviewed') {
+        updateData.admin_reviewed = true;
       }
 
       const { data, error } = await supabase

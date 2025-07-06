@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUpdateFields } from '@/api/update-update-fields';
 import { toast } from 'sonner';
@@ -15,12 +15,14 @@ interface PendingChange {
 let globalPendingChanges: PendingChange[] = [];
 let globalIsUpdating = false;
 let globalTimeoutRef: NodeJS.Timeout | null = null;
+let globalUpdateCount = 0;
 
 export const useDebouncedUpdates = () => {
   const [pendingChanges, setPendingChanges] =
     useState<PendingChange[]>(globalPendingChanges);
   const [isUpdating, setIsUpdating] = useState(globalIsUpdating);
   const queryClient = useQueryClient();
+  const updateCountRef = useRef(0);
 
   const mutation = useMutation({
     mutationFn: (changes: PendingChange[]) => updateUpdateFields(changes),
@@ -43,28 +45,35 @@ export const useDebouncedUpdates = () => {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries();
 
-      // Keep pending changes for a brief moment to prevent flash during refetch
-      setTimeout(() => {
-        globalIsUpdating = false;
-        globalPendingChanges = [];
-        setIsUpdating(false);
-        setPendingChanges([]);
-      }, 100);
+      // Mark that we're waiting for the refetch to complete
+      updateCountRef.current = globalUpdateCount;
     },
     onError: (error) => {
       toast.error('Failed to save changes');
       console.error('Update error:', error);
+      // Clear immediately on error
+      globalIsUpdating = false;
+      globalPendingChanges = [];
+      setIsUpdating(false);
+      setPendingChanges([]);
     },
-    onSettled: () => {
-      // Only clear immediately on error, success uses timeout above
-      if (mutation.isError) {
+  });
+
+  // Watch for query updates and clear optimistic state when new data arrives
+  useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (event.type === 'updated' && updateCountRef.current > 0) {
+        // New data has arrived, clear optimistic state
         globalIsUpdating = false;
         globalPendingChanges = [];
         setIsUpdating(false);
         setPendingChanges([]);
+        updateCountRef.current = 0;
       }
-    },
-  });
+    });
+
+    return unsubscribe;
+  }, [queryClient]);
 
   const debouncedUpdate = useCallback(() => {
     if (globalTimeoutRef) {
@@ -74,6 +83,7 @@ export const useDebouncedUpdates = () => {
     globalTimeoutRef = setTimeout(() => {
       if (globalPendingChanges.length > 0) {
         globalIsUpdating = true;
+        globalUpdateCount++;
         setIsUpdating(true);
         mutation.mutate([...globalPendingChanges]);
       }
