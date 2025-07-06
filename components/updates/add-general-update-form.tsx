@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Output, OutputMeasurable, Update } from '@/utils/types';
-import { upsertUpdate } from './server-actions';
-import { Badge } from '../ui/badge';
+import { upsertUpdate } from '@/api/upsert-updates';
+import { Badge } from '@/components/ui/badge';
 import { sortOutputs } from '@/utils/sort-outputs';
 
 export default function AddGeneralUpdateForm({

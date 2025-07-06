@@ -17,13 +17,6 @@ import UpdateForm from '@/components/updates/update-form';
 import Link from 'next/link';
 
 export const columns: ColumnDef<Update>[] = [
-  // {
-  //   header: 'Date',
-  //   accessorKey: 'date',
-  //   cell: ({ row }) => (
-  //     <p className='w-20'>{format(row.original.date, 'dd MMM yyyy')}</p>
-  //   ),
-  // },
   {
     header: 'Project / Date',
     accessorKey: 'projects.name',

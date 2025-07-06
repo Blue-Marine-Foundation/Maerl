@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ImpactIndicator, OutputMeasurable, Update } from '@/utils/types';
-import { upsertUpdate } from './server-actions';
-import { Badge } from '../ui/badge';
+import { upsertUpdate } from '@/api/upsert-updates';
+import { Badge } from '@/components/ui/badge';
 
 interface UpdateFormProps {
   outputMeasurable: OutputMeasurable;
