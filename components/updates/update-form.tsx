@@ -191,6 +191,47 @@ export default function UpdateForm({
 
         {isAdmin && (
           <>
+            <label htmlFor='verified' className='text-sm font-medium'>
+              Verified
+            </label>
+            <input
+              type='checkbox'
+              id='verified'
+              checked={verified}
+              onChange={(e) => {
+                setVerified(e.target.checked);
+              }}
+              className='mr-auto'
+            />
+            <label htmlFor='duplicate' className='text-sm font-medium'>
+              Duplicate
+            </label>
+            <input
+              type='checkbox'
+              id='duplicate'
+              checked={duplicate}
+              onChange={(e) => {
+                setDuplicate(e.target.checked);
+                setAdminReviewed(true);
+                if (e.target.checked) {
+                  setValid(false);
+                }
+              }}
+              className='mr-auto'
+            />
+            <label htmlFor='valid' className='text-sm font-medium'>
+              Valid
+            </label>
+            <input
+              type='checkbox'
+              id='valid'
+              checked={valid}
+              onChange={(e) => {
+                setValid(e.target.checked);
+                setAdminReviewed(true);
+              }}
+              className='mr-auto'
+            />
             <label htmlFor='admin_reviewed' className='text-sm font-medium'>
               Admin Reviewed
             </label>
@@ -210,36 +251,6 @@ export default function UpdateForm({
               value={reviewNote}
               onChange={(e) => setReviewNote(e.target.value)}
               placeholder='Add a review note (optional)'
-            />
-            <label htmlFor='verified' className='text-sm font-medium'>
-              Verified
-            </label>
-            <input
-              type='checkbox'
-              id='verified'
-              checked={verified}
-              onChange={(e) => setVerified(e.target.checked)}
-              className='mr-auto'
-            />
-            <label htmlFor='duplicate' className='text-sm font-medium'>
-              Duplicate
-            </label>
-            <input
-              type='checkbox'
-              id='duplicate'
-              checked={duplicate}
-              onChange={(e) => setDuplicate(e.target.checked)}
-              className='mr-auto'
-            />
-            <label htmlFor='valid' className='text-sm font-medium'>
-              Valid
-            </label>
-            <input
-              type='checkbox'
-              id='valid'
-              checked={valid}
-              onChange={(e) => setValid(e.target.checked)}
-              className='mr-auto'
             />
           </>
         )}
