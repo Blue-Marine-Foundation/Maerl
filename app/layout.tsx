@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
+import { Toaster } from 'sonner';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -32,6 +33,7 @@ export default function RootLayout({
           <div className='mb-32 px-4'>{children}</div>
         </QueryProvider>
         <Footer />
+        <Toaster richColors />
       </body>
     </html>
   );

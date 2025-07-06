@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import UpdateForm from '@/components/updates/update-form';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export const columns: ColumnDef<Update>[] = [
   {
@@ -216,26 +217,31 @@ export const columns: ColumnDef<Update>[] = [
   {
     id: 'edit',
     meta: { widthClass: 'w-16' },
-    cell: ({ row }) => (
-      <Dialog>
-        <DialogTrigger asChild>
-          <button className='rounded-md border px-2 py-1 text-muted-foreground'>
-            Edit
-          </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit update</DialogTitle>
-          </DialogHeader>
-          <UpdateForm
-            outputMeasurable={row.original.output_measurables!}
-            impactIndicator={row.original.impact_indicators!}
-            projectId={row.original.project_id}
-            update={row.original}
-            isAdmin={true}
-          />
-        </DialogContent>
-      </Dialog>
-    ),
+    cell: ({ row }) => {
+      const [isOpen, setIsOpen] = useState(false);
+
+      return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <button className='rounded-md border px-2 py-1 text-muted-foreground'>
+              Edit
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit update</DialogTitle>
+            </DialogHeader>
+            <UpdateForm
+              outputMeasurable={row.original.output_measurables!}
+              impactIndicator={row.original.impact_indicators!}
+              projectId={row.original.project_id}
+              update={row.original}
+              isAdmin={true}
+              onSuccess={() => setIsOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      );
+    },
   },
 ];
