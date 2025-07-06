@@ -18,6 +18,34 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useDebouncedUpdates } from '@/hooks/use-debounced-updates';
 
+// Edit dialog component
+const EditUpdateDialog = ({ update }: { update: Update }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <button className='rounded-md border px-2 py-1 text-muted-foreground'>
+          Edit
+        </button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit update</DialogTitle>
+        </DialogHeader>
+        <UpdateForm
+          outputMeasurable={update.output_measurables!}
+          impactIndicator={update.impact_indicators!}
+          projectId={update.project_id}
+          update={update}
+          isAdmin={true}
+          onSuccess={() => setIsOpen(false)}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // Interactive cell components
 const InteractiveVerifiedCell = ({ row }: { row: any }) => {
   const { updateField, isUpdating, getOptimisticValue } = useDebouncedUpdates();
@@ -279,31 +307,6 @@ export const columns: ColumnDef<Update>[] = [
   {
     id: 'edit',
     meta: { widthClass: 'w-16' },
-    cell: ({ row }) => {
-      const [isOpen, setIsOpen] = useState(false);
-
-      return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <button className='rounded-md border px-2 py-1 text-muted-foreground'>
-              Edit
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit update</DialogTitle>
-            </DialogHeader>
-            <UpdateForm
-              outputMeasurable={row.original.output_measurables!}
-              impactIndicator={row.original.impact_indicators!}
-              projectId={row.original.project_id}
-              update={row.original}
-              isAdmin={true}
-              onSuccess={() => setIsOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
-      );
-    },
+    cell: ({ row }) => <EditUpdateDialog update={row.original} />,
   },
 ];
