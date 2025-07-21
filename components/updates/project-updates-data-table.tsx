@@ -5,7 +5,6 @@ import { columns } from './updates-table-columns';
 import { fetchUpdates } from './server-actions';
 import useUrlDateState from '../date-filtering/use-url-date-state';
 import { DataTable } from '../data-tables/data-table';
-import { flattenUpdates } from './flatten-updates';
 import { Update } from '@/utils/types';
 
 const filterableColumns = [
