@@ -1,7 +1,20 @@
 'use client';
 
+import {
+  ErrorStateCard,
+  LoadingStateCard,
+} from '@/components/base-states/base-states';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useProjectImpacts } from '@/hooks/use-project-impact';
+import { cn } from '@/utils/cn';
 import { useParams } from 'next/navigation';
 
 export default function ImpactPage() {
@@ -11,40 +24,85 @@ export default function ImpactPage() {
     slug as string,
   );
 
-  return (
-    <div>
-      <h1>Impact</h1>
-      <Card>
-        <CardHeader className='pb-4'>
-          <h3>Impact indicators:</h3>
-        </CardHeader>
-        <CardContent>
-          {impactIndicatorSummaries.map(
-            ({
-              impactIndicatorId,
-              impactIndicatorCode,
-              impactIndicatorTitle,
-              impactIndicatorUnit,
-              count,
-              value,
-            }) => (
-              <div
-                key={impactIndicatorId}
-                className='grid grid-cols-4 gap-2 text-sm'
-              >
-                <p>{impactIndicatorCode}</p>
-                <p>{impactIndicatorTitle}</p>
+  if (isLoading) {
+    return <LoadingStateCard title='Impact Data' />;
+  }
 
-                <div className='grid grid-cols-2 gap-2'>
-                  <p className='text-right'>{count}</p>
-                  <p className='text-right'>{value}</p>
-                </div>
-                <p>{impactIndicatorUnit}</p>
-              </div>
-            ),
-          )}
-        </CardContent>
-      </Card>
-    </div>
+  if (error) {
+    return (
+      <ErrorStateCard
+        title='Error loading impact data'
+        errorMessage={error.message}
+      />
+    );
+  }
+
+  const columns = [
+    {
+      heading: 'Code',
+      textAlign: 'text-left',
+    },
+    {
+      heading: 'Title',
+      textAlign: 'text-left',
+    },
+    {
+      heading: 'No. Updates',
+      textAlign: 'text-right',
+    },
+    {
+      heading: 'Total impact',
+      textAlign: 'text-right',
+    },
+    {
+      heading: '',
+      textAlign: 'text-left',
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader className='pb-4'>
+        <h3 className='text-lg font-semibold'>Impact indicators summaries</h3>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column) => (
+                <TableHead
+                  key={column.heading}
+                  className={cn(column.textAlign)}
+                >
+                  {column.heading}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {impactIndicatorSummaries.map(
+              ({
+                impactIndicatorId,
+                impactIndicatorCode,
+                impactIndicatorTitle,
+                impactIndicatorUnit,
+                count,
+                value,
+              }) => (
+                <TableRow key={impactIndicatorId}>
+                  <TableCell>{impactIndicatorCode}</TableCell>
+                  <TableCell>{impactIndicatorTitle}</TableCell>
+                  <TableCell className='w-32 text-right'>{count}</TableCell>
+                  <TableCell className='w-32 text-right'>
+                    {value.toLocaleString()}
+                  </TableCell>
+                  <TableCell className='w-96'>{impactIndicatorUnit}</TableCell>
+                </TableRow>
+              ),
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/utils/cn';
 
@@ -60,7 +66,7 @@ export const EmptyStateCard = ({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className='bg-sky-500/10 border border-sky-100 rounded-md p-4'>
+        <div className='rounded-md border border-sky-100 bg-sky-500/10 p-4'>
           <p className='text-sm text-muted-foreground'>{emptyMessage}</p>
         </div>
       </CardContent>
@@ -84,7 +90,7 @@ export const ErrorStateCard = ({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className='flex items-center justify-center h-full bg-red-500/10 text-rose-800 border border-rose-100 rounded-md p-4'>
+        <div className='flex h-full items-center justify-center rounded-md border border-rose-500/20 bg-red-500/10 p-4 text-rose-800'>
           <p className='text-sm text-muted-foreground'>{errorMessage}</p>
         </div>
       </CardContent>
