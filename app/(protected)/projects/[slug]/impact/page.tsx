@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useProjectImpacts } from '@/hooks/use-project-impact';
+import SetDateRange from '@/components/date-filtering/set-date-range';
 import { cn } from '@/utils/cn';
 import { useParams } from 'next/navigation';
 
@@ -62,10 +63,20 @@ export default function ImpactPage() {
 
   return (
     <Card>
-      <CardHeader className='pb-4'>
-        <h3 className='text-lg font-semibold'>Impact indicators summaries</h3>
+      <CardHeader className='p-4'>
+        <div className='flex items-start justify-between gap-4'>
+          <div>
+            <h3 className='text-xl font-semibold'>Project Impact Summary</h3>
+            <p className='text-muted-foreground'>
+              Contributions to {impactIndicatorSummaries.length} impact
+              indicators
+            </p>
+          </div>
+
+          <SetDateRange />
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         <Table>
           <TableHeader>
             <TableRow>
