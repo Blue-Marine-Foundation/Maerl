@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ImpactIndicator, OutputMeasurable, Update } from '@/utils/types';
-import { upsertUpdate } from './server-actions';
-import { Badge } from '../ui/badge';
+import { upsertUpdate } from '@/api/upsert-updates';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 interface UpdateFormProps {
   outputMeasurable: OutputMeasurable;
@@ -12,6 +13,7 @@ interface UpdateFormProps {
   projectId: number;
   update?: Update;
   isAdmin?: boolean;
+  onSuccess?: () => void;
 }
 
 export default function UpdateForm({
@@ -20,6 +22,7 @@ export default function UpdateForm({
   projectId,
   update,
   isAdmin = false,
+  onSuccess,
 }: UpdateFormProps) {
   const [description, setDescription] = useState(update?.description || '');
   const [value, setValue] = useState<number | null>(update?.value || null);
@@ -30,7 +33,6 @@ export default function UpdateForm({
     update?.date || new Date().toISOString().split('T')[0],
   );
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [adminReviewed, setAdminReviewed] = useState(
     update?.admin_reviewed || false,
   );
@@ -45,10 +47,12 @@ export default function UpdateForm({
     mutationFn: (newUpdate: Partial<Update>) => upsertUpdate(newUpdate),
     onSuccess: () => {
       queryClient.invalidateQueries();
-      setSuccess('Update submitted successfully');
-      setTimeout(() => {
-        setSuccess(null);
-      }, 3000);
+      toast.success(
+        update ? 'Update saved successfully' : 'Update submitted successfully',
+      );
+      if (onSuccess) {
+        onSuccess();
+      }
       if (!update) {
         // Only reset form if this is a new update
         setDescription('');
@@ -61,6 +65,7 @@ export default function UpdateForm({
     },
     onError: (error: Error) => {
       setError(error.message);
+      toast.error(error.message);
     },
   });
 
@@ -186,6 +191,47 @@ export default function UpdateForm({
 
         {isAdmin && (
           <>
+            <label htmlFor='verified' className='text-sm font-medium'>
+              Verified
+            </label>
+            <input
+              type='checkbox'
+              id='verified'
+              checked={verified}
+              onChange={(e) => {
+                setVerified(e.target.checked);
+              }}
+              className='mr-auto'
+            />
+            <label htmlFor='duplicate' className='text-sm font-medium'>
+              Duplicate
+            </label>
+            <input
+              type='checkbox'
+              id='duplicate'
+              checked={duplicate}
+              onChange={(e) => {
+                setDuplicate(e.target.checked);
+                setAdminReviewed(true);
+                if (e.target.checked) {
+                  setValid(false);
+                }
+              }}
+              className='mr-auto'
+            />
+            <label htmlFor='valid' className='text-sm font-medium'>
+              Valid
+            </label>
+            <input
+              type='checkbox'
+              id='valid'
+              checked={valid}
+              onChange={(e) => {
+                setValid(e.target.checked);
+                setAdminReviewed(true);
+              }}
+              className='mr-auto'
+            />
             <label htmlFor='admin_reviewed' className='text-sm font-medium'>
               Admin Reviewed
             </label>
@@ -206,36 +252,6 @@ export default function UpdateForm({
               onChange={(e) => setReviewNote(e.target.value)}
               placeholder='Add a review note (optional)'
             />
-            <label htmlFor='verified' className='text-sm font-medium'>
-              Verified
-            </label>
-            <input
-              type='checkbox'
-              id='verified'
-              checked={verified}
-              onChange={(e) => setVerified(e.target.checked)}
-              className='mr-auto'
-            />
-            <label htmlFor='duplicate' className='text-sm font-medium'>
-              Duplicate
-            </label>
-            <input
-              type='checkbox'
-              id='duplicate'
-              checked={duplicate}
-              onChange={(e) => setDuplicate(e.target.checked)}
-              className='mr-auto'
-            />
-            <label htmlFor='valid' className='text-sm font-medium'>
-              Valid
-            </label>
-            <input
-              type='checkbox'
-              id='valid'
-              checked={valid}
-              onChange={(e) => setValid(e.target.checked)}
-              className='mr-auto'
-            />
           </>
         )}
       </div>
@@ -244,11 +260,6 @@ export default function UpdateForm({
         {error && (
           <div className='rounded-md border border-red-600/50 bg-red-500/10 px-4 py-2 text-sm'>
             <p className='text-red-200'>{error}</p>
-          </div>
-        )}
-        {success && (
-          <div className='rounded-md border border-green-800 bg-green-600/10 px-4 py-2 text-sm'>
-            <p>{success}</p>
           </div>
         )}
         <button

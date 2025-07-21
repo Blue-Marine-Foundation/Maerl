@@ -50,12 +50,16 @@ export default async function UnitOutputsPage({
     new Set(parsedData.map((item) => item.projectName)),
   );
 
+  const uniqueOutputs = Array.from(
+    new Set(parsedData.map((item) => item.outputId)),
+  );
+
   return (
     <div className='flex flex-col gap-6'>
       <div className='flex items-center justify-between gap-2'>
         <h3 className='text-lg font-bold'>
-          Contributing to {parsedData.length} output
-          {parsedData.length === 1 ? '' : 's'} on {uniqueProjects.length}{' '}
+          Contributing to {uniqueOutputs.length} output
+          {uniqueOutputs.length === 1 ? '' : 's'} on {uniqueProjects.length}{' '}
           project
           {uniqueProjects.length === 1 ? '' : 's'}
         </h3>
