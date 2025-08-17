@@ -3,17 +3,18 @@
 import * as d3 from 'd3';
 import { useImpactIndicatorProjectSummaries } from '@/hooks/use-impact-indicator-project-summaries';
 import FeatureCard from '@/components/ui/feature-card';
+import { LoadingStateCard, ErrorStateCard } from '../base-states/base-states';
 
 export default function ImpactIndicatorProjectSummary({ id }: { id: string }) {
   const { projectSummaries, error, isLoading } =
     useImpactIndicatorProjectSummaries(id);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingStateCard title='Loading project summaries...' />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <ErrorStateCard errorMessage={error.message} />;
   }
 
   return (
