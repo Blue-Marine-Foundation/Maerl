@@ -1,4 +1,4 @@
-import { CopyIcon, DownloadIcon } from 'lucide-react';
+import { DownloadIcon } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
 
 function escapeCSV(value: any): string {
