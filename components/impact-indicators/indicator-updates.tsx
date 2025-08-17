@@ -24,22 +24,18 @@ export default function IndicatorUpdates() {
     );
   }
 
-  const filterableColumns = [
-    { id: 'project', label: 'Project' },
-    { id: 'type', label: 'Update Type' },
-  ];
+  const filterableColumns = [{ id: 'type', label: 'Update Type' }];
 
   return (
-    <div className='flex flex-col gap-8'>
-      <FeatureCard>
-        <DataTable
-          data={data as Update[]}
-          columns={columns}
-          filterableColumns={filterableColumns}
-          enableDateFilter={false}
-          enableExport
-        />
-      </FeatureCard>
+    <div className='space-y-4'>
+      <h3 className='text-lg font-bold'>Impact Updates</h3>
+      <DataTable
+        data={data as Update[]}
+        columns={columns}
+        filterableColumns={filterableColumns}
+        enableDateFilter={false}
+        enableExport
+      />
     </div>
   );
 }

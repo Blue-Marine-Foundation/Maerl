@@ -1,9 +1,8 @@
 import IndicatorUpdates from '@/components/impact-indicators/indicator-updates';
 import Breadcrumbs from '@/components/ui/breadcrumbs';
 import FeatureCard from '@/components/ui/feature-card';
-import SetDateRange from '@/components/date-filtering/set-date-range';
 import { fetchImpactIndicator } from '@/api/fetch-impact-indicator';
-import ImpactIndicatorProjectSummary from '@/components/impact-indicators/impact-indicator-project-summary';
+import ImpactIndicatorSummary from '@/components/impact-indicators/impact-indicator-summary';
 
 export default async function IndicatorUpdatesPage({
   params,
@@ -25,7 +24,6 @@ export default async function IndicatorUpdatesPage({
             <h2 className='text-2xl font-semibold'>{data.indicator_title}</h2>
           )}
         </div>
-        <SetDateRange />
       </div>
 
       {error && (
@@ -37,8 +35,8 @@ export default async function IndicatorUpdatesPage({
       )}
 
       {data && (
-        <div className='flex flex-col gap-8'>
-          <ImpactIndicatorProjectSummary id={id} />
+        <div className='flex flex-col gap-8 rounded-lg bg-card p-4'>
+          <ImpactIndicatorSummary id={id} />
           <IndicatorUpdates />
         </div>
       )}
