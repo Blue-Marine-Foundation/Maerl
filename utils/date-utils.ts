@@ -1,4 +1,4 @@
-import { DateRange } from "react-day-picker";
+import { DateRange } from 'react-day-picker';
 import {
   differenceInMonths,
   endOfDay,
@@ -10,12 +10,12 @@ import {
   startOfMonth,
   subDays,
   subMonths,
-} from "date-fns";
+} from 'date-fns';
 
-export const serverDateFormat = "yyyy-MM-dd";
-export const textDateFormat = "dd MMMM yyyy";
-export const shortTextDateFormat = "d MMM yyyy";
-export const timeDateFormat = "HH:mm";
+export const serverDateFormat = 'yyyy-MM-dd';
+export const textDateFormat = 'dd MMMM yyyy';
+export const shortTextDateFormat = 'd MMM yyyy';
+export const timeDateFormat = 'HH:mm';
 
 /**
  * Gets the start date for the allowed date range (3 months ago from today)
@@ -113,4 +113,19 @@ export function initialiseDateRange(
     from: fromDate || defaultFrom,
     to: toDate || defaultTo,
   };
+}
+
+/**
+ * Extracts only date-related search parameters from URLSearchParams
+ * @param searchParams - The URLSearchParams object
+ * @returns A new URLSearchParams object containing only date parameters
+ */
+export function extractDateParams(
+  searchParams: URLSearchParams,
+): URLSearchParams {
+  const dateParams = new URLSearchParams();
+  if (searchParams.get('from'))
+    dateParams.set('from', searchParams.get('from')!);
+  if (searchParams.get('to')) dateParams.set('to', searchParams.get('to')!);
+  return dateParams;
 }
