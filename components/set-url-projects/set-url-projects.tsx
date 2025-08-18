@@ -19,7 +19,7 @@ const SetUrlProjects = ({ projects }: { projects: string[] }) => {
   // Get current projects from URL
   const currentProjectsParam = searchParams.get('projects');
   const currentProjects = currentProjectsParam
-    ? currentProjectsParam.split(',')
+    ? currentProjectsParam.split('|')
     : [];
 
   // State for checked projects
@@ -29,7 +29,7 @@ const SetUrlProjects = ({ projects }: { projects: string[] }) => {
   // Update local state when URL changes
   useEffect(() => {
     const urlProjects = currentProjectsParam
-      ? currentProjectsParam.split(',')
+      ? currentProjectsParam.split('|')
       : [];
     setCheckedProjects(urlProjects);
   }, [currentProjectsParam]);
@@ -50,15 +50,12 @@ const SetUrlProjects = ({ projects }: { projects: string[] }) => {
     // Update URL
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
-    if (
-      newCheckedProjects.length === 0 ||
-      newCheckedProjects.length === projects.length
-    ) {
-      // Remove query string if all unchecked or all checked
+    if (newCheckedProjects.length === 0) {
+      // Remove query string if all unchecked
       newSearchParams.delete('projects');
     } else {
       // Set projects query parameter
-      newSearchParams.set('projects', newCheckedProjects.join(','));
+      newSearchParams.set('projects', newCheckedProjects.join('|'));
     }
 
     const newUrl = `${pathname}?${newSearchParams.toString()}`;
@@ -69,7 +66,7 @@ const SetUrlProjects = ({ projects }: { projects: string[] }) => {
     if (checkedProjects.length === 0) {
       return 'Filter projects';
     } else if (checkedProjects.length === projects.length) {
-      return 'All projects';
+      return 'All projects selected';
     } else {
       return `${checkedProjects.length} project${checkedProjects.length === 1 ? '' : 's'} selected`;
     }
