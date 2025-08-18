@@ -1,6 +1,7 @@
 'use client';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { extractDateParams } from '@/utils/date-utils';
 
 interface NavItem {
   name: string;
@@ -10,7 +11,10 @@ interface NavItem {
 export default function PrimaryNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const hasSearchParams = searchParams && searchParams.toString().length > 0;
+
+  // Only preserve date params
+  const dateParams = extractDateParams(searchParams);
+  const hasDateParams = dateParams.toString().length > 0;
 
   const items = [
     {
@@ -40,7 +44,7 @@ export default function PrimaryNavigation() {
             className={` ${pathname === item.href && 'active'} group inline-block leading-4 transition-all`}
           >
             <Link
-              href={`${item.href}${hasSearchParams ? `?${searchParams.toString()}` : ''}`}
+              href={`${item.href}${hasDateParams ? `?${dateParams.toString()}` : ''}`}
               className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50 group-[.active]:text-foreground'
             >
               {item.name}

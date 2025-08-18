@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
+import { extractDateParams } from '@/utils/date-utils';
 
 interface BreadcrumbsProps {
   projectName?: string;
@@ -13,7 +14,8 @@ export default function Breadcrumbs({ projectName, type }: BreadcrumbsProps) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter((segment) => segment);
   const searchParams = useSearchParams();
-  const hasSearchParams = searchParams && searchParams.toString().length > 0;
+  const dateParams = extractDateParams(searchParams);
+  const hasDateParams = dateParams.toString().length > 0;
   const breadcrumbs = [
     { name: 'Home', path: '/' },
     ...pathSegments.map((segment, index) => {
@@ -33,7 +35,7 @@ export default function Breadcrumbs({ projectName, type }: BreadcrumbsProps) {
       return {
         name,
         path: `/${pathSegments.slice(0, index + 1).join('/')}${
-          hasSearchParams ? `?${searchParams.toString()}` : ''
+          hasDateParams ? `?${dateParams.toString()}` : ''
         }`,
       };
     }),
