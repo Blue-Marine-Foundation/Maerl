@@ -1,15 +1,7 @@
-import { signInAction } from '@/app/actions';
-import { FormMessage, Message } from '@/components/form-message';
-import { SubmitButton } from '@/components/submit-button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import logo from '@/public/bluemarinefoundationlogo.svg';
-import Link from 'next/link';
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const message = await props.searchParams;
-
+export default async function Login() {
   return (
     <div className='max-w-app mx-auto flex w-full justify-between gap-8'>
       <div className='flex min-h-96 basis-1/2 flex-col items-center justify-center gap-12 rounded-lg bg-card p-8'>
