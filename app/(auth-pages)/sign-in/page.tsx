@@ -22,36 +22,13 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         </div>
       </div>
       <div className='flex basis-1/2 flex-col items-center justify-center rounded-lg bg-card p-8'>
-        <form className='flex w-80 flex-col gap-8'>
+        <div className='flex w-80 flex-col gap-8'>
           <h1 className='text-2xl font-medium'>Sign in</h1>
-          <div className='flex flex-col gap-2 [&>input]:mb-3'>
-            <Label htmlFor='email'>Email</Label>
-            <Input name='email' placeholder='you@example.com' required />
-            <div className='flex items-center justify-between'>
-              <Label htmlFor='password'>Password</Label>
-              <Link
-                className='text-xs text-foreground underline'
-                href='/forgot-password'
-              >
-                Forgot Password?
-              </Link>
-            </div>
-            <Input
-              type='password'
-              name='password'
-              placeholder='Your password'
-              required
-            />
-            <SubmitButton
-              className='bg-sky-700 text-foreground hover:bg-sky-800'
-              pendingText='Signing In...'
-              formAction={signInAction}
-            >
-              Sign in
-            </SubmitButton>
-            <FormMessage message={message} />
-          </div>
-        </form>
+
+          <button className='rounded-md bg-sky-700 p-2 text-foreground hover:bg-sky-800'>
+            Sign in with Microsoft
+          </button>
+        </div>
       </div>
     </div>
   );
