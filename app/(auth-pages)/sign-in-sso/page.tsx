@@ -5,9 +5,9 @@ import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import logo from '@/public/bluemarinefoundationlogo.svg';
 import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
-export default function Login() {
+function ErrorHandler() {
   const searchParams = useSearchParams();
 
   // Handle error messages from callback redirect
@@ -23,6 +23,11 @@ export default function Login() {
       window.history.replaceState({}, '', url.toString());
     }
   }, [searchParams]);
+
+  return null;
+}
+
+export default function Login() {
   const handleAzureSignIn = async () => {
     try {
       const supabase = createClient();
@@ -49,28 +54,33 @@ export default function Login() {
   };
 
   return (
-    <div className='max-w-app mx-auto flex w-full justify-between gap-8'>
-      <div className='flex min-h-96 basis-1/2 flex-col items-center justify-center gap-12 rounded-lg bg-card p-8'>
-        <Image src={logo} alt='Maerl Logo' width={100} height={100} />
-        <div className='flex flex-col items-center gap-2'>
-          <h2 className='text-2xl font-medium'>Maerl</h2>
-          <p className='text-sm text-muted-foreground'>
-            Impact monitoring for Blue Marine Foundation
-          </p>
+    <>
+      <Suspense fallback={null}>
+        <ErrorHandler />
+      </Suspense>
+      <div className='max-w-app mx-auto flex w-full justify-between gap-8'>
+        <div className='flex min-h-96 basis-1/2 flex-col items-center justify-center gap-12 rounded-lg bg-card p-8'>
+          <Image src={logo} alt='Maerl Logo' width={100} height={100} />
+          <div className='flex flex-col items-center gap-2'>
+            <h2 className='text-2xl font-medium'>Maerl</h2>
+            <p className='text-sm text-muted-foreground'>
+              Impact monitoring for Blue Marine Foundation
+            </p>
+          </div>
         </div>
-      </div>
-      <div className='flex basis-1/2 flex-col items-center justify-center rounded-lg bg-card p-8'>
-        <div className='flex w-80 flex-col gap-8'>
-          <h1 className='text-2xl font-medium'>Sign in</h1>
+        <div className='flex basis-1/2 flex-col items-center justify-center rounded-lg bg-card p-8'>
+          <div className='flex w-80 flex-col gap-8'>
+            <h1 className='text-2xl font-medium'>Sign in</h1>
 
-          <button
-            onClick={handleAzureSignIn}
-            className='rounded-md bg-sky-700 p-2 text-foreground hover:bg-sky-800'
-          >
-            Sign in with Microsoft
-          </button>
+            <button
+              onClick={handleAzureSignIn}
+              className='rounded-md bg-sky-700 p-2 text-foreground hover:bg-sky-800'
+            >
+              Sign in with Microsoft
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
