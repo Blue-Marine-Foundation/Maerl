@@ -4,8 +4,25 @@ import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import logo from '@/public/bluemarinefoundationlogo.svg';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Login() {
+  const searchParams = useSearchParams();
+
+  // Handle error messages from callback redirect
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      toast.error('Failed to sign in with Microsoft', {
+        description: decodeURIComponent(error),
+      });
+      // Clean up URL by removing error parameter
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
   const handleAzureSignIn = async () => {
     try {
       const supabase = createClient();
