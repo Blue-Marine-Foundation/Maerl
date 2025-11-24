@@ -4,6 +4,8 @@ import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
 import { Toaster } from 'sonner';
+        import { Analytics } from "@vercel/analytics/next"
+
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -34,6 +36,7 @@ export default function RootLayout({
         </QueryProvider>
         <Footer />
         <Toaster richColors />
+        <Analytics />
       </body>
     </html>
   );
