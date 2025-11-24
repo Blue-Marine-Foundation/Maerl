@@ -1,8 +1,5 @@
-To run the app locally: 
+# Maerl
 
-- Clone the repo
-- Add an .env.local file with the two environment variables
-- From the root of the repo run the following commands:
-  - npm install
-  - npx next dev
-- The development server should start at localhost:3000
+Monitoring and Evaluation (M&E) system for Blue Marine Foundation.
+
+See documentation in the `docs` directory.
