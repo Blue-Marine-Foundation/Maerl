@@ -10,3 +10,4 @@
 
 - [ ] Logging in via Microsoft SSO by default, email as backup
 - [ ] Creating new users
+- [ ] Create test account for Sonny
