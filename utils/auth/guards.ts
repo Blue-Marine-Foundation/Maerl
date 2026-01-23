@@ -3,12 +3,17 @@
 import { fetchCurrentUserProfile } from '@/api/fetch-current-user-profile';
 import { redirect } from 'next/navigation';
 
-export async function requireNonPartner(redirectTo: string = '/projects') {
+export async function requireNonPartner(
+  redirectTo: string = '/projects',
+  noProfileRedirectTo: string = '/sign-in'
+) {
   const data = await fetchCurrentUserProfile();
 
-  // If there's no DB profile, treat as unauthorized for restricted pages.
-  const role = data.profile?.role ?? null;
-  if (role === 'Partner' || role === null) {
+  if (!data.profile || data.profile.role === null) {
+    redirect(noProfileRedirectTo);
+  }
+
+  if (data.profile.role === 'Partner') {
     redirect(redirectTo);
   }
 
