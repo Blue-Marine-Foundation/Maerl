@@ -19,13 +19,15 @@ interface OutputActivitiesListProps {
   activities: OutputActivity[];
   output: Output;
   projectId: number;
+  canEdit?: boolean;
 }
 
 export default function OutputActivitiesList({
   activities,
   output,
   projectId,
-}: OutputActivitiesListProps) {
+  canEdit = true,
+}: Readonly<OutputActivitiesListProps>) {
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] =
     useState<OutputActivity | null>(null);
@@ -54,14 +56,16 @@ export default function OutputActivitiesList({
               {activities.map((activity) => (
                 <li key={activity.id} className='my-4'>
                   <div className='flex items-start gap-4'>
-                    <ActionButton
-                      action='edit'
-                      variant='icon'
-                      onClick={() => {
-                        setSelectedActivity(activity);
-                        setIsActivityDialogOpen(true);
-                      }}
-                    />
+                    {canEdit && (
+                      <ActionButton
+                        action='edit'
+                        variant='icon'
+                        onClick={() => {
+                          setSelectedActivity(activity);
+                          setIsActivityDialogOpen(true);
+                        }}
+                      />
+                    )}
 
                     <span className='text-sm'>
                       {`${extractOutputActivityCodeNumber(
@@ -87,34 +91,42 @@ export default function OutputActivitiesList({
               ))}
             </ol>
           </div>
-          <ActionButton
-            action='add'
-            label='Add activity'
-            onClick={() => setIsActivityDialogOpen(true)}
-            className='mt-6'
-          />
+          {canEdit && (
+            <ActionButton
+              action='add'
+              label='Add activity'
+              onClick={() => setIsActivityDialogOpen(true)}
+              className='mt-6'
+            />
+          )}
         </div>
       ) : (
         <div className='mt-2 flex items-center justify-center rounded-md border border-dashed p-12'>
-          <ActionButton
-            action='add'
-            label='Add activity'
-            onClick={() => setIsActivityDialogOpen(true)}
-          />
+          {canEdit ? (
+            <ActionButton
+              action='add'
+              label='Add activity'
+              onClick={() => setIsActivityDialogOpen(true)}
+            />
+          ) : (
+            <p className='text-sm text-muted-foreground'>No activities yet.</p>
+          )}
         </div>
       )}
 
-      <OutputActivityForm
-        isOpen={isActivityDialogOpen}
-        onClose={() => {
-          setIsActivityDialogOpen(false);
-          setSelectedActivity(null);
-        }}
-        activity={selectedActivity}
-        activities={activities}
-        projectId={projectId}
-        output={output}
-      />
+      {canEdit && (
+        <OutputActivityForm
+          isOpen={isActivityDialogOpen}
+          onClose={() => {
+            setIsActivityDialogOpen(false);
+            setSelectedActivity(null);
+          }}
+          activity={selectedActivity}
+          activities={activities}
+          projectId={projectId}
+          output={output}
+        />
+      )}
     </div>
   );
 }

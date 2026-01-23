@@ -5,6 +5,8 @@ import { OutcomeMeasurable } from '@/utils/types';
 import OutcomeMeasurableForm from './outcome-measurable-form';
 import ActionButton from '@/components/ui/action-button';
 import {
+  type CellContext,
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -18,15 +20,59 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+type TableMeta = {
+  onEditMeasurable?: (measurable: OutcomeMeasurable) => void;
+};
+
+type OutcomeCellContext = CellContext<OutcomeMeasurable, unknown>;
+
+function DescriptionCell(props: Readonly<OutcomeCellContext>) {
+  const { row } = props;
+  return <p className='text-sm'>{row.getValue('description')}</p>;
+}
+
+function ImpactIndicatorCell(props: Readonly<OutcomeCellContext>) {
+  const { row } = props;
+  return (
+    <p
+      title={row.original.impact_indicators?.indicator_title}
+      className='hover:cursor-help'
+    >
+      {row.original.impact_indicators?.indicator_code}
+    </p>
+  );
+}
+
+function ActionsCell(props: Readonly<OutcomeCellContext>) {
+  const { row, table } = props;
+  const onEditMeasurable = (table.options.meta as TableMeta | undefined)
+    ?.onEditMeasurable;
+
+  if (!onEditMeasurable) {
+    return null;
+  }
+
+  return (
+    <ActionButton
+      action='edit'
+      variant='icon'
+      className='-mt-1'
+      onClick={() => onEditMeasurable(row.original)}
+    />
+  );
+}
+
 export default function OutcomeIndicatorsTable({
   measurables,
   outcomeId,
   projectId,
-}: {
+  canEdit = true,
+}: Readonly<{
   measurables: OutcomeMeasurable[];
   outcomeId: number;
   projectId: number;
-}) {
+  canEdit?: boolean;
+}>) {
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutcomeMeasurable | null>(null);
@@ -50,14 +96,12 @@ export default function OutcomeIndicatorsTable({
     }
   };
 
-  const columns = [
+  const columns: ColumnDef<OutcomeMeasurable, unknown>[] = [
     {
       accessorKey: 'description',
       header: 'Measurable Indicator',
       size: 400,
-      cell: ({ row }: { row: any }) => (
-        <p className='text-sm'>{row.getValue('description')}</p>
-      ),
+      cell: DescriptionCell,
     },
     {
       accessorKey: 'verification',
@@ -76,30 +120,18 @@ export default function OutcomeIndicatorsTable({
     {
       accessorKey: 'impact_indicator_id',
       header: 'Impact Indicator',
-      cell: ({ row }: { row: any }) => {
-        return (
-          <p
-            title={row.original.impact_indicators?.indicator_title}
-            className='hover:cursor-help'
-          >
-            {row.original.impact_indicators?.indicator_code}
-          </p>
-        );
-      },
+      cell: ImpactIndicatorCell,
     },
-    {
-      accessorKey: 'actions',
-      header: '',
-      size: 70,
-      cell: ({ row }: { row: any }) => (
-        <ActionButton
-          action='edit'
-          variant='icon'
-          className='-mt-1'
-          onClick={() => handleEditMeasurable(row.original)}
-        />
-      ),
-    },
+    ...(canEdit
+      ? ([
+          {
+            accessorKey: 'actions',
+            header: '',
+            size: 70,
+            cell: ActionsCell,
+          },
+        ] as ColumnDef<OutcomeMeasurable, unknown>[])
+      : []),
   ];
 
   const table = useReactTable({
@@ -107,6 +139,9 @@ export default function OutcomeIndicatorsTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',
+    meta: {
+      onEditMeasurable: handleEditMeasurable,
+    } satisfies TableMeta,
   });
 
   if (!measurables) {
@@ -117,11 +152,15 @@ export default function OutcomeIndicatorsTable({
     <>
       {measurables.length === 0 ? (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
-          <ActionButton
-            action='add'
-            label='Add outcome indicator'
-            onClick={handleAddMeasurable}
-          />
+          {canEdit ? (
+            <ActionButton
+              action='add'
+              label='Add outcome indicator'
+              onClick={handleAddMeasurable}
+            />
+          ) : (
+            <p className='text-sm text-muted-foreground'>No indicators yet.</p>
+          )}
         </div>
       ) : (
         <div className='flex w-full flex-col items-start gap-6'>
@@ -170,24 +209,28 @@ export default function OutcomeIndicatorsTable({
               </TableBody>
             </Table>
           </div>
-          <div className='flex w-full flex-row items-center justify-start'>
-            <ActionButton
-              action='add'
-              label='Add outcome indicator'
-              onClick={handleAddMeasurable}
-            />
-          </div>
+          {canEdit && (
+            <div className='flex w-full flex-row items-center justify-start'>
+              <ActionButton
+                action='add'
+                label='Add outcome indicator'
+                onClick={handleAddMeasurable}
+              />
+            </div>
+          )}
         </div>
       )}
 
-      <OutcomeMeasurableForm
-        isOpen={isMeasurableDialogOpen}
-        onClose={handleCloseMeasurableDialog}
-        measurable={selectedMeasurable}
-        outcomeId={outcomeId}
-        projectId={projectId}
-        existingCodes={measurables.map((m) => m.code)}
-      />
+      {canEdit && (
+        <OutcomeMeasurableForm
+          isOpen={isMeasurableDialogOpen}
+          onClose={handleCloseMeasurableDialog}
+          measurable={selectedMeasurable}
+          outcomeId={outcomeId}
+          projectId={projectId}
+          existingCodes={measurables.map((m) => m.code)}
+        />
+      )}
     </>
   );
 }

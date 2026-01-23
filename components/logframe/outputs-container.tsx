@@ -11,10 +11,12 @@ import { isUnplannedOutput } from './isUnplannedOutput';
 export default function OutputsContainer({
   outputs,
   projectId,
-}: {
+  canEdit = false,
+}: Readonly<{
   outputs: Output[];
   projectId: number;
-}) {
+  canEdit?: boolean;
+}>) {
   return (
     <div className='flex flex-col gap-8'>
       {outputs.length > 0 ? (
@@ -55,11 +57,17 @@ export default function OutputsContainer({
           variant='output'
           tooltipText={logframeText.output.description}
         >
-          <AddOutputButton
-            projectId={projectId}
-            output={null}
-            existingCodes={outputs.map((o) => o.code)}
-          />
+          {canEdit ? (
+            <AddOutputButton
+              projectId={projectId}
+              output={null}
+              existingCodes={outputs.map((o) => o.code)}
+            />
+          ) : (
+            <p className='text-sm text-muted-foreground'>
+              No outputs yet.
+            </p>
+          )}
         </FeatureCardTheoryOfChange>
       )}
     </div>

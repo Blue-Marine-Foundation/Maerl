@@ -28,13 +28,15 @@ export default function OutputIndicatorsDetailsTable({
   projectId,
   outputCode,
   showAddButton = true,
-}: {
+  canEditStructure = true,
+}: Readonly<{
   measurables: OutputMeasurable[];
   outputId: number;
   projectId: number;
   outputCode: string;
   showAddButton?: boolean;
-}) {
+  canEditStructure?: boolean;
+}>) {
   const [isMeasurableDialogOpen, setIsMeasurableDialogOpen] = useState(false);
   const [selectedMeasurable, setSelectedMeasurable] =
     useState<OutputMeasurable | null>(null);
@@ -61,6 +63,7 @@ export default function OutputIndicatorsDetailsTable({
     toggleRow,
     expandedRows,
     handleEditMeasurable,
+    canEditStructure,
     projectId.toString(),
   );
 
@@ -79,14 +82,18 @@ export default function OutputIndicatorsDetailsTable({
     <>
       {measurables.length === 0 ? (
         <div className='flex items-center justify-center rounded-md border border-dashed p-12'>
-          <ActionButton
-            action='add'
-            label='Add output indicator'
-            onClick={() => {
-              setSelectedMeasurable(null);
-              setIsMeasurableDialogOpen(true);
-            }}
-          />
+          {canEditStructure ? (
+            <ActionButton
+              action='add'
+              label='Add output indicator'
+              onClick={() => {
+                setSelectedMeasurable(null);
+                setIsMeasurableDialogOpen(true);
+              }}
+            />
+          ) : (
+            <p className='text-sm text-muted-foreground'>No indicators yet.</p>
+          )}
         </div>
       ) : (
         <div className='flex w-full flex-col items-start gap-6'>
@@ -152,7 +159,7 @@ export default function OutputIndicatorsDetailsTable({
               </TableBody>
             </Table>
           </div>
-          {showAddButton && (
+          {showAddButton && canEditStructure && (
             <div className='flex w-full flex-row items-center justify-start'>
               <ActionButton
                 action='add'
@@ -167,15 +174,17 @@ export default function OutputIndicatorsDetailsTable({
         </div>
       )}
 
-      <OutputMeasurableForm
-        isOpen={isMeasurableDialogOpen}
-        onClose={handleCloseMeasurableDialog}
-        measurable={selectedMeasurable}
-        outputId={outputId}
-        projectId={projectId}
-        existingCodes={measurables.map((m) => m.code)}
-        outputCode={outputCode}
-      />
+      {canEditStructure && (
+        <OutputMeasurableForm
+          isOpen={isMeasurableDialogOpen}
+          onClose={handleCloseMeasurableDialog}
+          measurable={selectedMeasurable}
+          outputId={outputId}
+          projectId={projectId}
+          existingCodes={measurables.map((m) => m.code)}
+          outputCode={outputCode}
+        />
+      )}
     </>
   );
 }

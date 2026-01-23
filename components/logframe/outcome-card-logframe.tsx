@@ -8,20 +8,19 @@ import ActionButton from '@/components/ui/action-button';
 import FeatureCardLogframe from './feature-card-logframe';
 import OutcomeIndicatorsTable from './outcome-indicators-table';
 import { extractOutputCodeNumber } from './extractOutputCodeNumber';
-import { logframeText } from './logframe-text';
 
 export default function OutcomeCardLogframe({
   canEdit = false,
   outcome,
   outcomes,
   projectId,
-}: {
+}: Readonly<{
   /** Enables the Add Impact and Edit Impact buttons*/
   canEdit?: boolean;
   outcome: Outcome | null;
   outcomes?: Outcome[];
   projectId: number;
-}) {
+}>) {
   const [isOutcomeDialogOpen, setIsOutcomeDialogOpen] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(true);
 
@@ -53,66 +52,65 @@ export default function OutcomeCardLogframe({
       )}
 
       {outcomes && outcome && (
-        <>
-          <FeatureCardLogframe
-            title={
-              outcomes.length > 1
-                ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
-                : 'Outcome'
-            }
-            variant='outcome'
-            minHeight='100%'
-          >
-            <div className='flex w-full grow flex-col items-start justify-between gap-6'>
-              <div className='flex w-full flex-row items-center justify-between'>
-                <p className='max-w-prose text-sm'>{outcome.description}</p>
-                {canEdit && (
-                  <div className='flex-shrink-0 text-sm'>
-                    <ActionButton
-                      action='edit'
-                      onClick={() => setIsOutcomeDialogOpen(true)}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className='w-full'>
-                <button
-                  onClick={() => setIsTableExpanded(!isTableExpanded)}
-                  className='mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
-                >
-                  {isTableExpanded ? (
-                    <>
-                      <ChevronDown className='h-4 w-4 transition-transform duration-200' />{' '}
-                      Hide indicators
-                    </>
-                  ) : (
-                    <>
-                      <ChevronRight className='h-4 w-4 transition-transform duration-200' />{' '}
-                      Show indicators
-                    </>
-                  )}
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${isTableExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
-                >
-                  <OutcomeIndicatorsTable
-                    measurables={outcomeMeasurables}
-                    outcomeId={outcome.id}
-                    projectId={projectId}
+        <FeatureCardLogframe
+          title={
+            outcomes.length > 1
+              ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
+              : 'Outcome'
+          }
+          variant='outcome'
+          minHeight='100%'
+        >
+          <div className='flex w-full grow flex-col items-start justify-between gap-6'>
+            <div className='flex w-full flex-row items-center justify-between'>
+              <p className='max-w-prose text-sm'>{outcome.description}</p>
+              {canEdit && (
+                <div className='flex-shrink-0 text-sm'>
+                  <ActionButton
+                    action='edit'
+                    onClick={() => setIsOutcomeDialogOpen(true)}
                   />
                 </div>
+              )}
+            </div>
+            <div className='w-full'>
+              <button
+                onClick={() => setIsTableExpanded(!isTableExpanded)}
+                className='mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
+              >
+                {isTableExpanded ? (
+                  <>
+                    <ChevronDown className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Hide indicators
+                  </>
+                ) : (
+                  <>
+                    <ChevronRight className='h-4 w-4 transition-transform duration-200' />{' '}
+                    Show indicators
+                  </>
+                )}
+              </button>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isTableExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+              >
+                <OutcomeIndicatorsTable
+                  measurables={outcomeMeasurables}
+                  outcomeId={outcome.id}
+                  projectId={projectId}
+                  canEdit={canEdit}
+                />
               </div>
             </div>
+          </div>
 
-            <OutcomeForm
-              isOpen={isOutcomeDialogOpen}
-              onClose={() => setIsOutcomeDialogOpen(false)}
-              outcome={outcome}
-              projectId={projectId}
-              existingCodes={outcomes?.map((o) => o.code) || []}
-            />
-          </FeatureCardLogframe>
-        </>
+          <OutcomeForm
+            isOpen={isOutcomeDialogOpen}
+            onClose={() => setIsOutcomeDialogOpen(false)}
+            outcome={outcome}
+            projectId={projectId}
+            existingCodes={outcomes?.map((o) => o.code) || []}
+          />
+        </FeatureCardLogframe>
       )}
     </div>
   );

@@ -4,8 +4,8 @@ import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
 import { Toaster } from 'sonner';
-        import { Analytics } from "@vercel/analytics/next"
-
+import { Analytics } from '@vercel/analytics/next';
+import { UserProvider } from '@/components/user/user-provider';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -24,19 +24,21 @@ const inter = Inter({
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang='en' className={inter.className} suppressHydrationWarning>
       <body className='min-h-svh bg-background text-foreground dark:bg-background'>
-        <Header />
         <QueryProvider>
-          <div className='mb-32 px-4'>{children}</div>
+          <UserProvider>
+            <Header />
+            <div className='mb-32 px-4'>{children}</div>
+            <Footer />
+            <Toaster richColors />
+            <Analytics />
+          </UserProvider>
         </QueryProvider>
-        <Footer />
-        <Toaster richColors />
-        <Analytics />
       </body>
     </html>
   );

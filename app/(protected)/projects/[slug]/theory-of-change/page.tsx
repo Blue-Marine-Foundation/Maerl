@@ -9,9 +9,11 @@ import TheoryOfChangeSkeleton from '@/components/logframe/theory-of-change-skele
 import OutputsContainer from '@/components/logframe/outputs-container';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
+import { useUser } from '@/components/user/user-provider';
 
 export default function TheoryOfChangePage() {
   const { slug } = useParams();
+  const { canEditLogframe } = useUser();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['logframe', slug],
@@ -45,7 +47,11 @@ export default function TheoryOfChangePage() {
       <LogframeQuickNav outcomes={outcomes} outputs={outputs} />
       <div className='flex flex-col gap-8'>
         <div className='mt-4' id='impact'>
-          <ImpactCard impact={impact} projectId={projectId} canEdit={!impact} />
+          <ImpactCard
+            impact={impact}
+            projectId={projectId}
+            canEdit={canEditLogframe && !impact}
+          />
         </div>
         <div className='mx-16 flex flex-col gap-8'>
           {outcomes.map((outcome) => (
@@ -55,17 +61,26 @@ export default function TheoryOfChangePage() {
                 outcome={outcome}
                 outcomes={outcomes}
                 projectId={projectId}
+                canEdit={canEditLogframe}
               />
             </div>
           ))}
           {outcomes.length === 0 && (
-            <OutcomeCard outcome={null} projectId={projectId} canEdit />
+            <OutcomeCard
+              outcome={null}
+              projectId={projectId}
+              canEdit={canEditLogframe}
+            />
           )}
         </div>
         <div>
           {
             <div className='mx-32 flex flex-col gap-8'>
-              <OutputsContainer outputs={outputs} projectId={projectId} />
+              <OutputsContainer
+                outputs={outputs}
+                projectId={projectId}
+                canEdit={canEditLogframe}
+              />
             </div>
           }
         </div>

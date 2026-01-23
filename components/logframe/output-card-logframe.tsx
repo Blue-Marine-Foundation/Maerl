@@ -22,7 +22,7 @@ export default function OutputCardLogframe({
   projectId,
   existingCodes = [],
   showIndicator = true,
-}: {
+}: Readonly<{
   /** Enables the Add Output and Edit Output buttons*/
   canEdit?: boolean;
   output: Output | null;
@@ -30,7 +30,7 @@ export default function OutputCardLogframe({
   projectSlug: string;
   existingCodes?: string[];
   showIndicator?: boolean;
-}) {
+}>) {
   const [isOutputDialogOpen, setIsOutputDialogOpen] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(showIndicator);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(false);
@@ -91,7 +91,7 @@ export default function OutputCardLogframe({
                     className='border-foreground/80 text-sm hover:bg-foreground/10'
                   />
                 )}
-                <ArchiveToggle outputType='output' data={output} />
+                {canEdit && <ArchiveToggle outputType='output' data={output} />}
               </div>
             </div>
           </div>
@@ -127,6 +127,7 @@ export default function OutputCardLogframe({
                     outputId={output.id}
                     projectId={projectId}
                     outputCode={output.code}
+                    canEditStructure={canEdit}
                   />
                 </div>
                 <button
@@ -157,6 +158,7 @@ export default function OutputCardLogframe({
                       activities={activities}
                       output={output}
                       projectId={projectId}
+                      canEdit={canEdit}
                     />
                   )}
                 </div>
@@ -169,17 +171,19 @@ export default function OutputCardLogframe({
               projectId={projectId}
               existingCodes={existingCodes}
             />
-            <OutputActivityForm
-              isOpen={isActivityDialogOpen}
-              onClose={() => {
-                setIsActivityDialogOpen(false);
-                setSelectedActivity(null);
-              }}
-              activity={selectedActivity}
-              activities={activities || []}
-              projectId={projectId}
-              output={output}
-            />
+            {canEdit && (
+              <OutputActivityForm
+                isOpen={isActivityDialogOpen}
+                onClose={() => {
+                  setIsActivityDialogOpen(false);
+                  setSelectedActivity(null);
+                }}
+                activity={selectedActivity}
+                activities={activities || []}
+                projectId={projectId}
+                output={output}
+              />
+            )}
           </div>
         </div>
       )}

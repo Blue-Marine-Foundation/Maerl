@@ -17,6 +17,7 @@ export const createColumns = (
   toggleRow: (rowId: string) => void,
   expandedRows: Record<string, boolean>,
   handleEditMeasurable: (measurable: OutputMeasurable) => void,
+  canEditStructure: boolean,
   projectId: string,
 ): ColumnDef<OutputMeasurable, any>[] => [
   {
@@ -110,14 +111,16 @@ export const createColumns = (
     header: '',
     size: 70,
     cell: ({ row }: { row: any }) => (
-      <div className='flex items-center gap-2 pt-0.5'>
-        <ActionButton
-          action='edit'
-          variant='icon'
-          onClick={() => handleEditMeasurable(row.original)}
-        />
-        <ArchiveToggle outputType='output_indicator' data={row.original} />
-      </div>
+      canEditStructure ? (
+        <div className='flex items-center gap-2 pt-0.5'>
+          <ActionButton
+            action='edit'
+            variant='icon'
+            onClick={() => handleEditMeasurable(row.original)}
+          />
+          <ArchiveToggle outputType='output_indicator' data={row.original} />
+        </div>
+      ) : null
     ),
   },
 ];

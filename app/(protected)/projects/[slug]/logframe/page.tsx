@@ -13,9 +13,11 @@ import ImpactCardLogframe from '@/components/logframe/impact-card-logframe';
 import LogframeQuickNav from '@/components/logframe/quick-nav';
 import FeatureCardLogframe from '@/components/logframe/feature-card-logframe';
 import { useLogframeDeeplinking } from './useLogframeDeeplinking';
+import { useUser } from '@/components/user/user-provider';
 
 export default function LogframePage() {
   const { slug } = useParams();
+  const { canEditLogframe } = useUser();
 
   const { data, isLoading } = useQuery({
     queryKey: ['logframe', slug],
@@ -46,7 +48,7 @@ export default function LogframePage() {
     const getPrefix = (code: string) => code?.split('.')[0] || '';
     const getNum = (code: string) => {
       const match = code?.match(/\.(\d+)$/);
-      return match ? parseInt(match[1]) : Infinity;
+      return match ? Number.parseInt(match[1], 10) : Number.POSITIVE_INFINITY;
     };
     const prefixA = getPrefix(a.code);
     const prefixB = getPrefix(b.code);
@@ -54,7 +56,7 @@ export default function LogframePage() {
       return prefixA.localeCompare(prefixB);
     }
     return getNum(a.code) - getNum(b.code);
-  }).filter((output) => !output.archived)
+  }).filter((output) => !output.archived);
   const projectId = data?.data?.id;
 
   return (
@@ -64,7 +66,11 @@ export default function LogframePage() {
       )}
       <div className='flex flex-col gap-8'>
         <div id='impact' className='mt-4'>
-          <ImpactCardLogframe impact={impact} projectId={projectId} canEdit />
+          <ImpactCardLogframe
+            impact={impact}
+            projectId={projectId}
+            canEdit={canEditLogframe}
+          />
         </div>
         <div className='flex flex-col gap-8'>
           {outcomes.map((outcome) => (
@@ -73,12 +79,16 @@ export default function LogframePage() {
                 outcome={outcome}
                 outcomes={outcomes}
                 projectId={projectId}
-                canEdit
+                canEdit={canEditLogframe}
               />
             </div>
           ))}
           {outcomes.length === 0 && (
-            <OutcomeCardLogframe outcome={null} projectId={projectId} canEdit />
+            <OutcomeCardLogframe
+              outcome={null}
+              projectId={projectId}
+              canEdit={canEditLogframe}
+            />
           )}
         </div>
         <div className='flex flex-col gap-8'>
@@ -89,11 +99,11 @@ export default function LogframePage() {
                   output={output}
                   projectId={projectId}
                   projectSlug={slug as string}
-                  canEdit
+                  canEdit={canEditLogframe}
                 />
               </div>
             ))}
-          {allOutputs.length > 0 && (
+          {canEditLogframe && allOutputs.length > 0 && (
             <div className='mt-4'>
               <AddOutputButton
                 projectId={projectId}
@@ -105,11 +115,17 @@ export default function LogframePage() {
           {allOutputs.length === 0 && (
             <FeatureCardLogframe title='Outputs' variant='output'>
               <div className='mt-4'>
-                <AddOutputButton
-                  projectId={projectId}
-                  output={null}
-                  existingCodes={allOutputs.map((o) => o.code)}
-                />
+                {canEditLogframe ? (
+                  <AddOutputButton
+                    projectId={projectId}
+                    output={null}
+                    existingCodes={allOutputs.map((o) => o.code)}
+                  />
+                ) : (
+                  <p className='text-sm text-muted-foreground'>
+                    No outputs yet.
+                  </p>
+                )}
               </div>
             </FeatureCardLogframe>
           )}
