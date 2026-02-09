@@ -12,28 +12,27 @@ interface NavItem {
 export default function PrimaryNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { isPartner } = useUser();
+  const { hasManagerAccess } = useUser();
 
   // Only preserve date params
   const dateParams = extractDateParams(searchParams);
   const hasDateParams = dateParams.toString().length > 0;
 
   const items = [
-    ...(isPartner
-      ? []
-      : [
+    ...(hasManagerAccess
+      ? [
           {
             name: 'Overview',
             href: '/',
           },
-        ]),
+        ]
+      : []),
     {
       name: 'Projects',
       href: '/projects',
     },
-    ...(isPartner
-      ? []
-      : [
+    ...(hasManagerAccess
+      ? [
           {
             name: 'Impact Indicators',
             href: '/impactindicators',
@@ -42,7 +41,8 @@ export default function PrimaryNavigation() {
             name: 'Updates',
             href: '/updates',
           },
-        ]),
+        ]
+      : []),
   ];
 
   return (

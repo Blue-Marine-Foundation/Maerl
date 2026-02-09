@@ -13,7 +13,7 @@ export default function ProjectNavigation({
   slug,
 }: Readonly<{ slug: string }>) {
   const pathname = usePathname();
-  const { isPartner } = useUser();
+  const { hasManagerAccess } = useUser();
 
   const items = [
     {
@@ -28,9 +28,8 @@ export default function ProjectNavigation({
       name: 'Logframe',
       href: `/projects/${slug}/logframe`,
     },
-    ...(isPartner
-      ? []
-      : [
+    ...(hasManagerAccess
+      ? [
           {
             name: 'Updates',
             href: `/projects/${slug}/updates`,
@@ -43,7 +42,8 @@ export default function ProjectNavigation({
             name: 'Archive',
             href: `/projects/${slug}/archive`,
           },
-        ]),
+        ]
+      : []),
   ];
 
   return (

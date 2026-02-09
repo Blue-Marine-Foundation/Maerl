@@ -11,10 +11,10 @@ export default function EditDialogue({
 }: Readonly<{
   project: ProjectMetadata;
 }>) {
-  const { isPartner } = useUser();
+  const { canEditProjectMetadata } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (isPartner) return null;
+  if (!canEditProjectMetadata) return null;
 
   return (
     <div>

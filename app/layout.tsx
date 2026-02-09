@@ -5,7 +5,7 @@ import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/next';
-import { UserProvider } from '@/components/user/user-provider';
+import { UserSessionSync } from '@/components/user/user-provider';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -31,13 +31,12 @@ export default function RootLayout({
     <html lang='en' className={inter.className} suppressHydrationWarning>
       <body className='min-h-svh bg-background text-foreground dark:bg-background'>
         <QueryProvider>
-          <UserProvider>
-            <Header />
-            <div className='mb-32 px-4'>{children}</div>
-            <Footer />
-            <Toaster richColors />
-            <Analytics />
-          </UserProvider>
+          <UserSessionSync />
+          <Header />
+          <div className='mb-32 px-4'>{children}</div>
+          <Footer />
+          <Toaster richColors />
+          <Analytics />
         </QueryProvider>
       </body>
     </html>
