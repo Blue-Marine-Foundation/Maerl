@@ -84,7 +84,7 @@ export default function OutputIndicatorUpdates({
                         >
                           {update.type}
                         </Badge>
-                        {update.value ? (
+                        {update.value !== null && update.value !== undefined ? (
                           <>
                             <span className='text-xs text-muted-foreground'>
                               |

@@ -72,7 +72,7 @@ export const createColumns = (
               <ActionButton
                 action='add'
                 label='Add update'
-                className="className='flex w-full items-center justify-center bg-purple-600/20 hover:bg-purple-600/40"
+                className='flex w-full items-center justify-center bg-purple-600/20 hover:bg-purple-600/40'
               />
             </DialogTrigger>
             <DialogContent>
