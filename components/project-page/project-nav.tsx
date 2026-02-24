@@ -2,14 +2,18 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { PlusCircleIcon } from 'lucide-react';
+import { useUser } from '@/components/user/user-provider';
 
 interface NavItem {
   name: string;
   href: string;
 }
 
-export default function ProjectNavigation({ slug }: { slug: string }) {
+export default function ProjectNavigation({
+  slug,
+}: Readonly<{ slug: string }>) {
   const pathname = usePathname();
+  const { hasManagerAccess } = useUser();
 
   const items = [
     {
@@ -24,18 +28,22 @@ export default function ProjectNavigation({ slug }: { slug: string }) {
       name: 'Logframe',
       href: `/projects/${slug}/logframe`,
     },
-    {
-      name: 'Updates',
-      href: `/projects/${slug}/updates`,
-    },
-    {
-      name: 'Impact',
-      href: `/projects/${slug}/impact`,
-    },
-    {
-      name: 'Archive',
-      href: `/projects/${slug}/archive`,
-    },
+    ...(hasManagerAccess
+      ? [
+          {
+            name: 'Updates',
+            href: `/projects/${slug}/updates`,
+          },
+          {
+            name: 'Impact',
+            href: `/projects/${slug}/impact`,
+          },
+          {
+            name: 'Archive',
+            href: `/projects/${slug}/archive`,
+          },
+        ]
+      : []),
   ];
 
   return (

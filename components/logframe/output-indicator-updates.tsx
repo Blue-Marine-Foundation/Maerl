@@ -1,3 +1,5 @@
+'use client';
+
 import { OutputMeasurable } from '@/utils/types';
 import { Badge } from '@/components/ui/badge';
 import ActionButton from '@/components/ui/action-button';
@@ -12,12 +14,14 @@ import {
   DialogTrigger,
 } from '../ui/dialog';
 import UpdateForm from '../updates/update-form';
+import { useUser } from '@/components/user/user-provider';
 
 export default function OutputIndicatorUpdates({
   measurable,
-}: {
+}: Readonly<{
   measurable: OutputMeasurable;
-}) {
+}>) {
+  const { authUserId, isAdmin } = useUser();
   const measurableUpdates = measurable.updates
     ?.filter((update) => !update.duplicate && update.valid)
     .sort((a, b) => {
@@ -40,22 +44,26 @@ export default function OutputIndicatorUpdates({
                 >
                   <div className='flex flex-row gap-4'>
                     <div>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <ActionButton action='edit' variant='icon' />
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit update</DialogTitle>
-                          </DialogHeader>
-                          <UpdateForm
-                            outputMeasurable={measurable}
-                            impactIndicator={measurable.impact_indicators!}
-                            projectId={measurable.project_id}
-                            update={update}
-                          />
-                        </DialogContent>
-                      </Dialog>
+                      {(isAdmin ||
+                        (authUserId && update.posted_by === authUserId)) && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <ActionButton action='edit' variant='icon' />
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit update</DialogTitle>
+                            </DialogHeader>
+                            <UpdateForm
+                              outputMeasurable={measurable}
+                              impactIndicator={measurable.impact_indicators!}
+                              projectId={measurable.project_id}
+                              update={update}
+                              isAdmin={isAdmin}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      )}
                     </div>
                     <div>
                       <p className='max-w-prose text-sm'>
@@ -76,7 +84,7 @@ export default function OutputIndicatorUpdates({
                         >
                           {update.type}
                         </Badge>
-                        {!!update.value ? (
+                        {update.value !== null && update.value !== undefined ? (
                           <>
                             <span className='text-xs text-muted-foreground'>
                               |
