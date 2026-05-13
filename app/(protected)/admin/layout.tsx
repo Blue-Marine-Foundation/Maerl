@@ -1,11 +1,11 @@
-import { requireNonPartner } from '@/utils/auth/guards';
+import { requireSuperAdmin } from '@/utils/auth/guards';
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireNonPartner('/projects');
+  await requireSuperAdmin('/');
   return children;
 }
 

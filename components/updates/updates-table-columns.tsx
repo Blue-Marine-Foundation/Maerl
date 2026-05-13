@@ -114,7 +114,11 @@ export const columns: ColumnDef<Update>[] = [
       return filterValue.includes(row.getValue(columnId));
     },
     cell: ({ row }) => {
-      return <p className='max-w-prose'>{row.getValue('description')}</p>;
+      return (
+        <p className='w-[18rem] max-w-[60vw] whitespace-normal break-words'>
+          {row.getValue('description')}
+        </p>
+      );
     },
   },
   {

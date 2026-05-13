@@ -35,7 +35,7 @@ export default function UpdatesDataTable() {
   }
 
   return (
-    <FeatureCard>
+    <FeatureCard className='min-w-0'>
       <DataTable<Update>
         data={data}
         columns={columns}

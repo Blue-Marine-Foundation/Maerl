@@ -50,6 +50,14 @@ export type ImpactIndicatorSummary = {
   total_value: number;
 };
 
+export type ImpactIndicatorSeriesPoint = {
+  impact_indicator_id: number;
+  indicator_code: string;
+  year: number;
+  valid_updates: number;
+  total_value: number;
+};
+
 export type Impact = {
   id: number;
   created_at: string;
@@ -157,4 +165,14 @@ export type OutputActivity = {
   created_at: string;
   output_id: number;
   project_id: number;
+};
+
+export type MapProject = {
+  id: number;
+  name: string;
+  slug: string;
+  project_status: string | null;
+  project_country: string | null;
+  lat: number;
+  lng: number;
 };

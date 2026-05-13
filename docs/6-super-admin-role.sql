@@ -1,0 +1,52 @@
+-- Super Admin role
+--
+-- Background:
+--   The legacy schema has three role values in `public.users.role`:
+--   'Admin', 'Project Manager', 'Partner'. In practice the entire 68-strong
+--   internal team is `Admin` (and `Project Manager` is unused). This makes
+--   "admin-only" data-quality privileges (admin_reviewed / verified flags,
+--   /admin route access) too widely scoped.
+--
+-- This change introduces a fourth role, 'Super Admin', which is reserved for
+-- the 1-2 people who actually own data review on the platform. Code-side:
+--
+--   - api/fetch-current-user-profile.ts extends AppUserRole.
+--   - components/user/user-provider.tsx exposes isSuperAdmin.
+--   - utils/auth/guards.ts adds requireSuperAdmin.
+--   - app/(protected)/admin/layout.tsx now uses requireSuperAdmin (was
+--     requireNonPartner).
+--   - components/header/primary-nav.tsx renders an `Admin` nav link only
+--     for Super Admins.
+--   - components/overview/for-you-panel.tsx gates the `Needs your attention`
+--     panel to Super Admins.
+--
+-- There is no CHECK constraint on public.users.role today (only NOT NULL on
+-- id and created_at), so nothing to drop or recreate. The only DB-side
+-- action required is promoting the chosen user(s).
+--
+-- 1) Promote a user to Super Admin
+--    Replace '<auth-uid-here>' with the user's auth.users.id. The id can be
+--    looked up by email:
+--
+--      SELECT id, first_name, last_name, role
+--      FROM public.users
+--      WHERE first_name ILIKE 'Sonny';
+--
+--    Then:
+
+UPDATE public.users
+SET role = 'Super Admin'
+WHERE id = '<auth-uid-here>';
+
+-- 2) Verify
+--
+--    SELECT role, count(*) AS n
+--    FROM public.users
+--    GROUP BY role
+--    ORDER BY n DESC;
+--
+-- 3) Demote (revert to plain Admin) if needed
+--
+--    UPDATE public.users
+--    SET role = 'Admin'
+--    WHERE id = '<auth-uid-here>';

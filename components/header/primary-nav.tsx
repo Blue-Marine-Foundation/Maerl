@@ -12,7 +12,7 @@ interface NavItem {
 export default function PrimaryNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { hasManagerAccess } = useUser();
+  const { hasManagerAccess, isSuperAdmin } = useUser();
 
   // Only preserve date params
   const dateParams = extractDateParams(searchParams);
@@ -34,12 +34,20 @@ export default function PrimaryNavigation() {
     ...(hasManagerAccess
       ? [
           {
-            name: 'Impact Indicators',
+            name: 'Impact',
             href: '/impactindicators',
           },
           {
             name: 'Updates',
             href: '/updates',
+          },
+        ]
+      : []),
+    ...(isSuperAdmin
+      ? [
+          {
+            name: 'Admin',
+            href: '/admin',
           },
         ]
       : []),
