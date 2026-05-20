@@ -3,47 +3,147 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import * as d3 from 'd3';
-import { XIcon } from 'lucide-react';
+import { GlobeIcon, MapIcon, XIcon } from 'lucide-react';
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/ui/toggle-group';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type {
   Map as MapboxMap,
   Popup as MapboxPopup,
   MapMouseEvent as MapboxMapMouseEvent,
 } from 'mapbox-gl';
-import type { CountryImpactRow } from './server-actions';
+import seaRegionsGeoJson from './sea-regions';
+import type { GeographyImpactRow } from './server-actions';
 import type { MapBounds } from './country-iso-map';
 
-// Fill colors. The basemap (dark-v11) provides the muted grey for inactive
-// countries, so we only fill where Maerl works. Hover gets a brighter tone
-// driven entirely by feature-state to avoid React re-renders on every move.
 const FILL_BASE = '#22c55e';
 const FILL_HOVER = '#4ade80';
 const FILL_OPACITY_BASE = 0.45;
 const FILL_OPACITY_HOVER = 0.7;
 const STROKE_COLOR = '#86efac';
 
+/** Marine overlays — cyan so they read differently from terrestrial choropleth. */
+const WATER_FILL_BASE = 'rgba(14, 165, 233, 0.28)';
+const WATER_FILL_HOVER = 'rgba(56, 189, 248, 0.45)';
+const WATER_STROKE = 'rgba(125, 211, 252, 0.75)';
+
+const WATER_SOURCE_ID = 'water-region-overlays';
+const WATER_FILL_LAYER_ID = 'water-overlay-fill';
+const WATER_OUTLINE_LAYER_ID = 'water-overlay-outline';
+
+type MapProjection = 'globe' | 'mercator';
+
+function applyMapProjection(map: MapboxMap, projection: MapProjection) {
+  map.setProjection(projection);
+}
+
 type Props = {
-  rows: CountryImpactRow[];
-  activeProjectsWithoutCountry: number;
+  rows: GeographyImpactRow[];
+  globalActiveProjectCount: number;
+  activeProjectsWithoutMappedGeography: number;
   defaultFocusBounds: MapBounds | null;
   defaultFocusLabel: string | null;
 };
 
-function buildHoverHtml(row: CountryImpactRow): string {
+function storageKey(row: GeographyImpactRow): string {
+  return row.geographyKind === 'country' ? `c:${row.geographyId}` : `w:${row.geographyId}`;
+}
+
+function layerKeyFromParsed(token: string | null): {
+  iso: string | null;
+  waterId: string | null;
+} {
+  if (!token) return { iso: null, waterId: null };
+  if (token.startsWith('c:')) return { iso: token.slice(2), waterId: null };
+  if (token.startsWith('w:')) return { iso: null, waterId: token.slice(2) };
+  return { iso: null, waterId: null };
+}
+
+type GeoJsonPolygon = {
+  type: 'Polygon';
+  coordinates: [number, number][][];
+};
+
+type GeoJsonMultiPolygon = {
+  type: 'MultiPolygon';
+  coordinates: [number, number][][][];
+};
+
+type GeoJsonGeometry = GeoJsonPolygon | GeoJsonMultiPolygon;
+
+type WaterRegionFeature = {
+  type: 'Feature';
+  properties: {
+    gid?: string;
+    id?: string;
+    name?: string;
+  };
+  geometry: GeoJsonGeometry | null;
+};
+
+type WaterRegionFeatureCollection = {
+  type: 'FeatureCollection';
+  features: readonly WaterRegionFeature[];
+};
+
+function boundsToPolygon(bounds: MapBounds): GeoJsonPolygon {
+  const [[west, south], [east, north]] = bounds;
+  return {
+    type: 'Polygon',
+    coordinates: [
+      [
+        [west, south],
+        [east, south],
+        [east, north],
+        [west, north],
+        [west, south],
+      ],
+    ],
+  };
+}
+
+const STATIC_WATER_GEOMETRIES = new Map<string, GeoJsonGeometry>(
+  ((seaRegionsGeoJson as unknown as WaterRegionFeatureCollection).features ?? [])
+    .filter((feature) => feature.geometry !== null)
+    .map(
+      (feature): [string, GeoJsonGeometry] => [
+        feature.properties.gid ?? feature.properties.id ?? '',
+        feature.geometry as unknown as GeoJsonGeometry,
+      ],
+    )
+    .filter(([gid]) => gid.length > 0),
+);
+
+function waterGeometryForRow(row: GeographyImpactRow): GeoJsonGeometry | null {
+  const staticGeometry = STATIC_WATER_GEOMETRIES.get(row.geographyId);
+  if (staticGeometry) return staticGeometry;
+  return row.waterBounds ? boundsToPolygon(row.waterBounds) : null;
+}
+
+function buildHoverHtml(row: GeographyImpactRow): string {
+  const foreground = 'hsl(var(--card-foreground))';
+  const muted = 'hsl(var(--muted-foreground))';
+  const scope =
+    row.geographyKind === 'water'
+      ? 'Sea / ocean programme area.'
+      : 'Country / territory.';
   const projectsLine = `${row.activeProjects} active project${row.activeProjects === 1 ? '' : 's'}`;
   const metricsHtml = row.metrics
     .slice(0, 4)
     .map(
       (m) =>
-        `<div style="display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#333"><span style="color:#666">${m.indicator_label}</span><span style="font-variant-numeric:tabular-nums">${d3.format(',.0f')(m.total)} ${m.unit}</span></div>`,
+        `<div style="display:flex;justify-content:space-between;gap:12px;font-size:12px;color:${foreground}"><span style="color:${muted}">${m.indicator_label}</span><span style="font-variant-numeric:tabular-nums">${d3.format(',.0f')(m.total)} ${m.unit}</span></div>`,
     )
     .join('');
 
   return `
-    <div style="font-family:system-ui,sans-serif;min-width:200px;max-width:260px">
-      <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#1a1a2e">${row.countryDisplay}</p>
-      <p style="margin:0 0 6px;font-size:12px;color:#555">${projectsLine}</p>
-      ${metricsHtml || '<p style="margin:0;font-size:12px;color:#888;font-style:italic">No headline metrics yet</p>'}
+    <div style="font-family:system-ui,sans-serif;min-width:200px;max-width:280px">
+      <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:${foreground}">${row.geographyLabel}</p>
+      <p style="margin:0 0 6px;font-size:11px;line-height:1.35;color:${muted}">${scope}</p>
+      <p style="margin:0 0 6px;font-size:12px;color:${muted}">${projectsLine}</p>
+      ${metricsHtml || `<p style="margin:0;font-size:12px;color:${muted};font-style:italic">No headline metrics yet</p>`}
     </div>
   `;
 }
@@ -54,6 +154,9 @@ const COUNTRY_FEATURE = {
 } as const;
 
 function buildCountryFilter(activeIsoCodes: readonly string[]): unknown[] {
+  if (activeIsoCodes.length === 0) {
+    return ['literal', false] as unknown[];
+  }
   return [
     'all',
     ['in', ['get', 'iso_3166_1_alpha_3'], ['literal', activeIsoCodes]],
@@ -69,9 +172,15 @@ function setCountryFeatureState(
   map.setFeatureState({ ...COUNTRY_FEATURE, id: iso }, state);
 }
 
+function setWaterFeatureState(
+  map: MapboxMap,
+  gid: string,
+  state: { hover?: boolean; selected?: boolean },
+) {
+  map.setFeatureState({ source: WATER_SOURCE_ID, id: gid }, state);
+}
+
 function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
-  // Promote the alpha-3 ISO code as the feature id so feature-state
-  // hover/selection works across tile boundaries.
   map.addSource('country-boundaries', {
     type: 'vector',
     url: 'mapbox://mapbox.country-boundaries-v1',
@@ -124,74 +233,72 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
   );
 }
 
-type InteractionHandles = {
-  map: MapboxMap;
-  popup: MapboxPopup;
-  hoveredIsoRef: React.RefObject<string | null>;
-  rowsByIsoRef: React.RefObject<Map<string, CountryImpactRow>>;
-  onSelect: (iso: string) => void;
+function addWaterLayers(map: MapboxMap) {
+  map.addSource(WATER_SOURCE_ID, {
+    type: 'geojson',
+    data: { type: 'FeatureCollection', features: [] },
+    promoteId: 'gid',
+  });
+
+  map.addLayer({
+    id: WATER_FILL_LAYER_ID,
+    type: 'fill',
+    source: WATER_SOURCE_ID,
+    paint: {
+      'fill-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        WATER_FILL_HOVER,
+        ['boolean', ['feature-state', 'selected'], false],
+        WATER_FILL_HOVER,
+        WATER_FILL_BASE,
+      ],
+      'fill-outline-color': WATER_STROKE,
+    },
+  });
+
+  map.addLayer({
+    id: WATER_OUTLINE_LAYER_ID,
+    type: 'line',
+    source: WATER_SOURCE_ID,
+    layout: {},
+    paint: {
+      'line-color': WATER_STROKE,
+      'line-width': 1,
+      'line-opacity': 0.9,
+    },
+  });
+}
+
+type WaterRegionOverlayFeatureCollection = {
+  type: 'FeatureCollection';
+  features: Array<{
+    type: 'Feature';
+    properties: { gid: string; name: string };
+    geometry: GeoJsonGeometry;
+  }>;
 };
 
-type CountryMouseEvent = MapboxMapMouseEvent & {
-  features?: Array<{ id?: string | number }>;
-};
+function buildWaterRegionsGeoJSON(
+  rows: readonly GeographyImpactRow[],
+): WaterRegionOverlayFeatureCollection {
+  const features = rows
+    .filter((r) => r.geographyKind === 'water')
+    .map((r) => {
+      const geometry = waterGeometryForRow(r);
+      if (!geometry) return null;
+      return {
+        type: 'Feature' as const,
+        properties: { gid: r.geographyId, name: r.geographyLabel },
+        geometry,
+      };
+    })
+    .filter((feature): feature is NonNullable<typeof feature> => feature !== null);
 
-function handleCountryMouseMove(
-  handles: InteractionHandles,
-  e: CountryMouseEvent,
-) {
-  const { map, popup, hoveredIsoRef, rowsByIsoRef } = handles;
-  const feature = e.features?.[0];
-  const iso = (feature?.id as string | undefined) ?? null;
-  if (!iso) return;
-  map.getCanvas().style.cursor = 'pointer';
-
-  const previous = hoveredIsoRef.current;
-  if (previous && previous !== iso) {
-    setCountryFeatureState(map, previous, { hover: false });
-  }
-  if (iso !== previous) {
-    setCountryFeatureState(map, iso, { hover: true });
-  }
-  hoveredIsoRef.current = iso;
-
-  const row = rowsByIsoRef.current.get(iso);
-  if (!row) return;
-  popup.setLngLat(e.lngLat).setHTML(buildHoverHtml(row)).addTo(map);
-}
-
-function handleCountryMouseLeave(handles: InteractionHandles) {
-  const { map, popup, hoveredIsoRef } = handles;
-  map.getCanvas().style.cursor = '';
-  if (hoveredIsoRef.current) {
-    setCountryFeatureState(map, hoveredIsoRef.current, { hover: false });
-    hoveredIsoRef.current = null;
-  }
-  popup.remove();
-}
-
-function handleCountryClick(
-  handles: InteractionHandles,
-  e: CountryMouseEvent,
-) {
-  const feature = e.features?.[0];
-  const iso = (feature?.id as string | undefined) ?? null;
-  if (!iso) return;
-  if (!handles.rowsByIsoRef.current.has(iso)) return;
-  handles.onSelect(iso);
-}
-
-function attachCountryInteractions(handles: InteractionHandles) {
-  const { map } = handles;
-  map.on('mousemove', 'country-active-fill', (e) =>
-    handleCountryMouseMove(handles, e),
-  );
-  map.on('mouseleave', 'country-active-fill', () =>
-    handleCountryMouseLeave(handles),
-  );
-  map.on('click', 'country-active-fill', (e) =>
-    handleCountryClick(handles, e),
-  );
+  return {
+    type: 'FeatureCollection',
+    features,
+  };
 }
 
 function applyCountryFilters(
@@ -207,17 +314,138 @@ function applyCountryFilters(
   }
 }
 
-function applySelection(
+type CountryInteract = {
+  map: MapboxMap;
+  popup: MapboxPopup;
+  hoveredIsoRef: React.RefObject<string | null>;
+  rowsByGeoKeyRef: React.RefObject<Map<string, GeographyImpactRow>>;
+  hoveredWaterRef: React.RefObject<string | null>;
+  onSelectCountry: (iso: string) => void;
+  onSelectWater: (gid: string) => void;
+};
+
+type GeographyMouseEvent = MapboxMapMouseEvent;
+
+function clearCountryHover(ci: CountryInteract) {
+  const { map, hoveredIsoRef } = ci;
+  if (hoveredIsoRef.current) {
+    setCountryFeatureState(map, hoveredIsoRef.current, { hover: false });
+    hoveredIsoRef.current = null;
+  }
+}
+
+function clearWaterHover(ci: CountryInteract) {
+  const { map, hoveredWaterRef } = ci;
+  if (hoveredWaterRef.current) {
+    setWaterFeatureState(map, hoveredWaterRef.current, { hover: false });
+    hoveredWaterRef.current = null;
+  }
+}
+
+function handleCountryMouseMove(ci: CountryInteract, e: GeographyMouseEvent) {
+  const { map, popup, rowsByGeoKeyRef } = ci;
+  const feature = e.features?.[0] as { id?: string | number } | undefined;
+  const iso = (feature?.id as string | undefined) ?? null;
+  if (!iso) return;
+  map.getCanvas().style.cursor = 'pointer';
+  clearWaterHover(ci);
+
+  const previous = ci.hoveredIsoRef.current;
+  if (previous && previous !== iso) {
+    setCountryFeatureState(map, previous, { hover: false });
+  }
+  setCountryFeatureState(map, iso, { hover: true });
+  ci.hoveredIsoRef.current = iso;
+
+  const row = rowsByGeoKeyRef.current.get(`c:${iso}`);
+  if (!row) return;
+  popup.setLngLat(e.lngLat).setHTML(buildHoverHtml(row)).addTo(map);
+}
+
+function handleCountryMouseLeave(ci: CountryInteract) {
+  ci.map.getCanvas().style.cursor = '';
+  clearCountryHover(ci);
+  ci.popup.remove();
+}
+
+function handleCountryClick(ci: CountryInteract, e: GeographyMouseEvent) {
+  const feature = e.features?.[0] as { id?: string | number } | undefined;
+  const iso = (feature?.id as string | undefined) ?? null;
+  if (!iso) return;
+  if (!ci.rowsByGeoKeyRef.current.has(`c:${iso}`)) return;
+  ci.onSelectCountry(iso);
+}
+
+function handleWaterMouseMove(ci: CountryInteract, e: GeographyMouseEvent) {
+  const { map, popup, rowsByGeoKeyRef } = ci;
+  const props = e.features?.[0]?.properties as { gid?: string } | undefined;
+  const gid = String(props?.gid ?? '');
+  if (!gid) return;
+  map.getCanvas().style.cursor = 'pointer';
+  clearCountryHover(ci);
+
+  const previous = ci.hoveredWaterRef.current;
+  if (previous && previous !== gid) {
+    setWaterFeatureState(map, previous, { hover: false });
+  }
+  setWaterFeatureState(map, gid, { hover: true });
+  ci.hoveredWaterRef.current = gid;
+
+  const row = rowsByGeoKeyRef.current.get(`w:${gid}`);
+  if (!row) return;
+  popup.setLngLat(e.lngLat).setHTML(buildHoverHtml(row)).addTo(map);
+}
+
+function handleWaterMouseLeave(ci: CountryInteract) {
+  ci.map.getCanvas().style.cursor = '';
+  clearWaterHover(ci);
+  ci.popup.remove();
+}
+
+function handleWaterClick(ci: CountryInteract, e: GeographyMouseEvent) {
+  const props = e.features?.[0]?.properties as { gid?: string } | undefined;
+  const gid = String(props?.gid ?? '');
+  if (!gid) return;
+  if (!ci.rowsByGeoKeyRef.current.has(`w:${gid}`)) return;
+  ci.onSelectWater(gid);
+}
+
+function attachGeographyInteractions(ci: CountryInteract) {
+  const { map } = ci;
+  map.on('mousemove', 'country-active-fill', (e) =>
+    handleCountryMouseMove(ci, e),
+  );
+  map.on('mouseleave', 'country-active-fill', () =>
+    handleCountryMouseLeave(ci),
+  );
+  map.on('click', 'country-active-fill', (e) =>
+    handleCountryClick(ci, e),
+  );
+
+  map.on('mousemove', WATER_FILL_LAYER_ID, (e) =>
+    handleWaterMouseMove(ci, e),
+  );
+  map.on('mouseleave', WATER_FILL_LAYER_ID, () =>
+    handleWaterMouseLeave(ci),
+  );
+  map.on('click', WATER_FILL_LAYER_ID, (e) => handleWaterClick(ci, e));
+}
+
+function applyGeoHighlight(
   map: MapboxMap,
-  previous: string | null,
-  next: string | null,
+  prevToken: string | null,
+  nextToken: string | null,
 ) {
-  if (previous && previous !== next) {
-    setCountryFeatureState(map, previous, { selected: false });
-  }
-  if (next && next !== previous) {
-    setCountryFeatureState(map, next, { selected: true });
-  }
+  const prev = layerKeyFromParsed(prevToken);
+  const next = layerKeyFromParsed(nextToken);
+
+  if (prev.iso && next.iso !== prev.iso)
+    setCountryFeatureState(map, prev.iso, { selected: false });
+  if (prev.waterId && next.waterId !== prev.waterId)
+    setWaterFeatureState(map, prev.waterId, { selected: false });
+
+  if (next.iso) setCountryFeatureState(map, next.iso, { selected: true });
+  if (next.waterId) setWaterFeatureState(map, next.waterId, { selected: true });
 }
 
 function applyDefaultFocus(map: MapboxMap, bounds: MapBounds | null) {
@@ -231,10 +459,6 @@ function applyDefaultFocus(map: MapboxMap, bounds: MapBounds | null) {
   const span = Math.max(lngSpan, latSpan);
   const center: [number, number] = [(west + east) / 2, (south + north) / 2];
 
-  // A tight fitBounds on globe projection can expose a large black "space"
-  // area below high-latitude regions (e.g. UK & Channel Islands). Use a soft
-  // regional camera instead: still focuses the user's region, but keeps enough
-  // earth in view that the map reads as a globe rather than a clipped panel.
   let zoom = 2.4;
   if (span < 18) zoom = 2.7;
   if (span > 55) zoom = 1.6;
@@ -250,52 +474,48 @@ function resizeMapToContainer(map: MapboxMap, bounds: MapBounds | null) {
   applyDefaultFocus(map, bounds);
 }
 
-function resizeCurrentMap(
-  mapRef: React.RefObject<MapboxMap | null>,
-  bounds: MapBounds | null,
-) {
-  if (!mapRef.current) return;
-  resizeMapToContainer(mapRef.current, bounds);
-}
-
-function scheduleInitialResize(
-  mapRef: React.RefObject<MapboxMap | null>,
-  bounds: MapBounds | null,
-) {
-  requestAnimationFrame(() => resizeCurrentMap(mapRef, bounds));
-  globalThis.setTimeout(() => resizeCurrentMap(mapRef, bounds), 250);
-}
-
 export default function MapView({
   rows,
-  activeProjectsWithoutCountry,
+  globalActiveProjectCount,
+  activeProjectsWithoutMappedGeography,
   defaultFocusBounds,
   defaultFocusLabel,
 }: Readonly<Props>) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<import('mapbox-gl').Map | null>(null);
-  const popupRef = useRef<import('mapbox-gl').Popup | null>(null);
+  const mapRef = useRef<MapboxMap | null>(null);
+  const popupRef = useRef<MapboxPopup | null>(null);
   const hoveredIsoRef = useRef<string | null>(null);
-  // Mapbox's click handler is registered once; reading from a ref keeps
-  // it in sync with the latest row data without re-subscribing.
-  const rowsByIsoRef = useRef<Map<string, CountryImpactRow>>(new Map());
-  const [selectedIso, setSelectedIso] = useState<string | null>(null);
+  const hoveredWaterRef = useRef<string | null>(null);
+  const rowsByGeoKeyRef = useRef<Map<string, GeographyImpactRow>>(new Map());
+  const [selectedGeo, setSelectedGeo] = useState<string | null>(null);
+  const [projection, setProjection] = useState<MapProjection>('globe');
 
-  const rowsByIso = useMemo(() => {
-    const m = new Map<string, CountryImpactRow>();
-    for (const r of rows) m.set(r.iso3, r);
+  const rowsByGeoKey = useMemo(() => {
+    const m = new Map<string, GeographyImpactRow>();
+    for (const r of rows) {
+      m.set(storageKey(r), r);
+    }
     return m;
   }, [rows]);
 
-  // Keep the ref in sync for the long-lived map handlers.
   useEffect(() => {
-    rowsByIsoRef.current = rowsByIso;
-  }, [rowsByIso]);
+    rowsByGeoKeyRef.current = rowsByGeoKey;
+  }, [rowsByGeoKey]);
 
-  const activeIsoCodes = useMemo(() => rows.map((r) => r.iso3), [rows]);
+  useEffect(() => {
+    if (selectedGeo && !rowsByGeoKey.has(selectedGeo)) {
+      setSelectedGeo(null);
+    }
+  }, [selectedGeo, rowsByGeoKey]);
 
-  // Initialise the map once. Subsequent data changes are pushed to the
-  // existing instance via setFilter in the activeIsoCodes effect.
+  const activeIsoCodes = useMemo(
+    () =>
+      rows
+        .filter((r) => r.geographyKind === 'country')
+        .map((r) => r.geographyId),
+    [rows],
+  );
+
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
@@ -312,10 +532,6 @@ export default function MapView({
         style: 'mapbox://styles/mapbox/dark-v11',
         center: [10, 20],
         zoom: 1.2,
-        // Cooperative gestures: trackpad pinch + Cmd/Ctrl-scroll zoom the
-        // map; plain mouse-wheel scroll passes through to the page so the
-        // map doesn't hijack vertical navigation. Two-finger touch is
-        // required to pan on mobile.
         cooperativeGestures: true,
         attributionControl: false,
         projection: 'globe',
@@ -324,8 +540,6 @@ export default function MapView({
         new mapboxgl.AttributionControl({ compact: true }),
         'bottom-left',
       );
-      // Keep the zoom controls clear of the country detail panel, which
-      // anchors to top-right when a country is selected.
       map.addControl(
         new mapboxgl.NavigationControl({ showCompass: false }),
         'top-left',
@@ -343,16 +557,30 @@ export default function MapView({
 
       map.on('load', () => {
         if (!mapRef.current) return;
-        addCountryLayers(mapRef.current, activeIsoCodes);
-        resizeMapToContainer(mapRef.current, defaultFocusBounds);
-        attachCountryInteractions({
-          map: mapRef.current,
+        const m = mapRef.current;
+
+        addCountryLayers(m, activeIsoCodes);
+        addWaterLayers(m);
+
+        const waterData = buildWaterRegionsGeoJSON(rows);
+        const src = m.getSource(WATER_SOURCE_ID);
+        if (src && 'setData' in src) src.setData(waterData);
+
+        resizeMapToContainer(m, defaultFocusBounds);
+        attachGeographyInteractions({
+          map: m,
           popup,
           hoveredIsoRef,
-          rowsByIsoRef,
-          onSelect: setSelectedIso,
+          hoveredWaterRef,
+          rowsByGeoKeyRef,
+          onSelectCountry: (iso) => setSelectedGeo(`c:${iso}`),
+          onSelectWater: (gid) => setSelectedGeo(`w:${gid}`),
         });
-        scheduleInitialResize(mapRef, defaultFocusBounds);
+        requestAnimationFrame(() => resizeMapToContainer(m, defaultFocusBounds));
+        globalThis.setTimeout(
+          () => resizeMapToContainer(m, defaultFocusBounds),
+          250,
+        );
       });
     }
 
@@ -360,18 +588,16 @@ export default function MapView({
 
     return () => {
       cancelled = true;
+      hoveredIsoRef.current = null;
+      hoveredWaterRef.current = null;
       popupRef.current?.remove();
       popupRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
-      hoveredIsoRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mapbox reads its container dimensions at init time. The overview layout
-  // can shift shortly after first paint as async cards resolve, so keep the
-  // canvas in sync with the actual rendered container.
   useEffect(() => {
     const container = containerRef.current;
     if (!container || typeof ResizeObserver === 'undefined') return;
@@ -394,37 +620,62 @@ export default function MapView({
     };
   }, [defaultFocusBounds]);
 
-  // Sync filter expressions when the active ISO list changes (e.g. when the
-  // user's RLS scope or the underlying data shifts after first paint).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+
+    const apply = () => applyMapProjection(map, projection);
+
+    if (map.isStyleLoaded()) apply();
+    else map.once('load', apply);
+  }, [projection]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getLayer('country-active-fill')) return;
     const apply = () => applyCountryFilters(map, activeIsoCodes);
-    if (map.isStyleLoaded() && map.getLayer('country-active-fill')) {
-      apply();
-    } else {
-      map.once('idle', apply);
-    }
+    if (map.isStyleLoaded()) apply();
+    else map.once('idle', apply);
   }, [activeIsoCodes]);
 
-  // Push selection into feature-state so the chosen country stays
-  // highlighted even after the cursor leaves the map. Tracks the previous
-  // selection across renders so we can clear it.
+  useEffect(() => {
+    const map = mapRef.current;
+    const src = map?.getSource(WATER_SOURCE_ID);
+    if (!map || !src || !('setData' in src)) return;
+    src.setData(buildWaterRegionsGeoJSON(rows));
+  }, [rows]);
+
   const previouslySelectedRef = useRef<string | null>(null);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     const apply = () =>
-      applySelection(map, previouslySelectedRef.current, selectedIso);
-    if (map.isStyleLoaded() && map.getSource('country-boundaries')) {
+      applyGeoHighlight(
+        map,
+        previouslySelectedRef.current,
+        selectedGeo,
+      );
+    if (
+      map.isStyleLoaded() &&
+      map.getSource('country-boundaries') &&
+      map.getSource(WATER_SOURCE_ID)
+    ) {
       apply();
     } else {
       map.once('idle', apply);
     }
-    previouslySelectedRef.current = selectedIso;
-  }, [selectedIso]);
+    previouslySelectedRef.current = selectedGeo;
+  }, [selectedGeo]);
 
-  const selectedRow = selectedIso ? rowsByIso.get(selectedIso) ?? null : null;
+  const selectedRow = useMemo(() => {
+    if (!selectedGeo) return null;
+    return rowsByGeoKey.get(selectedGeo) ?? null;
+  }, [selectedGeo, rowsByGeoKey]);
+
+  const footerChips =
+    defaultFocusLabel ||
+    globalActiveProjectCount > 0 ||
+    activeProjectsWithoutMappedGeography > 0;
 
   return (
     <div className='relative h-full w-full'>
@@ -433,25 +684,64 @@ export default function MapView({
         className='h-full w-full overflow-hidden rounded-lg'
       />
 
+      <div className='absolute right-3 top-3 z-20'>
+        <ToggleGroup
+          type='single'
+          value={projection}
+          onValueChange={(value) => {
+            if (value === 'globe' || value === 'mercator') {
+              setProjection(value);
+            }
+          }}
+          className='rounded-md border border-border/60 bg-background/90 p-0.5 shadow-sm backdrop-blur-md'
+        >
+          <ToggleGroupItem
+            value='globe'
+            size='sm'
+            aria-label='Globe projection'
+            className='h-7 gap-1 px-2 text-xs data-[state=on]:bg-muted'
+          >
+            <GlobeIcon className='h-3.5 w-3.5' />
+            Globe
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value='mercator'
+            size='sm'
+            aria-label='Flat map projection'
+            className='h-7 gap-1 px-2 text-xs data-[state=on]:bg-muted'
+          >
+            <MapIcon className='h-3.5 w-3.5' />
+            Flat
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       {selectedRow && (
-        <CountryPanel
+        <GeographyDetailPanel
           row={selectedRow}
-          onClose={() => setSelectedIso(null)}
+          onClose={() => setSelectedGeo(null)}
         />
       )}
 
-      {(defaultFocusLabel || activeProjectsWithoutCountry > 0) && (
+      {footerChips && (
         <div className='absolute bottom-2 right-2 flex max-w-[calc(100%-1rem)] flex-col items-end gap-1 text-[11px] text-muted-foreground'>
           {defaultFocusLabel && (
             <p className='rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm'>
               Focus: {defaultFocusLabel}
             </p>
           )}
-          {activeProjectsWithoutCountry > 0 && (
+          {globalActiveProjectCount > 0 && (
             <p className='rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm'>
-              + {activeProjectsWithoutCountry} active project
-              {activeProjectsWithoutCountry === 1 ? '' : 's'} without region or
-              country data
+              {globalActiveProjectCount} Global programme
+              {globalActiveProjectCount === 1 ? '' : 's'} · not plotted on map
+              (by design).
+            </p>
+          )}
+          {activeProjectsWithoutMappedGeography > 0 && (
+            <p className='rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm'>
+              + {activeProjectsWithoutMappedGeography} active project
+              {activeProjectsWithoutMappedGeography === 1 ? '' : 's'} without a
+              map label (missing or unsupported region text).
             </p>
           )}
         </div>
@@ -460,15 +750,21 @@ export default function MapView({
   );
 }
 
-function CountryPanel({
+function GeographyDetailPanel({
   row,
   onClose,
-}: Readonly<{ row: CountryImpactRow; onClose: () => void }>) {
+}: Readonly<{ row: GeographyImpactRow; onClose: () => void }>) {
+  const scopeHint =
+    row.geographyKind === 'water'
+      ? 'Marine programme geography.'
+      : 'Country / territory from Mapbox boundaries.';
+
   return (
-    <aside className='absolute right-3 top-3 flex max-h-[calc(100%-1.5rem)] w-[280px] max-w-[calc(100%-1.5rem)] flex-col gap-3 overflow-hidden rounded-lg border border-border/60 bg-background/95 p-4 shadow-lg backdrop-blur-md'>
+    <aside className='absolute right-3 top-12 flex max-h-[calc(100%-3.5rem)] w-[300px] max-w-[calc(100%-1.5rem)] flex-col gap-3 overflow-hidden rounded-lg border border-border/60 bg-background/95 p-4 shadow-lg backdrop-blur-md'>
       <header className='flex items-start justify-between gap-2'>
         <div className='flex flex-col gap-0.5'>
-          <p className='text-base font-semibold'>{row.countryDisplay}</p>
+          <p className='text-base font-semibold'>{row.geographyLabel}</p>
+          <p className='text-xs text-muted-foreground'>{scopeHint}</p>
           <p className='text-xs text-muted-foreground'>
             {row.activeProjects} active project
             {row.activeProjects === 1 ? '' : 's'}
@@ -477,7 +773,7 @@ function CountryPanel({
         <button
           type='button'
           onClick={onClose}
-          aria-label='Close country details'
+          aria-label='Close geography details'
           className='rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground'
         >
           <XIcon className='h-4 w-4' />

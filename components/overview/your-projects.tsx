@@ -2,15 +2,18 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import * as d3 from 'd3';
+import { differenceInDays, formatDistanceToNow } from 'date-fns';
 import { ArrowRightIcon, PlusIcon } from 'lucide-react';
+import { cn } from '@/utils/cn';
 import { Skeleton } from '@/components/ui/skeleton';
-import ProjectStatusBadge from '@/components/ui/project-status-badge';
+import OverviewSectionHeader from './overview-section-header';
 import {
   fetchYourProjects,
   type YourProjectRow,
   type YourProjectsScope,
 } from './your-projects-server-actions';
+
+const STALE_UPDATE_DAYS = 30;
 
 function projectHref(p: YourProjectRow): string {
   return `/${p.project_type === 'Unit' ? 'units' : 'projects'}/${p.slug}`;
@@ -20,35 +23,92 @@ function addUpdateHref(p: YourProjectRow): string {
   return `/${p.project_type === 'Unit' ? 'units' : 'projects'}/${p.slug}/add-update`;
 }
 
-function ProjectRow({ project }: Readonly<{ project: YourProjectRow }>) {
-  const lastUpdated = project.last_updated
-    ? d3.timeFormat('%d %b %Y')(new Date(project.last_updated))
-    : '—';
+function statusLabel(status: string | null): string {
+  if (!status) return 'Unknown status';
+  return status.trim().replace(/\s+$/, '');
+}
+
+function isActiveStatus(status: string | null): boolean {
+  return status?.toLowerCase().startsWith('active') ?? false;
+}
+
+function lastUpdateMeta(iso: string | null): {
+  label: string;
+  stale: boolean;
+} {
+  if (!iso) {
+    return { label: 'No updates recorded', stale: true };
+  }
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return { label: 'Update date unknown', stale: false };
+  }
+  const days = differenceInDays(new Date(), date);
+  const stale = days > STALE_UPDATE_DAYS;
+  const label = `Last update ${formatDistanceToNow(date, { addSuffix: true })}`;
+  return { label, stale };
+}
+
+function indicatorMeta(count: number): string {
+  if (count === 0) return 'No indicators with data yet';
+  if (count === 1) return '1 indicator';
+  return `${count.toLocaleString()} indicators`;
+}
+
+function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
+  const { label: lastUpdateLabel, stale } = lastUpdateMeta(project.last_updated);
+  const status = statusLabel(project.project_status);
 
   return (
-    <div className='flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0'>
-      <div className='flex min-w-0 flex-col gap-1'>
+    <article className='flex flex-col gap-4 rounded-xl border border-border/80 bg-card p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
+      <div className='min-w-0 flex-1'>
+        <p className='text-sm font-semibold leading-snug text-foreground'>
+          {project.name ?? 'Untitled project'}
+        </p>
+        <p className='mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground'>
+          {isActiveStatus(project.project_status) ? (
+            <>
+              <span className='inline-flex items-center gap-1'>
+                <span
+                  className='h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500'
+                  aria-hidden
+                />
+                <span>{status}</span>
+              </span>
+              <span aria-hidden>·</span>
+            </>
+          ) : (
+            <>
+              <span>{status}</span>
+              <span aria-hidden>·</span>
+            </>
+          )}
+          <span
+            className={cn(stale && 'font-medium text-amber-600 dark:text-amber-500')}
+          >
+            {lastUpdateLabel}
+          </span>
+          <span aria-hidden>·</span>
+          <span>{indicatorMeta(project.indicatorCount)}</span>
+        </p>
+      </div>
+      <div className='flex shrink-0 items-center gap-2'>
+        <Link
+          href={addUpdateHref(project)}
+          className='inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90'
+        >
+          <PlusIcon className='h-3 w-3' />
+          Add update
+        </Link>
         <Link
           href={projectHref(project)}
-          className='truncate text-sm font-medium hover:underline'
+          className='inline-flex items-center gap-1 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted/60'
         >
-          {project.name ?? 'Untitled project'}
+          View
+          <ArrowRightIcon className='h-3 w-3' />
         </Link>
-        <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-          {project.project_status && (
-            <ProjectStatusBadge status={project.project_status} size='xs' />
-          )}
-          <span className='font-mono'>{lastUpdated}</span>
-        </div>
       </div>
-      <Link
-        href={addUpdateHref(project)}
-        className='flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground'
-      >
-        <PlusIcon className='h-3 w-3' />
-        Add update
-      </Link>
-    </div>
+    </article>
   );
 }
 
@@ -61,17 +121,16 @@ export default function YourProjects({
     staleTime: 5 * 60 * 1000,
   });
 
-  const description =
-    scope === 'partner'
-      ? 'Projects where you support delivery — jump in to review progress or add an update.'
-      : 'Projects you lead — pick up where you left off and keep indicators current.';
+  const projectCount = data?.length ?? 0;
+  const showViewAll = projectCount > 1;
 
   return (
-    <div className='flex h-full flex-col gap-4 rounded-lg border bg-card p-5'>
-      <div>
-        <h2 className='text-base font-semibold'>Your projects</h2>
-        <p className='mt-1 text-xs text-muted-foreground'>{description}</p>
-      </div>
+    <section className='flex flex-col gap-4'>
+      <OverviewSectionHeader
+        title='Your projects'
+        viewAllHref={showViewAll ? '/projects' : undefined}
+        viewAllLabel={showViewAll ? 'View all projects' : undefined}
+      />
 
       {error && (
         <p className='text-sm text-muted-foreground'>
@@ -80,35 +139,25 @@ export default function YourProjects({
       )}
 
       {isLoading && (
-        <div className='flex flex-col gap-3'>
-          <Skeleton className='h-10 w-full' />
-          <Skeleton className='h-10 w-full' />
-          <Skeleton className='h-10 w-full' />
+        <div className='flex flex-col gap-4'>
+          <Skeleton className='h-[4.5rem] w-full rounded-xl' />
+          <Skeleton className='h-[4.5rem] w-full rounded-xl' />
         </div>
       )}
 
-      {!isLoading && !error && data?.length === 0 && (
+      {!isLoading && !error && projectCount === 0 && (
         <p className='text-sm text-muted-foreground'>
           No projects assigned to you yet.
         </p>
       )}
 
       {!isLoading && !error && data && data.length > 0 && (
-        <>
-          <div className='flex flex-col divide-y'>
-            {data.map((project) => (
-              <ProjectRow key={project.id} project={project} />
-            ))}
-          </div>
-          <Link
-            href='/projects'
-            className='mt-auto flex items-center justify-end gap-2 pt-2 text-sm text-muted-foreground hover:text-foreground'
-          >
-            <span>View all projects</span>
-            <ArrowRightIcon className='h-4 w-4' />
-          </Link>
-        </>
+        <div className='flex flex-col gap-4'>
+          {data.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
       )}
-    </div>
+    </section>
   );
 }

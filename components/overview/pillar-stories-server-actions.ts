@@ -19,10 +19,6 @@ export type PillarStoriesData = {
   indicators: Record<string, IndicatorRollup>;
 };
 
-type ProjectRow = {
-  id: number | null;
-};
-
 type IndicatorRow = {
   id: number;
   indicator_code: string;
@@ -58,42 +54,35 @@ export async function fetchPillarStoriesData(): Promise<PillarStoriesData> {
     return { projectCount: 0, todayIso, indicators: {} };
   }
 
-  const { data: projectRows, error: projectError } = await supabase
-    .from('projects')
-    .select('id, user_projects!inner(user_id)')
-    .eq('user_projects.user_id', user.id)
-    .ilike('project_status', 'Active%');
+  const [activeProjectsRes, updatesRes] = await Promise.all([
+    supabase
+      .from('projects')
+      .select('id', { count: 'exact', head: true })
+      .ilike('project_status', 'Active%'),
+    supabase
+      .from('updates')
+      .select(
+        'value, impact_indicators!inner(id, indicator_code, indicator_title, indicator_unit), projects!inner(id)',
+      )
+      .eq('valid', true)
+      .eq('duplicate', false)
+      .eq('impact_indicators.ii_heirarchy', 'Indicator')
+      .in('impact_indicators.indicator_code', [...OVERVIEW_FETCH_CODES])
+      .ilike('projects.project_status', 'Active%'),
+  ]);
 
-  if (projectError) {
-    throw new Error(`Failed to load active projects: ${projectError.message}`);
+  if (activeProjectsRes.error) {
+    throw new Error(
+      `Failed to load active projects: ${activeProjectsRes.error.message}`,
+    );
+  }
+  if (updatesRes.error) {
+    throw new Error(
+      `Failed to load overview indicators: ${updatesRes.error.message}`,
+    );
   }
 
-  const projectIds = Array.from(
-    new Set(
-      ((projectRows ?? []) as ProjectRow[])
-        .map((p) => p.id)
-        .filter((id): id is number => id !== null),
-    ),
-  );
-
-  if (projectIds.length === 0) {
-    return { projectCount: 0, todayIso, indicators: {} };
-  }
-
-  const { data: updateRows, error: updateError } = await supabase
-    .from('updates')
-    .select(
-      'value, impact_indicators!inner(id, indicator_code, indicator_title, indicator_unit)',
-    )
-    .eq('valid', true)
-    .eq('duplicate', false)
-    .eq('impact_indicators.ii_heirarchy', 'Indicator')
-    .in('impact_indicators.indicator_code', [...OVERVIEW_FETCH_CODES])
-    .in('project_id', projectIds);
-
-  if (updateError) {
-    throw new Error(`Failed to load overview indicators: ${updateError.message}`);
-  }
+  const updateRows = updatesRes.data;
 
   const byId = new Map<
     number,
@@ -133,7 +122,7 @@ export async function fetchPillarStoriesData(): Promise<PillarStoriesData> {
   }
 
   return {
-    projectCount: projectIds.length,
+    projectCount: activeProjectsRes.count ?? 0,
     todayIso,
     indicators,
   };

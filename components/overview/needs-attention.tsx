@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRightIcon } from 'lucide-react';
 import * as d3 from 'd3';
 import { Skeleton } from '@/components/ui/skeleton';
+import OverviewSectionHeader from './overview-section-header';
 import {
   fetchNeedsAttentionCounts,
   type NeedsAttentionCounts,
@@ -18,9 +19,6 @@ type Row = {
   getValue: (c: NeedsAttentionCounts) => number;
 };
 
-// `/updates` and `/projects` don't currently accept URL filters that match
-// these signals, so each card links to the parent list view and the count
-// itself is the actionable bit.
 const ROWS: readonly Row[] = [
   {
     key: 'pending-review',
@@ -45,6 +43,38 @@ const ROWS: readonly Row[] = [
   },
 ];
 
+function AttentionCard({
+  row,
+  value,
+  isLoading,
+}: Readonly<{
+  row: Row;
+  value: number | null;
+  isLoading: boolean;
+}>) {
+  return (
+    <Link
+      href={row.href}
+      className='group flex items-center justify-between gap-4 rounded-xl border border-border/80 bg-card p-5 shadow-sm transition-colors hover:border-border'
+    >
+      <div className='flex min-w-0 flex-col gap-0.5'>
+        <span className='text-sm font-semibold'>{row.label}</span>
+        <span className='text-xs text-muted-foreground'>{row.description}</span>
+      </div>
+      <div className='flex shrink-0 items-center gap-2 whitespace-nowrap'>
+        {isLoading || value === null ? (
+          <Skeleton className='h-7 w-12' />
+        ) : (
+          <span className='text-xl font-bold tabular-nums'>
+            {d3.format(',')(value)}
+          </span>
+        )}
+        <ArrowRightIcon className='h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5' />
+      </div>
+    </Link>
+  );
+}
+
 export default function NeedsAttention() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['overview-needs-attention'],
@@ -53,49 +83,28 @@ export default function NeedsAttention() {
   });
 
   return (
-    <div className='flex h-full flex-col gap-4 rounded-lg border bg-card p-5'>
-      <div>
-        <h2 className='text-base font-semibold'>Needs your attention</h2>
-        <p className='mt-1 text-xs text-muted-foreground'>
-          Admin-only signals that the data needs work.
-        </p>
-      </div>
+    <section className='flex flex-col gap-4'>
+      <OverviewSectionHeader
+        title='Needs your attention'
+        subtitle='Admin-only signals that the data needs work.'
+      />
 
       {error ? (
         <p className='text-sm text-muted-foreground'>
           Failed to load: {(error as Error).message}
         </p>
       ) : (
-        <div className='flex flex-col divide-y'>
-          {ROWS.map((row) => {
-            const value = data ? row.getValue(data) : null;
-            return (
-              <Link
-                key={row.key}
-                href={row.href}
-                className='group flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0 hover:text-foreground'
-              >
-                <div className='flex flex-col gap-0.5'>
-                  <span className='text-sm font-medium'>{row.label}</span>
-                  <span className='text-xs text-muted-foreground'>
-                    {row.description}
-                  </span>
-                </div>
-                <div className='flex items-center gap-2 whitespace-nowrap'>
-                  {isLoading || value === null ? (
-                    <Skeleton className='h-6 w-12' />
-                  ) : (
-                    <span className='text-xl font-bold tabular-nums'>
-                      {d3.format(',')(value)}
-                    </span>
-                  )}
-                  <ArrowRightIcon className='h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5' />
-                </div>
-              </Link>
-            );
-          })}
+        <div className='flex flex-col gap-4'>
+          {ROWS.map((row) => (
+            <AttentionCard
+              key={row.key}
+              row={row}
+              isLoading={isLoading}
+              value={data ? row.getValue(data) : null}
+            />
+          ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

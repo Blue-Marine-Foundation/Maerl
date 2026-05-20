@@ -51,7 +51,7 @@
 }
 
 /* Mapbox popup — themed to match the app's dark card style */
-.maerl-map-popup .mapboxgl-popup-content {
+.maerl-country-map-popup .mapboxgl-popup-content {
   background-color: hsl(var(--card));
   color: hsl(var(--card-foreground));
   border-radius: calc(var(--radius) - 2px);
@@ -61,6 +61,6 @@
   border: 1px solid hsl(var(--border));
 }
 
-.maerl-map-popup .mapboxgl-popup-tip {
+.maerl-country-map-popup .mapboxgl-popup-tip {
   border-top-color: hsl(var(--card));
 }

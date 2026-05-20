@@ -11,31 +11,27 @@ export default function ForYouPanel() {
 
   if (isLoading) {
     return (
-      <div className='flex flex-col gap-4'>
-        <div className='flex flex-col gap-3 rounded-lg border bg-card p-5'>
-          <Skeleton className='h-5 w-32' />
-          <Skeleton className='h-4 w-full' />
-          <Skeleton className='h-4 w-full' />
-          <Skeleton className='h-4 w-3/4' />
-        </div>
-      </div>
+      <section className='flex flex-col gap-4'>
+        <Skeleton className='h-6 w-40' />
+        <Skeleton className='h-4 w-64' />
+        <Skeleton className='h-[4.5rem] w-full rounded-xl' />
+      </section>
     );
   }
 
-  // Needs Attention is reserved for Super Admins, who own data review and
-  // don't own portfolio projects, so the per-user contribution rollup
-  // would be misleading for them.
   if (isSuperAdmin) {
     return <NeedsAttention />;
   }
 
   if (isAdmin || isProjectManager || isPartner) {
-    return (
-      <div className='flex flex-col gap-4'>
-        <YourProjects scope={isPartner ? 'partner' : 'pm'} />
-      </div>
-    );
+    return <YourProjects scope={isPartner ? 'partner' : 'pm'} />;
   }
 
-  return null;
+  return (
+    <section className='flex flex-col gap-4'>
+      <p className='text-sm text-muted-foreground'>
+        Sign in with a project role to see your assignments here.
+      </p>
+    </section>
+  );
 }

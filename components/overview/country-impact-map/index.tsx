@@ -5,11 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { fetchCountryImpactData } from './server-actions';
 import MapView from './map-view';
 
-// Wrapper that owns the data fetch and renders the Mapbox GL map. Mirrors
-// the projects-map pattern: a 'use client' component that runs useQuery,
-// renders skeleton/error/empty states, and hands typed data to MapView.
-// MapView itself lazy-imports `mapbox-gl` inside useEffect so the runtime
-// is never bundled into the server build (per the Mapbox ODP skill).
+// Wrapper that owns the data fetch and renders the Mapbox GL map.
 export default function CountryImpactMap() {
   const { data, error, isLoading } = useQuery({
     queryKey: ['overview-country-impact-map'],
@@ -31,12 +27,10 @@ export default function CountryImpactMap() {
     );
   }
 
-  if (!data || data.rows.length === 0) {
+  if (!data) {
     return (
       <div className='flex h-full items-center justify-center rounded-lg border bg-card'>
-        <p className='text-sm text-muted-foreground'>
-          No active projects with country data to display.
-        </p>
+        <p className='text-sm text-muted-foreground'>No map data available.</p>
       </div>
     );
   }
@@ -44,7 +38,10 @@ export default function CountryImpactMap() {
   return (
     <MapView
       rows={data.rows}
-      activeProjectsWithoutCountry={data.activeProjectsWithoutCountry}
+      globalActiveProjectCount={data.globalActiveProjectCount}
+      activeProjectsWithoutMappedGeography={
+        data.activeProjectsWithoutMappedGeography
+      }
       defaultFocusBounds={data.defaultFocusBounds}
       defaultFocusLabel={data.defaultFocusLabel}
     />

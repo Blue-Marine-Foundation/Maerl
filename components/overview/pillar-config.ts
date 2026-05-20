@@ -24,28 +24,31 @@ export const PROTECTION_SEGMENTS = [
   {
     code: '1.2.3',
     shortLabel: 'Committed',
-    barClass: 'bg-teal-600',
+    dotClass: 'bg-emerald-300',
+    barClass: 'bg-emerald-300',
   },
   {
     code: '1.2.1',
     shortLabel: 'Proposed',
-    barClass: 'bg-amber-500',
+    dotClass: 'bg-emerald-500',
+    barClass: 'bg-emerald-500',
   },
   {
     code: '1.2.2',
     shortLabel: 'Designated',
-    barClass: 'bg-orange-600',
+    dotClass: 'bg-emerald-700',
+    barClass: 'bg-emerald-700',
   },
 ] as const;
 
 export const RESTORATION_INDICATORS = [
   {
     code: '2.2.5',
-    label: 'Sea floor actively under restoration',
+    label: 'Sea floor under restoration',
   },
   {
     code: '2.2.1',
-    label: 'Habitat showing measurable improvement',
+    label: 'Habitat showing improvement',
   },
   {
     code: '2.2.4',
@@ -56,15 +59,15 @@ export const RESTORATION_INDICATORS = [
 export const FISHERIES_INDICATORS = [
   {
     code: '4.2.1',
-    label: 'Sea area where risky fishing gear or practices are banned',
+    label: 'Sea area with risky gear or practices banned',
   },
   {
     code: '4.3.2',
-    label: 'Laws or agreements Blue Marine helped shape',
+    label: 'Laws or agreements shaped',
   },
   {
     code: '5.6.1',
-    label: 'People engaged in fishery or site management',
+    label: 'People engaged in management',
   },
 ] as const;
 
@@ -72,18 +75,21 @@ export const ENGAGEMENT_INDICATORS = [
   {
     code: '5.2.1',
     label: 'Financial benefits',
-    hint: 'People who received monetary benefits through Blue Marine–linked work.',
+    hint: 'People who received monetary benefits through Blue Marine-linked work.',
+    unitLabel: 'beneficiaries',
   },
   {
     code: '5.2.2',
     label: 'In-kind benefits',
-    hint: 'People who received non-financial benefits (training, access, support, etc.).',
+    hint: 'People who received non-financial benefits — training, access, support.',
+    unitLabel: 'beneficiaries',
   },
   {
     code: '5.3.3',
     label: 'Outreach that led to action',
     hint:
       'People reached by communications who donated, advocated, or changed behaviour.',
+    unitLabel: 'people',
   },
 ] as const;
 

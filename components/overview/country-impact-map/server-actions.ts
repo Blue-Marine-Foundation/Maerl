@@ -3,10 +3,15 @@
 import { createClient } from '@/utils/supabase/server';
 import { OVERVIEW_FETCH_CODES } from '../pillar-config';
 import {
+  geographyBucketKeysFromRaw,
   ISO3_BOUNDS,
   ISO3_TO_DISPLAY,
+  isGlobalProjectLabel,
+  normalizeProjectGeography,
   REGION_BOUNDS,
   splitAndMapCountries,
+  tryResolveWaterRegion,
+  WATER_REGION_BY_ID,
   type MapBounds,
 } from './country-iso-map';
 
@@ -47,17 +52,24 @@ export type CountryMetric = {
   total: number;
 };
 
-export type CountryImpactRow = {
-  iso3: string;
-  countryDisplay: string;
+export type GeographyImpactRow = {
+  geographyKind: 'country' | 'water';
+  /** ISO-3 alpha (countries) or marine overlay id (`WaterRegionMeta.id`). */
+  geographyId: string;
+  geographyLabel: string;
+  /** Marine overlays only — choropleth countries use Mapbox polygons. */
+  waterBounds: MapBounds | null;
   activeProjects: number;
   projects: CountryProject[];
   metrics: CountryMetric[];
 };
 
-export type CountryImpactData = {
-  rows: CountryImpactRow[];
-  activeProjectsWithoutCountry: number;
+export type GeographyImpactData = {
+  rows: GeographyImpactRow[];
+  /** `project_country === Global` — counted for KPI only, no map geometry. */
+  globalActiveProjectCount: number;
+  /** Null / blank country, or unknown label (nothing to plot). */
+  activeProjectsWithoutMappedGeography: number;
   defaultFocusBounds: MapBounds | null;
   defaultFocusLabel: string | null;
 };
@@ -104,26 +116,26 @@ type UpdateRow = {
   } | null;
 };
 
-function getOrCreateBucket(buckets: Map<string, Bucket>, iso: string): Bucket {
-  const existing = buckets.get(iso);
+function getOrCreateBucket(buckets: Map<string, Bucket>, key: string): Bucket {
+  const existing = buckets.get(key);
   if (existing) return existing;
   const fresh: Bucket = {
     projects: new Map(),
     metricTotals: new Map(),
   };
-  buckets.set(iso, fresh);
+  buckets.set(key, fresh);
   return fresh;
 }
 
-function indexProjectsByCountry(
+function indexProjectsByGeography(
   buckets: Map<string, Bucket>,
   projects: ProjectRow[],
 ): void {
   for (const project of projects) {
-    const isoCodes = splitAndMapCountries(project.project_country);
-    if (isoCodes.length === 0) continue;
-    for (const iso of isoCodes) {
-      const bucket = getOrCreateBucket(buckets, iso);
+    const keys = geographyBucketKeysFromRaw(project.project_country);
+    if (keys.length === 0) continue;
+    for (const geoKey of keys) {
+      const bucket = getOrCreateBucket(buckets, geoKey);
       bucket.projects.set(project.id, {
         id: project.id,
         name: project.name,
@@ -150,41 +162,76 @@ function shouldCountUpdate(
   return true;
 }
 
-function indexUpdatesByCountry(
+function indexUpdatesByGeography(
   buckets: Map<string, Bucket>,
   updates: UpdateRow[],
 ): void {
   for (const update of updates) {
     if (!shouldCountUpdate(update)) continue;
     const code = update.impact_indicators.indicator_code as string;
-    const isoCodes = splitAndMapCountries(update.projects.project_country);
-    if (isoCodes.length === 0) continue;
-    for (const iso of isoCodes) {
-      const bucket = getOrCreateBucket(buckets, iso);
+    const keys = geographyBucketKeysFromRaw(update.projects.project_country);
+    if (keys.length === 0) continue;
+    for (const geoKey of keys) {
+      const bucket = getOrCreateBucket(buckets, geoKey);
       const running = bucket.metricTotals.get(code) ?? 0;
       bucket.metricTotals.set(code, running + (update.value ?? 0));
     }
   }
 }
 
-function bucketToRow(iso: string, bucket: Bucket): CountryImpactRow {
+function bucketKeyToRow(
+  bucketKey: string,
+  bucket: Bucket,
+): GeographyImpactRow | null {
   const meta = MAP_INDICATOR_LABELS;
-  return {
-    iso3: iso,
-    countryDisplay: ISO3_TO_DISPLAY[iso] ?? iso,
-    activeProjects: bucket.projects.size,
-    projects: Array.from(bucket.projects.values()).sort((p1, p2) =>
-      p1.name.localeCompare(p2.name),
-    ),
-    metrics: OVERVIEW_FETCH_CODES.filter(
-      (code) => (bucket.metricTotals.get(code) ?? 0) > 0,
-    ).map((code) => ({
-      indicator_code: code,
-      indicator_label: meta[code]?.label ?? code,
-      unit: meta[code]?.unit ?? '',
-      total: bucket.metricTotals.get(code) ?? 0,
-    })),
-  };
+
+  if (bucketKey.startsWith('iso:')) {
+    const iso = bucketKey.slice(4);
+    return {
+      geographyKind: 'country',
+      geographyId: iso,
+      geographyLabel: ISO3_TO_DISPLAY[iso] ?? iso,
+      waterBounds: null,
+      activeProjects: bucket.projects.size,
+      projects: Array.from(bucket.projects.values()).sort((p1, p2) =>
+        p1.name.localeCompare(p2.name),
+      ),
+      metrics: OVERVIEW_FETCH_CODES.filter(
+        (code) => (bucket.metricTotals.get(code) ?? 0) > 0,
+      ).map((code) => ({
+        indicator_code: code,
+        indicator_label: meta[code]?.label ?? code,
+        unit: meta[code]?.unit ?? '',
+        total: bucket.metricTotals.get(code) ?? 0,
+      })),
+    };
+  }
+
+  if (bucketKey.startsWith('sea:')) {
+    const waterId = bucketKey.slice(4);
+    const water = WATER_REGION_BY_ID[waterId];
+    if (!water) return null;
+    return {
+      geographyKind: 'water',
+      geographyId: water.id,
+      geographyLabel: water.displayName,
+      waterBounds: water.bounds,
+      activeProjects: bucket.projects.size,
+      projects: Array.from(bucket.projects.values()).sort((p1, p2) =>
+        p1.name.localeCompare(p2.name),
+      ),
+      metrics: OVERVIEW_FETCH_CODES.filter(
+        (code) => (bucket.metricTotals.get(code) ?? 0) > 0,
+      ).map((code) => ({
+        indicator_code: code,
+        indicator_label: meta[code]?.label ?? code,
+        unit: meta[code]?.unit ?? '',
+        total: bucket.metricTotals.get(code) ?? 0,
+      })),
+    };
+  }
+
+  return null;
 }
 
 function normaliseRegion(region: string | null | undefined): string | null {
@@ -203,9 +250,16 @@ function mergeBounds(bounds: MapBounds[]): MapBounds | null {
   );
 }
 
-function boundsForProject(project: ProjectRow): MapBounds[] {
+function boundsForProjectCountryField(project: ProjectRow): MapBounds[] {
   const region = normaliseRegion(project.regional_strategy);
   if (region && REGION_BOUNDS[region]) return [REGION_BOUNDS[region]];
+
+  const n = normalizeProjectGeography(project.project_country);
+  if (!n || isGlobalProjectLabel(n)) return [];
+
+  const water = tryResolveWaterRegion(project.project_country);
+  if (water) return [water.bounds];
+
   return splitAndMapCountries(project.project_country)
     .map((iso) => ISO3_BOUNDS[iso])
     .filter((bounds): bounds is MapBounds => Boolean(bounds));
@@ -215,12 +269,12 @@ function buildDefaultFocus(projects: ProjectRow[]): {
   bounds: MapBounds | null;
   label: string | null;
 } {
-  const bounds = projects.flatMap(boundsForProject);
+  const bounds = projects.flatMap(boundsForProjectCountryField);
   const regions = Array.from(
     new Set(
       projects
         .map((project) => normaliseRegion(project.regional_strategy))
-        .filter((region): region is string => Boolean(region)),
+        .filter((r): r is string => Boolean(r)),
     ),
   ).sort((a, b) => a.localeCompare(b));
 
@@ -234,7 +288,7 @@ function buildDefaultFocus(projects: ProjectRow[]): {
   };
 }
 
-export async function fetchCountryImpactData(): Promise<CountryImpactData> {
+export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
   const supabase = await createClient();
 
   const {
@@ -268,6 +322,27 @@ export async function fetchCountryImpactData(): Promise<CountryImpactData> {
     throw new Error(
       `Failed to load projects for map: ${projectsResult.error.message}`,
     );
+  }
+
+  const portfolioRows = (projectsResult.data ?? []) as ProjectRow[];
+
+  let globalActiveProjectCount = 0;
+  let mappedLabelUnknownCount = 0;
+  for (const p of portfolioRows) {
+    const raw = p.project_country;
+    if (raw === null) continue;
+    const norm = normalizeProjectGeography(raw);
+    if (!norm || norm === '') {
+      mappedLabelUnknownCount += 1;
+      continue;
+    }
+    if (isGlobalProjectLabel(norm)) {
+      globalActiveProjectCount += 1;
+      continue;
+    }
+    if (geographyBucketKeysFromRaw(raw).length === 0) {
+      mappedLabelUnknownCount += 1;
+    }
   }
 
   const [nullCountResult, blankCountResult, updatesResult] = await Promise.all([
@@ -309,24 +384,31 @@ export async function fetchCountryImpactData(): Promise<CountryImpactData> {
     );
   }
 
+  const activeProjectsWithoutMappedGeography =
+    mappedLabelUnknownCount +
+    (nullCountResult.count ?? 0) +
+    (blankCountResult.count ?? 0);
+
   const buckets = new Map<string, Bucket>();
-  indexProjectsByCountry(buckets, (projectsResult.data ?? []) as ProjectRow[]);
-  indexUpdatesByCountry(
+  indexProjectsByGeography(buckets, portfolioRows);
+  indexUpdatesByGeography(
     buckets,
     (updatesResult.data ?? []) as unknown as UpdateRow[],
   );
 
   const rows = Array.from(buckets.entries())
-    .map(([iso, bucket]) => bucketToRow(iso, bucket))
-    .sort((a, b) => a.countryDisplay.localeCompare(b.countryDisplay));
+    .map(([key, bucket]) => bucketKeyToRow(key, bucket))
+    .filter((row): row is GeographyImpactRow => row !== null)
+    .sort((a, b) => a.geographyLabel.localeCompare(b.geographyLabel));
+
   const defaultFocus = buildDefaultFocus(
     (focusProjectsResult.data ?? []) as ProjectRow[],
   );
 
   return {
     rows,
-    activeProjectsWithoutCountry:
-      (nullCountResult.count ?? 0) + (blankCountResult.count ?? 0),
+    globalActiveProjectCount,
+    activeProjectsWithoutMappedGeography,
     defaultFocusBounds: defaultFocus.bounds,
     defaultFocusLabel: defaultFocus.label,
   };

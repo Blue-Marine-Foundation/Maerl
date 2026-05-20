@@ -1,19 +1,12 @@
-// Static `project_country` raw label → ISO 3166-1 alpha-3 mapping.
+// Canonical mapping from free-text `projects.project_country` to map features.
 //
-// This file is the canonical, human-curated record of how the free-text
-// `projects.project_country` column maps onto Mapbox's country tileset
-// (which keys polygons on `iso_3166_1_alpha_3`). The set is intentionally
-// scoped to the labels actually present in the database today; new labels
-// added in future will fall through with a single console warning per
-// render and be dropped from the map until added here.
+// - **Countries** → ISO 3166-1 alpha-3 for Mapbox `country-boundaries-v1`.
+// - **Sea / ocean programmes** (`RAW_TO_WATER_REGION`) → separate overlay
+//   geometry where available, with bounds retained for map focus/fallbacks.
+//   Do not remap them onto coastal states.
+// - **Global** (`isGlobalProjectLabel`) → counted in KPI only, no choropleth.
 //
-// Returns an array because some raw labels span multiple countries
-// (`Tunisia, Libya`) or roll up sub-national values (`England`,
-// `Scotland`, `England, Scotland` → `GBR`).
-//
-// FUTURE: see docs/7-project-country-iso3-migration.md — long term we
-// want a constrained `project_country_iso3` column on the projects table
-// driven by a UI dropdown, retiring this lookup.
+// FUTURE: see docs/7-project-country-iso3-migration.md — eventual structured column.
 
 export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Antarctica: ['ATA'],
@@ -24,7 +17,6 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Belgium: ['BEL'],
   Brazil: ['BRA'],
   Chile: ['CHL'],
-  'Dogger Bank': ['GBR', 'DEU', 'DNK', 'NLD'],
   'Dutch Caribbean': ['CUW', 'ABW', 'SXM', 'BES'],
   'Dominican Republic': ['DOM'],
   England: ['GBR'],
@@ -40,16 +32,129 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Netherlands: ['NLD'],
   Panama: ['PAN'],
   Philippines: ['PHL'],
+  Spain: ['ESP'],
   'Sao Tome': ['STP'],
   'St Vincent and the Grenadines': ['VCT'],
   'Tunisia, Libya': ['TUN', 'LBY'],
   Turkey: ['TUR'],
   Uruguay: ['URY'],
+  'United Kingdom': ['GBR'],
+  'United Kingdom, EU': ['GBR'],
 };
 
-// Display name keyed by ISO-3 — used in popovers when the project's raw
-// label is messy ("Tunisia, Libya" splits into separate cards) or
-// sub-national ("England, Scotland" becomes "United Kingdom").
+export type MapBounds = [[number, number], [number, number]];
+
+/** Programme geographies rendered as marine overlays, not coastal-country proxies. */
+export type WaterRegionMeta = {
+  id: string;
+  displayName: string;
+  bounds: MapBounds;
+};
+
+export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
+  'Indian Ocean': {
+    id: 'indian-ocean',
+    displayName: 'Indian Ocean',
+    bounds: [
+      [30, -35],
+      [115, 30],
+    ],
+  },
+  'Mediterranean Sea': {
+    id: 'mediterranean-sea',
+    displayName: 'Mediterranean Sea',
+    bounds: [
+      [-6, 30],
+      [37, 47],
+    ],
+  },
+  'North Sea': {
+    id: 'north-sea',
+    displayName: 'North Sea',
+    bounds: [
+      [-4.45, 50.99],
+      [12.01, 61.02],
+    ],
+  },
+  'Dogger Bank': {
+    id: 'dogger-bank',
+    displayName: 'Dogger Bank',
+    bounds: [
+      [1, 54.35],
+      [4.35, 55.98],
+    ],
+  },
+};
+
+/** Lookup by stable `WaterRegionMeta.id` (slug). */
+export const WATER_REGION_BY_ID: Record<string, WaterRegionMeta> =
+  Object.fromEntries(
+    Object.values(RAW_TO_WATER_REGION).map((m) => [m.id, m]),
+  );
+
+export function normalizeProjectGeography(
+  raw: string | null | undefined,
+): string {
+  if (!raw) return '';
+  return raw.trim().replace(/\s+/g, ' ');
+}
+
+export function isGlobalProjectLabel(raw: string | null | undefined): boolean {
+  return normalizeProjectGeography(raw).toLowerCase() === 'global';
+}
+
+export function tryResolveWaterRegion(
+  raw: string | null | undefined,
+): WaterRegionMeta | null {
+  const n = normalizeProjectGeography(raw);
+  if (!n) return null;
+  return RAW_TO_WATER_REGION[n] ?? null;
+}
+
+/**
+ * Keys for choropleth + marine overlay buckets (`iso:NLD` vs `sea:north-sea`).
+ * Ignores Global and blanks (handled upstream in counts).
+ */
+export function geographyBucketKeysFromRaw(
+  raw: string | null | undefined,
+): string[] {
+  const n = normalizeProjectGeography(raw);
+  if (!n || isGlobalProjectLabel(n)) return [];
+  const water = tryResolveWaterRegion(raw);
+  if (water) return [`sea:${water.id}`];
+
+  const isos = splitAndMapCountriesInternal(n);
+  return isos.map((iso) => `iso:${iso}`);
+}
+
+/** ISO-3 lookup only water/global already excluded by caller preference — use geographyBucketKeysFromRaw. */
+export function splitAndMapCountries(
+  raw: string | null | undefined,
+): string[] {
+  const n = normalizeProjectGeography(raw);
+  if (!n || isGlobalProjectLabel(n)) return [];
+  if (tryResolveWaterRegion(raw)) return [];
+  return splitAndMapCountriesInternal(n);
+}
+
+const warnedLabels = new Set<string>();
+
+function splitAndMapCountriesInternal(trimmed: string): string[] {
+  const direct = RAW_TO_ISO3[trimmed];
+  if (direct) return [...direct];
+
+  if (!warnedLabels.has(trimmed)) {
+    warnedLabels.add(trimmed);
+    if (typeof console !== 'undefined') {
+      console.warn(
+        `[country-iso-map] Unknown project_country "${trimmed}". ` +
+          `Add to RAW_TO_ISO3 or RAW_TO_WATER_REGION in country-iso-map.ts.`,
+      );
+    }
+  }
+  return [];
+}
+
 export const ISO3_TO_DISPLAY: Record<string, string> = {
   ATA: 'Antarctica',
   ARG: 'Argentina',
@@ -63,8 +168,7 @@ export const ISO3_TO_DISPLAY: Record<string, string> = {
   ABW: 'Aruba',
   SXM: 'Sint Maarten',
   BES: 'Caribbean Netherlands',
-  DEU: 'Germany',
-  DNK: 'Denmark',
+  ESP: 'Spain',
   DOM: 'Dominican Republic',
   GBR: 'United Kingdom',
   GRC: 'Greece',
@@ -85,10 +189,6 @@ export const ISO3_TO_DISPLAY: Record<string, string> = {
   URY: 'Uruguay',
 };
 
-export type MapBounds = [[number, number], [number, number]];
-
-// Coarse country bounds used only for initial camera fitting. The choropleth
-// itself still comes from Mapbox's country-boundaries tileset.
 export const ISO3_BOUNDS: Record<string, MapBounds> = {
   ARG: [
     [-73.6, -55.1],
@@ -138,17 +238,13 @@ export const ISO3_BOUNDS: Record<string, MapBounds> = {
     [-68.6, 12],
     [-62.9, 17.7],
   ],
-  DEU: [
-    [5.8, 47.2],
-    [15.1, 55.1],
-  ],
-  DNK: [
-    [8.0, 54.5],
-    [15.2, 57.8],
-  ],
   DOM: [
     [-72.1, 17.5],
     [-68.2, 19.9],
+  ],
+  ESP: [
+    [-9.4, 35.9],
+    [4.6, 43.9],
   ],
   GBR: [
     [-8.7, 49.8],
@@ -220,9 +316,6 @@ export const ISO3_BOUNDS: Record<string, MapBounds> = {
   ],
 };
 
-// Regional strategy bounds for the initial map camera. These are deliberately
-// broad: they orient the user to their assigned active-project region without
-// pretending to be exact project geometries.
 export const REGION_BOUNDS: Record<string, MapBounds> = {
   Antarctica: [
     [-180, -85],
@@ -257,31 +350,3 @@ export const REGION_BOUNDS: Record<string, MapBounds> = {
     [3, 61],
   ],
 };
-
-const warnedLabels = new Set<string>();
-
-// Resolve a raw `project_country` string to ISO-3 codes. Trims whitespace,
-// returns `[]` for empty/null/unknown labels (with a one-shot console
-// warning for unknowns to make missing entries visible during dev).
-export function splitAndMapCountries(raw: string | null | undefined): string[] {
-  if (!raw) return [];
-  const trimmed = raw.trim();
-  if (trimmed === '') return [];
-
-  const direct = RAW_TO_ISO3[trimmed];
-  if (direct) return [...direct];
-
-  // Fallback for labels not in the canonical map: warn once, return empty
-  // so the row drops out of the map rather than raising. New countries
-  // entered via the UI will surface here until added to RAW_TO_ISO3.
-  if (!warnedLabels.has(trimmed)) {
-    warnedLabels.add(trimmed);
-    if (typeof console !== 'undefined') {
-      console.warn(
-        `[country-iso-map] Unknown project_country label: "${trimmed}". ` +
-          `Add it to RAW_TO_ISO3 in components/overview/country-impact-map/country-iso-map.ts.`,
-      );
-    }
-  }
-  return [];
-}
