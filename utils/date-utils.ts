@@ -3,6 +3,7 @@ import {
   differenceInMonths,
   endOfDay,
   endOfMonth,
+  format,
   isFirstDayOfMonth,
   isLastDayOfMonth,
   isValid,
@@ -88,6 +89,15 @@ export function parseValidDate(
   if (!input) return null;
   const raw = new Date(input);
   return isValid(raw) ? transform(raw) : null;
+}
+
+/** Normalises ISO or yyyy-MM-dd strings for Postgres `date::date` filters. */
+export function toServerDateString(value: string): string {
+  const date = parseValidDate(value);
+  if (!date) {
+    throw new Error(`Invalid date: ${value}`);
+  }
+  return format(date, serverDateFormat);
 }
 
 /**
