@@ -38,10 +38,15 @@ export const useProjectImpacts = (projectSlug: string) => {
         }[],
         update,
       ) => {
-        const impactIndicatorId = update.impact_indicators.id;
-        const impactIndicatorCode = update.impact_indicators.indicator_code;
-        const impactIndicatorTitle = update.impact_indicators.indicator_title;
-        const impactIndicatorUnit = update.impact_indicators.indicator_unit;
+        const indicator = update.impact_indicators;
+        if (!indicator?.id) {
+          return acc;
+        }
+
+        const impactIndicatorId = indicator.id;
+        const impactIndicatorCode = indicator.indicator_code;
+        const impactIndicatorTitle = indicator.indicator_title;
+        const impactIndicatorUnit = indicator.indicator_unit;
         const value = update.value ?? 0;
         const existing = acc.find(
           (item) => item.impactIndicatorId === impactIndicatorId,
@@ -50,16 +55,14 @@ export const useProjectImpacts = (projectSlug: string) => {
           existing.count += 1;
           existing.value += value;
         } else {
-          if (impactIndicatorId) {
-            acc.push({
-              impactIndicatorId,
-              impactIndicatorCode,
-              impactIndicatorTitle,
-              impactIndicatorUnit,
-              count: 1,
-              value,
-            });
-          }
+          acc.push({
+            impactIndicatorId,
+            impactIndicatorCode,
+            impactIndicatorTitle,
+            impactIndicatorUnit,
+            count: 1,
+            value,
+          });
         }
         return acc;
       },
