@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { toServerDateString } from '@/utils/date-utils';
 
 export const fetchProjectImpactUpdates = async (
   dateRange: { from: string; to: string },
@@ -13,8 +14,8 @@ export const fetchProjectImpactUpdates = async (
     .select(
       '*, projects!inner(*), output_measurables(*), impact_indicators!inner(*), users(*)',
     )
-    .gte('date::date', dateRange.from)
-    .lte('date::date', dateRange.to)
+    .gte('date::date', toServerDateString(dateRange.from))
+    .lte('date::date', toServerDateString(dateRange.to))
     .eq('type', 'Impact')
     .eq('projects.slug', projectSlug)
     .match({ duplicate: false, valid: true })

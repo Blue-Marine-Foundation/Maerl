@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { toServerDateString } from '@/utils/date-utils';
 
 export async function fetchImpactIndicatorUpdates(
   id: string,
@@ -15,8 +16,8 @@ export async function fetchImpactIndicatorUpdates(
       '*, projects(slug, name), output_measurables(*), impact_indicators(id, indicator_unit), users(*)',
     )
     .match({ impact_indicator_id: id, duplicate: false, valid: true })
-    .gte('date::date', fromDate)
-    .lte('date::date', toDate)
+    .gte('date::date', toServerDateString(fromDate))
+    .lte('date::date', toServerDateString(toDate))
     .order('date', { ascending: false });
 
   if (error) {
