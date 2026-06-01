@@ -17,6 +17,7 @@ export const fetchProjectImpactUpdates = async (
     .lte('date', dateRange.to)
     .eq('type', 'Impact')
     .eq('projects.slug', projectSlug)
+    .match({ duplicate: false, valid: true })
     .order('date', { ascending: false });
 
   if (error) {
