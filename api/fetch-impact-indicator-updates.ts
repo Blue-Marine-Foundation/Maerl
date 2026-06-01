@@ -15,8 +15,8 @@ export async function fetchImpactIndicatorUpdates(
       '*, projects(slug, name), output_measurables(*), impact_indicators(id, indicator_unit), users(*)',
     )
     .match({ impact_indicator_id: id, duplicate: false, valid: true })
-    .gte('date', fromDate)
-    .lte('date', toDate)
+    .gte('date::date', fromDate)
+    .lte('date::date', toDate)
     .order('date', { ascending: false });
 
   if (error) {

@@ -13,8 +13,8 @@ export const fetchProjectImpactUpdates = async (
     .select(
       '*, projects!inner(*), output_measurables(*), impact_indicators!inner(*), users(*)',
     )
-    .gte('date', dateRange.from)
-    .lte('date', dateRange.to)
+    .gte('date::date', dateRange.from)
+    .lte('date::date', dateRange.to)
     .eq('type', 'Impact')
     .eq('projects.slug', projectSlug)
     .match({ duplicate: false, valid: true })
