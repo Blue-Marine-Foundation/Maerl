@@ -11,12 +11,13 @@ export const fetchProjectImpactUpdates = async (
   const { data, error } = await supabase
     .from('updates')
     .select(
-      '*, projects!inner(*), output_measurables(*), impact_indicators(*), users(*)',
+      '*, projects!inner(*), output_measurables(*), impact_indicators!inner(*), users(*)',
     )
     .gte('date', dateRange.from)
     .lte('date', dateRange.to)
     .eq('type', 'Impact')
     .eq('projects.slug', projectSlug)
+    .match({ duplicate: false, valid: true })
     .order('date', { ascending: false });
 
   if (error) {
