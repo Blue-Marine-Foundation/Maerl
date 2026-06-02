@@ -15,23 +15,47 @@ import {
   type MapBounds,
 } from './country-iso-map';
 
-const MAP_INDICATOR_LABELS: Record<
-  string,
-  { label: string; unit: string }
-> = {
+const MAP_INDICATOR_LABELS: Record<string, { label: string; unit: string }> = {
   '1.2.3': { label: 'Protection — committed area', unit: 'km²' },
   '1.2.1': { label: 'Protection — proposed area', unit: 'km²' },
   '1.2.2': { label: 'Protection — designated area', unit: 'km²' },
-  '2.2.5': { label: 'Restoration — active area', unit: 'km²' },
-  '2.2.1': { label: 'Restoration — habitat improving', unit: 'km²' },
-  '2.2.4': { label: 'Restoration — specimens deployed', unit: 'specimens' },
-  '4.2.1': { label: 'Fisheries — risky gear or practices banned', unit: 'km²' },
-  '4.3.2': { label: 'Policy — laws or agreements influenced', unit: 'instruments' },
+  '2.1.2': {
+    label: 'Restoration — policy instruments influenced',
+    unit: 'instruments',
+  },
+  '2.2.5': {
+    label: 'Restoration — habitat under active restoration',
+    unit: 'km²',
+  },
+  '2.2.4': {
+    label: 'Restoration — specimens at restoration sites',
+    unit: 'specimens',
+  },
+  '3.1.2': {
+    label: 'Fisheries — policy instruments influenced',
+    unit: 'instruments',
+  },
+  '4.1.2': {
+    label: 'Fisheries — policy instruments influenced',
+    unit: 'instruments',
+  },
+  '4.2.1': {
+    label: 'Fisheries — harmful or illegal fishing practices banned',
+    unit: 'km²',
+  },
+  '4.3.2': {
+    label: 'Policy — legal acts or agreements influenced',
+    unit: 'instruments',
+  },
   '5.6.1': { label: 'Fisheries — people in management', unit: 'people' },
-  '5.2.1': { label: 'Benefits — monetary', unit: 'beneficiaries' },
-  '5.2.2': { label: 'Benefits — in-kind', unit: 'beneficiaries' },
+  '5.2.1': { label: 'Direct beneficiaries — monetary support', unit: 'people' },
+  '5.2.2': { label: 'Direct beneficiaries — in-kind support', unit: 'people' },
   '5.3.3': {
     label: 'Engagement — outreach to action',
+    unit: 'people',
+  },
+  '5.5.1': {
+    label: 'Education — public and students educated',
     unit: 'people',
   },
 };
@@ -76,8 +100,7 @@ export type GeographyImpactData = {
 
 function isTrackedIndicator(code: string | null): boolean {
   return (
-    code !== null &&
-    (OVERVIEW_FETCH_CODES as readonly string[]).includes(code)
+    code !== null && (OVERVIEW_FETCH_CODES as readonly string[]).includes(code)
   );
 }
 
@@ -146,9 +169,7 @@ function indexProjectsByGeography(
   }
 }
 
-function shouldCountUpdate(
-  update: UpdateRow,
-): update is UpdateRow & {
+function shouldCountUpdate(update: UpdateRow): update is UpdateRow & {
   projects: NonNullable<UpdateRow['projects']>;
   impact_indicators: NonNullable<UpdateRow['impact_indicators']>;
 } {

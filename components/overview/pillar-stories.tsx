@@ -12,6 +12,7 @@ import {
   INDICATOR_IDS,
   PROTECTION_SEGMENTS,
   RESTORATION_INDICATORS,
+  type OverviewMetricConfig,
 } from './pillar-config';
 import {
   fetchPillarStoriesData,
@@ -25,6 +26,14 @@ function indicatorHref(code: string, toIso: string | null): string | null {
   const id = INDICATOR_IDS[code];
   if (id === undefined || !toIso) return null;
   return `/impactindicators/${id}?from=${ALL_TIME_FROM_DATE}&to=${toIso}`;
+}
+
+function metricHref(
+  codes: readonly string[],
+  toIso: string | null,
+): string | null {
+  if (codes.length !== 1) return null;
+  return indicatorHref(codes[0], toIso);
 }
 
 function formatAreaKm2(value: number): string | null {
@@ -41,12 +50,18 @@ function formatCountValue(value: number): string | null {
 }
 
 function formatMetricValue(
-  rollup: IndicatorRollup | undefined,
+  rollups: readonly (IndicatorRollup | undefined)[],
 ): string | null {
-  if (!rollup || rollup.total_value <= 0) return null;
-  const u = rollup.indicator_unit.toLowerCase();
-  if (u.includes('km')) return formatAreaKm2(rollup.total_value);
-  return formatCountValue(rollup.total_value);
+  const total = rollups.reduce((sum, rollup) => {
+    return sum + (rollup?.total_value ?? 0);
+  }, 0);
+  if (total <= 0) return null;
+  const u =
+    rollups
+      .find((rollup) => rollup?.indicator_unit)
+      ?.indicator_unit.toLowerCase() ?? '';
+  if (u.includes('km')) return formatAreaKm2(total);
+  return formatCountValue(total);
 }
 
 function useOverviewData() {
@@ -156,8 +171,8 @@ function ProtectionCard({
   return (
     <PillarCardShell
       number='01'
-      title='Protection'
-      description='Marine area in MPAs or no-take zones.'
+      title='Secure effective protection of the ocean.'
+      description='Area of sea on the path to protection, through new MPA commitments, designations, expansions or improved management'
       isLoading={isLoading}
     >
       <ul className='flex flex-col divide-y divide-border/60'>
@@ -177,19 +192,19 @@ function ProtectionCard({
           role='img'
           aria-label='Relative share across protection stages'
         >
-          {sum > 0 ? (
-            PROTECTION_SEGMENTS.map((seg, i) => {
-              const t = totals[i] ?? 0;
-              return (
-                <div
-                  key={seg.code}
-                  className={cn('h-full min-w-0', seg.barClass)}
-                  style={{ flex: `${Math.max(t, 0)} 1 0%` }}
-                  title={`${seg.shortLabel}: ${formatAreaKm2(t) ?? NOT_YET_REPORTED}`}
-                />
-              );
-            })
-          ) : null}
+          {sum > 0
+            ? PROTECTION_SEGMENTS.map((seg, i) => {
+                const t = totals[i] ?? 0;
+                return (
+                  <div
+                    key={seg.code}
+                    className={cn('h-full min-w-0', seg.barClass)}
+                    style={{ flex: `${Math.max(t, 0)} 1 0%` }}
+                    title={`${seg.shortLabel}: ${formatAreaKm2(t) ?? NOT_YET_REPORTED}`}
+                  />
+                );
+              })
+            : null}
         </div>
         <p className='text-center text-xs text-muted-foreground'>
           Relative share across stages
@@ -204,15 +219,15 @@ function PillarMetricsCard({
   title,
   description,
   indicators,
-  rolls,
+  data,
   isLoading,
   toIso,
 }: Readonly<{
   number: string;
   title: string;
   description: string;
-  indicators: readonly { code: string; label: string }[];
-  rolls: (IndicatorRollup | undefined)[];
+  indicators: readonly OverviewMetricConfig[];
+  data: PillarStoriesData | undefined;
   isLoading: boolean;
   toIso: string | null;
 }>) {
@@ -224,14 +239,17 @@ function PillarMetricsCard({
       isLoading={isLoading}
     >
       <ul className='flex flex-col divide-y divide-border/60'>
-        {indicators.map((ind, i) => (
-          <MetricRow
-            key={ind.code}
-            label={ind.label}
-            value={formatMetricValue(rolls[i])}
-            href={indicatorHref(ind.code, toIso)}
-          />
-        ))}
+        {indicators.map((ind) => {
+          const rolls = ind.codes.map((code) => data?.indicators[code]);
+          return (
+            <MetricRow
+              key={ind.codes.join('+')}
+              label={ind.label}
+              value={formatMetricValue(rolls)}
+              href={metricHref(ind.codes, toIso)}
+            />
+          );
+        })}
       </ul>
     </PillarCardShell>
   );
@@ -249,27 +267,25 @@ export default function PillarStories() {
   }
 
   const toIso = data?.todayIso ?? null;
-  const restRolls = RESTORATION_INDICATORS.map((i) => data?.indicators[i.code]);
-  const fishRolls = FISHERIES_INDICATORS.map((i) => data?.indicators[i.code]);
 
   return (
     <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
       <ProtectionCard data={data} isLoading={isLoading} toIso={toIso} />
       <PillarMetricsCard
         number='02'
-        title='Restoration'
-        description='Where habitat is being restored, recovering, or stocked.'
-        indicators={RESTORATION_INDICATORS}
-        rolls={restRolls}
+        title='Tackle overfishing and support low-impact fishing'
+        description='Reducing harmful fishing practices and influencing the policy framework for low-impact fishing.'
+        indicators={FISHERIES_INDICATORS}
+        data={data}
         isLoading={isLoading}
         toIso={toIso}
       />
       <PillarMetricsCard
         number='03'
-        title='Sustainable fisheries & threats'
-        description='Reducing harmful fishing and supporting fishery management.'
-        indicators={FISHERIES_INDICATORS}
-        rolls={fishRolls}
+        title='Restore vital ecosystems'
+        description='Where habitat is being actively restored, supported with specimens, or advanced through policy.'
+        indicators={RESTORATION_INDICATORS}
+        data={data}
         isLoading={isLoading}
         toIso={toIso}
       />

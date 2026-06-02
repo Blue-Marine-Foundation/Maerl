@@ -23,9 +23,22 @@ function indicatorHref(code: string, toIso: string | null): string | null {
   return `/impactindicators/${id}?from=${ALL_TIME_FROM_DATE}&to=${toIso}`;
 }
 
-function formatEngagementValue(rollup: IndicatorRollup | undefined): string | null {
-  if (!rollup || rollup.total_value <= 0) return null;
-  return d3.format(',.0f')(rollup.total_value);
+function metricHref(
+  codes: readonly string[],
+  toIso: string | null,
+): string | null {
+  if (codes.length !== 1) return null;
+  return indicatorHref(codes[0], toIso);
+}
+
+function formatEngagementValue(
+  rollups: readonly (IndicatorRollup | undefined)[],
+): string | null {
+  const total = rollups.reduce((sum, rollup) => {
+    return sum + (rollup?.total_value ?? 0);
+  }, 0);
+  if (total <= 0) return null;
+  return d3.format(',.0f')(total);
 }
 
 function useOverviewData() {
@@ -105,7 +118,7 @@ export default function BenefitsEngagement() {
   if (error) {
     return (
       <p className='text-sm text-muted-foreground'>
-        Failed to load benefits & engagement: {(error as Error).message}
+        Failed to load connecting people to the sea: {(error as Error).message}
       </p>
     );
   }
@@ -117,29 +130,29 @@ export default function BenefitsEngagement() {
           Cross-cutting
         </p>
         <h2 className='text-2xl font-semibold tracking-tight'>
-          Benefits & engagement
+          Connecting people to the sea
         </h2>
         <p className='max-w-3xl text-sm text-foreground'>
-          Who benefits from the work, and who went from hearing about it to taking
-          part.
+          Who benefits from the work, who takes action, and who completes public
+          or student education programs.
         </p>
         <p className='text-sm text-muted-foreground'>
-          Totals from valid indicator updates across active projects. Open a row for
-          history and methodology.
+          Totals from valid indicator updates across active projects. Open a row
+          for history and methodology.
         </p>
       </header>
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
         {ENGAGEMENT_INDICATORS.map((ind) => {
-          const roll = data?.indicators[ind.code];
+          const rolls = ind.codes.map((code) => data?.indicators[code]);
           return (
             <EngagementMetricCard
-              key={ind.code}
+              key={ind.codes.join('+')}
               title={ind.label}
               hint={ind.hint}
-              value={formatEngagementValue(roll)}
+              value={formatEngagementValue(rolls)}
               unitLabel={ind.unitLabel}
-              href={indicatorHref(ind.code, toIso)}
+              href={metricHref(ind.codes, toIso)}
               isLoading={isLoading}
             />
           );

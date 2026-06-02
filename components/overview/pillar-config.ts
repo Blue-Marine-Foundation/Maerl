@@ -1,5 +1,5 @@
 // Overview homepage: strategic pillar presentation + deep-link IDs.
-// Indicator IDs match `public.impact_indicators` (verified 2026-05).
+// IDs mirror the code-derived `public.impact_indicators` records.
 
 export const ALL_TIME_FROM_DATE = '2010-01-01';
 
@@ -8,15 +8,29 @@ export const INDICATOR_IDS: Record<string, number> = {
   '1.2.3': 123,
   '1.2.1': 121,
   '1.2.2': 122,
+  '2.1.2': 212,
   '2.2.4': 224,
   '2.2.1': 221,
   '2.2.5': 225,
+  '3.1.2': 312,
+  '4.1.2': 412,
   '4.2.1': 421,
   '4.3.2': 432,
   '5.6.1': 561,
   '5.2.1': 521,
   '5.2.2': 522,
   '5.3.3': 533,
+  '5.5.1': 551,
+};
+
+export type OverviewMetricConfig = {
+  label: string;
+  codes: readonly string[];
+};
+
+export type EngagementMetricConfig = OverviewMetricConfig & {
+  hint: string;
+  unitLabel: string;
 };
 
 /** Protection pillar — stacked bar order (committed → proposed → designated). */
@@ -24,80 +38,80 @@ export const PROTECTION_SEGMENTS = [
   {
     code: '1.2.3',
     shortLabel: 'Committed',
-    dotClass: 'bg-emerald-300',
-    barClass: 'bg-emerald-300',
+    dotClass: 'bg-cyan-300',
+    barClass: 'bg-cyan-300',
   },
   {
     code: '1.2.1',
     shortLabel: 'Proposed',
-    dotClass: 'bg-emerald-500',
-    barClass: 'bg-emerald-500',
+    dotClass: 'bg-sky-500',
+    barClass: 'bg-sky-500',
   },
   {
     code: '1.2.2',
     shortLabel: 'Designated',
-    dotClass: 'bg-emerald-700',
-    barClass: 'bg-emerald-700',
+    dotClass: 'bg-blue-700',
+    barClass: 'bg-blue-700',
   },
 ] as const;
 
 export const RESTORATION_INDICATORS = [
   {
-    code: '2.2.5',
-    label: 'Sea floor under restoration',
+    codes: ['2.2.5'],
+    label: 'Area of habitat under active restoration',
   },
   {
-    code: '2.2.1',
-    label: 'Habitat showing improvement',
+    codes: ['2.2.4'],
+    label: 'Specimens deployed at restoration sites',
   },
   {
-    code: '2.2.4',
-    label: 'Restoration specimens deployed',
+    codes: ['2.1.2'],
+    label: 'Policy instruments influenced',
   },
-] as const;
+] as const satisfies readonly OverviewMetricConfig[];
 
 export const FISHERIES_INDICATORS = [
   {
-    code: '4.2.1',
-    label: 'Sea area with risky gear or practices banned',
+    codes: ['4.2.1'],
+    label:
+      'Area of habitat where harmful or illegal fishing practices are banned',
   },
   {
-    code: '4.3.2',
-    label: 'Laws or agreements shaped',
+    codes: ['4.3.2'],
+    label: 'legal acts or agreements influenced',
   },
   {
-    code: '5.6.1',
-    label: 'People engaged in management',
+    codes: ['3.1.2', '4.1.2'],
+    label: 'policy instruments influenced',
   },
-] as const;
+] as const satisfies readonly OverviewMetricConfig[];
 
 export const ENGAGEMENT_INDICATORS = [
   {
-    code: '5.2.1',
-    label: 'Financial benefits',
-    hint: 'People who received monetary benefits through Blue Marine-linked work.',
-    unitLabel: 'beneficiaries',
-  },
-  {
-    code: '5.2.2',
-    label: 'In-kind benefits',
-    hint: 'People who received non-financial benefits — training, access, support.',
-    unitLabel: 'beneficiaries',
-  },
-  {
-    code: '5.3.3',
-    label: 'Outreach that led to action',
-    hint:
-      'People reached by communications who donated, advocated, or changed behaviour.',
+    codes: ['5.2.1', '5.2.2'],
+    label: 'Direct beneficiaries',
+    hint: 'People who received monetary or in-kind support',
     unitLabel: 'people',
   },
-] as const;
+  {
+    codes: ['5.3.3'],
+    label: 'Outreach that led to action',
+    hint: 'People reached through public engagement who took action',
+    unitLabel: 'people',
+  },
+  {
+    codes: ['5.5.1'],
+    label: 'Public and students educated',
+    hint: 'People/students who completed education programs',
+    unitLabel: 'people',
+  },
+] as const satisfies readonly EngagementMetricConfig[];
 
 export const OVERVIEW_FETCH_CODES: readonly string[] = Array.from(
   new Set<string>([
     ...PROTECTION_SEGMENTS.map((s) => s.code),
-    ...RESTORATION_INDICATORS.map((i) => i.code),
-    ...FISHERIES_INDICATORS.map((i) => i.code),
-    ...ENGAGEMENT_INDICATORS.map((i) => i.code),
+    ...RESTORATION_INDICATORS.flatMap((i) => i.codes),
+    ...FISHERIES_INDICATORS.flatMap((i) => i.codes),
+    ...ENGAGEMENT_INDICATORS.flatMap((i) => i.codes),
   ]),
 );
