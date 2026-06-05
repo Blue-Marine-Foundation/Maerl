@@ -1,11 +1,11 @@
 'use client';
 
-import { useUrlDates } from './use-url-dates';
+import useUrlDateState from '@/components/date-filtering/use-url-date-state';
 import { fetchProjectImpactUpdates } from '@/api/fetch-project-impact-updates';
 import { useQuery } from '@tanstack/react-query';
 
 export const useProjectImpacts = (projectSlug: string) => {
-  const dateRange = useUrlDates();
+  const dateRange = useUrlDateState();
 
   const {
     data: projectImpactUpdates = [],

@@ -3,10 +3,10 @@ import {
   differenceInMonths,
   endOfDay,
   endOfMonth,
-  format,
   isFirstDayOfMonth,
   isLastDayOfMonth,
   isValid,
+  parseISO,
   startOfDay,
   startOfMonth,
   subDays,
@@ -91,13 +91,14 @@ export function parseValidDate(
   return isValid(raw) ? transform(raw) : null;
 }
 
-/** Normalises ISO or yyyy-MM-dd strings for Postgres `date::date` filters. */
+/** Preserves the calendar date from a valid ISO value for `date::date` filters. */
 export function toServerDateString(value: string): string {
-  const date = parseValidDate(value);
-  if (!date) {
+  const dateString = value.match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/)?.[1];
+  if (!dateString || !isValid(parseISO(value))) {
     throw new Error(`Invalid date: ${value}`);
   }
-  return format(date, serverDateFormat);
+
+  return dateString;
 }
 
 /**
