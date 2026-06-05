@@ -6,6 +6,7 @@ import {
   isFirstDayOfMonth,
   isLastDayOfMonth,
   isValid,
+  parseISO,
   startOfDay,
   startOfMonth,
   subDays,
@@ -88,6 +89,16 @@ export function parseValidDate(
   if (!input) return null;
   const raw = new Date(input);
   return isValid(raw) ? transform(raw) : null;
+}
+
+/** Preserves the calendar date from a valid ISO value for `date::date` filters. */
+export function toServerDateString(value: string): string {
+  const dateString = value.match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/)?.[1];
+  if (!dateString || !isValid(parseISO(value))) {
+    throw new Error(`Invalid date: ${value}`);
+  }
+
+  return dateString;
 }
 
 /**
