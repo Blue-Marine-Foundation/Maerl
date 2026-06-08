@@ -3,41 +3,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import * as d3 from 'd3';
-import { GlobeIcon, MapIcon, XIcon } from 'lucide-react';
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/ui/toggle-group';
+import { XIcon } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type {
   Map as MapboxMap,
   Popup as MapboxPopup,
   MapMouseEvent as MapboxMapMouseEvent,
 } from 'mapbox-gl';
-import seaRegionsGeoJson from './sea-regions';
 import type { GeographyImpactRow } from './server-actions';
 import type { MapBounds } from './country-iso-map';
 
-const FILL_BASE = '#22c55e';
-const FILL_HOVER = '#4ade80';
-const FILL_OPACITY_BASE = 0.45;
-const FILL_OPACITY_HOVER = 0.7;
-const STROKE_COLOR = '#86efac';
+const BRAND_TEAL = '#14b8a6';
+const MAP_DARK_HALO = '#111827';
+const POLYGON_FILL_OPACITY = 0.18;
+const POLYGON_FILL_OPACITY_ACTIVE = 0.24;
+const POLYGON_STROKE_OPACITY = 0.5;
 
-/** Marine overlays — cyan so they read differently from terrestrial choropleth. */
-const WATER_FILL_BASE = 'rgba(14, 165, 233, 0.28)';
-const WATER_FILL_HOVER = 'rgba(56, 189, 248, 0.45)';
-const WATER_STROKE = 'rgba(125, 211, 252, 0.75)';
-
-const WATER_SOURCE_ID = 'water-region-overlays';
-const WATER_FILL_LAYER_ID = 'water-overlay-fill';
-const WATER_OUTLINE_LAYER_ID = 'water-overlay-outline';
-
-type MapProjection = 'globe' | 'mercator';
-
-function applyMapProjection(map: MapboxMap, projection: MapProjection) {
-  map.setProjection(projection);
-}
+const MARKER_SOURCE_ID = 'impact-location-markers';
+const MARKER_HALO_LAYER_ID = 'impact-location-marker-halo';
+const MARKER_CORE_LAYER_ID = 'impact-location-marker-core';
+const MARKER_HIT_LAYER_ID = 'impact-location-marker-hit';
 
 type Props = {
   rows: GeographyImpactRow[];
@@ -48,88 +33,42 @@ type Props = {
 };
 
 function storageKey(row: GeographyImpactRow): string {
-  return row.geographyKind === 'country' ? `c:${row.geographyId}` : `w:${row.geographyId}`;
+  if (row.geographyKind === 'country') return `c:${row.geographyId}`;
+  if (row.geographyKind === 'water') return `w:${row.geographyId}`;
+  return `p:${row.geographyId}`;
 }
 
 function layerKeyFromParsed(token: string | null): {
   iso: string | null;
-  waterId: string | null;
+  markerKey: string | null;
 } {
-  if (!token) return { iso: null, waterId: null };
-  if (token.startsWith('c:')) return { iso: token.slice(2), waterId: null };
-  if (token.startsWith('w:')) return { iso: null, waterId: token.slice(2) };
-  return { iso: null, waterId: null };
-}
-
-type GeoJsonPolygon = {
-  type: 'Polygon';
-  coordinates: [number, number][][];
-};
-
-type GeoJsonMultiPolygon = {
-  type: 'MultiPolygon';
-  coordinates: [number, number][][][];
-};
-
-type GeoJsonGeometry = GeoJsonPolygon | GeoJsonMultiPolygon;
-
-type WaterRegionFeature = {
-  type: 'Feature';
-  properties: {
-    gid?: string;
-    id?: string;
-    name?: string;
-  };
-  geometry: GeoJsonGeometry | null;
-};
-
-type WaterRegionFeatureCollection = {
-  type: 'FeatureCollection';
-  features: readonly WaterRegionFeature[];
-};
-
-function boundsToPolygon(bounds: MapBounds): GeoJsonPolygon {
-  const [[west, south], [east, north]] = bounds;
-  return {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [west, south],
-        [east, south],
-        [east, north],
-        [west, north],
-        [west, south],
-      ],
-    ],
-  };
-}
-
-const STATIC_WATER_GEOMETRIES = new Map<string, GeoJsonGeometry>(
-  ((seaRegionsGeoJson as unknown as WaterRegionFeatureCollection).features ?? [])
-    .filter((feature) => feature.geometry !== null)
-    .map(
-      (feature): [string, GeoJsonGeometry] => [
-        feature.properties.gid ?? feature.properties.id ?? '',
-        feature.geometry as unknown as GeoJsonGeometry,
-      ],
-    )
-    .filter(([gid]) => gid.length > 0),
-);
-
-function waterGeometryForRow(row: GeographyImpactRow): GeoJsonGeometry | null {
-  const staticGeometry = STATIC_WATER_GEOMETRIES.get(row.geographyId);
-  if (staticGeometry) return staticGeometry;
-  return row.waterBounds ? boundsToPolygon(row.waterBounds) : null;
+  if (!token) return { iso: null, markerKey: null };
+  if (token.startsWith('c:')) {
+    return { iso: token.slice(2), markerKey: null };
+  }
+  if (token.startsWith('w:') || token.startsWith('p:')) {
+    return { iso: null, markerKey: token };
+  }
+  return { iso: null, markerKey: null };
 }
 
 function buildHoverHtml(row: GeographyImpactRow): string {
   const foreground = 'hsl(var(--card-foreground))';
   const muted = 'hsl(var(--muted-foreground))';
-  const scope =
-    row.geographyKind === 'water'
-      ? 'Sea / ocean programme area.'
-      : 'Country / territory.';
+  const scope = {
+    country: 'Country / territory.',
+    water: 'Sea / ocean programme area.',
+    point: 'Project location marker.',
+  }[row.geographyKind];
   const projectsLine = `${row.activeProjects} active project${row.activeProjects === 1 ? '' : 's'}`;
+  const stats = row.headlineStats.length > 0 ? row.headlineStats : null;
+  const headlineHtml = stats
+    ?.slice(0, 4)
+    .map(
+      (stat) =>
+        `<div style="font-size:12px;line-height:1.35;color:${foreground}">${escapeHtml(renderHeadlineStat(stat))}</div>`,
+    )
+    .join('');
   const metricsHtml = row.metrics
     .slice(0, 4)
     .map(
@@ -143,9 +82,32 @@ function buildHoverHtml(row: GeographyImpactRow): string {
       <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:${foreground}">${row.geographyLabel}</p>
       <p style="margin:0 0 6px;font-size:11px;line-height:1.35;color:${muted}">${scope}</p>
       <p style="margin:0 0 6px;font-size:12px;color:${muted}">${projectsLine}</p>
-      ${metricsHtml || `<p style="margin:0;font-size:12px;color:${muted};font-style:italic">No headline metrics yet</p>`}
+      ${headlineHtml || metricsHtml || `<p style="margin:0;font-size:12px;color:${muted};font-style:italic">No headline metrics yet</p>`}
     </div>
   `;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function formatHeadlineValue(value: number): string {
+  return d3.format(',.0f')(value);
+}
+
+function renderHeadlineStat(
+  stat: GeographyImpactRow['headlineStats'][number],
+): string {
+  const value = formatHeadlineValue(stat.value);
+  if (/\bx\b/i.test(stat.template)) {
+    return stat.template.replace(/\bx\b/i, value);
+  }
+  return `${value} ${stat.template}`;
 }
 
 const COUNTRY_FEATURE = {
@@ -172,12 +134,12 @@ function setCountryFeatureState(
   map.setFeatureState({ ...COUNTRY_FEATURE, id: iso }, state);
 }
 
-function setWaterFeatureState(
+function setMarkerFeatureState(
   map: MapboxMap,
-  gid: string,
+  key: string,
   state: { hover?: boolean; selected?: boolean },
 ) {
-  map.setFeatureState({ source: WATER_SOURCE_ID, id: gid }, state);
+  map.setFeatureState({ source: MARKER_SOURCE_ID, id: key }, state);
 }
 
 function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
@@ -195,21 +157,14 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
       'source-layer': 'country_boundaries',
       filter: buildCountryFilter(activeIsoCodes) as never,
       paint: {
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          FILL_HOVER,
-          ['boolean', ['feature-state', 'selected'], false],
-          FILL_HOVER,
-          FILL_BASE,
-        ],
+        'fill-color': BRAND_TEAL,
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          FILL_OPACITY_HOVER,
+          POLYGON_FILL_OPACITY_ACTIVE,
           ['boolean', ['feature-state', 'selected'], false],
-          FILL_OPACITY_HOVER,
-          FILL_OPACITY_BASE,
+          POLYGON_FILL_OPACITY_ACTIVE,
+          POLYGON_FILL_OPACITY,
         ],
       },
     },
@@ -224,76 +179,106 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
       'source-layer': 'country_boundaries',
       filter: buildCountryFilter(activeIsoCodes) as never,
       paint: {
-        'line-color': STROKE_COLOR,
+        'line-color': BRAND_TEAL,
         'line-width': 0.8,
-        'line-opacity': 0.6,
+        'line-opacity': POLYGON_STROKE_OPACITY,
       },
     },
     'country-label',
   );
 }
 
-function addWaterLayers(map: MapboxMap) {
-  map.addSource(WATER_SOURCE_ID, {
+function addImpactMarkerLayers(map: MapboxMap) {
+  map.addSource(MARKER_SOURCE_ID, {
     type: 'geojson',
     data: { type: 'FeatureCollection', features: [] },
-    promoteId: 'gid',
+    promoteId: 'key',
   });
 
   map.addLayer({
-    id: WATER_FILL_LAYER_ID,
-    type: 'fill',
-    source: WATER_SOURCE_ID,
+    id: MARKER_HALO_LAYER_ID,
+    type: 'circle',
+    source: MARKER_SOURCE_ID,
     paint: {
-      'fill-color': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        WATER_FILL_HOVER,
-        ['boolean', ['feature-state', 'selected'], false],
-        WATER_FILL_HOVER,
-        WATER_FILL_BASE,
-      ],
-      'fill-outline-color': WATER_STROKE,
+      'circle-radius': 10,
+      'circle-color': MAP_DARK_HALO,
+      'circle-opacity': 0.9,
     },
   });
 
   map.addLayer({
-    id: WATER_OUTLINE_LAYER_ID,
-    type: 'line',
-    source: WATER_SOURCE_ID,
-    layout: {},
+    id: MARKER_CORE_LAYER_ID,
+    type: 'circle',
+    source: MARKER_SOURCE_ID,
     paint: {
-      'line-color': WATER_STROKE,
-      'line-width': 1,
-      'line-opacity': 0.9,
+      'circle-radius': 7,
+      'circle-color': BRAND_TEAL,
+      'circle-stroke-color': MAP_DARK_HALO,
+      'circle-stroke-width': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        2,
+        ['boolean', ['feature-state', 'selected'], false],
+        2,
+        1,
+      ],
+      'circle-opacity': 0.96,
+    },
+  });
+
+  map.addLayer({
+    id: MARKER_HIT_LAYER_ID,
+    type: 'circle',
+    source: MARKER_SOURCE_ID,
+    paint: {
+      'circle-radius': 22,
+      'circle-color': 'rgba(255, 255, 255, 0)',
+      'circle-opacity': 0,
     },
   });
 }
 
-type WaterRegionOverlayFeatureCollection = {
+type ImpactMarkerFeatureCollection = {
   type: 'FeatureCollection';
   features: Array<{
     type: 'Feature';
-    properties: { gid: string; name: string };
-    geometry: GeoJsonGeometry;
+    properties: {
+      key: string;
+      name: string;
+      kind: 'water' | 'point';
+      activeProjects: number;
+    };
+    geometry: {
+      type: 'Point';
+      coordinates: [number, number];
+    };
   }>;
 };
 
-function buildWaterRegionsGeoJSON(
+function buildImpactMarkersGeoJSON(
   rows: readonly GeographyImpactRow[],
-): WaterRegionOverlayFeatureCollection {
+): ImpactMarkerFeatureCollection {
   const features = rows
-    .filter((r) => r.geographyKind === 'water')
+    .filter(
+      (r) =>
+        (r.geographyKind === 'water' || r.geographyKind === 'point') &&
+        r.markerCoordinates !== null,
+    )
     .map((r) => {
-      const geometry = waterGeometryForRow(r);
-      if (!geometry) return null;
       return {
         type: 'Feature' as const,
-        properties: { gid: r.geographyId, name: r.geographyLabel },
-        geometry,
+        properties: {
+          key: storageKey(r),
+          name: r.geographyLabel,
+          kind: r.geographyKind as 'water' | 'point',
+          activeProjects: r.activeProjects,
+        },
+        geometry: {
+          type: 'Point' as const,
+          coordinates: r.markerCoordinates as [number, number],
+        },
       };
-    })
-    .filter((feature): feature is NonNullable<typeof feature> => feature !== null);
+    });
 
   return {
     type: 'FeatureCollection',
@@ -319,9 +304,9 @@ type CountryInteract = {
   popup: MapboxPopup;
   hoveredIsoRef: React.RefObject<string | null>;
   rowsByGeoKeyRef: React.RefObject<Map<string, GeographyImpactRow>>;
-  hoveredWaterRef: React.RefObject<string | null>;
+  hoveredMarkerRef: React.RefObject<string | null>;
   onSelectCountry: (iso: string) => void;
-  onSelectWater: (gid: string) => void;
+  onSelectMarker: (key: string) => void;
 };
 
 type GeographyMouseEvent = MapboxMapMouseEvent;
@@ -334,11 +319,11 @@ function clearCountryHover(ci: CountryInteract) {
   }
 }
 
-function clearWaterHover(ci: CountryInteract) {
-  const { map, hoveredWaterRef } = ci;
-  if (hoveredWaterRef.current) {
-    setWaterFeatureState(map, hoveredWaterRef.current, { hover: false });
-    hoveredWaterRef.current = null;
+function clearMarkerHover(ci: CountryInteract) {
+  const { map, hoveredMarkerRef } = ci;
+  if (hoveredMarkerRef.current) {
+    setMarkerFeatureState(map, hoveredMarkerRef.current, { hover: false });
+    hoveredMarkerRef.current = null;
   }
 }
 
@@ -348,7 +333,7 @@ function handleCountryMouseMove(ci: CountryInteract, e: GeographyMouseEvent) {
   const iso = (feature?.id as string | undefined) ?? null;
   if (!iso) return;
   map.getCanvas().style.cursor = 'pointer';
-  clearWaterHover(ci);
+  clearMarkerHover(ci);
 
   const previous = ci.hoveredIsoRef.current;
   if (previous && previous !== iso) {
@@ -376,38 +361,38 @@ function handleCountryClick(ci: CountryInteract, e: GeographyMouseEvent) {
   ci.onSelectCountry(iso);
 }
 
-function handleWaterMouseMove(ci: CountryInteract, e: GeographyMouseEvent) {
+function handleMarkerMouseMove(ci: CountryInteract, e: GeographyMouseEvent) {
   const { map, popup, rowsByGeoKeyRef } = ci;
-  const props = e.features?.[0]?.properties as { gid?: string } | undefined;
-  const gid = String(props?.gid ?? '');
-  if (!gid) return;
+  const props = e.features?.[0]?.properties as { key?: string } | undefined;
+  const key = String(props?.key ?? '');
+  if (!key) return;
   map.getCanvas().style.cursor = 'pointer';
   clearCountryHover(ci);
 
-  const previous = ci.hoveredWaterRef.current;
-  if (previous && previous !== gid) {
-    setWaterFeatureState(map, previous, { hover: false });
+  const previous = ci.hoveredMarkerRef.current;
+  if (previous && previous !== key) {
+    setMarkerFeatureState(map, previous, { hover: false });
   }
-  setWaterFeatureState(map, gid, { hover: true });
-  ci.hoveredWaterRef.current = gid;
+  setMarkerFeatureState(map, key, { hover: true });
+  ci.hoveredMarkerRef.current = key;
 
-  const row = rowsByGeoKeyRef.current.get(`w:${gid}`);
+  const row = rowsByGeoKeyRef.current.get(key);
   if (!row) return;
   popup.setLngLat(e.lngLat).setHTML(buildHoverHtml(row)).addTo(map);
 }
 
-function handleWaterMouseLeave(ci: CountryInteract) {
+function handleMarkerMouseLeave(ci: CountryInteract) {
   ci.map.getCanvas().style.cursor = '';
-  clearWaterHover(ci);
+  clearMarkerHover(ci);
   ci.popup.remove();
 }
 
-function handleWaterClick(ci: CountryInteract, e: GeographyMouseEvent) {
-  const props = e.features?.[0]?.properties as { gid?: string } | undefined;
-  const gid = String(props?.gid ?? '');
-  if (!gid) return;
-  if (!ci.rowsByGeoKeyRef.current.has(`w:${gid}`)) return;
-  ci.onSelectWater(gid);
+function handleMarkerClick(ci: CountryInteract, e: GeographyMouseEvent) {
+  const props = e.features?.[0]?.properties as { key?: string } | undefined;
+  const key = String(props?.key ?? '');
+  if (!key) return;
+  if (!ci.rowsByGeoKeyRef.current.has(key)) return;
+  ci.onSelectMarker(key);
 }
 
 function attachGeographyInteractions(ci: CountryInteract) {
@@ -418,17 +403,11 @@ function attachGeographyInteractions(ci: CountryInteract) {
   map.on('mouseleave', 'country-active-fill', () =>
     handleCountryMouseLeave(ci),
   );
-  map.on('click', 'country-active-fill', (e) =>
-    handleCountryClick(ci, e),
-  );
+  map.on('click', 'country-active-fill', (e) => handleCountryClick(ci, e));
 
-  map.on('mousemove', WATER_FILL_LAYER_ID, (e) =>
-    handleWaterMouseMove(ci, e),
-  );
-  map.on('mouseleave', WATER_FILL_LAYER_ID, () =>
-    handleWaterMouseLeave(ci),
-  );
-  map.on('click', WATER_FILL_LAYER_ID, (e) => handleWaterClick(ci, e));
+  map.on('mousemove', MARKER_HIT_LAYER_ID, (e) => handleMarkerMouseMove(ci, e));
+  map.on('mouseleave', MARKER_HIT_LAYER_ID, () => handleMarkerMouseLeave(ci));
+  map.on('click', MARKER_HIT_LAYER_ID, (e) => handleMarkerClick(ci, e));
 }
 
 function applyGeoHighlight(
@@ -441,11 +420,12 @@ function applyGeoHighlight(
 
   if (prev.iso && next.iso !== prev.iso)
     setCountryFeatureState(map, prev.iso, { selected: false });
-  if (prev.waterId && next.waterId !== prev.waterId)
-    setWaterFeatureState(map, prev.waterId, { selected: false });
+  if (prev.markerKey && next.markerKey !== prev.markerKey)
+    setMarkerFeatureState(map, prev.markerKey, { selected: false });
 
   if (next.iso) setCountryFeatureState(map, next.iso, { selected: true });
-  if (next.waterId) setWaterFeatureState(map, next.waterId, { selected: true });
+  if (next.markerKey)
+    setMarkerFeatureState(map, next.markerKey, { selected: true });
 }
 
 function applyDefaultFocus(map: MapboxMap, bounds: MapBounds | null) {
@@ -485,10 +465,9 @@ export default function MapView({
   const mapRef = useRef<MapboxMap | null>(null);
   const popupRef = useRef<MapboxPopup | null>(null);
   const hoveredIsoRef = useRef<string | null>(null);
-  const hoveredWaterRef = useRef<string | null>(null);
+  const hoveredMarkerRef = useRef<string | null>(null);
   const rowsByGeoKeyRef = useRef<Map<string, GeographyImpactRow>>(new Map());
   const [selectedGeo, setSelectedGeo] = useState<string | null>(null);
-  const [projection, setProjection] = useState<MapProjection>('globe');
 
   const rowsByGeoKey = useMemo(() => {
     const m = new Map<string, GeographyImpactRow>();
@@ -560,23 +539,27 @@ export default function MapView({
         const m = mapRef.current;
 
         addCountryLayers(m, activeIsoCodes);
-        addWaterLayers(m);
+        addImpactMarkerLayers(m);
 
-        const waterData = buildWaterRegionsGeoJSON(rows);
-        const src = m.getSource(WATER_SOURCE_ID);
-        if (src && 'setData' in src) src.setData(waterData);
+        const markerData = buildImpactMarkersGeoJSON(rows);
+        const markerSource = m.getSource(MARKER_SOURCE_ID);
+        if (markerSource && 'setData' in markerSource) {
+          markerSource.setData(markerData);
+        }
 
         resizeMapToContainer(m, defaultFocusBounds);
         attachGeographyInteractions({
           map: m,
           popup,
           hoveredIsoRef,
-          hoveredWaterRef,
+          hoveredMarkerRef,
           rowsByGeoKeyRef,
           onSelectCountry: (iso) => setSelectedGeo(`c:${iso}`),
-          onSelectWater: (gid) => setSelectedGeo(`w:${gid}`),
+          onSelectMarker: setSelectedGeo,
         });
-        requestAnimationFrame(() => resizeMapToContainer(m, defaultFocusBounds));
+        requestAnimationFrame(() =>
+          resizeMapToContainer(m, defaultFocusBounds),
+        );
         globalThis.setTimeout(
           () => resizeMapToContainer(m, defaultFocusBounds),
           250,
@@ -589,7 +572,7 @@ export default function MapView({
     return () => {
       cancelled = true;
       hoveredIsoRef.current = null;
-      hoveredWaterRef.current = null;
+      hoveredMarkerRef.current = null;
       popupRef.current?.remove();
       popupRef.current = null;
       mapRef.current?.remove();
@@ -622,16 +605,6 @@ export default function MapView({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-
-    const apply = () => applyMapProjection(map, projection);
-
-    if (map.isStyleLoaded()) apply();
-    else map.once('load', apply);
-  }, [projection]);
-
-  useEffect(() => {
-    const map = mapRef.current;
     if (!map || !map.getLayer('country-active-fill')) return;
     const apply = () => applyCountryFilters(map, activeIsoCodes);
     if (map.isStyleLoaded()) apply();
@@ -640,9 +613,9 @@ export default function MapView({
 
   useEffect(() => {
     const map = mapRef.current;
-    const src = map?.getSource(WATER_SOURCE_ID);
+    const src = map?.getSource(MARKER_SOURCE_ID);
     if (!map || !src || !('setData' in src)) return;
-    src.setData(buildWaterRegionsGeoJSON(rows));
+    src.setData(buildImpactMarkersGeoJSON(rows));
   }, [rows]);
 
   const previouslySelectedRef = useRef<string | null>(null);
@@ -650,15 +623,11 @@ export default function MapView({
     const map = mapRef.current;
     if (!map) return;
     const apply = () =>
-      applyGeoHighlight(
-        map,
-        previouslySelectedRef.current,
-        selectedGeo,
-      );
+      applyGeoHighlight(map, previouslySelectedRef.current, selectedGeo);
     if (
       map.isStyleLoaded() &&
       map.getSource('country-boundaries') &&
-      map.getSource(WATER_SOURCE_ID)
+      map.getSource(MARKER_SOURCE_ID)
     ) {
       apply();
     } else {
@@ -683,38 +652,6 @@ export default function MapView({
         ref={containerRef}
         className='h-full w-full overflow-hidden rounded-lg'
       />
-
-      <div className='absolute right-3 top-3 z-20'>
-        <ToggleGroup
-          type='single'
-          value={projection}
-          onValueChange={(value) => {
-            if (value === 'globe' || value === 'mercator') {
-              setProjection(value);
-            }
-          }}
-          className='rounded-md border border-border/60 bg-background/90 p-0.5 shadow-sm backdrop-blur-md'
-        >
-          <ToggleGroupItem
-            value='globe'
-            size='sm'
-            aria-label='Globe projection'
-            className='h-7 gap-1 px-2 text-xs data-[state=on]:bg-muted'
-          >
-            <GlobeIcon className='h-3.5 w-3.5' />
-            Globe
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value='mercator'
-            size='sm'
-            aria-label='Flat map projection'
-            className='h-7 gap-1 px-2 text-xs data-[state=on]:bg-muted'
-          >
-            <MapIcon className='h-3.5 w-3.5' />
-            Flat
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </div>
 
       {selectedRow && (
         <GeographyDetailPanel
@@ -754,10 +691,11 @@ function GeographyDetailPanel({
   row,
   onClose,
 }: Readonly<{ row: GeographyImpactRow; onClose: () => void }>) {
-  const scopeHint =
-    row.geographyKind === 'water'
-      ? 'Marine programme geography.'
-      : 'Country / territory from Mapbox boundaries.';
+  const scopeHint = {
+    country: 'Country / territory from Mapbox boundaries.',
+    water: 'Marine programme marker.',
+    point: 'Project location marker.',
+  }[row.geographyKind];
 
   return (
     <aside className='absolute right-3 top-12 flex max-h-[calc(100%-3.5rem)] w-[300px] max-w-[calc(100%-1.5rem)] flex-col gap-3 overflow-hidden rounded-lg border border-border/60 bg-background/95 p-4 shadow-lg backdrop-blur-md'>
@@ -780,7 +718,18 @@ function GeographyDetailPanel({
         </button>
       </header>
 
-      {row.metrics.length > 0 && (
+      {row.headlineStats.length > 0 ? (
+        <ul className='flex flex-col gap-1.5'>
+          {row.headlineStats.map((stat) => (
+            <li
+              key={`${stat.template}-${stat.indicatorCodes.join('+')}`}
+              className='text-xs leading-snug text-foreground'
+            >
+              {renderHeadlineStat(stat)}
+            </li>
+          ))}
+        </ul>
+      ) : row.metrics.length > 0 ? (
         <ul className='flex flex-col gap-1.5'>
           {row.metrics.map((m) => (
             <li
@@ -794,7 +743,7 @@ function GeographyDetailPanel({
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
 
       <div className='flex flex-col gap-1.5 overflow-y-auto'>
         <p className='text-[10px] font-semibold uppercase tracking-wide text-muted-foreground'>
@@ -802,7 +751,8 @@ function GeographyDetailPanel({
         </p>
         <ul className='flex flex-col gap-1'>
           {row.projects.map((p) => {
-            const projectBase = p.project_type === 'Unit' ? 'units' : 'projects';
+            const projectBase =
+              p.project_type === 'Unit' ? 'units' : 'projects';
             return (
               <li key={p.id}>
                 <Link

@@ -1,8 +1,10 @@
 // Canonical mapping from free-text `projects.project_country` to map features.
 //
 // - **Countries** → ISO 3166-1 alpha-3 for Mapbox `country-boundaries-v1`.
-// - **Sea / ocean programmes** (`RAW_TO_WATER_REGION`) → separate overlay
-//   geometry where available, with bounds retained for map focus/fallbacks.
+// - **Sea / ocean programmes** (`RAW_TO_WATER_REGION`) → marker geographies,
+//   with bounds retained for map focus.
+// - **Tiny territories / islands** (`RAW_TO_POINT_REGION`) → marker geographies,
+//   so they remain visible at globe scale.
 //   Do not remap them onto coastal states.
 // - **Global** (`isGlobalProjectLabel`) → counted in KPI only, no choropleth.
 //
@@ -13,6 +15,7 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Argentina: ['ARG'],
   Azerbaijan: ['AZE'],
   Bahrain: ['BHR'],
+  'Aruba, Bonaire, Curacao': ['ABW', 'BES', 'CUW'],
   Barbados: ['BRB'],
   Belgium: ['BEL'],
   Brazil: ['BRA'],
@@ -43,11 +46,13 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
 };
 
 export type MapBounds = [[number, number], [number, number]];
+export type MapPoint = [number, number];
 
-/** Programme geographies rendered as marine overlays, not coastal-country proxies. */
+/** Programme geographies rendered as visual marker anchors, not coastal-country proxies. */
 export type WaterRegionMeta = {
   id: string;
   displayName: string;
+  coordinates: MapPoint;
   bounds: MapBounds;
 };
 
@@ -55,6 +60,7 @@ export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
   'Indian Ocean': {
     id: 'indian-ocean',
     displayName: 'Indian Ocean',
+    coordinates: [73, -8],
     bounds: [
       [30, -35],
       [115, 30],
@@ -63,6 +69,7 @@ export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
   'Mediterranean Sea': {
     id: 'mediterranean-sea',
     displayName: 'Mediterranean Sea',
+    coordinates: [18, 35.5],
     bounds: [
       [-6, 30],
       [37, 47],
@@ -71,6 +78,7 @@ export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
   'North Sea': {
     id: 'north-sea',
     displayName: 'North Sea',
+    coordinates: [4, 56],
     bounds: [
       [-4.45, 50.99],
       [12.01, 61.02],
@@ -79,6 +87,7 @@ export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
   'Dogger Bank': {
     id: 'dogger-bank',
     displayName: 'Dogger Bank',
+    coordinates: [2.8, 55.25],
     bounds: [
       [1, 54.35],
       [4.35, 55.98],
@@ -88,9 +97,111 @@ export const RAW_TO_WATER_REGION: Record<string, WaterRegionMeta> = {
 
 /** Lookup by stable `WaterRegionMeta.id` (slug). */
 export const WATER_REGION_BY_ID: Record<string, WaterRegionMeta> =
-  Object.fromEntries(
-    Object.values(RAW_TO_WATER_REGION).map((m) => [m.id, m]),
-  );
+  Object.fromEntries(Object.values(RAW_TO_WATER_REGION).map((m) => [m.id, m]));
+
+export type PointRegionMeta = {
+  id: string;
+  displayName: string;
+  coordinates: MapPoint;
+  bounds: MapBounds;
+};
+
+export const RAW_TO_POINT_REGION: Record<string, PointRegionMeta> = {
+  Ascension: {
+    id: 'ascension',
+    displayName: 'Ascension',
+    coordinates: [-14.36, -7.95],
+    bounds: [
+      [-18, -11],
+      [-10, -5],
+    ],
+  },
+  'Ascension Island': {
+    id: 'ascension',
+    displayName: 'Ascension',
+    coordinates: [-14.36, -7.95],
+    bounds: [
+      [-18, -11],
+      [-10, -5],
+    ],
+  },
+  'Channel Islands': {
+    id: 'channel-islands',
+    displayName: 'Channel Islands',
+    coordinates: [-2.13, 49.3],
+    bounds: [
+      [-3, 48.8],
+      [-1.2, 49.9],
+    ],
+  },
+  Barbados: {
+    id: 'barbados',
+    displayName: 'Barbados',
+    coordinates: [-59.54, 13.19],
+    bounds: [
+      [-61, 12],
+      [-58.5, 14.5],
+    ],
+  },
+  'French Polynesia': {
+    id: 'french-polynesia',
+    displayName: 'French Polynesia',
+    coordinates: [-149.41, -17.68],
+    bounds: [
+      [-155, -23],
+      [-144, -13],
+    ],
+  },
+  'Saint Helena': {
+    id: 'st-helena',
+    displayName: 'St Helena',
+    coordinates: [-5.72, -15.96],
+    bounds: [
+      [-8, -18],
+      [-3, -13],
+    ],
+  },
+  'St Helena': {
+    id: 'st-helena',
+    displayName: 'St Helena',
+    coordinates: [-5.72, -15.96],
+    bounds: [
+      [-8, -18],
+      [-3, -13],
+    ],
+  },
+  'St Helena Island': {
+    id: 'st-helena',
+    displayName: 'St Helena',
+    coordinates: [-5.72, -15.96],
+    bounds: [
+      [-8, -18],
+      [-3, -13],
+    ],
+  },
+  'Saint Vincent and the Grenadines': {
+    id: 'st-vincent-and-the-grenadines',
+    displayName: 'St Vincent and the Grenadines',
+    coordinates: [-61.2, 13.2],
+    bounds: [
+      [-62.5, 12],
+      [-60.5, 14.5],
+    ],
+  },
+  'St Vincent and the Grenadines': {
+    id: 'st-vincent-and-the-grenadines',
+    displayName: 'St Vincent and the Grenadines',
+    coordinates: [-61.2, 13.2],
+    bounds: [
+      [-62.5, 12],
+      [-60.5, 14.5],
+    ],
+  },
+};
+
+/** Lookup by stable `PointRegionMeta.id` (slug). */
+export const POINT_REGION_BY_ID: Record<string, PointRegionMeta> =
+  Object.fromEntries(Object.values(RAW_TO_POINT_REGION).map((m) => [m.id, m]));
 
 export function normalizeProjectGeography(
   raw: string | null | undefined,
@@ -111,8 +222,16 @@ export function tryResolveWaterRegion(
   return RAW_TO_WATER_REGION[n] ?? null;
 }
 
+export function tryResolvePointRegion(
+  raw: string | null | undefined,
+): PointRegionMeta | null {
+  const n = normalizeProjectGeography(raw);
+  if (!n) return null;
+  return RAW_TO_POINT_REGION[n] ?? null;
+}
+
 /**
- * Keys for choropleth + marine overlay buckets (`iso:NLD` vs `sea:north-sea`).
+ * Keys for choropleth + marker buckets (`iso:NLD`, `sea:north-sea`, `point:barbados`).
  * Ignores Global and blanks (handled upstream in counts).
  */
 export function geographyBucketKeysFromRaw(
@@ -122,18 +241,19 @@ export function geographyBucketKeysFromRaw(
   if (!n || isGlobalProjectLabel(n)) return [];
   const water = tryResolveWaterRegion(raw);
   if (water) return [`sea:${water.id}`];
+  const point = tryResolvePointRegion(raw);
+  if (point) return [`point:${point.id}`];
 
   const isos = splitAndMapCountriesInternal(n);
   return isos.map((iso) => `iso:${iso}`);
 }
 
 /** ISO-3 lookup only water/global already excluded by caller preference — use geographyBucketKeysFromRaw. */
-export function splitAndMapCountries(
-  raw: string | null | undefined,
-): string[] {
+export function splitAndMapCountries(raw: string | null | undefined): string[] {
   const n = normalizeProjectGeography(raw);
   if (!n || isGlobalProjectLabel(n)) return [];
   if (tryResolveWaterRegion(raw)) return [];
+  if (tryResolvePointRegion(raw)) return [];
   return splitAndMapCountriesInternal(n);
 }
 
@@ -148,7 +268,7 @@ function splitAndMapCountriesInternal(trimmed: string): string[] {
     if (typeof console !== 'undefined') {
       console.warn(
         `[country-iso-map] Unknown project_country "${trimmed}". ` +
-          `Add to RAW_TO_ISO3 or RAW_TO_WATER_REGION in country-iso-map.ts.`,
+          `Add to RAW_TO_ISO3, RAW_TO_WATER_REGION, or RAW_TO_POINT_REGION in country-iso-map.ts.`,
       );
     }
   }
