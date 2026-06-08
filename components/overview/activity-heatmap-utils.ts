@@ -7,6 +7,7 @@ export type ActivityHeatmapWeek = {
 export type ActivityHeatmapData = {
   year: number;
   currentWeek: number;
+  lastUpdateDate: string | null;
   weeks: ActivityHeatmapWeek[];
 };
 
@@ -82,6 +83,7 @@ export function buildEmptyActivityHeatmapData(
   return {
     year,
     currentWeek: getDisplayCurrentWeek(year, now),
+    lastUpdateDate: null,
     weeks: Array.from({ length: totalWeeks }, (_, index) => {
       const week = index + 1;
       return {

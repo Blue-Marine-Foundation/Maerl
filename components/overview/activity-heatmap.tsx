@@ -39,6 +39,12 @@ const monthFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'UTC',
 });
 
+const lastUpdateFormatter = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+});
+
 type ActivityHeatmapContentProps = {
   data: ActivityHeatmapData;
   errorMessage?: string;
@@ -102,6 +108,15 @@ function heatmapCopy(data: ActivityHeatmapData) {
     title: `${pluralizeUpdates(totalUpdates)} so far this year`,
     subtitle: `${busiestCopy}${quietCopy}`,
   };
+}
+
+function footerLeftCopy(data: ActivityHeatmapData): string {
+  if (!data.lastUpdateDate) return 'No updates yet';
+
+  const date = new Date(data.lastUpdateDate);
+  if (Number.isNaN(date.getTime())) return 'Last update date unknown';
+
+  return `Last update: ${lastUpdateFormatter.format(date)}`;
 }
 
 function monthState(
@@ -220,7 +235,7 @@ function ActivityHeatmapContent({
       </div>
 
       <div className='mt-4 flex items-center justify-between border-t-[0.5px] border-white/[0.08] pt-3.5 text-xs'>
-        <span className='text-foreground'>January {data.year}</span>
+        <span className='text-foreground'>{footerLeftCopy(data)}</span>
         <span className='text-muted-foreground'>
           {remainingWeeks === 0
             ? 'Year complete'

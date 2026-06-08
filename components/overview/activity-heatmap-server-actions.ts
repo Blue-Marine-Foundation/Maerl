@@ -79,6 +79,8 @@ export const fetchActivityHeatmap = cache(
     }
 
     const countsByWeek = new Map<number, Set<number>>();
+    let lastUpdateDate: string | null = null;
+    let lastUpdateTime = 0;
 
     for (const update of (updates ?? []) as ActivityUpdateRow[]) {
       if (typeof update.id !== 'number' || !update.created_at) continue;
@@ -89,6 +91,11 @@ export const fetchActivityHeatmap = cache(
       const { year: updateIsoYear, week } = getIsoWeekInfo(createdAt);
       if (updateIsoYear !== year || week < 1 || week > totalWeeks) continue;
 
+      if (createdAt.getTime() > lastUpdateTime) {
+        lastUpdateDate = update.created_at;
+        lastUpdateTime = createdAt.getTime();
+      }
+
       const updateIds = countsByWeek.get(week) ?? new Set<number>();
       updateIds.add(update.id);
       countsByWeek.set(week, updateIds);
@@ -96,6 +103,7 @@ export const fetchActivityHeatmap = cache(
 
     return {
       ...empty,
+      lastUpdateDate,
       weeks: empty.weeks.map((week) => ({
         ...week,
         count: countsByWeek.get(week.week)?.size ?? 0,
