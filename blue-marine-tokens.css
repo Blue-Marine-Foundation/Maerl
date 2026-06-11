@@ -1,0 +1,123 @@
+/* ==========================================================================
+   Blue Marine Foundation — design tokens for Maerl dashboard
+   Derived from Brand Guidelines v1.0 (pp. 7–9)
+
+   Contrast notes are taken from the accessibility chart on p.9 and apply
+   to text below 24px. AA threshold 4.5:1, AAA 7:1, non-text UI 3:1.
+   ========================================================================== */
+
+:root {
+  /* --- Raw brand palette ------------------------------------------------ */
+
+  /* Core */
+  --bm-marine-blue:    #003c69;  /* primary brand colour */
+
+  /* Extended blues */
+  --bm-abyss-blue:     #192d4b;
+  --bm-midnight-blue:  #004994;
+  --bm-twilight-blue:  #1a67e2;
+  --bm-sunlight-blue:  #00aaff;
+
+  /* Primary accents */
+  --bm-seagrass-green: #3addb3;
+  --bm-plankton-blue:  #78f9ff;
+  --bm-sea-foam:       #e1fefe;
+
+  /* Secondary accents */
+  --bm-urchin-violet:  #7766c2;
+  --bm-axolotl-pink:   #ff9ad1;
+  --bm-seahorse-yellow:#f9f871;
+
+  /* --- Semantic tokens ---------------------------------------------------
+     Each mapping below only uses combinations that pass on p.9. */
+
+  /* Surfaces */
+  --surface-page:        #ffffff;
+  --surface-raised:      #ffffff;
+  --surface-tint:        var(--bm-sea-foam);      /* subtle panels, callouts   */
+  --surface-brand:       var(--bm-marine-blue);   /* nav, hero bands           */
+  --surface-brand-deep:  var(--bm-abyss-blue);    /* footers, dark sections    */
+
+  /* Text */
+  --text-primary:        var(--bm-marine-blue);   /* on white: AAA 8.19        */
+  --text-secondary:      var(--bm-midnight-blue); /* on white: AAA 7.85        */
+  --text-on-brand:       #ffffff;                 /* on Marine Blue: AA 6.58   */
+  --text-on-brand-deep:  #ffffff;                 /* on Abyss: AAA 13.83       */
+  --text-on-tint:        var(--bm-marine-blue);   /* on Sea Foam: AA 5.40      */
+
+  /* Interactive */
+  --interactive:         var(--bm-twilight-blue); /* white on Twilight: AA 4.85 */
+  --interactive-hover:   var(--bm-midnight-blue);
+  --interactive-text:    #ffffff;
+  --link:                var(--bm-twilight-blue); /* on white: AA 4.58          */
+  --focus-ring:          var(--bm-sunlight-blue); /* non-text use only          */
+
+  /* Borders and dividers (non-text, 3:1 not required for decorative) */
+  --border-subtle:       color-mix(in srgb, var(--bm-marine-blue) 15%, white);
+  --border-strong:       var(--bm-marine-blue);
+
+  /* --- Data visualisation -------------------------------------------------
+     Bright accents live here. They FAIL as text colours — use as fills,
+     strokes, and chips only, with labels in --text-primary alongside.
+     Ordered for maximum adjacent-hue separation in categorical series. */
+
+  --viz-1: var(--bm-marine-blue);
+  --viz-2: var(--bm-seagrass-green);
+  --viz-3: var(--bm-urchin-violet);
+  --viz-4: var(--bm-sunlight-blue);
+  --viz-5: var(--bm-axolotl-pink);
+  --viz-6: var(--bm-seahorse-yellow);
+  --viz-7: var(--bm-twilight-blue);
+  --viz-8: var(--bm-plankton-blue);
+
+  /* Sequential blue ramp (light → dark) for choropleths / heatmaps.
+     This also suits the Overview activity heatmap. */
+  --viz-seq-1: var(--bm-sea-foam);
+  --viz-seq-2: var(--bm-plankton-blue);
+  --viz-seq-3: var(--bm-sunlight-blue);
+  --viz-seq-4: var(--bm-twilight-blue);
+  --viz-seq-5: var(--bm-midnight-blue);
+  --viz-seq-6: var(--bm-marine-blue);
+  --viz-seq-7: var(--bm-abyss-blue);
+
+  /* Positive/negative without leaving the palette. Pair with icons or
+     labels — green/violet alone shouldn't carry meaning. */
+  --viz-positive: var(--bm-seagrass-green);
+  --viz-negative: var(--bm-urchin-violet);
+
+  /* --- Typography ---------------------------------------------------------
+     Galano Grotesque is the brand face (commercial licence required for
+     webfont use). Poppins is the closest free geometric fallback. */
+
+  --font-sans: "Galano Grotesque", "Poppins", system-ui, -apple-system,
+               "Segoe UI", sans-serif;
+
+  --font-weight-light:    300;
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* Type scale — headings in Marine Blue, semibold; body regular */
+  --text-display:  600 2.25rem/1.2  var(--font-sans);
+  --text-h1:       600 1.75rem/1.25 var(--font-sans);
+  --text-h2:       600 1.375rem/1.3 var(--font-sans);
+  --text-h3:       500 1.125rem/1.4 var(--font-sans);
+  --text-body:     400 1rem/1.55    var(--font-sans);
+  --text-small:    400 0.875rem/1.5 var(--font-sans);
+  --text-caption:  500 0.75rem/1.4  var(--font-sans);  /* letter-spacing: 0.04em */
+}
+
+/* ==========================================================================
+   Usage rules distilled from the guidelines
+   --------------------------------------------------------------------------
+   1. Plankton Blue, Sea Foam, Seahorse Yellow, Axolotl Pink, Seagrass
+      Green: fills and accents only. Never text, never text-on-fill <24px.
+   2. Seagrass Green on Marine Blue is 4.43 — fails AA for small text but
+      passes the 3:1 non-text threshold, so it works for icons, chart
+      elements and large stats on brand surfaces.
+   3. Logo: Marine Blue or white only. Badge variant as favicon. Maintain
+      cap-height clear space; never below 8px x-height.
+   4. Light backgrounds dominate; Marine Blue is the identity anchor, the
+      brights are seasoning, not structure.
+   ========================================================================== */
