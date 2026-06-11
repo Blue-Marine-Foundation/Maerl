@@ -78,7 +78,11 @@ export function ProjectsDataTable<TData, TValue>({
           <ColumnFilter table={table} columnId='project_type' />
           <ColumnFilter table={table} columnId='project_status' />
           <ColumnFilter table={table} columnId='regional_strategy' />
-          <ListColumnFilter table={table} columnId='pillars' />
+          <ListColumnFilter
+            table={table}
+            columnId='pillars'
+            label='Strategic Goals'
+          />
           <ListColumnFilter table={table} columnId='unit_requirements' />
           <input
             placeholder='Filter by person'

@@ -1,4 +1,4 @@
-// Overview homepage: strategic pillar presentation + deep-link IDs.
+// Overview homepage: strategic goal presentation + deep-link IDs.
 // IDs mirror the code-derived `public.impact_indicators` records.
 
 export const ALL_TIME_FROM_DATE = '2010-01-01';
@@ -33,7 +33,7 @@ export type EngagementMetricConfig = OverviewMetricConfig & {
   unitLabel: string;
 };
 
-/** Protection pillar — stacked bar order (committed → proposed → designated). */
+/** Protection goal — stacked bar order (committed → proposed → designated). */
 export const PROTECTION_SEGMENTS = [
   {
     code: '1.2.3',
@@ -90,7 +90,7 @@ export const ENGAGEMENT_INDICATORS = [
   {
     codes: ['5.2.1', '5.2.2'],
     label: 'Direct beneficiaries',
-    hint: 'People who received monetary or in-kind support',
+    hint: 'Combined total of people receiving monetary and in-kind support',
     unitLabel: 'people',
   },
   {

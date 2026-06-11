@@ -499,6 +499,13 @@ export default function MapView({
     if (!containerRef.current || mapRef.current) return;
 
     let cancelled = false;
+    let resizeFrame: number | null = null;
+    let resizeTimeout: ReturnType<typeof globalThis.setTimeout> | null = null;
+
+    function resizeLiveMap(map: MapboxMap) {
+      if (cancelled || mapRef.current !== map) return;
+      resizeMapToContainer(map, defaultFocusBounds);
+    }
 
     async function initMap() {
       const mapboxgl = (await import('mapbox-gl')).default;
@@ -535,8 +542,8 @@ export default function MapView({
       popupRef.current = popup;
 
       map.on('load', () => {
-        if (!mapRef.current) return;
-        const m = mapRef.current;
+        if (cancelled || mapRef.current !== map) return;
+        const m = map;
 
         addCountryLayers(m, activeIsoCodes);
         addImpactMarkerLayers(m);
@@ -557,13 +564,14 @@ export default function MapView({
           onSelectCountry: (iso) => setSelectedGeo(`c:${iso}`),
           onSelectMarker: setSelectedGeo,
         });
-        requestAnimationFrame(() =>
-          resizeMapToContainer(m, defaultFocusBounds),
-        );
-        globalThis.setTimeout(
-          () => resizeMapToContainer(m, defaultFocusBounds),
-          250,
-        );
+        resizeFrame = requestAnimationFrame(() => {
+          resizeFrame = null;
+          resizeLiveMap(m);
+        });
+        resizeTimeout = globalThis.setTimeout(() => {
+          resizeTimeout = null;
+          resizeLiveMap(m);
+        }, 250);
       });
     }
 
@@ -571,6 +579,8 @@ export default function MapView({
 
     return () => {
       cancelled = true;
+      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+      if (resizeTimeout !== null) globalThis.clearTimeout(resizeTimeout);
       hoveredIsoRef.current = null;
       hoveredMarkerRef.current = null;
       popupRef.current?.remove();

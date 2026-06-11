@@ -261,7 +261,7 @@ export default function PillarStories() {
   if (error) {
     return (
       <p className='text-sm text-muted-foreground'>
-        Failed to load pillar overview: {(error as Error).message}
+        Failed to load Strategic Goal overview: {(error as Error).message}
       </p>
     );
   }

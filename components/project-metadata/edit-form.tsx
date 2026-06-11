@@ -153,11 +153,11 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
       />
 
       <TextInput
-        label='Pillars'
+        label='Strategic Goals'
         name='pillars'
         value={formState.pillars}
         onChange={handleChange}
-        placeholder='Pillars'
+        placeholder='Strategic Goals'
       />
 
       <LocalContactInput

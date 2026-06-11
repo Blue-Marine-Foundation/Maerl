@@ -173,7 +173,7 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
   },
   {
     accessorKey: 'pillars',
-    header: 'Pillars',
+    header: 'Strategic Goals',
     filterFn: listFilterFn,
   },
   {

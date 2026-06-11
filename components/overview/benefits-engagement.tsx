@@ -1,7 +1,9 @@
 'use client';
 
+import { useId, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import { ChevronDownIcon } from 'lucide-react';
 import * as d3 from 'd3';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -16,6 +18,28 @@ import {
 } from './pillar-stories-server-actions';
 
 const NOT_YET_REPORTED = 'Not yet reported';
+
+const ENGAGEMENT_INDICATOR_LABELS: Record<string, string> = {
+  '5.2.1': 'Monetary support',
+  '5.2.2': 'In-kind support',
+  '5.3.3': 'People taking action',
+  '5.5.1': 'Education completed',
+};
+
+type EngagementIndicatorBreakdown = {
+  code: string;
+  label: string;
+  fullTitle: string;
+  value: string | null;
+  href: string | null;
+};
+
+function conciseIndicatorLabel(code: string, title: string): string {
+  return (
+    ENGAGEMENT_INDICATOR_LABELS[code] ??
+    title.replace(/^number of\s+/i, '').replace(/^no\.?\s+of\s+/i, '')
+  );
+}
 
 function indicatorHref(code: string, toIso: string | null): string | null {
   const id = INDICATOR_IDS[code];
@@ -55,6 +79,7 @@ function EngagementMetricCard({
   value,
   unitLabel,
   href,
+  indicatorBreakdown,
   isLoading,
 }: Readonly<{
   title: string;
@@ -62,8 +87,12 @@ function EngagementMetricCard({
   value: string | null;
   unitLabel: string;
   href: string | null;
+  indicatorBreakdown: readonly EngagementIndicatorBreakdown[];
   isLoading: boolean;
 }>) {
+  const [indicatorsOpen, setIndicatorsOpen] = useState(false);
+  const indicatorPanelId = useId();
+
   if (isLoading) {
     return (
       <article className='flex flex-col gap-4 rounded-xl border border-border/80 bg-card p-6 shadow-sm'>
@@ -92,7 +121,7 @@ function EngagementMetricCard({
         <h3 className='text-base font-semibold leading-tight'>{title}</h3>
         <p className='text-sm leading-snug text-muted-foreground'>{hint}</p>
       </div>
-      <div className='mt-auto flex flex-col gap-1'>
+      <div className='flex flex-col gap-1'>
         {href && value !== null ? (
           <Link
             href={href}
@@ -106,6 +135,69 @@ function EngagementMetricCard({
         {value !== null && (
           <p className='text-sm text-muted-foreground'>{unitLabel}</p>
         )}
+      </div>
+      <div className='relative mt-auto flex flex-col gap-3'>
+        {indicatorsOpen && (
+          <ul
+            id={indicatorPanelId}
+            className='absolute left-0 right-0 top-full z-10 mt-1 flex flex-col gap-1 rounded-lg border border-border/80 bg-card p-2 shadow-md'
+          >
+            {indicatorBreakdown.map((indicator) => {
+              const rowClass =
+                'grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3 rounded-md px-1 py-1.5 text-sm';
+              const rowContent = (
+                <>
+                  <span className='flex min-w-0 items-baseline gap-2.5'>
+                    <span className='shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground/75'>
+                      {indicator.code}
+                    </span>
+                    <span
+                      className='min-w-0 truncate'
+                      title={indicator.fullTitle}
+                    >
+                      {indicator.label}
+                    </span>
+                  </span>
+                  <span className='shrink-0 text-right text-sm font-semibold tabular-nums text-foreground'>
+                    {indicator.value ?? NOT_YET_REPORTED}
+                  </span>
+                </>
+              );
+
+              return (
+                <li key={indicator.code}>
+                  {indicator.href ? (
+                    <Link
+                      href={indicator.href}
+                      aria-label={`Open indicator ${indicator.code}: ${indicator.fullTitle}`}
+                      className={`${rowClass} outline-none transition-colors hover:bg-muted/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`}
+                    >
+                      {rowContent}
+                    </Link>
+                  ) : (
+                    <div className={rowClass}>{rowContent}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <div className='border-t border-border/60 pt-3'>
+          <button
+            type='button'
+            aria-expanded={indicatorsOpen}
+            aria-controls={indicatorPanelId}
+            aria-label={`${indicatorsOpen ? 'Hide' : 'Show'} contributing indicators for ${title}`}
+            onClick={() => setIndicatorsOpen((open) => !open)}
+            className='-mx-1 flex w-fit items-center gap-1.5 rounded-md px-1 py-0.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+          >
+            <span>Indicators</span>
+            <ChevronDownIcon
+              className={`h-3.5 w-3.5 shrink-0 transition-transform ${indicatorsOpen ? 'rotate-180' : ''}`}
+              aria-hidden
+            />
+          </button>
+        </div>
       </div>
     </article>
   );
@@ -126,7 +218,7 @@ export default function BenefitsEngagement() {
   return (
     <section className='flex flex-col gap-5'>
       <header className='flex flex-col gap-1.5'>
-        <p className='text-[10px] font-medium uppercase tracking-widest text-muted-foreground'>
+        <p className='text-[10px] font-medium uppercase tracking-wide text-muted-foreground/70'>
           Cross-cutting
         </p>
         <h2 className='text-2xl font-semibold tracking-tight'>
@@ -137,14 +229,29 @@ export default function BenefitsEngagement() {
           or student education programs.
         </p>
         <p className='text-sm text-muted-foreground'>
-          Totals from valid indicator updates across active projects. Open a row
-          for history and methodology.
+          All-time totals from valid indicator updates across active projects.
+          Expand a card to see the contributing indicators.
         </p>
       </header>
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
         {ENGAGEMENT_INDICATORS.map((ind) => {
           const rolls = ind.codes.map((code) => data?.indicators[code]);
+          const indicatorBreakdown = ind.codes.map((code) => {
+            const rollup = data?.indicators[code];
+
+            return {
+              code,
+              label: conciseIndicatorLabel(
+                code,
+                rollup?.indicator_title ?? `Indicator ${code}`,
+              ),
+              fullTitle: rollup?.indicator_title ?? `Indicator ${code}`,
+              value: formatEngagementValue([rollup]),
+              href: indicatorHref(code, toIso),
+            };
+          });
+
           return (
             <EngagementMetricCard
               key={ind.codes.join('+')}
@@ -153,6 +260,7 @@ export default function BenefitsEngagement() {
               value={formatEngagementValue(rolls)}
               unitLabel={ind.unitLabel}
               href={metricHref(ind.codes, toIso)}
+              indicatorBreakdown={indicatorBreakdown}
               isLoading={isLoading}
             />
           );

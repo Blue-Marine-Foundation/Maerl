@@ -7,8 +7,8 @@ export default function ProtectedPage() {
       <div className='flex max-w-2xl flex-col gap-2'>
         <PageHeading>Projects</PageHeading>
         <p className='text-sm text-muted-foreground'>
-          Explore project geographies on the map, or switch to the table for the
-          full directory.
+          Explore project geographies on the map, then use the directory below
+          for filtering, export, and detail links.
         </p>
       </div>
       <ProjectsDirectory />
