@@ -58,7 +58,7 @@ export default function OutputCardLogframe({
 
       {output && (
         <div id={`output-${output.id}`} className='rounded-md bg-card'>
-          <div className='-mt-0 w-full rounded-t-md bg-sky-600/50 px-4 py-6'>
+          <div className='-mt-0 w-full rounded-t-md bg-brand-twilight px-4 py-6 text-white'>
             <div className='flex items-center justify-between gap-8'>
               <div className='flex items-baseline justify-start gap-8'>
                 <div className='flex items-center gap-4'>
@@ -75,6 +75,7 @@ export default function OutputCardLogframe({
                             .toLowerCase()
                             .replace(' ', '_') as BadgeProps['variant']
                         }
+                        className='bg-white/90'
                       >
                         {output.status}
                       </Badge>
@@ -88,7 +89,7 @@ export default function OutputCardLogframe({
                   <ActionButton
                     action='edit'
                     onClick={() => setIsOutputDialogOpen(true)}
-                    className='border-foreground/80 text-sm hover:bg-foreground/10'
+                    className='border-white/80 text-white text-sm hover:bg-white/10'
                   />
                 )}
                 {canEdit && <ArchiveToggle outputType='output' data={output} />}

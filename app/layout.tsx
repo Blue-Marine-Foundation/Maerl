@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
@@ -17,9 +17,11 @@ export const metadata = {
   description: 'Impact monitoring for Blue Marine Foundation',
 };
 
-const inter = Inter({
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-poppins',
 });
 
 export default function RootLayout({
@@ -28,14 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={inter.className} suppressHydrationWarning>
-      <body className='min-h-svh bg-background text-foreground dark:bg-background'>
+    <html
+      lang='en'
+      className={`${poppins.variable} font-sans`}
+      suppressHydrationWarning
+    >
+      <body className='min-h-svh bg-background text-foreground'>
         <QueryProvider>
           <UserSessionSync />
           <Header />
           <div className='mb-32 px-4'>{children}</div>
           <Footer />
-          <Toaster richColors />
+          <Toaster richColors theme='light' />
           <Analytics />
         </QueryProvider>
       </body>

@@ -99,8 +99,9 @@ export function cellOpacity(
   count: number,
   peakBaseline = DEFAULT_PEAK_BASELINE,
 ): number {
-  if (count === 0) return 0.05;
-  return Math.min(1, 0.15 + (count / peakBaseline) * 0.85);
+  // Floors tuned for marine-blue alpha on a white card (fainter than on dark).
+  if (count === 0) return 0.08;
+  return Math.min(1, 0.18 + (count / peakBaseline) * 0.82);
 }
 
 export function pluralizeUpdates(count: number): string {

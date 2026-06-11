@@ -42,7 +42,7 @@ export default function OutputActivitiesList({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Info className='h-4 w-4 text-white/60 hover:text-white' />
+                    <Info className='h-4 w-4 text-muted-foreground hover:text-foreground' />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className='max-w-xs text-sm'>

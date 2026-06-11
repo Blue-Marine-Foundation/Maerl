@@ -69,7 +69,7 @@ export function ProjectsDataTable<TData, TValue>({
 
   return (
     <div>
-      <p className='mb-6 max-w-fit rounded-md bg-blue-500/20 px-4 py-3'>
+      <p className='mb-6 max-w-fit rounded-md bg-brand-seafoam px-4 py-3 text-brand-marine'>
         Showing {table.getRowModel().rows.length} projects
       </p>
       <div className='flex items-center justify-between gap-4 pb-4 text-sm'>

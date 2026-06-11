@@ -23,7 +23,7 @@ export const TextInput: React.FC<InputProps> = ({
     </label>
     <input
       id={name}
-      className='flex-grow bg-white/10 px-2 py-1 text-foreground'
+      className='flex-grow border border-input bg-background px-2 py-1 text-foreground'
       name={name}
       value={value || ''}
       onChange={onChange}
@@ -49,7 +49,7 @@ export const SelectInput: React.FC<SelectInputProps> = ({
     </label>
     <select
       id={name}
-      className='flex-grow bg-white/10 px-2 py-1 text-foreground'
+      className='flex-grow border border-input bg-background px-2 py-1 text-foreground'
       name={name}
       value={value || ''}
       onChange={
@@ -102,13 +102,13 @@ export const LocalContactInput: React.FC<LocalContactInputProps> = ({
           contacts.map((contact, index) => (
             <div key={index} className='flex items-center gap-2'>
               <input
-                className='bg-white/10 px-2 py-1 text-foreground'
+                className='border border-input bg-background px-2 py-1 text-foreground'
                 placeholder='Name'
                 value={contact.name}
                 onChange={(e) => handleChange(index, 'name', e.target.value)}
               />
               <input
-                className='bg-white/10 px-2 py-1 text-foreground'
+                className='border border-input bg-background px-2 py-1 text-foreground'
                 placeholder='Organisation'
                 value={contact.organisation}
                 onChange={(e) =>
@@ -117,7 +117,7 @@ export const LocalContactInput: React.FC<LocalContactInputProps> = ({
               />
               <button
                 type='button'
-                className='rounded p-1 transition-all hover:bg-white/10'
+                className='rounded p-1 transition-all hover:bg-muted'
                 onClick={() => removeContact(index)}
                 aria-label='Remove contact'
               >
@@ -127,7 +127,7 @@ export const LocalContactInput: React.FC<LocalContactInputProps> = ({
           ))}
         <button
           type='button'
-          className='flex items-center gap-1 self-start rounded border px-2 py-1 text-xs transition-all hover:bg-white/10'
+          className='flex items-center gap-1 self-start rounded border px-2 py-1 text-xs transition-all hover:bg-muted'
           onClick={addContact}
         >
           <PlusIcon size={16} /> Add Contact

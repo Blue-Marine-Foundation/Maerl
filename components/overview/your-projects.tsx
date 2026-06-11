@@ -70,7 +70,7 @@ function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
             <>
               <span className='inline-flex items-center gap-1'>
                 <span
-                  className='h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500'
+                  className='h-1.5 w-1.5 shrink-0 rounded-full bg-green-600'
                   aria-hidden
                 />
                 <span>{status}</span>
@@ -84,7 +84,7 @@ function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
             </>
           )}
           <span
-            className={cn(stale && 'font-medium text-amber-600 dark:text-amber-500')}
+            className={cn(stale && 'font-medium text-amber-700')}
           >
             {lastUpdateLabel}
           </span>

@@ -87,7 +87,7 @@ export default function ColumnFilter<TData>({
 
   return (
     <Popover>
-      <PopoverTrigger className='rounded-md border px-5 py-2 text-sm hover:bg-sky-500/20'>
+      <PopoverTrigger className='rounded-md border px-5 py-2 text-sm hover:bg-accent'>
         {label || defaultLabel}
       </PopoverTrigger>
       <PopoverContent className='w-[250px]'>
@@ -104,7 +104,7 @@ export default function ColumnFilter<TData>({
 
         <div className='max-h-[400px] overflow-y-auto text-sm'>
           {filteredValues.length > 0 && (
-            <label className='mb-2 flex cursor-pointer items-center rounded p-1 hover:bg-sky-500/20'>
+            <label className='mb-2 flex cursor-pointer items-center rounded p-1 hover:bg-accent'>
               <input
                 type='checkbox'
                 checked={filterValue.length === uniqueValues.length}
@@ -118,7 +118,7 @@ export default function ColumnFilter<TData>({
           {filteredValues.map((value: string) => (
             <label
               key={value}
-              className='flex cursor-pointer items-center rounded p-1 hover:bg-sky-500/20'
+              className='flex cursor-pointer items-center rounded p-1 hover:bg-accent'
             >
               <input
                 type='checkbox'
@@ -132,7 +132,7 @@ export default function ColumnFilter<TData>({
             </label>
           ))}
           {filteredValues.length === 0 && (
-            <p className='p-2 text-sm text-gray-500'>No matching items</p>
+            <p className='p-2 text-sm text-muted-foreground'>No matching items</p>
           )}
         </div>
       </PopoverContent>

@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { marineAlpha } from '@/utils/brand-colors';
 import { cn } from '@/utils/cn';
 import { fetchActivityHeatmap } from './activity-heatmap-server-actions';
 import {
@@ -154,7 +155,7 @@ function ActivityHeatmapContent({
 
   return (
     <section
-      className='rounded-[10px] border-[0.5px] border-white/[0.08] bg-[#14191F] px-5 py-5 shadow-sm sm:px-7 sm:py-6'
+      className='rounded-[10px] border border-border bg-card px-5 py-5 shadow-sm sm:px-7 sm:py-6'
       role='region'
       aria-labelledby='activity-heatmap-title'
     >
@@ -171,7 +172,7 @@ function ActivityHeatmapContent({
         {errorMessage ?? copy.subtitle}
       </p>
 
-      <div className='mt-5 overflow-x-auto pb-1 pt-0.5 [scrollbar-color:rgba(255,255,255,0.18)_transparent]'>
+      <div className='mt-5 overflow-x-auto pb-1 pt-0.5 [scrollbar-color:rgba(0,60,105,0.25)_transparent]'>
         <div
           className='grid gap-[3px]'
           style={metrics}
@@ -190,18 +191,17 @@ function ActivityHeatmapContent({
                 className={cn(
                   'block aspect-square min-w-2 rounded-[2px]',
                   isFuture &&
-                    'border-[0.5px] border-dashed border-white/[0.08] bg-white/[0.02]',
+                    'border-[0.5px] border-dashed border-border bg-muted/40',
                   isCurrent &&
-                    'outline outline-1 outline-offset-1 outline-white/30',
+                    'outline outline-1 outline-offset-1 outline-brand-marine/40',
                 )}
                 style={
                   isFuture
                     ? undefined
                     : {
-                        backgroundColor: `rgba(93, 202, 165, ${cellOpacity(
-                          week.count,
-                          peakBaseline,
-                        )})`,
+                        backgroundColor: marineAlpha(
+                          cellOpacity(week.count, peakBaseline),
+                        ),
                       }
                 }
                 title={cellLabel}
@@ -234,7 +234,7 @@ function ActivityHeatmapContent({
         </div>
       </div>
 
-      <div className='mt-4 flex items-center justify-between border-t-[0.5px] border-white/[0.08] pt-3.5 text-xs'>
+      <div className='mt-4 flex items-center justify-between border-t border-border pt-3.5 text-xs'>
         <span className='text-foreground'>{footerLeftCopy(data)}</span>
         <span className='text-muted-foreground'>
           {remainingWeeks === 0
@@ -253,7 +253,7 @@ export function ActivityHeatmapSkeleton() {
   const metrics = gridMetrics(data.weeks.length);
 
   return (
-    <section className='rounded-[10px] border-[0.5px] border-white/[0.08] bg-[#14191F] px-5 py-5 shadow-sm sm:px-7 sm:py-6'>
+    <section className='rounded-[10px] border border-border bg-card px-5 py-5 shadow-sm sm:px-7 sm:py-6'>
       <Skeleton className='mb-2 h-3 w-44 bg-muted/70' />
       <Skeleton className='h-6 w-64 bg-muted/70' />
       <Skeleton className='mt-2 h-4 w-full max-w-lg bg-muted/70' />
@@ -270,7 +270,7 @@ export function ActivityHeatmapSkeleton() {
         <Skeleton className='mt-3 h-3 w-full bg-muted/60' />
       </div>
 
-      <div className='mt-4 flex items-center justify-between border-t-[0.5px] border-white/[0.08] pt-3.5'>
+      <div className='mt-4 flex items-center justify-between border-t border-border pt-3.5'>
         <Skeleton className='h-3 w-24 bg-muted/70' />
         <Skeleton className='h-3 w-40 bg-muted/70' />
       </div>

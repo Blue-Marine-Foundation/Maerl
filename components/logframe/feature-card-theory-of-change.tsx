@@ -25,9 +25,9 @@ export default function FeatureCardTheoryOfChange({
         <div
           className={cn(
             'w-64 rounded-l-md p-6',
-            variant === 'impact' && 'bg-blue-950/90',
-            variant === 'outcome' && 'bg-sky-900/90',
-            variant === 'output' && 'bg-sky-600/90',
+            variant === 'impact' && 'bg-brand-marine',
+            variant === 'outcome' && 'bg-brand-midnight',
+            variant === 'output' && 'bg-brand-twilight',
           )}
         >
           <div className='flex items-center gap-2'>

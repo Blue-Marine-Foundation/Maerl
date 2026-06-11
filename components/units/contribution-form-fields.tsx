@@ -66,14 +66,14 @@ export const ProjectSelect = ({
         <ChevronDownIcon className='h-4 w-4' />
       </button>
       {isOpen && (
-        <div className='absolute left-0 right-0 top-full z-10 flex max-h-[320px] flex-col overflow-y-auto rounded-b-md border bg-black'>
+        <div className='absolute left-0 right-0 top-full z-10 flex max-h-[320px] flex-col overflow-y-auto rounded-b-md border bg-popover shadow-md'>
           {projects
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((project) => (
               <label
                 key={project.id}
                 htmlFor={`project-${project.id}`}
-                className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-sky-700/20'
+                className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-accent'
               >
                 <div className='p-4'>
                   <input
@@ -145,14 +145,14 @@ export const OutputSelect = ({
             <ChevronDownIcon className='h-4 w-4' />
           </button>
           {isOpen && (
-            <div className='absolute left-0 right-0 top-full z-10 flex max-h-[350px] flex-col overflow-y-auto rounded-b-md border bg-black'>
+            <div className='absolute left-0 right-0 top-full z-10 flex max-h-[350px] flex-col overflow-y-auto rounded-b-md border bg-popover shadow-md'>
               {outputs
                 .sort((a, b) => a.code.localeCompare(b.code))
                 .map((output) => (
                   <label
                     key={output.id}
                     htmlFor={`output-${output.id}`}
-                    className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-sky-700/20'
+                    className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-accent'
                   >
                     <div className='p-4'>
                       <input
@@ -208,14 +208,14 @@ export const OutputMeasurableCheckboxes = ({
           Select all relevant output indicators:
         </span>
       </div>
-      <div className='flex max-h-[350px] flex-col overflow-y-auto rounded-b-md border bg-black'>
+      <div className='flex max-h-[350px] flex-col overflow-y-auto rounded-b-md border bg-popover shadow-md'>
         {selectedOutput.output_measurables
           .sort((a, b) => a.code.localeCompare(b.code))
           .map((measurable) => (
             <label
               key={measurable.id}
               htmlFor={`measurable-${measurable.id}`}
-              className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-sky-700/20'
+              className='flex justify-start border-t px-3 hover:cursor-pointer hover:bg-accent'
             >
               <div className='p-4'>
                 <input
@@ -225,7 +225,7 @@ export const OutputMeasurableCheckboxes = ({
                   onChange={(e) =>
                     handleCheckboxChange(measurable.id || 0, e.target.checked)
                   }
-                  className='h-4 w-4 rounded border-gray-300'
+                  className='h-4 w-4 rounded border-input'
                 />
               </div>
               <p className='w-24 p-4'>{measurable.code}</p>

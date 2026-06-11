@@ -10,12 +10,13 @@ import type {
   Popup as MapboxPopup,
   MapMouseEvent as MapboxMapMouseEvent,
 } from 'mapbox-gl';
+import { TWILIGHT_BLUE } from '@/utils/brand-colors';
 import type { GeographyImpactRow } from './server-actions';
 import type { MapBounds } from './country-iso-map';
 
-const BRAND_TEAL = '#14b8a6';
-const MAP_DARK_HALO = '#111827';
-const POLYGON_FILL_OPACITY = 0.18;
+const BRAND_FILL = TWILIGHT_BLUE;
+const MARKER_HALO = '#ffffff';
+const POLYGON_FILL_OPACITY = 0.22;
 const POLYGON_FILL_OPACITY_ACTIVE = 0.24;
 const POLYGON_STROKE_OPACITY = 0.5;
 
@@ -157,7 +158,7 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
       'source-layer': 'country_boundaries',
       filter: buildCountryFilter(activeIsoCodes) as never,
       paint: {
-        'fill-color': BRAND_TEAL,
+        'fill-color': BRAND_FILL,
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -179,7 +180,7 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
       'source-layer': 'country_boundaries',
       filter: buildCountryFilter(activeIsoCodes) as never,
       paint: {
-        'line-color': BRAND_TEAL,
+        'line-color': BRAND_FILL,
         'line-width': 0.8,
         'line-opacity': POLYGON_STROKE_OPACITY,
       },
@@ -201,7 +202,7 @@ function addImpactMarkerLayers(map: MapboxMap) {
     source: MARKER_SOURCE_ID,
     paint: {
       'circle-radius': 10,
-      'circle-color': MAP_DARK_HALO,
+      'circle-color': MARKER_HALO,
       'circle-opacity': 0.9,
     },
   });
@@ -212,8 +213,8 @@ function addImpactMarkerLayers(map: MapboxMap) {
     source: MARKER_SOURCE_ID,
     paint: {
       'circle-radius': 7,
-      'circle-color': BRAND_TEAL,
-      'circle-stroke-color': MAP_DARK_HALO,
+      'circle-color': BRAND_FILL,
+      'circle-stroke-color': MARKER_HALO,
       'circle-stroke-width': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -515,7 +516,7 @@ export default function MapView({
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: 'mapbox://styles/mapbox/dark-v11',
+        style: 'mapbox://styles/mapbox/light-v11',
         center: [10, 20],
         zoom: 1.2,
         cooperativeGestures: true,

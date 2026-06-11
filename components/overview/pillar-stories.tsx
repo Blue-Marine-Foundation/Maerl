@@ -144,7 +144,7 @@ function MetricRow({
       {href && value !== null ? (
         <Link
           href={href}
-          className='shrink-0 hover:text-sky-600 hover:underline dark:hover:text-sky-400'
+          className='shrink-0 hover:text-primary hover:underline'
         >
           {valueNode}
         </Link>

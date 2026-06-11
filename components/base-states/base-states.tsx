@@ -66,7 +66,7 @@ export const EmptyStateCard = ({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className='rounded-md border border-sky-100 bg-sky-500/10 p-4'>
+        <div className='rounded-md border border-brand-twilight/20 bg-brand-seafoam/60 p-4'>
           <p className='text-sm text-muted-foreground'>{emptyMessage}</p>
         </div>
       </CardContent>
@@ -90,8 +90,8 @@ export const ErrorStateCard = ({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className='flex h-full items-center justify-center rounded-md border border-rose-500/20 bg-red-500/10 p-4 text-rose-800'>
-          <p className='text-sm text-muted-foreground'>{errorMessage}</p>
+        <div className='flex h-full items-center justify-center rounded-md border border-red-600/20 bg-red-600/10 p-4'>
+          <p className='text-sm text-red-800'>{errorMessage}</p>
         </div>
       </CardContent>
     </Card>

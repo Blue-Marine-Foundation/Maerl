@@ -6,16 +6,16 @@ import { cn } from '@/utils/cn';
 const badgeVariants = cva('inline items-center rounded px-2 py-0.5 text-sm', {
   variants: {
     variant: {
-      default: 'border-transparent bg-sky-500/50 text-foreground',
+      default: 'border-transparent bg-brand-twilight/10 text-brand-midnight',
       secondary: 'border-transparent bg-secondary text-secondary-foreground',
       destructive:
         'border-transparent bg-destructive text-destructive-foreground',
       outline: 'text-foreground',
-      success: 'border-transparent bg-green-500/50 text-foreground',
-      complete: 'border-transparent bg-green-500/50 text-foreground',
-      in_progress: 'border-transparent bg-sky-500/50 text-foreground',
-      delayed: 'border-transparent bg-yellow-500/50 text-foreground',
-      not_started: 'border-transparent bg-gray-500/50 text-foreground',
+      success: 'border-transparent bg-green-600/10 text-green-700',
+      complete: 'border-transparent bg-green-600/10 text-green-700',
+      in_progress: 'border-transparent bg-brand-twilight/10 text-brand-midnight',
+      delayed: 'border-transparent bg-amber-500/15 text-amber-700',
+      not_started: 'border-transparent bg-muted text-muted-foreground',
     },
   },
   defaultVariants: {

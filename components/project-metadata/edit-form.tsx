@@ -198,7 +198,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
       />
 
       {errorMessage && (
-        <div className='ml-auto max-w-prose rounded-md bg-red-500/10 p-2 text-red-500'>
+        <div className='ml-auto max-w-prose rounded-md bg-red-600/10 p-2 text-red-700'>
           <p>{errorMessage}</p>
         </div>
       )}
@@ -207,13 +207,13 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         <button
           type='button'
           onClick={onClose}
-          className='rounded bg-gray-200 px-2 py-1 text-gray-800 hover:bg-gray-300'
+          className='rounded bg-secondary px-2 py-1 text-secondary-foreground hover:bg-muted'
         >
           Cancel
         </button>
         <button
           type='submit'
-          className='rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600'
+          className='rounded bg-primary px-2 py-1 text-primary-foreground hover:bg-brand-midnight'
           disabled={mutation.isPending}
         >
           {mutation.isPending ? 'Saving...' : 'Save Changes'}

@@ -65,8 +65,8 @@ const InteractiveVerifiedCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           verified
-            ? 'border-green-500/20 bg-green-500/10 text-green-300'
-            : 'border-red-500/20 bg-red-500/10 text-red-300'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700'
+            : 'border-red-600/30 bg-red-600/10 text-red-700'
         }`}
       >
         {verified ? 'Yes' : 'No'}
@@ -93,8 +93,8 @@ const InteractiveDuplicateCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           duplicate
-            ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-300'
-            : 'border-gray-500/20 bg-gray-500/10 text-gray-300'
+            ? 'border-amber-500/30 bg-amber-500/10 text-amber-700'
+            : 'border-border bg-muted text-muted-foreground'
         }`}
       >
         {duplicate ? 'Duplicate' : 'No'}
@@ -121,8 +121,8 @@ const InteractiveValidCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           valid
-            ? 'border-green-500/20 bg-green-500/10 text-green-300'
-            : 'border-red-500/20 bg-red-500/10 text-red-300'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700'
+            : 'border-red-600/30 bg-red-600/10 text-red-700'
         }`}
       >
         {valid ? 'Yes' : 'No'}
@@ -153,8 +153,8 @@ const InteractiveAdminReviewedCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           adminReviewed
-            ? 'border-green-500/20 bg-green-500/10 text-green-300'
-            : 'border-red-500/20 bg-red-500/10 text-red-300'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700'
+            : 'border-red-600/30 bg-red-600/10 text-red-700'
         }`}
       >
         {adminReviewed ? 'Yes' : 'No'}
@@ -205,7 +205,7 @@ export const columns: ColumnDef<Update>[] = [
             <p>{row.original.output_measurables?.description}</p>
             <Link
               href={link}
-              className='text-right text-xs text-blue-400 hover:underline'
+              className='text-right text-xs text-primary hover:underline'
             >
               View in logframe
             </Link>
@@ -247,7 +247,7 @@ export const columns: ColumnDef<Update>[] = [
           {row.original.users?.last_name}
         </p>
         {row.original.link && (
-          <p className='text-blue-400 hover:underline'>
+          <p className='text-primary hover:underline'>
             <a href={row.original.link} target='_blank'>
               View linked evidence
             </a>

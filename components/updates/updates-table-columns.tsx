@@ -151,7 +151,7 @@ export const columns: ColumnDef<Update>[] = [
               )}
           </p>
           {row.original.link && (
-            <p className='text-sky-500'>
+            <p className='text-primary'>
               <Link href={row.original.link} target='_blank'>
                 Linked evidence <ArrowUpRight className='inline h-3 w-3' />
               </Link>

@@ -79,11 +79,11 @@ export const columns: ColumnDef<ProjectMetadata>[] = [
             className={cn(
               'border-l-2 pl-2',
               row.original.project_type === 'Project' &&
-                'border-l-blue-500 group-hover:bg-blue-500/20',
+                'border-l-brand-twilight group-hover:bg-brand-twilight/10',
               row.original.project_type === 'Unit led project' &&
-                'border-l-yellow-500 group-hover:bg-yellow-500/20',
+                'border-l-amber-500 group-hover:bg-amber-500/10',
               row.original.project_type === 'Unit' &&
-                'border-l-green-500 group-hover:bg-green-500/20',
+                'border-l-brand-seagrass group-hover:bg-brand-seagrass/10',
             )}
           >
             {row.original.name.slice(0, 25)}

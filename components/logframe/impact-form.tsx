@@ -54,7 +54,7 @@ export default function ImpactDialog({
           />
           <div className='flex justify-end'>
             <button
-              className='flex items-center gap-2 rounded-md border border-blue-400 bg-blue-600 px-3 py-1 text-foreground transition-all hover:bg-blue-700'
+              className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-brand-midnight'
               type='submit'
               disabled={mutation.isPending}
             >

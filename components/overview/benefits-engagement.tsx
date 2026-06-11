@@ -125,7 +125,7 @@ function EngagementMetricCard({
         {href && value !== null ? (
           <Link
             href={href}
-            className='w-fit hover:text-sky-600 hover:underline dark:hover:text-sky-400'
+            className='w-fit hover:text-primary hover:underline'
           >
             {valueBlock}
           </Link>
