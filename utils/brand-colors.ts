@@ -60,6 +60,11 @@ export const VIZ_SEQ = [
 
 export const MARINE_BLUE_RGB = [0, 60, 105] as const;
 
-export function marineAlpha(alpha: number): string {
-  return `rgba(${MARINE_BLUE_RGB.join(', ')}, ${alpha})`;
+/**
+ * Theme-aware heatmap cell color. Resolves `--heatmap-cell` (defined per
+ * theme in globals.css) in the browser, so server-rendered inline styles
+ * adapt when the user toggles dark mode.
+ */
+export function heatmapCellColor(alpha: number): string {
+  return `rgb(var(--heatmap-cell) / ${alpha})`;
 }

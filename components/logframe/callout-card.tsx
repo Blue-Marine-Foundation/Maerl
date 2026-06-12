@@ -4,8 +4,8 @@ export type InfoTipVariant = 'info' | 'warning' | 'success';
 
 const variantStyles: Record<InfoTipVariant, string> = {
   info: 'border-brand-twilight/30 bg-brand-seafoam text-brand-marine',
-  success: 'border-green-600/30 bg-green-600/10 text-green-800',
-  warning: 'border-amber-500/40 bg-amber-500/10 text-amber-800',
+  success: 'border-green-600/30 bg-green-600/10 text-green-800 dark:text-green-300',
+  warning: 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-300',
 };
 
 type CalloutCardProps = {

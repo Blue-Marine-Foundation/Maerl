@@ -35,6 +35,34 @@
     --chart-3: 251 43% 58%; /* --viz-3 urchin violet */
     --chart-4: 200 100% 50%; /* --viz-4 sunlight */
     --chart-5: 327 100% 80%; /* --viz-5 axolotl pink */
+    --heatmap-cell: 0 60 105; /* marine RGB, consumed as rgb(var(--heatmap-cell) / a) */
+  }
+
+  /* Branded dark mode: Abyss/Marine surfaces with white text (white on Abyss
+     AAA 13.83 per brand contrast chart). Opt-in via next-themes class toggle;
+     light remains the default per the guidelines. */
+  .dark {
+    --background: 216 50% 13%; /* deepened --bm-abyss-blue */
+    --foreground: 0 0% 98%;
+    --card: 216 50% 20%; /* --bm-abyss-blue #192d4b */
+    --card-foreground: 0 0% 98%;
+    --popover: 216 50% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 213 90% 68%; /* lightened twilight; twilight itself fails on dark */
+    --primary-foreground: 216 50% 13%;
+    --secondary: 211 60% 28%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 216 40% 25%;
+    --muted-foreground: 214 25% 75%;
+    --accent: 213 45% 30%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 35% 30%;
+    --input: 215 35% 34%;
+    --ring: 200 100% 50%; /* sunlight blue works on both modes */
+    --chart-1: 213 90% 68%; /* marine is invisible on abyss; use light twilight */
+    --heatmap-cell: 0 170 255; /* --bm-sunlight-blue fill on dark surfaces */
   }
 }
 
@@ -63,4 +91,8 @@
 
 .maerl-country-map-popup .mapboxgl-popup-tip {
   border-top-color: hsl(var(--card));
+}
+
+.dark .maerl-country-map-popup .mapboxgl-popup-content {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.5);
 }

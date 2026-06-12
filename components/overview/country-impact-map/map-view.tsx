@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import * as d3 from 'd3';
 import { XIcon } from 'lucide-react';
@@ -12,10 +13,14 @@ import type {
 } from 'mapbox-gl';
 import { TWILIGHT_BLUE } from '@/utils/brand-colors';
 import type { GeographyImpactRow } from './server-actions';
-import type { MapBounds } from './country-iso-map';
+import { ISO3_BOUNDS, type MapBounds } from './country-iso-map';
 
 const BRAND_FILL = TWILIGHT_BLUE;
-const MARKER_HALO = '#ffffff';
+const MAP_STYLES = {
+  light: 'mapbox://styles/mapbox/light-v11',
+  dark: 'mapbox://styles/mapbox/dark-v11',
+} as const;
+const MARKER_HALOS = { light: '#ffffff', dark: '#111827' } as const;
 const POLYGON_FILL_OPACITY = 0.22;
 const POLYGON_FILL_OPACITY_ACTIVE = 0.24;
 const POLYGON_STROKE_OPACITY = 0.5;
@@ -56,11 +61,6 @@ function layerKeyFromParsed(token: string | null): {
 function buildHoverHtml(row: GeographyImpactRow): string {
   const foreground = 'hsl(var(--card-foreground))';
   const muted = 'hsl(var(--muted-foreground))';
-  const scope = {
-    country: 'Country / territory.',
-    water: 'Sea / ocean programme area.',
-    point: 'Project location marker.',
-  }[row.geographyKind];
   const projectsLine = `${row.activeProjects} active project${row.activeProjects === 1 ? '' : 's'}`;
   const stats = row.headlineStats.length > 0 ? row.headlineStats : null;
   const headlineHtml = stats
@@ -81,7 +81,6 @@ function buildHoverHtml(row: GeographyImpactRow): string {
   return `
     <div style="font-family:system-ui,sans-serif;min-width:200px;max-width:280px">
       <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:${foreground}">${row.geographyLabel}</p>
-      <p style="margin:0 0 6px;font-size:11px;line-height:1.35;color:${muted}">${scope}</p>
       <p style="margin:0 0 6px;font-size:12px;color:${muted}">${projectsLine}</p>
       ${headlineHtml || metricsHtml || `<p style="margin:0;font-size:12px;color:${muted};font-style:italic">No headline metrics yet</p>`}
     </div>
@@ -189,7 +188,7 @@ function addCountryLayers(map: MapboxMap, activeIsoCodes: readonly string[]) {
   );
 }
 
-function addImpactMarkerLayers(map: MapboxMap) {
+function addImpactMarkerLayers(map: MapboxMap, markerHalo: string) {
   map.addSource(MARKER_SOURCE_ID, {
     type: 'geojson',
     data: { type: 'FeatureCollection', features: [] },
@@ -202,7 +201,7 @@ function addImpactMarkerLayers(map: MapboxMap) {
     source: MARKER_SOURCE_ID,
     paint: {
       'circle-radius': 10,
-      'circle-color': MARKER_HALO,
+      'circle-color': markerHalo,
       'circle-opacity': 0.9,
     },
   });
@@ -214,7 +213,7 @@ function addImpactMarkerLayers(map: MapboxMap) {
     paint: {
       'circle-radius': 7,
       'circle-color': BRAND_FILL,
-      'circle-stroke-color': MARKER_HALO,
+      'circle-stroke-color': markerHalo,
       'circle-stroke-width': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -246,7 +245,7 @@ type ImpactMarkerFeatureCollection = {
     properties: {
       key: string;
       name: string;
-      kind: 'water' | 'point';
+      kind: 'water' | 'point' | 'country';
       activeProjects: number;
     };
     geometry: {
@@ -256,30 +255,52 @@ type ImpactMarkerFeatureCollection = {
   }>;
 };
 
+/* Countries whose bounding box is smaller than this (degrees, shorter side)
+   are nearly impossible to hover as polygons at world zoom (Curaçao, the
+   Maldives, ...), so they also get a marker at the centre of their bounds. */
+const SMALL_COUNTRY_MAX_SPAN_DEG = 2;
+
+function smallCountryMarkerCoords(iso: string): [number, number] | null {
+  const bounds = ISO3_BOUNDS[iso];
+  if (!bounds) return null;
+  const lngSpan = Math.abs(bounds[1][0] - bounds[0][0]);
+  const latSpan = Math.abs(bounds[1][1] - bounds[0][1]);
+  if (Math.min(lngSpan, latSpan) > SMALL_COUNTRY_MAX_SPAN_DEG) return null;
+  return [
+    (bounds[0][0] + bounds[1][0]) / 2,
+    (bounds[0][1] + bounds[1][1]) / 2,
+  ];
+}
+
+function markerCoordsForRow(row: GeographyImpactRow): [number, number] | null {
+  if (row.geographyKind === 'country') {
+    return smallCountryMarkerCoords(row.geographyId);
+  }
+  return (row.markerCoordinates as [number, number] | null) ?? null;
+}
+
 function buildImpactMarkersGeoJSON(
   rows: readonly GeographyImpactRow[],
 ): ImpactMarkerFeatureCollection {
-  const features = rows
-    .filter(
-      (r) =>
-        (r.geographyKind === 'water' || r.geographyKind === 'point') &&
-        r.markerCoordinates !== null,
-    )
-    .map((r) => {
-      return {
+  const features = rows.flatMap((r) => {
+    const coordinates = markerCoordsForRow(r);
+    if (!coordinates) return [];
+    return [
+      {
         type: 'Feature' as const,
         properties: {
           key: storageKey(r),
           name: r.geographyLabel,
-          kind: r.geographyKind as 'water' | 'point',
+          kind: r.geographyKind,
           activeProjects: r.activeProjects,
         },
         geometry: {
           type: 'Point' as const,
-          coordinates: r.markerCoordinates as [number, number],
+          coordinates,
         },
-      };
-    });
+      },
+    ];
+  });
 
   return {
     type: 'FeatureCollection',
@@ -462,6 +483,11 @@ export default function MapView({
   defaultFocusBounds,
   defaultFocusLabel,
 }: Readonly<Props>) {
+  const { resolvedTheme } = useTheme();
+  // Theme change re-runs the init effect; its cleanup removes the old map,
+  // so the map is rebuilt with the matching basemap style.
+  const mapTheme: keyof typeof MAP_STYLES =
+    resolvedTheme === 'dark' ? 'dark' : 'light';
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const popupRef = useRef<MapboxPopup | null>(null);
@@ -516,7 +542,7 @@ export default function MapView({
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: MAP_STYLES[mapTheme],
         center: [10, 20],
         zoom: 1.2,
         cooperativeGestures: true,
@@ -547,7 +573,7 @@ export default function MapView({
         const m = map;
 
         addCountryLayers(m, activeIsoCodes);
-        addImpactMarkerLayers(m);
+        addImpactMarkerLayers(m, MARKER_HALOS[mapTheme]);
 
         const markerData = buildImpactMarkersGeoJSON(rows);
         const markerSource = m.getSource(MARKER_SOURCE_ID);
@@ -590,7 +616,7 @@ export default function MapView({
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [mapTheme]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -702,18 +728,11 @@ function GeographyDetailPanel({
   row,
   onClose,
 }: Readonly<{ row: GeographyImpactRow; onClose: () => void }>) {
-  const scopeHint = {
-    country: 'Country / territory from Mapbox boundaries.',
-    water: 'Marine programme marker.',
-    point: 'Project location marker.',
-  }[row.geographyKind];
-
   return (
     <aside className='absolute right-3 top-12 flex max-h-[calc(100%-3.5rem)] w-[300px] max-w-[calc(100%-1.5rem)] flex-col gap-3 overflow-hidden rounded-lg border border-border/60 bg-background/95 p-4 shadow-lg backdrop-blur-md'>
       <header className='flex items-start justify-between gap-2'>
         <div className='flex flex-col gap-0.5'>
           <p className='text-base font-semibold'>{row.geographyLabel}</p>
-          <p className='text-xs text-muted-foreground'>{scopeHint}</p>
           <p className='text-xs text-muted-foreground'>
             {row.activeProjects} active project
             {row.activeProjects === 1 ? '' : 's'}

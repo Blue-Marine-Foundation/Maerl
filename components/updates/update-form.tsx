@@ -259,11 +259,11 @@ export default function UpdateForm({
       <div className='flex items-center justify-end gap-6'>
         {error && (
           <div className='rounded-md border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm'>
-            <p className='text-red-700'>{error}</p>
+            <p className='text-red-700 dark:text-red-400'>{error}</p>
           </div>
         )}
         <button
-          className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-brand-midnight'
+          className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'
           type='submit'
           disabled={mutation.isPending}
         >

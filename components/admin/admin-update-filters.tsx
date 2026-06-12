@@ -121,21 +121,21 @@ function ToggleFilter({ options, values, onChange }: ToggleFilterProps) {
             <ToggleGroupItem
               value='yes'
               size='sm'
-              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-green-600/30 data-[state=on]:bg-green-600/10 data-[state=on]:text-green-700'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-green-600/30 data-[state=on]:bg-green-600/10 data-[state=on]:text-green-700 dark:data-[state=on]:text-green-400'
             >
               Yes
             </ToggleGroupItem>
             <ToggleGroupItem
               value='either'
               size='sm'
-              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-brand-twilight/30 data-[state=on]:bg-brand-twilight/10 data-[state=on]:text-brand-midnight'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-brand-twilight/30 data-[state=on]:bg-brand-twilight/10 data-[state=on]:text-brand-midnight dark:data-[state=on]:bg-brand-twilight/25 dark:data-[state=on]:text-blue-300'
             >
               Either
             </ToggleGroupItem>
             <ToggleGroupItem
               value='no'
               size='sm'
-              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-red-600/30 data-[state=on]:bg-red-600/10 data-[state=on]:text-red-700'
+              className='h-6 px-2 text-xs data-[state=on]:border data-[state=on]:border-red-600/30 data-[state=on]:bg-red-600/10 data-[state=on]:text-red-700 dark:data-[state=on]:text-red-400'
             >
               No
             </ToggleGroupItem>

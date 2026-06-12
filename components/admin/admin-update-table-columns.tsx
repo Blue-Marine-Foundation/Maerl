@@ -65,8 +65,8 @@ const InteractiveVerifiedCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           verified
-            ? 'border-green-600/30 bg-green-600/10 text-green-700'
-            : 'border-red-600/30 bg-red-600/10 text-red-700'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
+            : 'border-red-600/30 bg-red-600/10 text-red-700 dark:text-red-400'
         }`}
       >
         {verified ? 'Yes' : 'No'}
@@ -93,7 +93,7 @@ const InteractiveDuplicateCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           duplicate
-            ? 'border-amber-500/30 bg-amber-500/10 text-amber-700'
+            ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400'
             : 'border-border bg-muted text-muted-foreground'
         }`}
       >
@@ -121,8 +121,8 @@ const InteractiveValidCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           valid
-            ? 'border-green-600/30 bg-green-600/10 text-green-700'
-            : 'border-red-600/30 bg-red-600/10 text-red-700'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
+            : 'border-red-600/30 bg-red-600/10 text-red-700 dark:text-red-400'
         }`}
       >
         {valid ? 'Yes' : 'No'}
@@ -153,8 +153,8 @@ const InteractiveAdminReviewedCell = ({ row }: { row: any }) => {
         disabled={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           adminReviewed
-            ? 'border-green-600/30 bg-green-600/10 text-green-700'
-            : 'border-red-600/30 bg-red-600/10 text-red-700'
+            ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
+            : 'border-red-600/30 bg-red-600/10 text-red-700 dark:text-red-400'
         }`}
       >
         {adminReviewed ? 'Yes' : 'No'}

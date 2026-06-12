@@ -57,7 +57,7 @@ export default function ProjectNavigation({
             >
               <Link
                 href={item.href}
-                className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-brand-twilight/30 group-[.active]:bg-brand-twilight/10 group-[.active]:text-brand-marine'
+                className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-brand-twilight/30 group-[.active]:bg-brand-twilight/10 group-[.active]:text-foreground'
               >
                 {item.name}
               </Link>

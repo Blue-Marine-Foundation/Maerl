@@ -3,7 +3,8 @@ import './globals.css';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
-import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import ThemedToaster from '@/components/theme/themed-toaster';
 import { Analytics } from '@vercel/analytics/next';
 import { UserSessionSync } from '@/components/user/user-provider';
 
@@ -36,14 +37,21 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className='min-h-svh bg-background text-foreground'>
-        <QueryProvider>
-          <UserSessionSync />
-          <Header />
-          <div className='mb-32 px-4'>{children}</div>
-          <Footer />
-          <Toaster richColors theme='light' />
-          <Analytics />
-        </QueryProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <UserSessionSync />
+            <Header />
+            <div className='mb-32 px-4'>{children}</div>
+            <Footer />
+            <ThemedToaster />
+            <Analytics />
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

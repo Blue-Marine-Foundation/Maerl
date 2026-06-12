@@ -74,7 +74,7 @@ export default function Login() {
 
             <button
               onClick={handleAzureSignIn}
-              className='rounded-md bg-primary p-2 text-primary-foreground hover:bg-brand-midnight'
+              className='rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90'
             >
               Sign in with Microsoft
             </button>

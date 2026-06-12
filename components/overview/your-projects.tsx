@@ -84,7 +84,7 @@ function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
             </>
           )}
           <span
-            className={cn(stale && 'font-medium text-amber-700')}
+            className={cn(stale && 'font-medium text-amber-700 dark:text-amber-400')}
           >
             {lastUpdateLabel}
           </span>

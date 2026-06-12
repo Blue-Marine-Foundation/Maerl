@@ -55,7 +55,7 @@ export default function CopyToCsvButton({
         <CheckIcon
           size={14}
           strokeWidth={2.5}
-          className='mx-auto text-green-700'
+          className='mx-auto text-green-700 dark:text-green-400'
         />
       ) : (
         <CopyIcon size={14} className='mx-auto' />

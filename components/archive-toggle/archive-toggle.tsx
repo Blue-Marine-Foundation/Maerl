@@ -121,7 +121,7 @@ export default function ArchiveToggle({
               this {outputType === 'output' ? 'output' : 'output indicator'}?
             </p>
             {error && (
-              <div className='rounded-md border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm text-red-700'>
+              <div className='rounded-md border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm text-red-700 dark:text-red-400'>
                 <p>
                   Error attempting to {data.archived ? 'unarchive' : 'archive'}:{' '}
                   {error}

@@ -91,7 +91,7 @@ export const ErrorStateCard = ({
       </CardHeader>
       <CardContent>
         <div className='flex h-full items-center justify-center rounded-md border border-red-600/20 bg-red-600/10 p-4'>
-          <p className='text-sm text-red-800'>{errorMessage}</p>
+          <p className='text-sm text-red-800 dark:text-red-300'>{errorMessage}</p>
         </div>
       </CardContent>
     </Card>

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { marineAlpha } from '@/utils/brand-colors';
+import { heatmapCellColor } from '@/utils/brand-colors';
 import { cn } from '@/utils/cn';
 import { fetchActivityHeatmap } from './activity-heatmap-server-actions';
 import {
@@ -172,7 +172,7 @@ function ActivityHeatmapContent({
         {errorMessage ?? copy.subtitle}
       </p>
 
-      <div className='mt-5 overflow-x-auto pb-1 pt-0.5 [scrollbar-color:rgba(0,60,105,0.25)_transparent]'>
+      <div className='mt-5 overflow-x-auto pb-1 pt-0.5 [scrollbar-color:rgb(var(--heatmap-cell)/0.25)_transparent]'>
         <div
           className='grid gap-[3px]'
           style={metrics}
@@ -193,13 +193,13 @@ function ActivityHeatmapContent({
                   isFuture &&
                     'border-[0.5px] border-dashed border-border bg-muted/40',
                   isCurrent &&
-                    'outline outline-1 outline-offset-1 outline-brand-marine/40',
+                    'outline outline-1 outline-offset-1 outline-brand-marine/40 dark:outline-white/40',
                 )}
                 style={
                   isFuture
                     ? undefined
                     : {
-                        backgroundColor: marineAlpha(
+                        backgroundColor: heatmapCellColor(
                           cellOpacity(week.count, peakBaseline),
                         ),
                       }

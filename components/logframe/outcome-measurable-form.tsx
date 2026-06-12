@@ -182,7 +182,7 @@ export default function OutcomeMeasurableForm({
           />
           <div className='flex justify-end'>
             <button
-              className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-brand-midnight'
+              className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'
               type='submit'
               disabled={mutation.isPending}
             >
