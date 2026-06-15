@@ -16,7 +16,7 @@ export function isOverviewEligibleProjectType(
 }
 
 export function isUnitRouteProject(projectType: ProjectType): boolean {
-  return projectType === 'Unit' || projectType === 'Unit led project';
+  return projectType === 'Unit';
 }
 
 export function projectRouteBase(
