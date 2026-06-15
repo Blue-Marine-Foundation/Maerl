@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { OVERVIEW_FETCH_CODES } from './pillar-config';
+import { OVERVIEW_ELIGIBLE_PROJECT_TYPES } from './project-types';
 
 export type IndicatorRollup = {
   impact_indicator_id: number;
@@ -58,7 +59,8 @@ export async function fetchPillarStoriesData(): Promise<PillarStoriesData> {
     supabase
       .from('projects')
       .select('id', { count: 'exact', head: true })
-      .ilike('project_status', 'Active%'),
+      .ilike('project_status', 'Active%')
+      .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES]),
     supabase
       .from('updates')
       .select(
@@ -68,7 +70,8 @@ export async function fetchPillarStoriesData(): Promise<PillarStoriesData> {
       .eq('duplicate', false)
       .eq('impact_indicators.ii_heirarchy', 'Indicator')
       .in('impact_indicators.indicator_code', [...OVERVIEW_FETCH_CODES])
-      .ilike('projects.project_status', 'Active%'),
+      .ilike('projects.project_status', 'Active%')
+      .in('projects.project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES]),
   ]);
 
   if (activeProjectsRes.error) {

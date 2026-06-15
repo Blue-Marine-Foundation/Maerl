@@ -3,6 +3,10 @@
 import { createClient } from '@/utils/supabase/server';
 import { OVERVIEW_FETCH_CODES } from '../pillar-config';
 import {
+  isOverviewEligibleProjectType,
+  OVERVIEW_ELIGIBLE_PROJECT_TYPES,
+} from '../project-types';
+import {
   geographyBucketKeysFromRaw,
   ISO3_BOUNDS,
   ISO3_TO_DISPLAY,
@@ -63,8 +67,6 @@ const MAP_INDICATOR_LABELS: Record<string, { label: string; unit: string }> = {
   },
 };
 
-const ELIGIBLE_PROJECT_TYPES = ['Project', 'Unit led project'] as const;
-
 export type CountryProject = {
   id: number;
   name: string;
@@ -109,13 +111,6 @@ export type GeographyImpactData = {
   defaultFocusBounds: MapBounds | null;
   defaultFocusLabel: string | null;
 };
-
-function isEligibleProjectType(type: string | null): boolean {
-  return (
-    type !== null &&
-    (ELIGIBLE_PROJECT_TYPES as readonly string[]).includes(type)
-  );
-}
 
 type Bucket = {
   projects: Map<number, CountryProject>;
@@ -214,7 +209,8 @@ async function loadHeadlineStatDefinitions(
       const template = normaliseHeadlineTemplate(row.display_template ?? '');
       const indicatorCodes = normaliseIndicatorCodes(row.indicator_codes);
       if (!geoKey || !template) return null;
-      if (indicatorCodes.length === 0 && row.value_override === null) return null;
+      if (indicatorCodes.length === 0 && row.value_override === null)
+        return null;
 
       return {
         geoKey,
@@ -300,7 +296,7 @@ function shouldCountUpdate(update: UpdateRow): update is UpdateRow & {
   const indicator = update.impact_indicators;
   if (!project || !indicator) return false;
   if (!project.project_status?.toLowerCase().startsWith('active')) return false;
-  if (!isEligibleProjectType(project.project_type)) return false;
+  if (!isOverviewEligibleProjectType(project.project_type)) return false;
   if (indicator.ii_heirarchy !== 'Indicator') return false;
   return true;
 }
@@ -484,7 +480,7 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
     .from('projects')
     .select('id, name, slug, project_country, project_type')
     .ilike('project_status', 'Active%')
-    .in('project_type', [...ELIGIBLE_PROJECT_TYPES])
+    .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
     .not('project_country', 'is', null);
 
   const focusProjectsResult = user
@@ -494,7 +490,7 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
           'id, name, slug, project_country, project_type, regional_strategy, user_projects!inner(user_id)',
         )
         .ilike('project_status', 'Active%')
-        .in('project_type', [...ELIGIBLE_PROJECT_TYPES])
+        .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
         .eq('user_projects.user_id', user.id)
     : { data: [], error: null };
 
@@ -535,13 +531,13 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
       .from('projects')
       .select('id', { count: 'exact', head: true })
       .ilike('project_status', 'Active%')
-      .in('project_type', [...ELIGIBLE_PROJECT_TYPES])
+      .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
       .is('project_country', null),
     supabase
       .from('projects')
       .select('id', { count: 'exact', head: true })
       .ilike('project_status', 'Active%')
-      .in('project_type', [...ELIGIBLE_PROJECT_TYPES])
+      .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
       .eq('project_country', ''),
     supabase
       .from('updates')

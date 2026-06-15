@@ -12,15 +12,16 @@ import {
   type YourProjectRow,
   type YourProjectsScope,
 } from './your-projects-server-actions';
+import { overviewProjectHref } from './project-types';
 
 const STALE_UPDATE_DAYS = 30;
 
 function projectHref(p: YourProjectRow): string {
-  return `/${p.project_type === 'Unit' ? 'units' : 'projects'}/${p.slug}`;
+  return overviewProjectHref(p);
 }
 
 function addUpdateHref(p: YourProjectRow): string {
-  return `/${p.project_type === 'Unit' ? 'units' : 'projects'}/${p.slug}/add-update`;
+  return `${overviewProjectHref(p)}/add-update`;
 }
 
 function statusLabel(status: string | null): string {
@@ -56,7 +57,9 @@ function indicatorMeta(count: number): string {
 }
 
 function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
-  const { label: lastUpdateLabel, stale } = lastUpdateMeta(project.last_updated);
+  const { label: lastUpdateLabel, stale } = lastUpdateMeta(
+    project.last_updated,
+  );
   const status = statusLabel(project.project_status);
 
   return (
@@ -84,7 +87,9 @@ function ProjectCard({ project }: Readonly<{ project: YourProjectRow }>) {
             </>
           )}
           <span
-            className={cn(stale && 'font-medium text-amber-700 dark:text-amber-400')}
+            className={cn(
+              stale && 'font-medium text-amber-700 dark:text-amber-400',
+            )}
           >
             {lastUpdateLabel}
           </span>

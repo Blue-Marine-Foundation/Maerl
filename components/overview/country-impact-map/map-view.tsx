@@ -12,6 +12,7 @@ import type {
   MapMouseEvent as MapboxMapMouseEvent,
 } from 'mapbox-gl';
 import { TWILIGHT_BLUE } from '@/utils/brand-colors';
+import { overviewProjectHref } from '../project-types';
 import type { GeographyImpactRow } from './server-actions';
 import { ISO3_BOUNDS, type MapBounds } from './country-iso-map';
 
@@ -266,10 +267,7 @@ function smallCountryMarkerCoords(iso: string): [number, number] | null {
   const lngSpan = Math.abs(bounds[1][0] - bounds[0][0]);
   const latSpan = Math.abs(bounds[1][1] - bounds[0][1]);
   if (Math.min(lngSpan, latSpan) > SMALL_COUNTRY_MAX_SPAN_DEG) return null;
-  return [
-    (bounds[0][0] + bounds[1][0]) / 2,
-    (bounds[0][1] + bounds[1][1]) / 2,
-  ];
+  return [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
 }
 
 function markerCoordsForRow(row: GeographyImpactRow): [number, number] | null {
@@ -781,12 +779,10 @@ function GeographyDetailPanel({
         </p>
         <ul className='flex flex-col gap-1'>
           {row.projects.map((p) => {
-            const projectBase =
-              p.project_type === 'Unit' ? 'units' : 'projects';
             return (
               <li key={p.id}>
                 <Link
-                  href={`/${projectBase}/${p.slug}`}
+                  href={overviewProjectHref(p)}
                   className='block rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-muted hover:text-foreground'
                 >
                   {p.name}

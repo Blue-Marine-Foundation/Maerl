@@ -2,6 +2,7 @@ import Link from 'next/link';
 import * as d3 from 'd3';
 import { ArrowUpRightIcon } from 'lucide-react';
 import type { Update } from '@/utils/types';
+import { overviewProjectHref } from './project-types';
 
 function formatUnitLabel(
   unit: string | null | undefined,
@@ -33,8 +34,7 @@ export default function PortfolioImpactCard({
   const project = update.projects;
   const indicator = update.impact_indicators;
 
-  const projectBase = project?.project_type === 'Unit' ? 'units' : 'projects';
-  const projectHref = project ? `/${projectBase}/${project.slug}` : null;
+  const projectHref = project ? overviewProjectHref(project) : null;
 
   const dateLabel = update.date
     ? d3.timeFormat('%d %b %Y')(new Date(update.date))
