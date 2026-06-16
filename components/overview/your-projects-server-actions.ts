@@ -15,8 +15,7 @@ export type YourProjectRow = {
 };
 
 // Retained for the existing call sites; no longer drives behaviour.
-// Project assignment comes from user_projects, PM ownership, and support
-// metadata on the project record.
+// Project assignment comes from stable project relationships only.
 export type YourProjectsScope = 'pm' | 'partner';
 
 const SELECT_FIELDS =
