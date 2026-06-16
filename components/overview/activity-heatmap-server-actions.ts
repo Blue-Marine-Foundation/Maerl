@@ -10,6 +10,7 @@ import {
   toIsoDate,
   type ActivityHeatmapData,
 } from './activity-heatmap-utils';
+import { fetchUserAssignedProjectIds } from './user-project-assignments';
 
 type ActivityUpdateRow = {
   id: number;
@@ -40,20 +41,7 @@ export const fetchActivityHeatmap = cache(
       return empty;
     }
 
-    const { data: projects, error: projectsError } = await supabase
-      .from('projects')
-      .select('id, user_projects!inner(user_id)')
-      .eq('user_projects.user_id', user.id);
-
-    if (projectsError) {
-      throw new Error(
-        `Failed to load your projects for activity: ${projectsError.message}`,
-      );
-    }
-
-    const projectIds = (projects ?? [])
-      .map((project) => project.id)
-      .filter((id): id is number => typeof id === 'number');
+    const projectIds = await fetchUserAssignedProjectIds();
 
     if (projectIds.length === 0) {
       return empty;

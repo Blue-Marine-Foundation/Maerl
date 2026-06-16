@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { fetchUserAssignedProjectIds } from './user-project-assignments';
 
 export type YourProjectRow = {
   id: number;
@@ -14,31 +15,27 @@ export type YourProjectRow = {
 };
 
 // Retained for the existing call sites; no longer drives behaviour.
-// `user_projects` is the canonical source of truth for project assignment
-// across every role (Admin, PM, Partner), so the query is the same in
-// every case. Kept on the signature to avoid touching callers in this PR.
+// Project assignment comes from user_projects, PM ownership, and support
+// metadata on the project record.
 export type YourProjectsScope = 'pm' | 'partner';
 
 const SELECT_FIELDS =
-  'id, name, slug, project_status, last_updated, project_type, user_projects!inner(user_id)';
+  'id, name, slug, project_status, last_updated, project_type';
 
 export async function fetchYourProjects(
   _scope: YourProjectsScope,
 ): Promise<YourProjectRow[]> {
   const supabase = await createClient();
+  const projectIds = await fetchUserAssignedProjectIds();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (projectIds.length === 0) {
     return [];
   }
 
   const { data, error } = await supabase
     .from('projects')
     .select(SELECT_FIELDS)
-    .eq('user_projects.user_id', user.id)
+    .in('id', projectIds)
     .order('last_updated', { ascending: false, nullsFirst: false })
     .limit(8);
 
@@ -55,13 +52,12 @@ export async function fetchYourProjects(
     project_type: row.project_type,
   }));
 
-  const projectIds = projects.map((p) => p.id);
-  if (projectIds.length === 0) return [];
+  if (projects.length === 0) return [];
 
   const { data: updateRows, error: updatesError } = await supabase
     .from('updates')
     .select('project_id, impact_indicator_id')
-    .in('project_id', projectIds)
+    .in('project_id', projects.map((p) => p.id))
     .eq('valid', true)
     .eq('duplicate', false)
     .not('impact_indicator_id', 'is', null);

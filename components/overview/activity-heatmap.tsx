@@ -147,11 +147,10 @@ function ActivityHeatmapContent({
   peakBaseline,
 }: ActivityHeatmapContentProps) {
   const copy = heatmapCopy(data);
-  const remainingWeeks = Math.max(0, data.weeks.length - data.currentWeek);
   const metrics = gridMetrics(data.weeks.length);
   const gridLabel = `Weekly update activity for ${data.year}: ${pluralizeUpdates(
     copy.totalUpdates,
-  )} so far, ${remainingWeeks} weeks remaining.`;
+  )} so far.`;
 
   return (
     <section
@@ -234,15 +233,8 @@ function ActivityHeatmapContent({
         </div>
       </div>
 
-      <div className='mt-4 flex items-center justify-between border-t border-border pt-3.5 text-xs'>
-        <span className='text-foreground'>{footerLeftCopy(data)}</span>
-        <span className='text-muted-foreground'>
-          {remainingWeeks === 0
-            ? 'Year complete'
-            : `This week · ${remainingWeeks} week${
-                remainingWeeks === 1 ? '' : 's'
-              } remaining`}
-        </span>
+      <div className='mt-4 border-t border-border pt-3.5 text-xs text-foreground'>
+        {footerLeftCopy(data)}
       </div>
     </section>
   );
@@ -270,9 +262,8 @@ export function ActivityHeatmapSkeleton() {
         <Skeleton className='mt-3 h-3 w-full bg-muted/60' />
       </div>
 
-      <div className='mt-4 flex items-center justify-between border-t border-border pt-3.5'>
+      <div className='mt-4 border-t border-border pt-3.5'>
         <Skeleton className='h-3 w-24 bg-muted/70' />
-        <Skeleton className='h-3 w-40 bg-muted/70' />
       </div>
     </section>
   );

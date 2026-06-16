@@ -78,11 +78,11 @@ export const FISHERIES_INDICATORS = [
   },
   {
     codes: ['4.3.2'],
-    label: 'legal acts or agreements influenced',
+    label: 'Legal acts or agreements influenced',
   },
   {
     codes: ['3.1.2', '4.1.2'],
-    label: 'policy instruments influenced',
+    label: 'Policy instruments influenced',
   },
 ] as const satisfies readonly OverviewMetricConfig[];
 
