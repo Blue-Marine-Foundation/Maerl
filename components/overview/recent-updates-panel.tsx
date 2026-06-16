@@ -40,7 +40,7 @@ export default async function RecentUpdatesPanel() {
 
       {!hasUpdates ? (
         <p className='text-sm text-muted-foreground'>
-          No updates yet on your assigned projects.
+          No updates from you yet on your assigned projects.
         </p>
       ) : (
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>

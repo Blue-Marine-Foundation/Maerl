@@ -108,11 +108,12 @@ async function fetchPortfolioStats(
 async function fetchPortfolioHighlightUpdates(
   supabase: Awaited<ReturnType<typeof createClient>>,
   projectIds: readonly number[],
+  postedByUserId?: string,
 ): Promise<Update[]> {
   if (projectIds.length === 0) return [];
 
-  const base = () =>
-    supabase
+  const base = () => {
+    let query = supabase
       .from('updates')
       .select(UPDATE_SELECT)
       .in('project_id', [...projectIds])
@@ -120,6 +121,13 @@ async function fetchPortfolioHighlightUpdates(
       .eq('duplicate', false)
       .not('value', 'is', null)
       .not('description', 'is', null);
+
+    if (postedByUserId) {
+      query = query.eq('posted_by', postedByUserId);
+    }
+
+    return query;
+  };
 
   const { data: strict, error: strictError } = await base()
     .eq('admin_reviewed', true)
@@ -151,7 +159,7 @@ async function fetchPortfolioHighlightUpdates(
     const highlighted = filteredStrict as Update[];
     return highlighted.length > 0
       ? highlighted
-      : fetchRecentPortfolioUpdates(supabase, projectIds);
+      : fetchRecentPortfolioUpdates(supabase, projectIds, postedByUserId);
   }
 
   const filteredRelaxed = (relaxed ?? []).filter(
@@ -169,24 +177,30 @@ async function fetchPortfolioHighlightUpdates(
     return highlighted;
   }
 
-  return fetchRecentPortfolioUpdates(supabase, projectIds);
+  return fetchRecentPortfolioUpdates(supabase, projectIds, postedByUserId);
 }
 
 async function fetchRecentPortfolioUpdates(
   supabase: Awaited<ReturnType<typeof createClient>>,
   projectIds: readonly number[],
+  postedByUserId?: string,
 ): Promise<Update[]> {
   if (projectIds.length === 0) return [];
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('updates')
     .select(UPDATE_SELECT)
     .in('project_id', [...projectIds])
     .eq('valid', true)
     .eq('duplicate', false)
     .order('date', { ascending: false, nullsFirst: false })
-    .order('created_at', { ascending: false, nullsFirst: false })
-    .limit(TARGET_COUNT);
+    .order('created_at', { ascending: false, nullsFirst: false });
+
+  if (postedByUserId) {
+    query = query.eq('posted_by', postedByUserId);
+  }
+
+  const { data, error } = await query.limit(TARGET_COUNT);
 
   if (error) {
     throw new Error(`Failed to load recent portfolio updates: ${error.message}`);
@@ -235,7 +249,7 @@ export const fetchPortfolioImpact = cache(async (): Promise<PortfolioImpactData>
 
   const [stats, updates] = await Promise.all([
     fetchPortfolioStats(supabase, assigned),
-    fetchPortfolioHighlightUpdates(supabase, projectIds),
+    fetchPortfolioHighlightUpdates(supabase, projectIds, user.id),
   ]);
 
   return { variant: 'portfolio', stats, updates };
