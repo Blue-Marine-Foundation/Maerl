@@ -30,7 +30,7 @@ export default async function RecentUpdatesPanel() {
 
   const hasUpdates = data.updates.length > 0;
   const viewAllHref = hasUpdates
-    ? `/updates?scope=mine&from=${data.updateDateRange.from}&to=${data.updateDateRange.to}`
+    ? `/updates?scope=assigned&from=${data.updateDateRange.from}&to=${data.updateDateRange.to}`
     : undefined;
 
   return (
@@ -38,12 +38,12 @@ export default async function RecentUpdatesPanel() {
       <OverviewSectionHeader
         title='Recent updates'
         viewAllHref={viewAllHref}
-        viewAllLabel={hasUpdates ? 'View my updates' : undefined}
+        viewAllLabel={hasUpdates ? 'View project updates' : undefined}
       />
 
       {!hasUpdates ? (
         <p className='text-sm text-muted-foreground'>
-          No updates from you yet on your assigned projects.
+          No updates yet on your linked projects.
         </p>
       ) : (
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>

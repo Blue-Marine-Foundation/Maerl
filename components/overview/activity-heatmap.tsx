@@ -70,7 +70,7 @@ function describeWeekRange(year: number, startWeek: number, endWeek: number) {
   const startMonth = monthFormatter.format(startDate);
   const endMonth = monthFormatter.format(endDate);
 
-  return startMonth === endMonth ? startMonth : `${startMonth}-${endMonth}`;
+  return startMonth === endMonth ? startMonth : `${startMonth}–${endMonth}`;
 }
 
 function heatmapCopy(data: ActivityHeatmapData) {
@@ -94,7 +94,7 @@ function heatmapCopy(data: ActivityHeatmapData) {
   const quietCopy =
     quietWeeks === 0
       ? 'Updated this week.'
-      : `${quietWeeks} quiet week${quietWeeks === 1 ? '' : 's'} since your last update.`;
+      : `${quietWeeks} quiet week${quietWeeks === 1 ? '' : 's'} since the last update.`;
   const busiestCopy =
     busiest && busiest.total > 0
       ? `Busiest stretch: ${describeWeekRange(
@@ -106,7 +106,7 @@ function heatmapCopy(data: ActivityHeatmapData) {
 
   return {
     totalUpdates,
-    title: `${pluralizeUpdates(totalUpdates)} so far this year`,
+    title: `${pluralizeUpdates(totalUpdates)} this year`,
     subtitle: `${busiestCopy}${quietCopy}`,
   };
 }
@@ -159,7 +159,7 @@ function ActivityHeatmapContent({
       aria-labelledby='activity-heatmap-title'
     >
       <p className='mb-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-muted-foreground'>
-        Your year in updates · {data.year}
+        Activity on your projects · {data.year}
       </p>
       <h2
         id='activity-heatmap-title'

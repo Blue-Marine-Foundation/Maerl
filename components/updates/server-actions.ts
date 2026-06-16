@@ -1,9 +1,10 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { fetchUserAssignedProjectIds } from '../overview/user-project-assignments';
 import { getDefaultUpdateDateRange } from './update-date-range';
 
-export type UpdateAuthorScope = 'all' | 'current-user';
+export type UpdateScope = 'all' | 'current-user' | 'assigned-projects';
 
 export const fetchUpdates = async (
   dateRange?: {
@@ -11,7 +12,7 @@ export const fetchUpdates = async (
     to: string;
   },
   projectId?: number,
-  authorScope: UpdateAuthorScope = 'all',
+  updateScope: UpdateScope = 'all',
 ) => {
   const supabase = await createClient();
 
@@ -38,9 +39,18 @@ export const fetchUpdates = async (
     );
   }
 
-  const shouldFilterToCurrentUser =
-    authorScope === 'current-user' ||
-    (projectId === undefined && profileResult.data?.role !== 'Super Admin');
+  const shouldFilterToCurrentUser = updateScope === 'current-user';
+  const shouldFilterToAssignedProjects =
+    projectId === undefined &&
+    (updateScope === 'assigned-projects' ||
+      profileResult.data?.role !== 'Super Admin');
+  const assignedProjectIds = shouldFilterToAssignedProjects
+    ? await fetchUserAssignedProjectIds()
+    : [];
+
+  if (shouldFilterToAssignedProjects && assignedProjectIds.length === 0) {
+    return [];
+  }
 
   const defaultRange = getDefaultUpdateDateRange();
 
@@ -65,6 +75,10 @@ export const fetchUpdates = async (
 
   if (shouldFilterToCurrentUser) {
     query = query.eq('posted_by', user.id);
+  }
+
+  if (shouldFilterToAssignedProjects) {
+    query = query.in('project_id', assignedProjectIds);
   }
 
   const { data, error } = await query;

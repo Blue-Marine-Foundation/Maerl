@@ -1,6 +1,6 @@
 import { fetchCurrentUserProfile } from '@/api/fetch-current-user-profile';
 import UpdatesDataTable from '@/components/updates/updates-data-table';
-import type { UpdateAuthorScope } from '@/components/updates/server-actions';
+import type { UpdateScope } from '@/components/updates/server-actions';
 
 type UpdatesPageSearchParams = {
   scope?: string | string[];
@@ -19,18 +19,26 @@ export default async function UpdatesPages(props: {
   ]);
 
   const requestedScope = getFirstParam(searchParams.scope);
-  const authorScope: UpdateAuthorScope =
-    requestedScope === 'mine' || currentUser.profile?.role !== 'Super Admin'
+  const updateScope: UpdateScope =
+    requestedScope === 'mine'
       ? 'current-user'
+      : requestedScope === 'assigned' ||
+          currentUser.profile?.role !== 'Super Admin'
+        ? 'assigned-projects'
       : 'all';
-  const title = authorScope === 'current-user' ? 'My updates' : 'Updates';
+  const title =
+    updateScope === 'current-user'
+      ? 'My updates'
+      : updateScope === 'assigned-projects'
+        ? 'Project updates'
+        : 'Updates';
 
   return (
     <div className='flex min-w-0 flex-col gap-6'>
       <div className='flex items-baseline justify-between'>
         <h2 className='text-xl font-semibold'>{title}</h2>
       </div>
-      <UpdatesDataTable authorScope={authorScope} />
+      <UpdatesDataTable updateScope={updateScope} />
     </div>
   );
 }
