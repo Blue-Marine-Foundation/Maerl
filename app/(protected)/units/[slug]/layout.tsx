@@ -86,7 +86,7 @@ export default async function ProjectLayout({
             Please screenshot this whole page (including the address bar) and
             forward it to the SII team:
           </p>
-          <p className='rounded-md bg-slate-600 px-2 py-1 text-xs'>
+          <p className='rounded-md bg-secondary px-2 py-1 text-xs text-secondary-foreground'>
             <code>{projectError.message}</code>
           </p>
         </div>

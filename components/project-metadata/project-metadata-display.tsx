@@ -18,7 +18,7 @@ export default function ProjectMetadataDisplay({
     { label: 'Start Date', key: 'start_date' },
     { label: 'Regional Strategy', key: 'regional_strategy' },
     { label: 'Units', key: 'unit_requirements' },
-    { label: 'Pillars', key: 'pillars' },
+    { label: 'Strategic Goals', key: 'pillars' },
     { label: 'Local Contacts', key: 'local_contacts' },
     { label: 'Highlights', key: 'highlights' },
     { label: 'Current Issues', key: 'current_issues' },

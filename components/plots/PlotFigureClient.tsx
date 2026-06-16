@@ -47,6 +47,6 @@ export default function ClientPlotFigure({ options }: ClientPlotFigureProps) {
   }, [options, width]);
 
   return (
-    <div className='w-full rounded-md bg-white/5 py-2' ref={containerRef} />
+    <div className='w-full rounded-md py-2' ref={containerRef} />
   );
 }

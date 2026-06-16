@@ -2,7 +2,11 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-export type AppUserRole = 'Admin' | 'Project Manager' | 'Partner';
+export type AppUserRole =
+  | 'Admin'
+  | 'Project Manager'
+  | 'Partner'
+  | 'Super Admin';
 
 export type UserProfile = {
   id: string;

@@ -43,7 +43,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
               required
             />
             <SubmitButton
-              className='bg-sky-700 text-foreground hover:bg-sky-800'
+              className='bg-primary text-primary-foreground hover:bg-primary/90'
               pendingText='Signing In...'
               formAction={signInAction}
             >

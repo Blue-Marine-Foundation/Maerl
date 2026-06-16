@@ -1,40 +1,68 @@
+@import '../blue-marine-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Light theme mapped from blue-marine-tokens.css. Values are HSL triplets
+   (required by hsl(var(--x)) in tailwind.config.ts) converted from the brand
+   hexes — each line names its source token. Bright accents (seagrass,
+   plankton, seahorse, axolotl, sea foam) are fills only, never text <24px. */
 @layer base {
   :root {
     --radius: 0.5rem;
-    --background: 228 12% 8%;
-    --foreground: 0 0% 98%;
-    --card: 230 12% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 25%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 0 0% 100%; /* --surface-page: white */
+    --foreground: 206 100% 21%; /* --bm-marine-blue #003c69, AAA on white */
+    --card: 0 0% 100%;
+    --card-foreground: 206 100% 21%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 206 100% 21%;
+    --primary: 217 79% 49%; /* --bm-twilight-blue #1a67e2, white text AA */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 206 50% 94%; /* light marine tint */
+    --secondary-foreground: 206 100% 21%;
+    --muted: 206 30% 95%; /* desaturated marine tint; sea foam reserved for callouts */
+    --muted-foreground: 206 35% 38%;
+    --accent: 180 65% 93%; /* softened --bm-sea-foam for hovers */
+    --accent-foreground: 206 100% 21%;
+    --destructive: 0 72% 51%; /* functional red, white text passes */
+    --destructive-foreground: 0 0% 100%;
+    --border: 206 27% 88%; /* ≈ --border-subtle (marine 15% on white) */
+    --input: 206 27% 84%;
+    --ring: 200 100% 50%; /* --bm-sunlight-blue, focus ring (non-text) only */
+    --chart-1: 206 100% 21%; /* --viz-1 marine */
+    --chart-2: 165 71% 55%; /* --viz-2 seagrass */
+    --chart-3: 251 43% 58%; /* --viz-3 urchin violet */
+    --chart-4: 200 100% 50%; /* --viz-4 sunlight */
+    --chart-5: 327 100% 80%; /* --viz-5 axolotl pink */
+    --heatmap-cell: 0 60 105; /* marine RGB, consumed as rgb(var(--heatmap-cell) / a) */
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 228 12% 8%;
-    }
+  /* Branded dark mode: Abyss/Marine surfaces with white text (white on Abyss
+     AAA 13.83 per brand contrast chart). Opt-in via next-themes class toggle;
+     light remains the default per the guidelines. */
+  .dark {
+    --background: 216 50% 13%; /* deepened --bm-abyss-blue */
+    --foreground: 0 0% 98%;
+    --card: 216 50% 20%; /* --bm-abyss-blue #192d4b */
+    --card-foreground: 0 0% 98%;
+    --popover: 216 50% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 213 90% 68%; /* lightened twilight; twilight itself fails on dark */
+    --primary-foreground: 216 50% 13%;
+    --secondary: 211 60% 28%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 216 40% 25%;
+    --muted-foreground: 214 25% 75%;
+    --accent: 213 45% 30%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 35% 30%;
+    --input: 215 35% 34%;
+    --ring: 200 100% 50%; /* sunlight blue works on both modes */
+    --chart-1: 213 90% 68%; /* marine is invisible on abyss; use light twilight */
+    --heatmap-cell: 0 170 255; /* --bm-sunlight-blue fill on dark surfaces */
   }
 }
 
@@ -48,4 +76,23 @@
   .max-w-app {
     max-width: 1360px;
   }
+}
+
+/* Mapbox popup — themed to match the app's card style */
+.maerl-country-map-popup .mapboxgl-popup-content {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 16px rgb(0 60 105 / 0.15);
+  border: 1px solid hsl(var(--border));
+}
+
+.maerl-country-map-popup .mapboxgl-popup-tip {
+  border-top-color: hsl(var(--card));
+}
+
+.dark .maerl-country-map-popup .mapboxgl-popup-content {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.5);
 }

@@ -1,3 +1,9 @@
+const STATUS_CLASSES: Record<string, string> = {
+  Active: 'bg-green-600/10 text-green-700 dark:text-green-400',
+  Pipeline: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  Complete: 'bg-brand-twilight/10 text-brand-midnight dark:bg-brand-twilight/25 dark:text-blue-300',
+};
+
 export default function ProjectStatusBadge({
   status,
   size = 'sm',
@@ -7,11 +13,9 @@ export default function ProjectStatusBadge({
 }) {
   return (
     <span
-      className={`rounded-md px-3 py-1 text-sm font-light tracking-wide ${
+      className={`rounded-md px-3 py-1 font-light tracking-wide ${
         size === 'xs' ? 'text-xs' : 'text-sm'
-      } ${status === 'Active' && 'bg-green-500/15 text-green-500'} ${
-        status === 'Pipeline' && 'bg-yellow-500/15 text-yellow-400'
-      } ${status === 'Complete' && 'bg-blue-500/15 text-blue-400'} }`}
+      } ${STATUS_CLASSES[status] ?? 'bg-muted text-muted-foreground'}`}
     >
       {status}
     </span>

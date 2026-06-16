@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { columns } from './updates-table-columns';
-import { fetchUpdates } from './server-actions';
+import { fetchUpdates, type UpdateScope } from './server-actions';
 import useUrlDateState from '../date-filtering/use-url-date-state';
 import { DataTable } from '../data-tables/data-table';
 import { Update } from '@/utils/types';
@@ -14,12 +14,16 @@ const filterableColumns = [
   { id: 'type', label: 'Update Type' },
 ];
 
-export default function UpdatesDataTable() {
+export default function UpdatesDataTable({
+  updateScope = 'all',
+}: {
+  updateScope?: UpdateScope;
+}) {
   const dateRange = useUrlDateState();
 
   const { data, error } = useQuery({
-    queryKey: ['updates', dateRange],
-    queryFn: () => fetchUpdates(dateRange),
+    queryKey: ['updates', dateRange, updateScope],
+    queryFn: () => fetchUpdates(dateRange, undefined, updateScope),
   });
 
   if (error) {
@@ -35,7 +39,7 @@ export default function UpdatesDataTable() {
   }
 
   return (
-    <FeatureCard>
+    <FeatureCard className='min-w-0'>
       <DataTable<Update>
         data={data}
         columns={columns}

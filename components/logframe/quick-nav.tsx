@@ -61,7 +61,7 @@ export default function LogframeQuickNav({
         <div className='flex flex-wrap gap-2'>
           <a
             href='#impact'
-            className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:scale-95 active:bg-accent'
+            className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95 active:bg-accent'
           >
             Impact
           </a>
@@ -69,7 +69,7 @@ export default function LogframeQuickNav({
             <a
               key={outcome.id}
               href={`#outcome-${outcome.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:scale-95 active:bg-accent'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95 active:bg-accent'
             >
               {outcomes.length > 1
                 ? `Outcome ${extractOutputCodeNumber(outcome.code)}`
@@ -80,7 +80,7 @@ export default function LogframeQuickNav({
             <a
               key={output.id}
               href={`#output-${output.id}`}
-              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-black/20 hover:text-foreground active:scale-95 active:bg-accent'
+              className='rounded border bg-card px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95 active:bg-accent'
             >
               {isUnplannedOutput(output)
                 ? `Unplanned Output ${extractOutputCodeNumber(output.code || '')}`

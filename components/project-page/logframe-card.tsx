@@ -73,7 +73,7 @@ export default async function LogframeCard({
           {cardLinks.map((link) => (
             <Link
               key={link.href}
-              className='rounded border bg-white/10 px-2 py-1 transition-all hover:border-muted-foreground'
+              className='rounded border bg-secondary px-2 py-1 transition-all hover:border-muted-foreground'
               href={link.href}
             >
               {link.label}

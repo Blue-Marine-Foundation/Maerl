@@ -32,7 +32,7 @@ export default function OutputIndicatorUpdates({
 
   return (
     <div className='mb-8 mt-4 pl-12'>
-      <div className='mr-8 rounded-lg border border-slate-400/20'>
+      <div className='mr-8 rounded-lg border border-border'>
         <div className='p-4'>
           <p className='mb-4 font-medium text-muted-foreground'>Updates</p>
           {measurableUpdates?.length ? (
@@ -103,7 +103,7 @@ export default function OutputIndicatorUpdates({
                               <Link
                                 href={update.link}
                                 target='_blank'
-                                className='text-xs text-sky-400 hover:underline'
+                                className='text-xs text-primary hover:underline'
                               >
                                 View evidence
                               </Link>

@@ -4,7 +4,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { format } from 'date-fns';
 import { Loader } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import DateRangePicker from './date-range-picker';
 import useUrlDateState from './use-url-date-state';
@@ -16,6 +16,7 @@ export default function SetDateRange({
 }) {
   const router = useRouter();
   const path = usePathname();
+  const searchParams = useSearchParams();
   const { from: initialFrom, to: initialTo } = useUrlDateState();
 
   const [date, setDate] = useState<DateRange | undefined>({
@@ -43,14 +44,15 @@ export default function SetDateRange({
     e.preventDefault();
     setIsUpdating(true);
 
-    const urlParams = new URLSearchParams();
+    const urlParams = new URLSearchParams(searchParams.toString());
 
     if (date?.from && date?.to) {
       urlParams.set('from', format(date.from, 'yyyy-MM-dd'));
       urlParams.set('to', format(date.to, 'yyyy-MM-dd'));
     }
 
-    router.replace(`${path}?${urlParams.toString()}`);
+    const queryString = urlParams.toString();
+    router.replace(queryString ? `${path}?${queryString}` : path);
   };
 
   const handleDateChange = (newDate: DateRange | undefined) => {
@@ -68,7 +70,7 @@ export default function SetDateRange({
           <button
             type='submit'
             disabled={!datesAreEdited}
-            className='h-10 w-32 rounded-r-md border border-l-0 bg-background text-center text-sm hover:bg-sky-500/20 disabled:bg-transparent disabled:text-foreground/40'
+            className='h-10 w-32 rounded-r-md border border-l-0 bg-background text-center text-sm hover:bg-accent disabled:bg-transparent disabled:text-foreground/40'
           >
             {isUpdating ? (
               <Loader size={12} className='mx-auto animate-spin' />

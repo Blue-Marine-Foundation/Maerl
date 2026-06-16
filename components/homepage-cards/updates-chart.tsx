@@ -1,6 +1,7 @@
 'use client';
 
 import * as Plot from '@observablehq/plot';
+import { TWILIGHT_BLUE } from '@/utils/brand-colors';
 import ClientPlotFigure from '../plots/PlotFigureClient';
 
 export default function UpdatesChart({ updates }: { updates: any[] }) {
@@ -30,9 +31,9 @@ export default function UpdatesChart({ updates }: { updates: any[] }) {
                 x: (d) => new Date(d.created_at),
                 interval: 'week',
                 // @ts-expect-error
-                fill: 'skyblue',
+                fill: TWILIGHT_BLUE,
                 fillOpacity: 0.5,
-                stroke: 'skyblue',
+                stroke: TWILIGHT_BLUE,
                 strokeWidth: 1,
                 inset: 2,
               },

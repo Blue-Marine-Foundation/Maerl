@@ -1,7 +1,10 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { endOfDay, startOfMonth } from 'date-fns';
+import { fetchUserAssignedProjectIds } from '../overview/user-project-assignments';
+import { getDefaultUpdateDateRange } from './update-date-range';
+
+export type UpdateScope = 'all' | 'assigned-projects';
 
 export const fetchUpdates = async (
   dateRange?: {
@@ -9,20 +12,53 @@ export const fetchUpdates = async (
     to: string;
   },
   projectId?: number,
+  updateScope: UpdateScope = 'all',
 ) => {
   const supabase = await createClient();
 
-  // Set default date range if not provided
-  const today = new Date();
-  const defaultFrom = startOfMonth(today);
-  const defaultTo = endOfDay(today);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const profileResult =
+    projectId === undefined
+      ? await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle()
+      : { data: null, error: null };
+
+  if (profileResult.error) {
+    throw new Error(
+      `Failed to load your update permissions: ${profileResult.error.message}`,
+    );
+  }
+
+  const shouldFilterToAssignedProjects =
+    projectId === undefined &&
+    (updateScope === 'assigned-projects' ||
+      (updateScope === 'all' && profileResult.data?.role !== 'Super Admin'));
+  const assignedProjectIds = shouldFilterToAssignedProjects
+    ? await fetchUserAssignedProjectIds()
+    : [];
+
+  if (shouldFilterToAssignedProjects && assignedProjectIds.length === 0) {
+    return [];
+  }
+
+  const defaultRange = getDefaultUpdateDateRange();
 
   const dates = {
-    from: dateRange?.from || defaultFrom.toISOString(),
-    to: dateRange?.to || defaultTo.toISOString(),
+    from: dateRange?.from || defaultRange.from,
+    to: dateRange?.to || defaultRange.to,
   };
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('updates')
     .select(
       '*, projects(name, slug), output_measurables(*), impact_indicators(*), users(*)',
@@ -35,6 +71,12 @@ export const fetchUpdates = async (
       duplicate: false,
     })
     .order('date', { ascending: false });
+
+  if (shouldFilterToAssignedProjects) {
+    query = query.in('project_id', assignedProjectIds);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
 

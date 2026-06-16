@@ -72,7 +72,7 @@ export const createColumns = (
               <ActionButton
                 action='add'
                 label='Add update'
-                className='flex w-full items-center justify-center bg-purple-600/20 hover:bg-purple-600/40'
+                className='flex w-full items-center justify-center bg-brand-urchin/15 hover:bg-brand-urchin/30'
               />
             </DialogTrigger>
             <DialogContent>
@@ -88,7 +88,7 @@ export const createColumns = (
           </Dialog>
           <button
             onClick={() => toggleRow(row.id)}
-            className='flex w-full min-w-[145px] items-center justify-center gap-1 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-slate-300 dark:hover:text-slate-100'
+            className='flex w-full min-w-[145px] items-center justify-center gap-1 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground'
           >
             {expandedRows[row.id] ? (
               <>

@@ -74,7 +74,7 @@ export default function ImpactIndicatorSelect({
 
       {selectedIndicator?.indicator_unit && (
         <div className='flex items-end justify-end'>
-          <p className='rounded-md border border-sky-700/50 bg-sky-500/20 px-2 py-1.5 text-sm font-medium'>
+          <p className='rounded-md border border-brand-twilight/30 bg-brand-twilight/10 px-2 py-1.5 text-sm font-medium'>
             <span className='pr-1 font-medium text-foreground/80'>Unit:</span>{' '}
             {selectedIndicator.indicator_unit}
           </p>

@@ -9,9 +9,14 @@ import { Table } from '@tanstack/react-table';
 type ListFilterProps<TData> = {
   table: Table<TData>;
   columnId: string;
+  label?: string;
 };
 
-function ListColumnFilter<TData>({ table, columnId }: ListFilterProps<TData>) {
+function ListColumnFilter<TData>({
+  table,
+  columnId,
+  label,
+}: ListFilterProps<TData>) {
   const column = table.getColumn(columnId);
 
   const uniqueValues = useMemo(() => {
@@ -54,10 +59,11 @@ function ListColumnFilter<TData>({ table, columnId }: ListFilterProps<TData>) {
   return (
     <Popover>
       <PopoverTrigger className='rounded-md border px-3 py-1'>
-        {columnId
-          .split('_')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')}
+        {label ??
+          columnId
+            .split('_')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')}
       </PopoverTrigger>
       <PopoverContent className='flex max-h-60 flex-col gap-2 overflow-y-auto'>
         <label>

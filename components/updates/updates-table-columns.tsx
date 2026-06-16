@@ -114,7 +114,11 @@ export const columns: ColumnDef<Update>[] = [
       return filterValue.includes(row.getValue(columnId));
     },
     cell: ({ row }) => {
-      return <p className='max-w-prose'>{row.getValue('description')}</p>;
+      return (
+        <p className='w-[18rem] max-w-[60vw] whitespace-normal break-words'>
+          {row.getValue('description')}
+        </p>
+      );
     },
   },
   {
@@ -147,7 +151,7 @@ export const columns: ColumnDef<Update>[] = [
               )}
           </p>
           {row.original.link && (
-            <p className='text-sky-500'>
+            <p className='text-primary'>
               <Link href={row.original.link} target='_blank'>
                 Linked evidence <ArrowUpRight className='inline h-3 w-3' />
               </Link>

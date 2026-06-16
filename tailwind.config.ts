@@ -1,5 +1,22 @@
 import type { Config } from 'tailwindcss';
 
+/* Blue Marine palette — mirrors blue-marine-tokens.css and utils/brand-colors.ts;
+   keep in sync. Inlined here because Turbopack cannot resolve TS imports from
+   the Tailwind config in dev. Literal hexes keep opacity modifiers working. */
+const brand = {
+  marine: '#003c69',
+  abyss: '#192d4b',
+  midnight: '#004994',
+  twilight: '#1a67e2',
+  sunlight: '#00aaff',
+  seagrass: '#3addb3',
+  plankton: '#78f9ff',
+  seafoam: '#e1fefe',
+  urchin: '#7766c2',
+  axolotl: '#ff9ad1',
+  seahorse: '#f9f871',
+};
+
 const config = {
   darkMode: ['selector', 'class'],
   content: [
@@ -18,7 +35,18 @@ const config = {
   		}
   	},
   	extend: {
+  		fontFamily: {
+  			sans: [
+  				'"Galano Grotesque"',
+  				'var(--font-poppins)',
+  				'system-ui',
+  				'-apple-system',
+  				'"Segoe UI"',
+  				'sans-serif'
+  			]
+  		},
   		colors: {
+  			brand,
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',

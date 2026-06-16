@@ -45,8 +45,8 @@ export default function CopyToCsvButton({
 
   return (
     <button
-      className={`flex max-w-[5rem] items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs transition-all hover:bg-gray-100/20 ${
-        copySuccess && 'bg-green-500/40 hover:bg-green-500/40'
+      className={`flex max-w-[5rem] items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs transition-all hover:bg-muted ${
+        copySuccess && 'bg-green-600/15 hover:bg-green-600/15'
       }`}
       type='button'
       onClick={handleCopyClick}
@@ -55,7 +55,7 @@ export default function CopyToCsvButton({
         <CheckIcon
           size={14}
           strokeWidth={2.5}
-          className='mx-auto text-green-100'
+          className='mx-auto text-green-700 dark:text-green-400'
         />
       ) : (
         <CopyIcon size={14} className='mx-auto' />

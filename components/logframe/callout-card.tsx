@@ -3,9 +3,9 @@ import { cn } from '@/utils/cn';
 export type InfoTipVariant = 'info' | 'warning' | 'success';
 
 const variantStyles: Record<InfoTipVariant, string> = {
-  info: 'border-blue-600 bg-blue-500/10 text-blue-300',
-  success: 'border-green-800 bg-green-500/10 text-green-400',
-  warning: 'border-yellow-800 bg-yellow-500/10 text-yellow-400',
+  info: 'border-brand-twilight/30 bg-brand-seafoam text-brand-marine',
+  success: 'border-green-600/30 bg-green-600/10 text-green-800 dark:text-green-300',
+  warning: 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-300',
 };
 
 type CalloutCardProps = {

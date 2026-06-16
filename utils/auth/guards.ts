@@ -20,3 +20,20 @@ export async function requireNonPartner(
   return data.profile;
 }
 
+export async function requireSuperAdmin(
+  redirectTo: string = '/',
+  noProfileRedirectTo: string = '/sign-in',
+) {
+  const data = await fetchCurrentUserProfile();
+
+  if (!data.profile || data.profile.role === null) {
+    redirect(noProfileRedirectTo);
+  }
+
+  if (data.profile.role !== 'Super Admin') {
+    redirect(redirectTo);
+  }
+
+  return data.profile;
+}
+

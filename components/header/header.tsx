@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { Button } from '../ui/button';
 import PrimaryNavigation from './primary-nav';
 import Logo from '../logo';
+import ThemeToggle from '../theme/theme-toggle';
 
 export default async function Header() {
   const supabase = await createClient();
@@ -22,13 +23,16 @@ export default async function Header() {
           </h2>
           {user && <PrimaryNavigation />}
         </div>
-        {user ? (
-          <AuthButton user={user} />
-        ) : (
-          <Button asChild size='sm' variant='outline'>
-            <Link href='/sign-in'>Sign in</Link>
-          </Button>
-        )}
+        <div className='flex items-center gap-2'>
+          <ThemeToggle />
+          {user ? (
+            <AuthButton user={user} />
+          ) : (
+            <Button asChild size='sm' variant='outline'>
+              <Link href='/sign-in'>Sign in</Link>
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

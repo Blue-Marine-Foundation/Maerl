@@ -1,13 +1,10 @@
-import { startOfYear, format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
+import { getDefaultUpdateDateRange } from '../updates/update-date-range';
 
 export interface DateState {
   from: string;
   to: string;
 }
-
-export const defaultFrom = startOfYear(new Date());
-export const defaultTo = new Date();
 
 export default function useUrlDateState(): DateState {
   const queryStrings = useSearchParams();
@@ -22,11 +19,10 @@ export default function useUrlDateState(): DateState {
     };
   }
 
-  const from = new Date(fromParam ?? defaultFrom);
-  const to = new Date(toParam ?? defaultTo);
+  const defaultRange = getDefaultUpdateDateRange();
 
   return {
-    from: format(from, 'yyyy-MM-dd'),
-    to: format(to, 'yyyy-MM-dd'),
+    from: fromParam ?? defaultRange.from,
+    to: toParam ?? defaultRange.to,
   };
 }

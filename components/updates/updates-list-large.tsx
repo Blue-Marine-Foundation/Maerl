@@ -64,7 +64,7 @@ export default function UpdatesListLarge({ updates }: { updates: Update[] }) {
               <Link
                 href={update.link}
                 target='_blank'
-                className='text-sm text-sky-400 hover:underline'
+                className='text-sm text-primary hover:underline'
               >
                 View evidence
               </Link>

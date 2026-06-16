@@ -12,7 +12,7 @@ interface NavItem {
 export default function PrimaryNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { hasManagerAccess } = useUser();
+  const { hasManagerAccess, isSuperAdmin } = useUser();
 
   // Only preserve date params
   const dateParams = extractDateParams(searchParams);
@@ -34,12 +34,20 @@ export default function PrimaryNavigation() {
     ...(hasManagerAccess
       ? [
           {
-            name: 'Impact Indicators',
+            name: 'Impact',
             href: '/impactindicators',
           },
           {
             name: 'Updates',
             href: '/updates',
+          },
+        ]
+      : []),
+    ...(isSuperAdmin
+      ? [
+          {
+            name: 'Admin',
+            href: '/admin',
           },
         ]
       : []),
@@ -59,7 +67,7 @@ export default function PrimaryNavigation() {
           >
             <Link
               href={href}
-              className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-slate-800 group-[.active]:bg-sky-800/50 group-[.active]:text-foreground'
+              className='inline-block rounded-md border border-transparent px-4 py-2 text-foreground/80 transition-all ease-in-out hover:border-foreground/20 group-[.active]:border-brand-twilight/30 group-[.active]:bg-brand-twilight/10 group-[.active]:text-foreground'
             >
               {item.name}
             </Link>

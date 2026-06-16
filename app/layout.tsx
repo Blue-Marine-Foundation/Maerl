@@ -1,9 +1,10 @@
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import QueryProvider from '@/utils/query-provider';
-import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import ThemedToaster from '@/components/theme/themed-toaster';
 import { Analytics } from '@vercel/analytics/next';
 import { UserSessionSync } from '@/components/user/user-provider';
 
@@ -17,9 +18,11 @@ export const metadata = {
   description: 'Impact monitoring for Blue Marine Foundation',
 };
 
-const inter = Inter({
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-poppins',
 });
 
 export default function RootLayout({
@@ -28,16 +31,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={inter.className} suppressHydrationWarning>
-      <body className='min-h-svh bg-background text-foreground dark:bg-background'>
-        <QueryProvider>
-          <UserSessionSync />
-          <Header />
-          <div className='mb-32 px-4'>{children}</div>
-          <Footer />
-          <Toaster richColors />
-          <Analytics />
-        </QueryProvider>
+    <html
+      lang='en'
+      className={`${poppins.variable} font-sans`}
+      suppressHydrationWarning
+    >
+      <body className='min-h-svh bg-background text-foreground'>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <UserSessionSync />
+            <Header />
+            <div className='mb-32 px-4'>{children}</div>
+            <Footer />
+            <ThemedToaster />
+            <Analytics />
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

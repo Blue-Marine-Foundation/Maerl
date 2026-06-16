@@ -103,8 +103,8 @@ export default function AddUnitContributionForm({
             type='submit'
             className={`flex w-full max-w-xs items-center justify-center gap-2 rounded-md px-4 py-2 text-sm text-white ${
               canSubmit
-                ? 'bg-sky-500/50 transition-all duration-300 hover:bg-sky-500/70'
-                : 'cursor-not-allowed bg-gray-400'
+                ? 'bg-primary text-primary-foreground transition-all duration-300 hover:bg-primary/90'
+                : 'cursor-not-allowed bg-muted text-muted-foreground'
             }`}
             disabled={isLoading}
           >
@@ -116,7 +116,9 @@ export default function AddUnitContributionForm({
           <p
             className={cn(
               'rounded border p-3',
-              error ? 'bg-rose-500/10' : 'bg-green-500/10',
+              error
+                ? 'border-red-600/30 bg-red-600/10 text-red-700 dark:text-red-400'
+                : 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400',
             )}
           >
             {message}

@@ -230,12 +230,12 @@ export default function AddGeneralUpdateForm({
 
         <div className='flex items-center justify-end gap-6'>
           {error && (
-            <div className='rounded-md border border-red-600/50 bg-red-500/10 px-4 py-2 text-sm'>
-              <p className='text-red-200'>{error}</p>
+            <div className='rounded-md border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm'>
+              <p className='text-red-700 dark:text-red-400'>{error}</p>
             </div>
           )}
           <button
-            className='flex items-center gap-2 rounded-md border border-blue-400 bg-blue-600 px-3 py-1 text-foreground transition-all hover:bg-blue-700'
+            className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'
             type='submit'
             disabled={isSubmitting}
           >

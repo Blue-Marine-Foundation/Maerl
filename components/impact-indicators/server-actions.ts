@@ -32,3 +32,20 @@ export async function fetchImpactIndicatorSummaries(
 
   return data;
 }
+
+export async function fetchImpactIndicatorSeries(
+  fromDate: string,
+  toDate: string,
+) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_impact_indicator_series', {
+    from_date: fromDate,
+    to_date: toDate,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}

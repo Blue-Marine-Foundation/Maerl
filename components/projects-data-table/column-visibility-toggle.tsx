@@ -1,22 +1,31 @@
-import { Table } from '@tanstack/react-table'
+import { Table } from '@tanstack/react-table';
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@/components/ui/popover';
 
 type FilterProps<TData> = {
-  table: Table<TData>
+  table: Table<TData>;
+};
+
+function formatColumnLabel(columnId: string) {
+  if (columnId === 'pillars') return 'Strategic Goals';
+
+  return columnId
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 const ColumnVisibilityToggle = <TData,>({ table }: FilterProps<TData>) => {
   return (
     <Popover>
-      <PopoverTrigger className="border rounded-md px-3 py-1">
+      <PopoverTrigger className='rounded-md border px-3 py-1'>
         Show/hide columns
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col gap-2">
+      <PopoverContent className='flex flex-col gap-2'>
         {table
           .getAllColumns()
           .filter((column) => column.getCanHide())
@@ -24,23 +33,18 @@ const ColumnVisibilityToggle = <TData,>({ table }: FilterProps<TData>) => {
             return (
               <label key={column.id}>
                 <input
-                  type="checkbox"
-                  className="capitalize"
+                  type='checkbox'
+                  className='capitalize'
                   checked={column.getIsVisible()}
                   onChange={(e) => column.toggleVisibility(e.target.checked)}
                 />
-                <span className="ml-2">
-                  {column.id
-                    .split('_')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ')}
-                </span>
+                <span className='ml-2'>{formatColumnLabel(column.id)}</span>
               </label>
-            )
+            );
           })}
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
 
-export default ColumnVisibilityToggle
+export default ColumnVisibilityToggle;

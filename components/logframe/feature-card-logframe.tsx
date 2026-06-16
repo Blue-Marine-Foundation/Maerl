@@ -24,11 +24,11 @@ export default function FeatureCardLogframe({
       {title && (
         <div
           className={cn(
-            '-mt-0 w-full px-4 py-6',
+            '-mt-0 w-full px-4 py-6 text-white',
             'rounded-t-md',
-            variant === 'impact' && 'bg-blue-950/90',
-            variant === 'outcome' && 'bg-sky-900/90',
-            variant === 'output' && 'bg-sky-600/90',
+            variant === 'impact' && 'bg-brand-marine',
+            variant === 'outcome' && 'bg-brand-midnight',
+            variant === 'output' && 'bg-brand-twilight',
           )}
         >
           <div className='flex items-center justify-between'>

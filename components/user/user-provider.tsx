@@ -12,6 +12,7 @@ type UserState = {
   isAdmin: boolean;
   isProjectManager: boolean;
   isPartner: boolean;
+  isSuperAdmin: boolean;
   hasManagerAccess: boolean;
   canEditLogframe: boolean;
   canEditProjectMetadata: boolean;
@@ -51,7 +52,9 @@ export function useUser(): UserState {
     const isAdmin = role === 'Admin';
     const isProjectManager = role === 'Project Manager';
     const isPartner = role === 'Partner';
-    const hasManagerAccess = isAdmin || isProjectManager;
+    const isSuperAdmin = role === 'Super Admin';
+    // Super Admin sits above Admin and inherits manager-style access by default.
+    const hasManagerAccess = isAdmin || isProjectManager || isSuperAdmin;
 
     return {
       isLoading,
@@ -60,6 +63,7 @@ export function useUser(): UserState {
       isAdmin,
       isProjectManager,
       isPartner,
+      isSuperAdmin,
       hasManagerAccess,
       canEditLogframe: hasManagerAccess,
       canEditProjectMetadata: hasManagerAccess,
