@@ -20,18 +20,11 @@ export default async function UpdatesPages(props: {
 
   const requestedScope = getFirstParam(searchParams.scope);
   const updateScope: UpdateScope =
-    requestedScope === 'mine'
-      ? 'current-user'
-      : requestedScope === 'assigned' ||
-          currentUser.profile?.role !== 'Super Admin'
-        ? 'assigned-projects'
+    requestedScope === 'assigned' || currentUser.profile?.role !== 'Super Admin'
+      ? 'assigned-projects'
       : 'all';
   const title =
-    updateScope === 'current-user'
-      ? 'My updates'
-      : updateScope === 'assigned-projects'
-        ? 'Project updates'
-        : 'Updates';
+    updateScope === 'assigned-projects' ? 'Project updates' : 'Updates';
 
   return (
     <div className='flex min-w-0 flex-col gap-6'>

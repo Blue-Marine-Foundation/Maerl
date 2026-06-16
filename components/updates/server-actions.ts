@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { fetchUserAssignedProjectIds } from '../overview/user-project-assignments';
 import { getDefaultUpdateDateRange } from './update-date-range';
 
-export type UpdateScope = 'all' | 'current-user' | 'assigned-projects';
+export type UpdateScope = 'all' | 'assigned-projects';
 
 export const fetchUpdates = async (
   dateRange?: {
@@ -39,11 +39,10 @@ export const fetchUpdates = async (
     );
   }
 
-  const shouldFilterToCurrentUser = updateScope === 'current-user';
   const shouldFilterToAssignedProjects =
     projectId === undefined &&
     (updateScope === 'assigned-projects' ||
-      profileResult.data?.role !== 'Super Admin');
+      (updateScope === 'all' && profileResult.data?.role !== 'Super Admin'));
   const assignedProjectIds = shouldFilterToAssignedProjects
     ? await fetchUserAssignedProjectIds()
     : [];
@@ -72,10 +71,6 @@ export const fetchUpdates = async (
       duplicate: false,
     })
     .order('date', { ascending: false });
-
-  if (shouldFilterToCurrentUser) {
-    query = query.eq('posted_by', user.id);
-  }
 
   if (shouldFilterToAssignedProjects) {
     query = query.in('project_id', assignedProjectIds);
