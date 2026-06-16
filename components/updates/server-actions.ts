@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { endOfDay, startOfMonth } from 'date-fns';
+import { getDefaultUpdateDateRange } from './update-date-range';
 
 export type UpdateAuthorScope = 'all' | 'current-user';
 
@@ -42,14 +42,11 @@ export const fetchUpdates = async (
     authorScope === 'current-user' ||
     (projectId === undefined && profileResult.data?.role !== 'Super Admin');
 
-  // Set default date range if not provided
-  const today = new Date();
-  const defaultFrom = startOfMonth(today);
-  const defaultTo = endOfDay(today);
+  const defaultRange = getDefaultUpdateDateRange();
 
   const dates = {
-    from: dateRange?.from || defaultFrom.toISOString(),
-    to: dateRange?.to || defaultTo.toISOString(),
+    from: dateRange?.from || defaultRange.from,
+    to: dateRange?.to || defaultRange.to,
   };
 
   let query = supabase

@@ -4,6 +4,10 @@ import { cache } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import type { Update } from '@/utils/types';
 import { fetchUserAssignedProjectIds } from './user-project-assignments';
+import {
+  getDefaultUpdateDateRange,
+  type UpdateDateRange,
+} from '../updates/update-date-range';
 
 const TARGET_COUNT = 3;
 const MIN_DESCRIPTION_LENGTH = 80;
@@ -33,6 +37,7 @@ export type PortfolioImpactData =
       variant: 'portfolio';
       stats: PortfolioImpactStats;
       updates: Update[];
+      updateDateRange: UpdateDateRange;
     };
 
 type ProjectAssignmentRow = {
@@ -108,6 +113,7 @@ async function fetchPortfolioStats(
 async function fetchPortfolioHighlightUpdates(
   supabase: Awaited<ReturnType<typeof createClient>>,
   projectIds: readonly number[],
+  dateRange: UpdateDateRange,
   postedByUserId?: string,
 ): Promise<Update[]> {
   if (projectIds.length === 0) return [];
@@ -119,6 +125,8 @@ async function fetchPortfolioHighlightUpdates(
       .in('project_id', [...projectIds])
       .eq('valid', true)
       .eq('duplicate', false)
+      .gte('date::date', dateRange.from)
+      .lte('date::date', dateRange.to)
       .not('value', 'is', null)
       .not('description', 'is', null);
 
@@ -159,7 +167,12 @@ async function fetchPortfolioHighlightUpdates(
     const highlighted = filteredStrict as Update[];
     return highlighted.length > 0
       ? highlighted
-      : fetchRecentPortfolioUpdates(supabase, projectIds, postedByUserId);
+      : fetchRecentPortfolioUpdates(
+          supabase,
+          projectIds,
+          dateRange,
+          postedByUserId,
+        );
   }
 
   const filteredRelaxed = (relaxed ?? []).filter(
@@ -177,12 +190,18 @@ async function fetchPortfolioHighlightUpdates(
     return highlighted;
   }
 
-  return fetchRecentPortfolioUpdates(supabase, projectIds, postedByUserId);
+  return fetchRecentPortfolioUpdates(
+    supabase,
+    projectIds,
+    dateRange,
+    postedByUserId,
+  );
 }
 
 async function fetchRecentPortfolioUpdates(
   supabase: Awaited<ReturnType<typeof createClient>>,
   projectIds: readonly number[],
+  dateRange: UpdateDateRange,
   postedByUserId?: string,
 ): Promise<Update[]> {
   if (projectIds.length === 0) return [];
@@ -193,6 +212,8 @@ async function fetchRecentPortfolioUpdates(
     .in('project_id', [...projectIds])
     .eq('valid', true)
     .eq('duplicate', false)
+    .gte('date::date', dateRange.from)
+    .lte('date::date', dateRange.to)
     .order('date', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false, nullsFirst: false });
 
@@ -246,11 +267,17 @@ export const fetchPortfolioImpact = cache(async (): Promise<PortfolioImpactData>
   }
 
   const assigned = (projects ?? []) as ProjectAssignmentRow[];
+  const updateDateRange = getDefaultUpdateDateRange();
 
   const [stats, updates] = await Promise.all([
     fetchPortfolioStats(supabase, assigned),
-    fetchPortfolioHighlightUpdates(supabase, projectIds, user.id),
+    fetchPortfolioHighlightUpdates(
+      supabase,
+      projectIds,
+      updateDateRange,
+      user.id,
+    ),
   ]);
 
-  return { variant: 'portfolio', stats, updates };
+  return { variant: 'portfolio', stats, updates, updateDateRange };
 });

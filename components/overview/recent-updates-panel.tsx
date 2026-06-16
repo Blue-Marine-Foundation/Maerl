@@ -29,12 +29,15 @@ export default async function RecentUpdatesPanel() {
   }
 
   const hasUpdates = data.updates.length > 0;
+  const viewAllHref = hasUpdates
+    ? `/updates?scope=mine&from=${data.updateDateRange.from}&to=${data.updateDateRange.to}`
+    : undefined;
 
   return (
     <section className='flex flex-col gap-4'>
       <OverviewSectionHeader
         title='Recent updates'
-        viewAllHref={hasUpdates ? '/updates?scope=mine' : undefined}
+        viewAllHref={viewAllHref}
         viewAllLabel={hasUpdates ? 'View my updates' : undefined}
       />
 
