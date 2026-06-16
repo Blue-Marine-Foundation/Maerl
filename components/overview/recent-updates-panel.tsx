@@ -34,8 +34,8 @@ export default async function RecentUpdatesPanel() {
     <section className='flex flex-col gap-4'>
       <OverviewSectionHeader
         title='Recent updates'
-        viewAllHref={hasUpdates ? '/updates' : undefined}
-        viewAllLabel={hasUpdates ? 'View all updates' : undefined}
+        viewAllHref={hasUpdates ? '/updates?scope=mine' : undefined}
+        viewAllLabel={hasUpdates ? 'View my updates' : undefined}
       />
 
       {!hasUpdates ? (
