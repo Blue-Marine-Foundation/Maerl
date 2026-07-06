@@ -152,6 +152,15 @@ export const RAW_TO_POINT_REGION: Record<string, PointRegionMeta> = {
       [-144, -13],
     ],
   },
+  'French Polynseia': {
+    id: 'french-polynesia',
+    displayName: 'French Polynesia',
+    coordinates: [-149.41, -17.68],
+    bounds: [
+      [-155, -23],
+      [-144, -13],
+    ],
+  },
   'Saint Helena': {
     id: 'st-helena',
     displayName: 'St Helena',
@@ -195,6 +204,51 @@ export const RAW_TO_POINT_REGION: Record<string, PointRegionMeta> = {
     bounds: [
       [-62.5, 12],
       [-60.5, 14.5],
+    ],
+  },
+  'St Kitts and Nevis': {
+    id: 'st-kitts-and-nevis',
+    displayName: 'St Kitts and Nevis',
+    coordinates: [-62.7, 17.25],
+    bounds: [
+      [-63.4, 16.7],
+      [-62, 17.8],
+    ],
+  },
+  'St Kitts & Nevis': {
+    id: 'st-kitts-and-nevis',
+    displayName: 'St Kitts and Nevis',
+    coordinates: [-62.7, 17.25],
+    bounds: [
+      [-63.4, 16.7],
+      [-62, 17.8],
+    ],
+  },
+  'Saint Kitts and Nevis': {
+    id: 'st-kitts-and-nevis',
+    displayName: 'St Kitts and Nevis',
+    coordinates: [-62.7, 17.25],
+    bounds: [
+      [-63.4, 16.7],
+      [-62, 17.8],
+    ],
+  },
+  'British Virgin Islands': {
+    id: 'british-virgin-islands',
+    displayName: 'British Virgin Islands',
+    coordinates: [-64.62, 18.43],
+    bounds: [
+      [-65.1, 18.1],
+      [-64.1, 18.9],
+    ],
+  },
+  BVI: {
+    id: 'british-virgin-islands',
+    displayName: 'British Virgin Islands',
+    coordinates: [-64.62, 18.43],
+    bounds: [
+      [-65.1, 18.1],
+      [-64.1, 18.9],
     ],
   },
 };
