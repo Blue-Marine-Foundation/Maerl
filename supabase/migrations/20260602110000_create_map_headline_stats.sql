@@ -81,8 +81,8 @@ values
   ('w:mediterranean-sea', 'x shark species under improved management', array['4.2.2'], null, true, 120, null),
   ('c:ata', 'x e-actions taken', array['5.3.3'], null, true, 130, null),
 
-  ('p:barbados', 'x sq km protected', array['1.2.2'], null, true, 140, null),
-  ('p:barbados', 'x people trained', array['5.5.1'], null, true, 150, null),
+  ('c:brb', 'x sq km protected', array['1.2.2'], null, true, 140, null),
+  ('c:brb', 'x people trained', array['5.5.1'], null, true, 150, null),
 
   ('c:dom', 'x sq km protected', array['1.2.2'], null, true, 160, null),
 
@@ -99,7 +99,7 @@ values
   ('c:sxm', 'x people reached through knowledge sharing and collaboration', array['5.2.2'], null, true, 180, 'Dutch Caribbean headline replicated across mapped islands'),
   ('c:bes', 'x people reached through knowledge sharing and collaboration', array['5.2.2'], null, true, 181, 'Dutch Caribbean headline replicated across mapped islands'),
 
-  ('p:st-vincent-and-the-grenadines', 'x sq km under sustainable management', array['4.2.1'], null, true, 190, null),
+  ('c:vct', 'x sq km under sustainable management', array['4.2.1'], null, true, 190, null),
   ('c:nam', 'x Govt staff and tehcnical personnel trained', array['5.2.2'], null, true, 200, null),
   ('c:idn', 'x local Papuans trained as dive guides', array['5.2.2'], null, true, 210, null),
   ('c:moz', 'x women trained in sustainble aquaculture', array['5.2.2'], null, true, 220, null),
