@@ -64,9 +64,9 @@ insert into public.map_headline_stats (
   notes
 )
 values
-  ('c:gbr', 'x Ha under active resotration', array['2.2.5'], null, true, 10, null),
+  ('c:gbr', 'x Ha under active restoration', array['2.2.5'], null, true, 10, null),
   ('c:gbr', 'x policies influenced', array['1.1.2', '2.1.2', '3.1.2', '4.1.2'], null, true, 20, null),
-  ('c:gbr', 'x laws or legal agreeements influenced', array['4.3.2'], null, true, 30, null),
+  ('c:gbr', 'x laws or legal agreements influenced', array['4.3.2'], null, true, 30, null),
   ('c:gbr', 'x MPAs with improved management', array['1.3.1', '1.3.2'], null, true, 40, null),
   ('c:gbr', 'x sq km under protection commitments', array['1.2.1'], null, true, 50, null),
 
@@ -100,9 +100,9 @@ values
   ('c:bes', 'x people reached through knowledge sharing and collaboration', array['5.2.2'], null, true, 181, 'Dutch Caribbean headline replicated across mapped islands'),
 
   ('c:vct', 'x sq km under sustainable management', array['4.2.1'], null, true, 190, null),
-  ('c:nam', 'x Govt staff and tehcnical personnel trained', array['5.2.2'], null, true, 200, null),
+  ('c:nam', 'x Govt staff and technical personnel trained', array['5.2.2'], null, true, 200, null),
   ('c:idn', 'x local Papuans trained as dive guides', array['5.2.2'], null, true, 210, null),
-  ('c:moz', 'x women trained in sustainble aquaculture', array['5.2.2'], null, true, 220, null),
+  ('c:moz', 'x women trained in sustainable aquaculture', array['5.2.2'], null, true, 220, null),
   ('c:phl', 'x people trained in mangrove restoration techniques', array['5.2.1'], null, true, 230, null),
   ('c:arg', 'x sq km protected', array['1.2.2'], null, true, 240, null),
   ('c:bra', 'x sq km protected', array['1.2.2'], null, true, 250, null),

@@ -25,7 +25,7 @@ values
   ('c:pan', 'Will add once logframe completed (Panama/Costa Rica)', array['1.2.2'], null, false, 1080, 'Placeholder wording retained from CSV; indicator code present'),
   ('p:french-polynesia', 'Will add once logframe completed (French Pol)', array[]::text[], 0, false, 1090, 'Placeholder from CSV'),
 
-  ('c:mdv', 'x people trained as citizen scietists', array[]::text[], 0, false, 1100, 'Incomplete CSV row: no indicator codes provided'),
+  ('c:mdv', 'x people trained as citizen scientists', array[]::text[], 0, false, 1100, 'Incomplete CSV row: no indicator codes provided'),
   ('c:mdv', 'x sq km protected', array[]::text[], 0, false, 1110, 'Incomplete CSV row: no indicator codes provided')
 on conflict (geography_key, display_template) do update
 set
