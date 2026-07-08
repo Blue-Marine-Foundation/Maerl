@@ -19,6 +19,8 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Barbados: ['BRB'],
   Belgium: ['BEL'],
   Brazil: ['BRA'],
+  'British Virgin Islands': ['VGB'],
+  BVI: ['VGB'],
   Chile: ['CHL'],
   'Dutch Caribbean': ['CUW', 'ABW', 'SXM', 'BES'],
   'Dominican Republic': ['DOM'],
@@ -37,6 +39,10 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   Philippines: ['PHL'],
   Spain: ['ESP'],
   'Sao Tome': ['STP'],
+  'Saint Kitts and Nevis': ['KNA'],
+  'St Kitts and Nevis': ['KNA'],
+  'St Kitts & Nevis': ['KNA'],
+  'Saint Vincent and the Grenadines': ['VCT'],
   'St Vincent and the Grenadines': ['VCT'],
   'Tunisia, Libya': ['TUN', 'LBY'],
   Turkey: ['TUR'],
@@ -134,16 +140,16 @@ export const RAW_TO_POINT_REGION: Record<string, PointRegionMeta> = {
       [-1.2, 49.9],
     ],
   },
-  Barbados: {
-    id: 'barbados',
-    displayName: 'Barbados',
-    coordinates: [-59.54, 13.19],
+  'French Polynesia': {
+    id: 'french-polynesia',
+    displayName: 'French Polynesia',
+    coordinates: [-149.41, -17.68],
     bounds: [
-      [-61, 12],
-      [-58.5, 14.5],
+      [-155, -23],
+      [-144, -13],
     ],
   },
-  'French Polynesia': {
+  'French Polynseia': {
     id: 'french-polynesia',
     displayName: 'French Polynesia',
     coordinates: [-149.41, -17.68],
@@ -177,24 +183,6 @@ export const RAW_TO_POINT_REGION: Record<string, PointRegionMeta> = {
     bounds: [
       [-8, -18],
       [-3, -13],
-    ],
-  },
-  'Saint Vincent and the Grenadines': {
-    id: 'st-vincent-and-the-grenadines',
-    displayName: 'St Vincent and the Grenadines',
-    coordinates: [-61.2, 13.2],
-    bounds: [
-      [-62.5, 12],
-      [-60.5, 14.5],
-    ],
-  },
-  'St Vincent and the Grenadines': {
-    id: 'st-vincent-and-the-grenadines',
-    displayName: 'St Vincent and the Grenadines',
-    coordinates: [-61.2, 13.2],
-    bounds: [
-      [-62.5, 12],
-      [-60.5, 14.5],
     ],
   },
 };
@@ -294,6 +282,7 @@ export const ISO3_TO_DISPLAY: Record<string, string> = {
   GRC: 'Greece',
   IDN: 'Indonesia',
   ITA: 'Italy',
+  KNA: 'St Kitts and Nevis',
   MDV: 'Maldives',
   MEX: 'Mexico',
   MOZ: 'Mozambique',
@@ -307,6 +296,7 @@ export const ISO3_TO_DISPLAY: Record<string, string> = {
   LBY: 'Libya',
   TUR: 'Turkey',
   URY: 'Uruguay',
+  VGB: 'British Virgin Islands',
 };
 
 export const ISO3_BOUNDS: Record<string, MapBounds> = {
@@ -382,6 +372,10 @@ export const ISO3_BOUNDS: Record<string, MapBounds> = {
     [6.6, 35.5],
     [18.6, 47.1],
   ],
+  KNA: [
+    [-62.87, 17.08],
+    [-62.54, 17.42],
+  ],
   LBY: [
     [9.3, 19.5],
     [25.2, 33.3],
@@ -433,6 +427,10 @@ export const ISO3_BOUNDS: Record<string, MapBounds> = {
   VCT: [
     [-61.5, 12.5],
     [-61.1, 13.4],
+  ],
+  VGB: [
+    [-64.85, 18.32],
+    [-64.12, 18.75],
   ],
 };
 

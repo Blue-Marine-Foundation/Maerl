@@ -122,8 +122,13 @@ function buildCountryFilter(activeIsoCodes: readonly string[]): unknown[] {
   }
   return [
     'all',
-    ['in', ['get', 'iso_3166_1_alpha_3'], ['literal', activeIsoCodes]],
-    ['match', ['get', 'worldview'], ['all', 'US'], true, false],
+    ['==', ['get', 'disputed'], 'false'],
+    [
+      'any',
+      ['==', ['get', 'worldview'], 'all'],
+      ['in', 'US', ['get', 'worldview']],
+    ],
+    ['in', ['get', 'iso_3166_1_alpha_3'], ['literal', [...activeIsoCodes]]],
   ];
 }
 
