@@ -49,12 +49,12 @@ export function useUser(): UserState {
   return useMemo<UserState>(() => {
     const role = data?.profile?.role ?? null;
     const authUserId = data?.authUser?.id ?? null;
-    const isAdmin = role === 'Admin';
     const isProjectManager = role === 'Project Manager';
     const isPartner = role === 'Partner';
     const isSuperAdmin = role === 'Super Admin';
-    // Super Admin sits above Admin and inherits manager-style access by default.
-    const hasManagerAccess = isAdmin || isProjectManager || isSuperAdmin;
+    // Admin-quality update fields and edit-any-update in logframe (not review-only tools).
+    const isAdmin = role === 'Admin' || isSuperAdmin;
+    const hasManagerAccess = isAdmin || isProjectManager;
 
     return {
       isLoading,
