@@ -19,9 +19,9 @@ import {
   tryResolvePointRegion,
   tryResolveWaterRegion,
   WATER_REGION_BY_ID,
-  type MapBounds,
   type MapPoint,
 } from './country-iso-map';
+import { mergeMapBounds, type MapBounds } from './map-bounds';
 
 const MAP_INDICATOR_LABELS: Record<string, { label: string; unit: string }> = {
   '1.2.3': { label: 'Protection — committed area', unit: 'km²' },
@@ -423,17 +423,6 @@ function normaliseRegion(region: string | null | undefined): string | null {
   return trimmed && trimmed.length > 0 ? trimmed : null;
 }
 
-function mergeBounds(bounds: MapBounds[]): MapBounds | null {
-  if (bounds.length === 0) return null;
-  return bounds.reduce<MapBounds>(
-    (acc, next) => [
-      [Math.min(acc[0][0], next[0][0]), Math.min(acc[0][1], next[0][1])],
-      [Math.max(acc[1][0], next[1][0]), Math.max(acc[1][1], next[1][1])],
-    ],
-    bounds[0],
-  );
-}
-
 function boundsForProjectCountryField(project: ProjectRow): MapBounds[] {
   const region = normaliseRegion(project.regional_strategy);
   if (region && REGION_BOUNDS[region]) return [REGION_BOUNDS[region]];
@@ -470,7 +459,7 @@ function buildDefaultFocus(projects: ProjectRow[]): {
   if (regions.length > 0) label = regions.join(', ');
 
   return {
-    bounds: mergeBounds(bounds),
+    bounds: mergeMapBounds(bounds),
     label,
   };
 }

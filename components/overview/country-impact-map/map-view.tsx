@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import type { GeographyImpactRow, UnmappedProject } from './server-actions';
-import type { MapBounds } from './country-iso-map';
+import { getMapBoundsFocus, type MapBounds } from './map-bounds';
 
 const BRAND_FILL = TWILIGHT_BLUE;
 const MAP_STYLES = {
@@ -444,14 +444,7 @@ function applyGeoHighlight(
 
 function applyDefaultFocus(map: MapboxMap, bounds: MapBounds | null) {
   if (!bounds) return;
-  const west = bounds[0][0];
-  const south = bounds[0][1];
-  const east = bounds[1][0];
-  const north = bounds[1][1];
-  const lngSpan = Math.abs(east - west);
-  const latSpan = Math.abs(north - south);
-  const span = Math.max(lngSpan, latSpan);
-  const center: [number, number] = [(west + east) / 2, (south + north) / 2];
+  const { center, span } = getMapBoundsFocus(bounds);
 
   let zoom = 2.4;
   if (span < 18) zoom = 2.7;

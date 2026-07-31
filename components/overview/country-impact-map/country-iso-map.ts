@@ -1,4 +1,7 @@
 import { GENERATED_ISO_GEOGRAPHIES } from './generated-iso-geographies';
+import type { MapBounds } from './map-bounds';
+
+export type { MapBounds } from './map-bounds';
 
 // Canonical mapping from free-text `projects.project_country` to map features.
 //
@@ -45,7 +48,6 @@ export const RAW_TO_ISO3: Record<string, readonly string[]> = {
   ...CUSTOM_AND_LEGACY_RAW_TO_ISO3,
 };
 
-export type MapBounds = [[number, number], [number, number]];
 export type MapPoint = [number, number];
 
 /** Programme geographies rendered as visual marker anchors, not coastal-country proxies. */

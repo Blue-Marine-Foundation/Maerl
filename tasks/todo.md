@@ -134,6 +134,9 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - [x] Load a project with a legacy value: code path preserves and labels the
       value, allows unrelated patch saves, and requires a canonical selection
       only when that field changes.
+- [x] Dateline-aware default focus merges wrapped and conventional bounds on a
+      globe, including USA, Fiji + Samoa, USA + UK, and Fiji + New Zealand;
+      `pnpm check:map-bounds` covers the regression cases.
 - [ ] Re-run docs/4 audit: zero rows flagged `has_leading_space` /
       `has_trailing_space` / `not_in_lookup` (bar deliberate entries).
 - [ ] Direct insert with `'Active '` status rejected by the CHECK constraint.
@@ -152,6 +155,7 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - Generated 249 official ISO entries plus live-verified Mapbox `XKS`/`XSB`
   entries, 262 canonical picker options, and 105 dual-rendered point markers.
 - `pnpm verify:mapbox-countries`: passed all nine live samples.
+- `pnpm check:map-bounds`: passed all wrapped and combined focus cases.
 - `pnpm build`: passed.
 - Safe cleanup, the country-normalization trigger, and the project-type CHECK
   ran against the live database on 2026-07-31; no status constraint,
