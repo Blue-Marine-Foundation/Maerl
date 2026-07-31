@@ -53,7 +53,51 @@ from re-appearing.
 
 Before the full migration, the lowest-effort improvement is a
 `project_country` cleanup pass on the existing rows: trim whitespace,
-fold sub-national values into "United Kingdom", expand "Sao Tome" to
-"São Tomé and Príncipe", and normalise the dirty values listed in the
-May 2026 audit. That alone keeps the homepage map honest while the
+decide how sub-national values should relate to "United Kingdom", expand
+"Sao Tome" to "São Tomé and Príncipe", and normalise the dirty values listed
+in the May 2026 audit. That alone keeps the homepage map honest while the
 schema-level work is queued.
+
+The interim constrained-input work now prepares that cleanup in
+`docs/9-project-country-status-cleanup.sql`, but deliberately leaves the
+England/Scotland fold disabled until the owner decides whether retaining
+sub-national fidelity is more important than storing one canonical country
+label. The status constraint is likewise sign-off-gated because existing
+`Transitioned` rows may represent a legitimate fourth workflow state.
+
+## Interim registry workflow
+
+ISO countries and territories are generated from a pinned Natural Earth
+dataset and verified against Mapbox Countries v1. Refresh and validate the
+checked-in registry with:
+
+```sh
+pnpm generate:geographies
+pnpm check:geographies
+pnpm verify:mapbox-countries
+```
+
+The generator is a development tool only; the application reads the generated
+TypeScript and makes no runtime geography-data request. Maerl-specific seas,
+compound labels, and marker islands still require an explicit metadata entry in
+`country-iso-map.ts` plus the corresponding generator option so the picker,
+audit SQL, and sign-off CSV remain aligned.
+
+Small ISO territories are rendered as both their Mapbox polygon and a visible
+point marker. Existing Maerl marker islands remain marker-only.
+
+## Headline-stat caveat
+
+A newly selected ISO geography can shade or pin immediately and receives the
+standard project/metric totals. Curated hover headlines are separate content in
+`public.map_headline_stats`; they appear only after an enabled row is added for
+the geography key. A Super Admin editor for that table remains a possible
+follow-up and is not part of the constrained-input work.
+
+## Release ordering
+
+After owner sign-off, run the finalized cleanup first, apply the selected
+constraints, and deploy the form/map changes in the same release window. The
+patch-based metadata action allows unrelated edits to save while an unchanged
+legacy country or status is still present, and names the offending field when a
+user attempts to change it to a non-canonical value.

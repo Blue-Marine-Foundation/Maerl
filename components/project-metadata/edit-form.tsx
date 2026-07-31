@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
-import { ProjectMetadata } from '@/utils/types';
-import { TextInput, SelectInput, LocalContactInput } from './form-inputs';
+import {
+  EditableProjectMetadata,
+  ProjectMetadata,
+  ProjectMetadataUpdate,
+} from '@/utils/types';
+import {
+  GeographyComboboxInput,
+  LocalContactInput,
+  SelectInput,
+  TextInput,
+} from './form-inputs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import upsertProjectMetadata from './server-actions';
+import updateProjectMetadata from './server-actions';
+import { normalizeProjectGeography } from '@/components/overview/country-impact-map/country-iso-map';
+import {
+  CANONICAL_PROJECT_STATUSES,
+  normalizeProjectStatus,
+} from './project-field-options';
 
 type EditFormProps = {
   project: ProjectMetadata;
@@ -26,13 +40,23 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
     setFormState((prev) => ({ ...prev, local_contacts: contacts }));
   };
 
+  const handleProjectCountryChange = (projectCountry: string | null) => {
+    setFormState((prev) => ({
+      ...prev,
+      project_country: projectCountry,
+    }));
+  };
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: ProjectMetadata) => upsertProjectMetadata(data),
+    mutationFn: (data: ProjectMetadataUpdate) => updateProjectMetadata(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projectMetadata'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({
+        queryKey: ['overview-country-impact-map'],
+      });
       onClose();
     },
     onError: (error: Error) => {
@@ -46,19 +70,59 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
-    const cleanedFormState = {
-      ...formState,
-      last_updated: new Date().toISOString(),
-      local_contacts: (formState.local_contacts ?? []).filter(
+
+    const changes: ProjectMetadataUpdate['changes'] = {};
+    const setIfChanged = <Key extends keyof EditableProjectMetadata>(
+      key: Key,
+      value: EditableProjectMetadata[Key],
+    ) => {
+      const previousValue = project[key];
+      if (JSON.stringify(previousValue) !== JSON.stringify(value)) {
+        changes[key] = value;
+      }
+    };
+
+    setIfChanged('support', formState.support);
+    setIfChanged('start_date', formState.start_date);
+    setIfChanged('project_tier', formState.project_tier);
+    setIfChanged('regional_strategy', formState.regional_strategy);
+    setIfChanged('unit_requirements', formState.unit_requirements);
+    setIfChanged('pillars', formState.pillars);
+    setIfChanged('highlights', formState.highlights);
+    setIfChanged('current_issues', formState.current_issues);
+    setIfChanged('proposed_solutions', formState.proposed_solutions);
+    setIfChanged(
+      'board_intervention_required',
+      formState.board_intervention_required,
+    );
+    setIfChanged(
+      'local_contacts',
+      (formState.local_contacts ?? []).filter(
         (contact) =>
           contact.name.trim() !== '' || contact.organisation.trim() !== '',
       ),
-    };
+    );
+
+    if (formState.project_country !== project.project_country) {
+      const normalizedCountry = normalizeProjectGeography(
+        formState.project_country,
+      );
+      changes.project_country = normalizedCountry || null;
+    }
+    if (formState.project_status !== project.project_status) {
+      const normalizedStatus = normalizeProjectStatus(formState.project_status);
+      changes.project_status = normalizedStatus || null;
+    }
+
+    if (Object.keys(changes).length === 0) {
+      onClose();
+      return;
+    }
+
     try {
-      await mutation.mutateAsync(cleanedFormState);
-    } catch (error) {
-      // Error will be handled by onError callback, no need to do anything here
-      throw error;
+      await mutation.mutateAsync({ id: project.id, changes });
+    } catch {
+      // The mutation callback renders the field-specific server error.
     }
   };
 
@@ -94,11 +158,14 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         value={formState.project_status}
         onChange={handleChange}
         options={[
-          { value: 'Pipeline', label: 'Pipeline' },
-          { value: 'Active', label: 'Active' },
-          { value: 'Complete', label: 'Complete' },
+          { value: '', label: 'Not set' },
+          ...CANONICAL_PROJECT_STATUSES.map((status) => ({
+            value: status,
+            label: status,
+          })),
         ]}
         placeholder={''}
+        legacyWarning='Project Status is awaiting an owner decision. You can save other fields unchanged, but changing this field requires Pipeline, Active, Complete, or Not set.'
       />
 
       <SelectInput
@@ -128,12 +195,9 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose }) => {
         placeholder={'Select project tier'}
       />
 
-      <TextInput
-        label='Project Country'
-        name='project_country'
+      <GeographyComboboxInput
         value={formState.project_country}
-        onChange={handleChange}
-        placeholder='Enter project country'
+        onValueChange={handleProjectCountryChange}
       />
 
       <TextInput

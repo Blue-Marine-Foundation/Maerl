@@ -29,6 +29,28 @@ export type ProjectMetadata = {
   }[];
 };
 
+export type EditableProjectMetadata = Pick<
+  ProjectMetadata,
+  | 'support'
+  | 'start_date'
+  | 'project_status'
+  | 'project_tier'
+  | 'project_country'
+  | 'regional_strategy'
+  | 'unit_requirements'
+  | 'pillars'
+  | 'local_contacts'
+  | 'highlights'
+  | 'current_issues'
+  | 'proposed_solutions'
+  | 'board_intervention_required'
+>;
+
+export type ProjectMetadataUpdate = {
+  id: number;
+  changes: Partial<EditableProjectMetadata>;
+};
+
 export type ProjectWithOutputs = ProjectMetadata & {
   outputs: Output[];
 };
