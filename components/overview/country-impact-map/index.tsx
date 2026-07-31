@@ -42,6 +42,7 @@ export default function CountryImpactMap() {
       activeProjectsWithoutMappedGeography={
         data.activeProjectsWithoutMappedGeography
       }
+      unmappedProjects={data.unmappedProjects}
       defaultFocusBounds={data.defaultFocusBounds}
       defaultFocusLabel={data.defaultFocusLabel}
     />

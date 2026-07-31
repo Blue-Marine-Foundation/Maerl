@@ -13,8 +13,13 @@ import type {
 } from 'mapbox-gl';
 import { TWILIGHT_BLUE } from '@/utils/brand-colors';
 import { overviewProjectHref } from '../project-types';
-import type { GeographyImpactRow } from './server-actions';
-import { ISO3_BOUNDS, type MapBounds } from './country-iso-map';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import type { GeographyImpactRow, UnmappedProject } from './server-actions';
+import { getMapBoundsFocus, type MapBounds } from './map-bounds';
 
 const BRAND_FILL = TWILIGHT_BLUE;
 const MAP_STYLES = {
@@ -35,6 +40,7 @@ type Props = {
   rows: GeographyImpactRow[];
   globalActiveProjectCount: number;
   activeProjectsWithoutMappedGeography: number;
+  unmappedProjects: UnmappedProject[];
   defaultFocusBounds: MapBounds | null;
   defaultFocusLabel: string | null;
 };
@@ -261,24 +267,7 @@ type ImpactMarkerFeatureCollection = {
   }>;
 };
 
-/* Countries whose bounding box is smaller than this (degrees, shorter side)
-   are nearly impossible to hover as polygons at world zoom (Curaçao, the
-   Maldives, ...), so they also get a marker at the centre of their bounds. */
-const SMALL_COUNTRY_MAX_SPAN_DEG = 2;
-
-function smallCountryMarkerCoords(iso: string): [number, number] | null {
-  const bounds = ISO3_BOUNDS[iso];
-  if (!bounds) return null;
-  const lngSpan = Math.abs(bounds[1][0] - bounds[0][0]);
-  const latSpan = Math.abs(bounds[1][1] - bounds[0][1]);
-  if (Math.min(lngSpan, latSpan) > SMALL_COUNTRY_MAX_SPAN_DEG) return null;
-  return [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
-}
-
 function markerCoordsForRow(row: GeographyImpactRow): [number, number] | null {
-  if (row.geographyKind === 'country') {
-    return smallCountryMarkerCoords(row.geographyId);
-  }
   return (row.markerCoordinates as [number, number] | null) ?? null;
 }
 
@@ -455,14 +444,7 @@ function applyGeoHighlight(
 
 function applyDefaultFocus(map: MapboxMap, bounds: MapBounds | null) {
   if (!bounds) return;
-  const west = bounds[0][0];
-  const south = bounds[0][1];
-  const east = bounds[1][0];
-  const north = bounds[1][1];
-  const lngSpan = Math.abs(east - west);
-  const latSpan = Math.abs(north - south);
-  const span = Math.max(lngSpan, latSpan);
-  const center: [number, number] = [(west + east) / 2, (south + north) / 2];
+  const { center, span } = getMapBoundsFocus(bounds);
 
   let zoom = 2.4;
   if (span < 18) zoom = 2.7;
@@ -483,6 +465,7 @@ export default function MapView({
   rows,
   globalActiveProjectCount,
   activeProjectsWithoutMappedGeography,
+  unmappedProjects,
   defaultFocusBounds,
   defaultFocusLabel,
 }: Readonly<Props>) {
@@ -715,15 +698,78 @@ export default function MapView({
             </p>
           )}
           {activeProjectsWithoutMappedGeography > 0 && (
-            <p className='rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm'>
-              + {activeProjectsWithoutMappedGeography} active project
-              {activeProjectsWithoutMappedGeography === 1 ? '' : 's'} without a
-              map label (missing or unsupported region text).
-            </p>
+            <>
+              {unmappedProjects.length > 0 ? (
+                <UnmappedProjectsPopover
+                  count={activeProjectsWithoutMappedGeography}
+                  projects={unmappedProjects}
+                />
+              ) : (
+                <p className='rounded-md bg-background/80 px-2 py-1 backdrop-blur-sm'>
+                  + {activeProjectsWithoutMappedGeography} active project
+                  {activeProjectsWithoutMappedGeography === 1 ? '' : 's'}{' '}
+                  without a map label (missing or unsupported region text).
+                </p>
+              )}
+            </>
           )}
         </div>
       )}
     </div>
+  );
+}
+
+function UnmappedProjectsPopover({
+  count,
+  projects,
+}: Readonly<{ count: number; projects: UnmappedProject[] }>) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type='button'
+          className='rounded-md bg-background/80 px-2 py-1 text-left text-muted-foreground underline decoration-dotted underline-offset-2 backdrop-blur-sm transition-colors hover:text-foreground'
+          aria-label={`Inspect ${count} active projects without a mapped geography`}
+        >
+          + {count} active project{count === 1 ? '' : 's'} without a map label
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align='end'
+        side='top'
+        className='w-80 max-w-[calc(100vw-2rem)] p-0'
+      >
+        <div className='border-b px-3 py-2'>
+          <p className='text-sm font-semibold'>Unmapped active projects</p>
+          <p className='text-xs text-muted-foreground'>
+            Select a canonical Project Country to make these projects visible.
+          </p>
+        </div>
+        <ul className='max-h-72 overflow-y-auto p-2'>
+          {projects.map((project) => {
+            const rawValue =
+              project.rawCountry === null || project.rawCountry.trim() === ''
+                ? 'Not set'
+                : JSON.stringify(project.rawCountry);
+            return (
+              <li key={project.id}>
+                <Link
+                  href={overviewProjectHref(project)}
+                  className='block rounded-md px-2 py-2 transition-colors hover:bg-muted'
+                >
+                  <span className='block text-sm font-medium text-foreground'>
+                    {project.name}
+                  </span>
+                  <span className='block text-xs text-muted-foreground'>
+                    Raw value: {rawValue}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </PopoverContent>
+    </Popover>
   );
 }
 

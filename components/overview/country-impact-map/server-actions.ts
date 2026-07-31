@@ -10,6 +10,7 @@ import {
   geographyBucketKeysFromRaw,
   ISO3_BOUNDS,
   ISO3_TO_DISPLAY,
+  ISO_GEOGRAPHY_BY_ISO3,
   isGlobalProjectLabel,
   normalizeProjectGeography,
   POINT_REGION_BY_ID,
@@ -18,9 +19,9 @@ import {
   tryResolvePointRegion,
   tryResolveWaterRegion,
   WATER_REGION_BY_ID,
-  type MapBounds,
   type MapPoint,
 } from './country-iso-map';
+import { mergeMapBounds, type MapBounds } from './map-bounds';
 
 const MAP_INDICATOR_LABELS: Record<string, { label: string; unit: string }> = {
   '1.2.3': { label: 'Protection — committed area', unit: 'km²' },
@@ -74,6 +75,10 @@ export type CountryProject = {
   project_type: string | null;
 };
 
+export type UnmappedProject = CountryProject & {
+  rawCountry: string | null;
+};
+
 export type CountryMetric = {
   indicator_code: string;
   indicator_label: string;
@@ -108,6 +113,8 @@ export type GeographyImpactData = {
   globalActiveProjectCount: number;
   /** Null / blank country, or unknown label (nothing to plot). */
   activeProjectsWithoutMappedGeography: number;
+  /** Populated only for authenticated Admin and Super Admin users. */
+  unmappedProjects: UnmappedProject[];
   defaultFocusBounds: MapBounds | null;
   defaultFocusLabel: string | null;
 };
@@ -295,7 +302,7 @@ function shouldCountUpdate(update: UpdateRow): update is UpdateRow & {
   const project = update.projects;
   const indicator = update.impact_indicators;
   if (!project || !indicator) return false;
-  if (!project.project_status?.toLowerCase().startsWith('active')) return false;
+  if (project.project_status !== 'Active') return false;
   if (!isOverviewEligibleProjectType(project.project_type)) return false;
   if (indicator.ii_heirarchy !== 'Indicator') return false;
   return true;
@@ -339,7 +346,7 @@ function bucketKeyToRow(
       geographyId: iso,
       geographyLabel: ISO3_TO_DISPLAY[iso] ?? iso,
       waterBounds: null,
-      markerCoordinates: null,
+      markerCoordinates: ISO_GEOGRAPHY_BY_ISO3[iso]?.markerCoordinates ?? null,
       activeProjects: bucket.projects.size,
       projects: Array.from(bucket.projects.values()).sort((p1, p2) =>
         p1.name.localeCompare(p2.name),
@@ -416,17 +423,6 @@ function normaliseRegion(region: string | null | undefined): string | null {
   return trimmed && trimmed.length > 0 ? trimmed : null;
 }
 
-function mergeBounds(bounds: MapBounds[]): MapBounds | null {
-  if (bounds.length === 0) return null;
-  return bounds.reduce<MapBounds>(
-    (acc, next) => [
-      [Math.min(acc[0][0], next[0][0]), Math.min(acc[0][1], next[0][1])],
-      [Math.max(acc[1][0], next[1][0]), Math.max(acc[1][1], next[1][1])],
-    ],
-    bounds[0],
-  );
-}
-
 function boundsForProjectCountryField(project: ProjectRow): MapBounds[] {
   const region = normaliseRegion(project.regional_strategy);
   if (region && REGION_BOUNDS[region]) return [REGION_BOUNDS[region]];
@@ -463,7 +459,7 @@ function buildDefaultFocus(projects: ProjectRow[]): {
   if (regions.length > 0) label = regions.join(', ');
 
   return {
-    bounds: mergeBounds(bounds),
+    bounds: mergeMapBounds(bounds),
     label,
   };
 }
@@ -476,12 +472,15 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const profileResultPromise = user
+    ? supabase.from('users').select('role').eq('id', user.id).maybeSingle()
+    : Promise.resolve({ data: null, error: null });
+
   const projectsResult = await supabase
     .from('projects')
     .select('id, name, slug, project_country, project_type')
-    .ilike('project_status', 'Active%')
-    .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
-    .not('project_country', 'is', null);
+    .eq('project_status', 'Active')
+    .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES]);
 
   const focusProjectsResult = user
     ? await supabase
@@ -489,7 +488,7 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
         .select(
           'id, name, slug, project_country, project_type, regional_strategy, user_projects!inner(user_id)',
         )
-        .ilike('project_status', 'Active%')
+        .eq('project_status', 'Active')
         .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
         .eq('user_projects.user_id', user.id)
     : { data: [], error: null };
@@ -508,13 +507,18 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
   const portfolioRows = (projectsResult.data ?? []) as ProjectRow[];
 
   let globalActiveProjectCount = 0;
-  let mappedLabelUnknownCount = 0;
+  const unmappedPortfolioRows: UnmappedProject[] = [];
   for (const p of portfolioRows) {
     const raw = p.project_country;
-    if (raw === null) continue;
     const norm = normalizeProjectGeography(raw);
-    if (!norm || norm === '') {
-      mappedLabelUnknownCount += 1;
+    if (!norm) {
+      unmappedPortfolioRows.push({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        project_type: p.project_type,
+        rawCountry: raw,
+      });
       continue;
     }
     if (isGlobalProjectLabel(norm)) {
@@ -522,23 +526,17 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
       continue;
     }
     if (geographyBucketKeysFromRaw(raw).length === 0) {
-      mappedLabelUnknownCount += 1;
+      unmappedPortfolioRows.push({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        project_type: p.project_type,
+        rawCountry: raw,
+      });
     }
   }
 
-  const [nullCountResult, blankCountResult, updatesResult] = await Promise.all([
-    supabase
-      .from('projects')
-      .select('id', { count: 'exact', head: true })
-      .ilike('project_status', 'Active%')
-      .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
-      .is('project_country', null),
-    supabase
-      .from('projects')
-      .select('id', { count: 'exact', head: true })
-      .ilike('project_status', 'Active%')
-      .in('project_type', [...OVERVIEW_ELIGIBLE_PROJECT_TYPES])
-      .eq('project_country', ''),
+  const [updatesResult, profileResult] = await Promise.all([
     supabase
       .from('updates')
       .select(
@@ -547,18 +545,9 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
       .eq('valid', true)
       .eq('duplicate', false)
       .not('value', 'is', null),
+    profileResultPromise,
   ]);
 
-  if (nullCountResult.error) {
-    throw new Error(
-      `Failed to count projects without country: ${nullCountResult.error.message}`,
-    );
-  }
-  if (blankCountResult.error) {
-    throw new Error(
-      `Failed to count projects with blank country: ${blankCountResult.error.message}`,
-    );
-  }
   if (updatesResult.error) {
     throw new Error(
       `Failed to load updates for map: ${updatesResult.error.message}`,
@@ -573,10 +562,16 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
     ...headlineDefinitions.flatMap((definition) => definition.indicatorCodes),
   ]);
 
-  const activeProjectsWithoutMappedGeography =
-    mappedLabelUnknownCount +
-    (nullCountResult.count ?? 0) +
-    (blankCountResult.count ?? 0);
+  const activeProjectsWithoutMappedGeography = unmappedPortfolioRows.length;
+  const isAdmin =
+    profileResult.error === null &&
+    (profileResult.data?.role === 'Admin' ||
+      profileResult.data?.role === 'Super Admin');
+  const unmappedProjects = isAdmin
+    ? unmappedPortfolioRows.sort((first, second) =>
+        first.name.localeCompare(second.name),
+      )
+    : [];
 
   const buckets = new Map<string, Bucket>();
   indexProjectsByGeography(buckets, portfolioRows);
@@ -601,6 +596,7 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
     rows,
     globalActiveProjectCount,
     activeProjectsWithoutMappedGeography,
+    unmappedProjects,
     defaultFocusBounds: defaultFocus.bounds,
     defaultFocusLabel: defaultFocus.label,
   };
