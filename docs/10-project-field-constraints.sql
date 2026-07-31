@@ -3,6 +3,8 @@
 -- EXECUTION STATUS:
 --   - Sections 1 and 2 were applied to the live Maerl database on 2026-07-31
 --     as migration add_project_country_normalization_and_type_constraint;
+--   - project_status and project_type trimming was added to the normalization
+--     trigger on 2026-07-31 as migration normalize_project_status_and_type;
 --   - the enabled trigger and validated CHECK were behavior-tested inside a
 --     rolled-back transaction;
 --   - Section 3 remains disabled pending owner sign-off.
@@ -11,17 +13,19 @@
 -- two disabled status candidates; exactly one may be enabled after sign-off.
 
 -- ============================================================================
--- Section 1: normalize project_country on every direct insert/update
+-- Section 1: normalize project map fields on every direct insert/update
 -- ============================================================================
 BEGIN;
 
-CREATE OR REPLACE FUNCTION public.normalize_project_country()
+CREATE OR REPLACE FUNCTION public.normalize_project_map_fields()
 RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
   NEW.project_country := nullif(btrim(NEW.project_country), '');
+  NEW.project_status := nullif(btrim(NEW.project_status), '');
+  NEW.project_type := nullif(btrim(NEW.project_type), '');
   RETURN NEW;
 END;
 $$;
@@ -29,11 +33,16 @@ $$;
 DROP TRIGGER IF EXISTS projects_normalize_project_country
 ON public.projects;
 
-CREATE TRIGGER projects_normalize_project_country
-BEFORE INSERT OR UPDATE OF project_country
+DROP TRIGGER IF EXISTS projects_normalize_project_map_fields
+ON public.projects;
+
+CREATE TRIGGER projects_normalize_project_map_fields
+BEFORE INSERT OR UPDATE OF project_country, project_status, project_type
 ON public.projects
 FOR EACH ROW
-EXECUTE FUNCTION public.normalize_project_country();
+EXECUTE FUNCTION public.normalize_project_map_fields();
+
+DROP FUNCTION IF EXISTS public.normalize_project_country();
 
 COMMIT;
 
@@ -136,6 +145,8 @@ COMMIT;
 
 -- Acceptance after the chosen status constraint is applied:
 --
--- INSERT/UPDATE with project_status = 'Active ' must fail.
+-- INSERT/UPDATE with project_status = 'Active ' must store 'Active'.
+-- INSERT/UPDATE with a genuinely unsupported status must fail.
 -- INSERT/UPDATE with project_country = ' Greece ' must store 'Greece'.
+-- INSERT/UPDATE with project_type = ' Unit ' must store 'Unit'.
 -- INSERT/UPDATE with an unsupported project_type must fail.

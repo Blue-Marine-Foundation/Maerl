@@ -99,6 +99,10 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - [x] Apply and verify the country-normalization trigger and project-type CHECK
       against the live database on 2026-07-31. The behavior test ran inside a
       rolled-back transaction and left project data unchanged.
+- [x] Extend the live normalization trigger to trim and nullify blank
+      `project_status` and `project_type` values as well as `project_country`.
+      Rolled-back tests verified `Active `-style values cannot reappear and
+      `Transitioned` is preserved without making it canonical.
 - [x] Save as `docs/10-project-field-constraints.sql`, note in docs/7 that
       steps overlap.
 - [x] Tighten the country-map queries in
@@ -137,9 +141,13 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - [x] Dateline-aware default focus merges wrapped and conventional bounds on a
       globe, including USA, Fiji + Samoa, USA + UK, and Fiji + New Zealand;
       `pnpm check:map-bounds` covers the regression cases.
-- [ ] Re-run docs/4 audit: zero rows flagged `has_leading_space` /
-      `has_trailing_space` / `not_in_lookup` (bar deliberate entries).
-- [ ] Direct insert with `'Active '` status rejected by the CHECK constraint.
+- [x] Re-run docs/4 against production after cleanup: 69 exact `Active` rows,
+      zero active-status variants, zero whitespace rows across country/status/
+      type, zero safe cleanup candidates, and no duplicate trimmed country
+      variants. Deliberate sign-off entries remain unchanged.
+- [x] Direct insert/update with `'Active '` status is normalized to exact
+      `'Active'` before storage; unsupported status rejection remains pending
+      the owner-selected status CHECK.
 - [x] `pnpm build` clean.
 - [ ] Deploy to staging for user testing after field sign-off and SQL
       finalization.
@@ -157,8 +165,8 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - `pnpm verify:mapbox-countries`: passed all nine live samples.
 - `pnpm check:map-bounds`: passed all wrapped and combined focus cases.
 - `pnpm build`: passed.
-- Safe cleanup, the country-normalization trigger, and the project-type CHECK
-  ran against the live database on 2026-07-31; no status constraint,
+- Safe cleanup, the three-field normalization trigger, and the project-type
+  CHECK ran against the live database on 2026-07-31; no status constraint,
   sign-off-gated mappings, deployment, or external communication performed.
 - Pending owner decisions: `Transitioned`; England/Scotland and
   `United Kingdom, EU` folding.
