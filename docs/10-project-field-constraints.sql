@@ -7,10 +7,13 @@
 --     trigger on 2026-07-31 as migration normalize_project_status_and_type;
 --   - the enabled trigger and validated CHECK were behavior-tested inside a
 --     rolled-back transaction;
---   - Section 3 remains disabled pending owner sign-off.
+--   - Section 3 was finalized on 2026-08-07 as migration
+--     finalize_project_status_constraint after exactly two Transitioned rows
+--     were confirmed and converted to Complete;
+--   - status acceptance, normalization, NULL handling, and rejection were
+--     tested inside a rolled-back transaction after the migration.
 --
--- Sections 1 and 2 are final and independently runnable. Section 3 contains
--- two disabled status candidates; exactly one may be enabled after sign-off.
+-- All three sections are final and independently runnable against cleaned data.
 
 -- ============================================================================
 -- Section 1: normalize project map fields on every direct insert/update
@@ -78,75 +81,41 @@ ALTER TABLE public.projects
 COMMIT;
 
 -- ============================================================================
--- Section 3: project_status — SIGN-OFF REQUIRED, nothing executable below
+-- Section 3: constrain project_status to the owner-approved closed set
 -- ============================================================================
 
--- Candidate A: owner converts Transitioned to Complete in docs/9, then enables:
---
--- BEGIN;
--- DO $$
--- BEGIN
---   IF EXISTS (
---     SELECT 1
---     FROM public.projects
---     WHERE project_status IS NOT NULL
---       AND project_status NOT IN ('Pipeline', 'Active', 'Complete')
---   ) THEN
---     RAISE EXCEPTION
---       'Cannot add three-value status constraint: unsupported values remain';
---   END IF;
--- END
--- $$;
--- ALTER TABLE public.projects
---   DROP CONSTRAINT IF EXISTS projects_project_status_valid;
--- ALTER TABLE public.projects
---   ADD CONSTRAINT projects_project_status_valid
---   CHECK (
---     project_status IS NULL
---     OR project_status IN ('Pipeline', 'Active', 'Complete')
---   );
--- COMMIT;
+BEGIN;
 
--- Candidate B: owner retains Transitioned as a fourth status, then enables:
---
--- BEGIN;
--- DO $$
--- BEGIN
---   IF EXISTS (
---     SELECT 1
---     FROM public.projects
---     WHERE project_status IS NOT NULL
---       AND project_status NOT IN (
---         'Pipeline',
---         'Active',
---         'Complete',
---         'Transitioned'
---       )
---   ) THEN
---     RAISE EXCEPTION
---       'Cannot add four-value status constraint: unsupported values remain';
---   END IF;
--- END
--- $$;
--- ALTER TABLE public.projects
---   DROP CONSTRAINT IF EXISTS projects_project_status_valid;
--- ALTER TABLE public.projects
---   ADD CONSTRAINT projects_project_status_valid
---   CHECK (
---     project_status IS NULL
---     OR project_status IN (
---       'Pipeline',
---       'Active',
---       'Complete',
---       'Transitioned'
---     )
---   );
--- COMMIT;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM public.projects
+    WHERE project_status IS NOT NULL
+      AND project_status NOT IN ('Pipeline', 'Active', 'Complete')
+  ) THEN
+    RAISE EXCEPTION
+      'Cannot add project status constraint: unsupported values remain';
+  END IF;
+END
+$$;
 
--- Acceptance after the chosen status constraint is applied:
+ALTER TABLE public.projects
+  DROP CONSTRAINT IF EXISTS projects_project_status_valid;
+
+ALTER TABLE public.projects
+  ADD CONSTRAINT projects_project_status_valid
+  CHECK (
+    project_status IS NULL
+    OR project_status IN ('Pipeline', 'Active', 'Complete')
+  );
+
+COMMIT;
+
+-- Verified acceptance on 2026-08-07:
 --
--- INSERT/UPDATE with project_status = 'Active ' must store 'Active'.
--- INSERT/UPDATE with a genuinely unsupported status must fail.
--- INSERT/UPDATE with project_country = ' Greece ' must store 'Greece'.
--- INSERT/UPDATE with project_type = ' Unit ' must store 'Unit'.
--- INSERT/UPDATE with an unsupported project_type must fail.
+-- INSERT/UPDATE with Pipeline, Active, Complete, or NULL succeeds.
+-- INSERT/UPDATE with project_status = ' Active ' stores 'Active'.
+-- INSERT/UPDATE with a blank status stores NULL.
+-- INSERT/UPDATE with Transitioned or another unsupported status fails.
+-- All behavior checks ran inside a transaction that was rolled back.

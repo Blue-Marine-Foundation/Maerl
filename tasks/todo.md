@@ -78,17 +78,20 @@ Key codebase facts driving the plan:
 Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - [x] Run the sign-off-independent cleanup against the live Maerl database:
       six `project_country` rows changed on 2026-07-31; the post-cleanup audit
-      found zero remaining safe cleanup candidates. `Transitioned` and the UK
+      found zero remaining safe cleanup candidates. The UK
       sub-national/compound values were left unchanged.
+- [x] Confirm exactly two `Transitioned` projects, convert only those rows to
+      `Complete`, and rerun the audit on 2026-08-07. The final status counts are
+      69 `Active`, 41 `Complete`, and 6 `Pipeline`.
 - [ ] Share `docs/project-field-signoff.csv` with Suneha for sign-off
       on names/spellings before the picker ships (replaces her lost
       "list of all project countries").
 
 ## Phase 4 — DB-level guards (stop bad direct inserts)
 
-- [ ] Select and enable one guarded status CHECK after Suneha decides whether
-      `Transitioned` is retained or converted to `Complete`; run it only after
-      Phase 3 cleanup.
+- [x] Record the decision to convert `Transitioned` to `Complete` and apply the
+      guarded `projects_project_status_valid` CHECK. It now permits only
+      `Pipeline`, `Active`, `Complete`, or `NULL`.
 - [x] For country: prepare a trigger that trims whitespace on insert/update.
       Recommend the trim-trigger only for now — the country list grows often,
       and a CHECK would make adding a new country a DB migration; the full FK
@@ -101,8 +104,11 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
       rolled-back transaction and left project data unchanged.
 - [x] Extend the live normalization trigger to trim and nullify blank
       `project_status` and `project_type` values as well as `project_country`.
-      Rolled-back tests verified `Active `-style values cannot reappear and
-      `Transitioned` is preserved without making it canonical.
+      Rolled-back tests verified `Active `-style values cannot reappear.
+- [x] Re-test the finalized status guard inside a rolled-back transaction:
+      all three statuses and `NULL` were accepted, padded/blank values were
+      normalized, and `Transitioned` plus an arbitrary invalid value were
+      rejected.
 - [x] Save as `docs/10-project-field-constraints.sql`, note in docs/7 that
       steps overlap.
 - [x] Tighten the country-map queries in
@@ -141,16 +147,16 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - [x] Dateline-aware default focus merges wrapped and conventional bounds on a
       globe, including USA, Fiji + Samoa, USA + UK, and Fiji + New Zealand;
       `pnpm check:map-bounds` covers the regression cases.
-- [x] Re-run docs/4 against production after cleanup: 69 exact `Active` rows,
-      zero active-status variants, zero whitespace rows across country/status/
-      type, zero safe cleanup candidates, and no duplicate trimmed country
-      variants. Deliberate sign-off entries remain unchanged.
+- [x] Re-run docs/4 against production after status finalization: 69 exact
+      `Active`, 41 `Complete`, and 6 `Pipeline` rows; zero `Transitioned`,
+      unknown-status, active-status-variant, or whitespace rows; zero safe
+      country-cleanup candidates; and no duplicate trimmed country variants.
 - [x] Direct insert/update with `'Active '` status is normalized to exact
-      `'Active'` before storage; unsupported status rejection remains pending
-      the owner-selected status CHECK.
+      `'Active'` before storage; unsupported statuses are rejected by the
+      validated CHECK.
 - [x] `pnpm build` clean.
-- [ ] Deploy to staging for user testing after field sign-off and SQL
-      finalization.
+- [ ] Deploy to staging for user testing after the remaining country field
+      sign-off.
 
 ## Explicitly out of scope (tracked in docs/7)
 
@@ -166,7 +172,10 @@ Islands`, `Sao Tome` → canonical, etc.). Verify with audit after.
 - `pnpm check:map-bounds`: passed all wrapped and combined focus cases.
 - `pnpm build`: passed.
 - Safe cleanup, the three-field normalization trigger, and the project-type
-  CHECK ran against the live database on 2026-07-31; no status constraint,
-  sign-off-gated mappings, deployment, or external communication performed.
-- Pending owner decisions: `Transitioned`; England/Scotland and
-  `United Kingdom, EU` folding.
+  CHECK ran against the live database on 2026-07-31.
+- On 2026-08-07, exactly two `Transitioned` rows were converted to `Complete`;
+  the validated three-value-plus-`NULL` status CHECK was applied and tested in
+  a rolled-back transaction.
+- Pending owner decisions: England/Scotland and `United Kingdom, EU` folding.
+- No deployment or external communication was performed as part of the status
+  finalization.
