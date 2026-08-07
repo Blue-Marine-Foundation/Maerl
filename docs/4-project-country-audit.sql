@@ -383,7 +383,7 @@ ORDER BY project_count DESC, normalised_value;
 
 -- ============================================================================
 -- Section 4: status values
--- Transitioned is deliberately reported as sign-off-gated, not invalid.
+-- The validated CHECK permits Pipeline, Active, Complete, or NULL.
 -- ============================================================================
 SELECT
   project_status AS raw_value,
@@ -391,13 +391,13 @@ SELECT
   project_status IS NULL AS is_null,
   project_status IS DISTINCT FROM btrim(project_status) AS has_outer_space,
   btrim(project_status) IN ('Pipeline', 'Active', 'Complete') AS is_canonical,
-  btrim(project_status) = 'Transitioned' AS requires_signoff,
-  btrim(project_status) NOT IN (
-    'Pipeline',
-    'Active',
-    'Complete',
-    'Transitioned'
-  ) AS is_unknown
+  false AS requires_signoff,
+  project_status IS NOT NULL
+    AND btrim(project_status) NOT IN (
+      'Pipeline',
+      'Active',
+      'Complete'
+    ) AS is_unknown
 FROM public.projects
 GROUP BY project_status
 ORDER BY requires_signoff DESC, is_unknown DESC, project_count DESC, raw_value;

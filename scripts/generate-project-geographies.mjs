@@ -95,9 +95,8 @@ const CUSTOM_CANONICAL_OPTIONS = [
 const CURRENT_AUDIT_ROWS = {
   project_status: [
     ['Active', 69],
-    ['Complete', 39],
+    ['Complete', 41],
     ['Pipeline', 6],
-    ['Transitioned', 2],
   ],
   project_type: [
     ['Project', 87],
@@ -163,11 +162,12 @@ const SIGNOFF_DECISIONS = [
     field: 'project_status',
     currentValue: 'Transitioned',
     currentCount: 2,
-    proposedValue: '',
-    action:
-      'Choose: retain as a fourth status, or convert both rows to Complete',
+    proposedValue: 'Complete',
+    action: 'Convert both rows to Complete',
+    decisionRequired: false,
+    ownerDecision: 'Convert to Complete',
     notes:
-      'A CHECK constraint must not be finalized until the status owner records this decision.',
+      'Owner decision recorded and migration applied 2026-08-07; the audit found zero Transitioned rows afterward.',
   },
   {
     field: 'project_country',
@@ -580,7 +580,7 @@ function generatedSignoffCsv(options) {
         hasSafeMapping ? 'Apply unambiguous cleanup' : 'Keep pending audit',
         'false',
         '',
-        'Post-cleanup read-only audit snapshot captured 2026-07-31',
+        'Post-constraint read-only audit snapshot captured 2026-08-07',
       ]);
     }
   }
@@ -594,8 +594,8 @@ function generatedSignoffCsv(options) {
       decision.proposedValue,
       '',
       decision.action,
-      'true',
-      '',
+      String(decision.decisionRequired ?? true),
+      decision.ownerDecision ?? '',
       decision.notes,
     ]);
   }

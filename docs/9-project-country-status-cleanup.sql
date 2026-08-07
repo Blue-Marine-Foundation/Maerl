@@ -4,7 +4,9 @@
 --   - the sign-off-independent transaction was run against the live Maerl
 --     database on 2026-07-31 and changed six project_country rows;
 --   - post-cleanup verification found zero remaining safe cleanup candidates;
---   - the sign-off-gated candidates at the end of this file were not run.
+--   - on 2026-08-07, exactly two Transitioned rows were confirmed and converted
+--     to Complete by migration finalize_project_status_constraint;
+--   - the UK country candidates at the end of this file remain disabled.
 --
 -- This safe section is idempotent and can be rerun if verification is needed.
 --
@@ -14,7 +16,6 @@
 --   - folds spelling/abbreviation aliases whose meaning is unambiguous.
 --
 -- Deliberately excluded pending owner sign-off:
---   - Transitioned -> Complete versus retaining Transitioned;
 --   - England / Scotland / England, Scotland -> United Kingdom;
 --   - United Kingdom, EU -> United Kingdom.
 --
@@ -123,14 +124,18 @@ GROUP BY project_type
 ORDER BY project_count DESC, project_type NULLS FIRST;
 
 -- ============================================================================
--- SIGN-OFF-GATED CANDIDATES — deliberately disabled
+-- STATUS DECISION — applied 2026-08-07
 -- ============================================================================
 
--- If the owner chooses to convert Transitioned to Complete:
+-- The two Transitioned rows were converted to Complete and the three-value
+-- status CHECK was added by:
 --
--- UPDATE public.projects
--- SET project_status = 'Complete'
--- WHERE project_status = 'Transitioned';
+--   supabase/migrations/
+--     20260807132026_finalize_project_status_constraint.sql
+
+-- ============================================================================
+-- COUNTRY SIGN-OFF-GATED CANDIDATES — deliberately disabled
+-- ============================================================================
 
 -- If the owner chooses to fold UK sub-national/compound values:
 --

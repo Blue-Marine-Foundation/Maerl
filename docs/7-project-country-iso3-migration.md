@@ -62,8 +62,9 @@ The interim constrained-input work now prepares that cleanup in
 `docs/9-project-country-status-cleanup.sql`, but deliberately leaves the
 England/Scotland fold disabled until the owner decides whether retaining
 sub-national fidelity is more important than storing one canonical country
-label. The status constraint is likewise sign-off-gated because existing
-`Transitioned` rows may represent a legitimate fourth workflow state.
+label. The status decision was finalized on 2026-08-07: the two existing
+`Transitioned` rows were converted to `Complete`, and a validated CHECK now
+permits only `Pipeline`, `Active`, `Complete`, or `NULL`.
 
 ## Interim registry workflow
 
@@ -96,8 +97,8 @@ follow-up and is not part of the constrained-input work.
 
 ## Release ordering
 
-After owner sign-off, run the finalized cleanup first, apply the selected
-constraints, and deploy the form/map changes in the same release window. The
-patch-based metadata action allows unrelated edits to save while an unchanged
-legacy country or status is still present, and names the offending field when a
-user attempts to change it to a non-canonical value.
+The status cleanup and constraint are complete. After the remaining country
+sign-off, run any approved country cleanup before deployment. The patch-based
+metadata action allows unrelated edits to save while an unchanged legacy
+country is still present, and names the offending field when a user attempts to
+change it to a non-canonical value.
