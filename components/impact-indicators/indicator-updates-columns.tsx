@@ -1,11 +1,6 @@
-import UpdateStatus from '@/components/updates/update-status';
+import UpdateIndicatorCell from '@/components/updates/update-indicator-cell';
 import { Update } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
 import Link from 'next/link';
 import * as d3 from 'd3';
 import { ArrowUpRight } from 'lucide-react';
@@ -64,31 +59,7 @@ export const columns: ColumnDef<Update>[] = [
       if (!filterValue || filterValue.length === 0) return true;
       return filterValue.includes(row.getValue(columnId));
     },
-    cell: ({ row }) => {
-      return (
-        <HoverCard>
-          <HoverCardTrigger>
-            <UpdateStatus update={row.original} />
-            {
-              (
-                row.original.outcome_measurables ??
-                row.original.output_measurables
-              )?.code
-            }
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <p>
-              {
-                (
-                  row.original.outcome_measurables ??
-                  row.original.output_measurables
-                )?.description
-              }
-            </p>
-          </HoverCardContent>
-        </HoverCard>
-      );
-    },
+    cell: ({ row }) => <UpdateIndicatorCell update={row.original} />,
   },
   {
     header: 'Type',

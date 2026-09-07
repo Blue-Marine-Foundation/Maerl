@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
-import { isApprovedImpact } from '@/utils/update-review';
+import IndicatorActualValues from './indicator-actual-values';
 import ActionButton from '@/components/ui/action-button';
 import {
   type CellContext,
@@ -136,10 +136,9 @@ export default function OutcomeIndicatorsTable({
     {
       id: 'actual',
       header: 'Actual Value',
-      cell: ({ row }) =>
-        (row.original.updates ?? [])
-          .filter(isApprovedImpact)
-          .reduce((sum, update) => sum + update.value, 0),
+      cell: ({ row }) => (
+        <IndicatorActualValues updates={row.original.updates} />
+      ),
     },
     {
       id: 'updates',

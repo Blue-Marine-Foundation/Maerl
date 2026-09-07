@@ -6,6 +6,8 @@ New Outcome Indicators require an Impact Indicator. Only Admin and Super Admin u
 
 Indicator Impact Updates start Pending Review. Reporting requires all of `type = Impact`, `admin_reviewed = true`, `valid = true`, `verified = true`, `duplicate = false`, and a numeric value. Mark repeated results duplicate during review. Content changes reset review; review-only saves leave content untouched. Progress Updates have no numeric value and appear immediately.
 
+Outcome actual values are grouped by each update's captured Impact Indicator, with the corresponding code and unit, so remapping never adds incompatible measurements together. Unit Updates retains the contribution view's scope and loads canonical update relationships and historical impact mappings.
+
 An update captures its Impact Indicator on insertion. Editing its Outcome Indicator's mapping does not change historical updates. An authenticated admin can explicitly migrate selected historical updates to the Outcome Indicator's current mapping with:
 
 ```sql
