@@ -11,7 +11,7 @@ export const fetchUpdates = async (
   let query = supabase
     .from('updates')
     .select(
-      '*, projects(*), output_measurables(*), impact_indicators(*), users(*)',
+      '*, projects(*), output_measurables(*), outcome_measurables(*), impact_indicators(*), users(*)',
     )
     .gte('date', dateRange.from)
     .lte('date', dateRange.to)

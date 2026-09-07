@@ -1,5 +1,6 @@
 'use server';
 
+import { approvedImpactFilters } from '@/utils/update-review';
 import { createClient } from '@/utils/supabase/server';
 import { OVERVIEW_FETCH_CODES } from './pillar-config';
 import { OVERVIEW_ELIGIBLE_PROJECT_TYPES } from './project-types';
@@ -66,8 +67,7 @@ export async function fetchPillarStoriesData(): Promise<PillarStoriesData> {
       .select(
         'value, impact_indicators!inner(id, indicator_code, indicator_title, indicator_unit), projects!inner(id)',
       )
-      .eq('valid', true)
-      .eq('duplicate', false)
+      .match(approvedImpactFilters)
       .eq('impact_indicators.ii_heirarchy', 'Indicator')
       .in('impact_indicators.indicator_code', [...OVERVIEW_FETCH_CODES])
       .ilike('projects.project_status', 'Active%')

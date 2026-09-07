@@ -1,5 +1,6 @@
 'use server';
 
+import { approvedImpactFilters } from '@/utils/update-review';
 import { createClient } from '@/utils/supabase/server';
 import { OVERVIEW_FETCH_CODES } from '../pillar-config';
 import {
@@ -542,8 +543,7 @@ export async function fetchCountryImpactData(): Promise<GeographyImpactData> {
       .select(
         'value, projects!inner(project_country, project_status, project_type), impact_indicators!inner(indicator_code, indicator_unit, ii_heirarchy)',
       )
-      .eq('valid', true)
-      .eq('duplicate', false)
+      .match(approvedImpactFilters)
       .not('value', 'is', null),
     profileResultPromise,
   ]);

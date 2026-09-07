@@ -19,6 +19,32 @@ export const updateUpdateFields = async (updates: UpdateField[]) => {
     throw new Error('Unauthorized');
   }
 
+  const { data: profile, error: profileError } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError) throw profileError;
+  if (!['Admin', 'Super Admin'].includes(profile.role))
+    throw new Error('Only admins may review updates');
+  const allowedFields = [
+    'duplicate',
+    'verified',
+    'valid',
+    'admin_reviewed',
+    'review_note',
+  ];
+  for (const update of updates) {
+    if (
+      !allowedFields.includes(update.field) ||
+      (update.field === 'review_note'
+        ? typeof update.value !== 'string'
+        : typeof update.value !== 'boolean')
+    ) {
+      throw new Error('Invalid review field or value');
+    }
+  }
+
   const results = [];
 
   for (const update of updates) {
