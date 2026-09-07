@@ -44,7 +44,7 @@ export const fetchUnassignedOutputs = async (identifier: number | string) => {
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .is('outputs.outcome_measurable_id', null)
-    .single();
+    .maybeSingle();
 
   return response;
 };
