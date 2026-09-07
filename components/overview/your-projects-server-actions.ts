@@ -1,5 +1,6 @@
 'use server';
 
+import { approvedImpactFilters } from '@/utils/update-review';
 import { createClient } from '@/utils/supabase/server';
 import { fetchUserAssignedProjectIds } from './user-project-assignments';
 
@@ -56,9 +57,11 @@ export async function fetchYourProjects(
   const { data: updateRows, error: updatesError } = await supabase
     .from('updates')
     .select('project_id, impact_indicator_id')
-    .in('project_id', projects.map((p) => p.id))
-    .eq('valid', true)
-    .eq('duplicate', false)
+    .in(
+      'project_id',
+      projects.map((p) => p.id),
+    )
+    .match(approvedImpactFilters)
     .not('impact_indicator_id', 'is', null);
 
   if (updatesError) {
@@ -75,8 +78,7 @@ export async function fetchYourProjects(
     ) {
       continue;
     }
-    const set =
-      indicatorsByProject.get(row.project_id) ?? new Set<number>();
+    const set = indicatorsByProject.get(row.project_id) ?? new Set<number>();
     set.add(row.impact_indicator_id);
     indicatorsByProject.set(row.project_id, set);
   }

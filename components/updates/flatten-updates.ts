@@ -1,3 +1,4 @@
+import { updateLevel, updateReviewStatus } from '@/utils/update-review';
 import { Update } from '@/utils/types';
 
 export const flattenUpdates = (updates: Update[]) => {
@@ -14,6 +15,11 @@ export const flattenUpdates = (updates: Update[]) => {
       update_date: update.date ?? '',
       maerl_slug,
       project,
+      indicator_level: updateLevel(update),
+      review_status: updateReviewStatus(update),
+      outcome_indicator_code: update.outcome_measurables?.code ?? '',
+      outcome_indicator_description:
+        update.outcome_measurables?.description ?? '',
       output_indicator_code: update.output_measurables?.code ?? '',
       output_indicator_description:
         update.output_measurables?.description ?? '',

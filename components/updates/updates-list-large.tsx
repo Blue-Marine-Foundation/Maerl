@@ -1,3 +1,4 @@
+import UpdateStatus from '@/components/updates/update-status';
 import { Update } from '@/utils/types';
 import Link from 'next/link';
 import * as d3 from 'd3';
@@ -22,6 +23,14 @@ export default function UpdatesListLarge({ updates }: { updates: Update[] }) {
             </span>
           </div>
           <div className='flex flex-col items-start justify-start gap-2'>
+            <UpdateStatus update={update} />
+            {update.outcome_measurables && (
+              <Link
+                href={`/projects/${update.projects?.slug}/logframe#outcome-${update.outcome_measurables.outcome_id}`}
+              >
+                Outcome {update.outcome_measurables.code}
+              </Link>
+            )}
             {update.output_measurables && (
               <p
                 className='text-sm'

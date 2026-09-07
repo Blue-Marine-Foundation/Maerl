@@ -1,3 +1,4 @@
+import UpdateStatus from '@/components/updates/update-status';
 import { Update } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
@@ -55,9 +56,10 @@ export const columns: ColumnDef<Update>[] = [
     },
   },
   {
-    header: 'Output Indicator',
+    header: 'Indicator',
     accessorKey: 'output_measurable',
-    accessorFn: (row) => row.output_measurables?.code,
+    accessorFn: (row) =>
+      (row.outcome_measurables ?? row.output_measurables)?.code,
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length === 0) return true;
       return filterValue.includes(row.getValue(columnId));
@@ -66,10 +68,23 @@ export const columns: ColumnDef<Update>[] = [
       return (
         <HoverCard>
           <HoverCardTrigger>
-            {row.original.output_measurables?.code}
+            <UpdateStatus update={row.original} />
+            {
+              (
+                row.original.outcome_measurables ??
+                row.original.output_measurables
+              )?.code
+            }
           </HoverCardTrigger>
           <HoverCardContent>
-            <p>{row.original.output_measurables?.description}</p>
+            <p>
+              {
+                (
+                  row.original.outcome_measurables ??
+                  row.original.output_measurables
+                )?.description
+              }
+            </p>
           </HoverCardContent>
         </HoverCard>
       );

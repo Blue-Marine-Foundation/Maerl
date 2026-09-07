@@ -71,6 +71,7 @@ export default async function UnitUpdatesPage({
       date: update.date,
       project_id: update.project_id,
       output_measurable_id: update.output_measurable_id,
+      outcome_measurable_id: null,
       type: update.type,
       description: update.description,
       value: update.value,

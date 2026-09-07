@@ -1,5 +1,6 @@
 'use server';
 
+import { approvedImpactFilters } from '@/utils/update-review';
 import { cache } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import type { Update } from '@/utils/types';
@@ -13,7 +14,7 @@ const TARGET_COUNT = 3;
 const MIN_DESCRIPTION_LENGTH = 80;
 
 const UPDATE_SELECT =
-  '*, projects(name, slug, project_type), impact_indicators(indicator_code, indicator_unit, indicator_title)';
+  '*, projects(name, slug, project_type), outcome_measurables(*), output_measurables(*), impact_indicators(indicator_code, indicator_unit, indicator_title)';
 
 export type PortfolioImpactStats = {
   assignedProjectCount: number;
@@ -47,10 +48,7 @@ type ProjectAssignmentRow = {
 
 function statsFromProjects(
   rows: readonly ProjectAssignmentRow[],
-): Pick<
-  PortfolioImpactStats,
-  'assignedProjectCount' | 'activeProjectCount'
-> {
+): Pick<PortfolioImpactStats, 'assignedProjectCount' | 'activeProjectCount'> {
   return {
     assignedProjectCount: rows.length,
     activeProjectCount: rows.filter((p) =>
@@ -126,6 +124,7 @@ async function fetchPortfolioHighlightUpdates(
       .eq('duplicate', false)
       .gte('date::date', dateRange.from)
       .lte('date::date', dateRange.to)
+      .match(approvedImpactFilters)
       .not('value', 'is', null)
       .not('description', 'is', null);
 
@@ -136,7 +135,9 @@ async function fetchPortfolioHighlightUpdates(
     .limit(TARGET_COUNT * 2);
 
   if (strictError) {
-    throw new Error(`Failed to load portfolio highlights: ${strictError.message}`);
+    throw new Error(
+      `Failed to load portfolio highlights: ${strictError.message}`,
+    );
   }
 
   const filteredStrict = (strict ?? []).filter(
@@ -164,8 +165,7 @@ async function fetchPortfolioHighlightUpdates(
 
   const filteredRelaxed = (relaxed ?? []).filter(
     (u) =>
-      !seen.has(u.id) &&
-      (u.description?.length ?? 0) >= MIN_DESCRIPTION_LENGTH,
+      !seen.has(u.id) && (u.description?.length ?? 0) >= MIN_DESCRIPTION_LENGTH,
   );
 
   const highlighted = [
@@ -191,8 +191,9 @@ async function fetchRecentPortfolioUpdates(
     .from('updates')
     .select(UPDATE_SELECT)
     .in('project_id', [...projectIds])
-    .eq('valid', true)
-    .eq('duplicate', false)
+    .or(
+      'outcome_measurable_id.not.is.null,output_measurable_id.not.is.null,and(valid.eq.true,duplicate.eq.false)',
+    )
     .gte('date::date', dateRange.from)
     .lte('date::date', dateRange.to)
     .order('date', { ascending: false, nullsFirst: false })
@@ -200,59 +201,59 @@ async function fetchRecentPortfolioUpdates(
     .limit(TARGET_COUNT);
 
   if (error) {
-    throw new Error(`Failed to load recent portfolio updates: ${error.message}`);
+    throw new Error(
+      `Failed to load recent portfolio updates: ${error.message}`,
+    );
   }
 
   return (data ?? []) as Update[];
 }
 
-export const fetchPortfolioImpact = cache(async (): Promise<PortfolioImpactData> => {
-  const supabase = await createClient();
+export const fetchPortfolioImpact = cache(
+  async (): Promise<PortfolioImpactData> => {
+    const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { variant: 'unassigned', stats: null, updates: [] };
-  }
+    if (!user) {
+      return { variant: 'unassigned', stats: null, updates: [] };
+    }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
 
-  if (profile?.role === 'Super Admin') {
-    return { variant: 'reviewer', stats: null, updates: [] };
-  }
+    if (profile?.role === 'Super Admin') {
+      return { variant: 'reviewer', stats: null, updates: [] };
+    }
 
-  const projectIds = await fetchUserAssignedProjectIds();
+    const projectIds = await fetchUserAssignedProjectIds();
 
-  if (projectIds.length === 0) {
-    return { variant: 'unassigned', stats: null, updates: [] };
-  }
+    if (projectIds.length === 0) {
+      return { variant: 'unassigned', stats: null, updates: [] };
+    }
 
-  const { data: projects, error: projectsError } = await supabase
-    .from('projects')
-    .select('id, project_status')
-    .in('id', projectIds);
+    const { data: projects, error: projectsError } = await supabase
+      .from('projects')
+      .select('id, project_status')
+      .in('id', projectIds);
 
-  if (projectsError) {
-    throw new Error(`Failed to load your projects: ${projectsError.message}`);
-  }
+    if (projectsError) {
+      throw new Error(`Failed to load your projects: ${projectsError.message}`);
+    }
 
-  const assigned = (projects ?? []) as ProjectAssignmentRow[];
-  const updateDateRange = getDefaultUpdateDateRange();
+    const assigned = (projects ?? []) as ProjectAssignmentRow[];
+    const updateDateRange = getDefaultUpdateDateRange();
 
-  const [stats, updates] = await Promise.all([
-    fetchPortfolioStats(supabase, assigned),
-    fetchPortfolioHighlightUpdates(
-      supabase,
-      projectIds,
-      updateDateRange,
-    ),
-  ]);
+    const [stats, updates] = await Promise.all([
+      fetchPortfolioStats(supabase, assigned),
+      fetchPortfolioHighlightUpdates(supabase, projectIds, updateDateRange),
+    ]);
 
-  return { variant: 'portfolio', stats, updates, updateDateRange };
-});
+    return { variant: 'portfolio', stats, updates, updateDateRange };
+  },
+);

@@ -1,3 +1,5 @@
+import { isApprovedImpact } from '@/utils/update-review';
+import type { Update } from '@/utils/types';
 import { extractOutputCodeNumber } from '@/components/logframe/extractOutputCodeNumber';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCard from '@/components/ui/feature-card';
@@ -19,7 +21,9 @@ function parseData(data: any[]) {
     outputMeasurableDescription: item.output_measurables.description,
     outputMeasurableTarget: item.output_measurables.target,
     outputMeasurableUnit: item.output_measurables.unit,
-    outputMeasurableValue: item.output_measurables.value,
+    outputMeasurableValue: ((item.output_measurables.updates ?? []) as Update[])
+      .filter(isApprovedImpact)
+      .reduce((sum, update) => sum + update.value, 0),
   }));
 }
 
@@ -35,7 +39,7 @@ export default async function UnitOutputsPage({
   const { data, error } = await supabase
     .from('unit_contributions')
     .select(
-      '*, projects!inner(*), output_measurables(*, projects(name, slug, project_type), outputs(id, code, description, status))',
+      '*, projects!inner(*), output_measurables(*, updates(*), projects(name, slug, project_type), outputs(id, code, description, status))',
     )
     .eq('projects.slug', slug);
 

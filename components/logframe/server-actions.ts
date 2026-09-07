@@ -15,7 +15,7 @@ export const fetchLogframe = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*))), outputs(*, activities(*), output_measurables(*, impact_indicators(*), updates(*)))',
+      'id, slug, name, impacts(*), outcomes(*, outcome_measurables(*, impact_indicators(*), updates(*, impact_indicators(*)))), outputs(*, activities(*), output_measurables(*, impact_indicators(*), updates(*, impact_indicators(*))))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .single();
@@ -40,7 +40,7 @@ export const fetchUnassignedOutputs = async (identifier: number | string) => {
   const response = await supabase
     .from('projects')
     .select(
-      'id, slug, name, outputs!inner(*, activities(*), output_measurables(*, impact_indicators(*), updates(*)))',
+      'id, slug, name, outputs!inner(*, activities(*), output_measurables(*, impact_indicators(*), updates(*, impact_indicators(*))))',
     )
     .eq(typeof identifier === 'number' ? 'id' : 'slug', identifier)
     .is('outputs.outcome_measurable_id', null)
@@ -151,21 +151,26 @@ export const upsertOutcomeMeasurable = async (
     throw new Error('Missing required fields');
   }
 
-  const { data, error } = await supabase
-    .from('outcome_measurables')
-    .upsert({
-      id: measurable.id,
-      project_id: measurable.project_id,
-      outcome_id: measurable.outcome_id,
-      description: measurable.description,
-      verification: measurable.verification || '',
-      assumptions: measurable.assumptions || '',
-      code: measurable.code,
-      target: measurable.target,
-      impact_indicator_id: measurable.impact_indicator_id,
-    })
-    .select()
-    .single();
+  if (!measurable.id && !measurable.impact_indicator_id) {
+    throw new Error('Select an organisational Impact Indicator.');
+  }
+  const fields = {
+    project_id: measurable.project_id,
+    outcome_id: measurable.outcome_id,
+    description: measurable.description,
+    verification: measurable.verification || '',
+    assumptions: measurable.assumptions || '',
+    code: measurable.code,
+    target: measurable.target,
+    impact_indicator_id: measurable.impact_indicator_id,
+  };
+  const query = measurable.id
+    ? supabase
+        .from('outcome_measurables')
+        .update(fields)
+        .eq('id', measurable.id)
+    : supabase.from('outcome_measurables').insert(fields);
+  const { data, error } = await query.select().single();
 
   if (error) throw error;
 
