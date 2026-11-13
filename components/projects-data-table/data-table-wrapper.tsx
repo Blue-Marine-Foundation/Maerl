@@ -4,8 +4,28 @@ import { useQuery } from '@tanstack/react-query';
 import fetchProjectList from './fetch-project-list';
 import { ProjectsDataTable } from './projects-data-table';
 import { columns } from './columns';
+import {
+  isStaleActiveProject,
+  staleThresholdDate,
+} from '@/utils/stale-projects';
 
-export default function ProjectsDataTableWrapper() {
+function toStaleProjects<
+  T extends { project_status?: string | null; last_updated?: string | null },
+>(projects: T[]): T[] {
+  const threshold = staleThresholdDate();
+  return projects
+    .filter((p) => isStaleActiveProject(p, threshold))
+    .sort((a, b) => {
+      // Never-updated projects first, then oldest update first.
+      if (!a.last_updated) return b.last_updated ? -1 : 0;
+      if (!b.last_updated) return 1;
+      return a.last_updated.localeCompare(b.last_updated);
+    });
+}
+
+export default function ProjectsDataTableWrapper({
+  staleOnly = false,
+}: Readonly<{ staleOnly?: boolean }>) {
   const { data, error, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: fetchProjectList,
@@ -40,5 +60,10 @@ export default function ProjectsDataTableWrapper() {
     );
   }
 
-  return <ProjectsDataTable columns={columns} data={data} />;
+  return (
+    <ProjectsDataTable
+      columns={columns}
+      data={staleOnly ? toStaleProjects(data) : data}
+    />
+  );
 }

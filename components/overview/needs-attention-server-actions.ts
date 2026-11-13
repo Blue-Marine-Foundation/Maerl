@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { staleThresholdDate } from '@/utils/stale-projects';
 
 export type NeedsAttentionCounts = {
   updatesPendingReview: number;
@@ -9,14 +10,10 @@ export type NeedsAttentionCounts = {
   staleThresholdIso: string;
 };
 
-const STALE_THRESHOLD_DAYS = 180;
-
 export async function fetchNeedsAttentionCounts(): Promise<NeedsAttentionCounts> {
   const supabase = await createClient();
 
-  const staleThreshold = new Date();
-  staleThreshold.setDate(staleThreshold.getDate() - STALE_THRESHOLD_DAYS);
-  const staleThresholdIso = staleThreshold.toISOString();
+  const staleThresholdIso = staleThresholdDate().toISOString();
 
   const [pendingReviewRes, unverifiedRes, staleProjectsRes] = await Promise.all([
     supabase
