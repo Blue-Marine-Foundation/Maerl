@@ -7,6 +7,7 @@ import { ImpactIndicator, OutcomeMeasurable } from '@/utils/types';
 import { upsertOutcomeMeasurable } from './server-actions';
 import ImpactIndicatorSelect from '../impact-indicators/impact-indicator-select';
 import CalloutCard from './callout-card';
+import { useUser } from '@/components/user/user-provider';
 import { Badge } from '../ui/badge';
 
 interface OutcomeMeasurableFormProps {
@@ -26,6 +27,7 @@ export default function OutcomeMeasurableForm({
   projectId,
   existingCodes = [],
 }: OutcomeMeasurableFormProps) {
+  const { isAdmin } = useUser();
   // Initialize state with measurable values if editing
   const [description, setDescription] = useState(measurable?.description || '');
   const [verification, setVerification] = useState(
@@ -105,7 +107,10 @@ export default function OutcomeMeasurableForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
+      <DialogContent
+        aria-describedby={undefined}
+        className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'
+      >
         <DialogHeader>
           <DialogTitle>
             {measurable ? 'Edit Indicator' : 'Add Indicator'}
@@ -174,12 +179,25 @@ export default function OutcomeMeasurableForm({
             />
           </div>
           <ImpactIndicatorSelect
+            required
+            disabled={Boolean(measurable?.id) && !isAdmin}
             value={impactIndicatorId}
             onChange={(indicator) => {
               setImpactIndicatorId(indicator?.id || null);
               setSelectedIndicator(indicator);
             }}
           />
+          {mutation.error && (
+            <p role='alert' className='text-red-600'>
+              {mutation.error.message}
+            </p>
+          )}
+          {measurable?.id && (
+            <p className='text-sm text-muted-foreground'>
+              Only admins can change this mapping. Existing updates keep their
+              original Impact Indicator.
+            </p>
+          )}
           <div className='flex justify-end'>
             <button
               className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'

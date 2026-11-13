@@ -1,3 +1,4 @@
+import { isApprovedImpact } from '@/utils/update-review';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { OutputMeasurable } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
@@ -44,7 +45,13 @@ export const createColumns = (
   {
     accessorKey: 'value',
     header: 'Actual Value',
-    cell: ({ row }) => <p>{row.original.value ?? 0}</p>,
+    cell: ({ row }) => (
+      <p>
+        {(row.original.updates ?? [])
+          .filter(isApprovedImpact)
+          .reduce((sum, update) => sum + update.value, 0)}
+      </p>
+    ),
     size: 70,
   },
   {
@@ -110,7 +117,7 @@ export const createColumns = (
     accessorKey: 'actions',
     header: '',
     size: 70,
-    cell: ({ row }: { row: any }) => (
+    cell: ({ row }: { row: any }) =>
       canEditStructure ? (
         <div className='flex items-center gap-2 pt-0.5'>
           <ActionButton
@@ -120,7 +127,6 @@ export const createColumns = (
           />
           <ArchiveToggle outputType='output_indicator' data={row.original} />
         </div>
-      ) : null
-    ),
+      ) : null,
   },
 ];

@@ -6,12 +6,16 @@ import { useState, useEffect } from 'react';
 import type { ImpactIndicator } from '@/utils/types';
 interface ImpactIndicatorSelectProps {
   value: number | null;
+  required?: boolean;
+  disabled?: boolean;
   onChange: (indicator: ImpactIndicator | null) => void;
 }
 
 export default function ImpactIndicatorSelect({
   value,
   onChange,
+  required = false,
+  disabled = false,
 }: ImpactIndicatorSelectProps) {
   const { data: indicators } = useQuery({
     queryKey: ['impactIndicators'],
@@ -54,6 +58,8 @@ export default function ImpactIndicatorSelect({
         </label>
         <select
           id='impactIndicator'
+          required={required}
+          disabled={disabled}
           className='w-full rounded-md border bg-background px-4 py-2'
           value={selectedIndicator?.id || ''}
           onChange={(e) => handleChange(e.target.value)}

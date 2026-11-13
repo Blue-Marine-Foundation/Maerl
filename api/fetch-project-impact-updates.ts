@@ -1,5 +1,6 @@
 'use server';
 
+import { approvedImpactFilters } from '@/utils/update-review';
 import { createClient } from '@/utils/supabase/server';
 import { toServerDateString } from '@/utils/date-utils';
 
@@ -12,13 +13,13 @@ export const fetchProjectImpactUpdates = async (
   const { data, error } = await supabase
     .from('updates')
     .select(
-      '*, projects!inner(*), output_measurables(*), impact_indicators!inner(*), users(*)',
+      '*, projects!inner(*), output_measurables(*), outcome_measurables(*), impact_indicators!inner(*), users(*)',
     )
     .gte('date::date', toServerDateString(dateRange.from))
     .lte('date::date', toServerDateString(dateRange.to))
     .eq('type', 'Impact')
     .eq('projects.slug', projectSlug)
-    .match({ duplicate: false, valid: true })
+    .match({ ...approvedImpactFilters })
     .order('date', { ascending: false });
 
   if (error) {

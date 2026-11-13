@@ -96,6 +96,7 @@ export type Outcome = {
 };
 
 export interface OutcomeMeasurable {
+  updates?: Update[];
   id?: number;
   assumptions: string;
   code: string;
@@ -154,6 +155,7 @@ export type Update = {
   date: string;
   project_id: number;
   output_measurable_id: number | null;
+  outcome_measurable_id: number | null;
   type: string;
   description: string;
   value: number;
@@ -169,6 +171,7 @@ export type Update = {
   review_note: string;
   projects?: ProjectMetadata;
   output_measurables?: OutputMeasurable;
+  outcome_measurables?: OutcomeMeasurable;
   impact_indicators?: ImpactIndicator;
   users?: User;
 };

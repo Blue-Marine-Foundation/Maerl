@@ -20,7 +20,7 @@ import {
 import OutputMeasurableForm from './output-measurable-form';
 import { cn } from '@/utils/cn';
 import { createColumns } from './output-indicators-table-columns';
-import OutputIndicatorUpdates from './output-indicator-updates';
+import IndicatorUpdates from './indicator-updates';
 
 export default function OutputIndicatorsDetailsTable({
   measurables,
@@ -150,7 +150,7 @@ export default function OutputIndicatorsDetailsTable({
                     {expandedRows[row.id] && (
                       <TableRow className='duration-300 ease-in-out animate-in fade-in hover:bg-transparent'>
                         <TableCell colSpan={columns.length} className='p-0'>
-                          <OutputIndicatorUpdates measurable={row.original} />
+                          <IndicatorUpdates measurable={row.original} />
                         </TableCell>
                       </TableRow>
                     )}

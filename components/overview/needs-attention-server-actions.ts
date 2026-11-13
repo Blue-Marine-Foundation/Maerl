@@ -15,25 +15,25 @@ export async function fetchNeedsAttentionCounts(): Promise<NeedsAttentionCounts>
 
   const staleThresholdIso = staleThresholdDate().toISOString();
 
-  const [pendingReviewRes, unverifiedRes, staleProjectsRes] = await Promise.all([
-    supabase
-      .from('updates')
-      .select('id', { count: 'exact', head: true })
-      .eq('valid', true)
-      .eq('duplicate', false)
-      .not('admin_reviewed', 'is', true),
-    supabase
-      .from('updates')
-      .select('id', { count: 'exact', head: true })
-      .eq('valid', true)
-      .eq('duplicate', false)
-      .not('verified', 'is', true),
-    supabase
-      .from('projects')
-      .select('id', { count: 'exact', head: true })
-      .ilike('project_status', 'Active%')
-      .or(`last_updated.is.null,last_updated.lt.${staleThresholdIso}`),
-  ]);
+  const [pendingReviewRes, unverifiedRes, staleProjectsRes] = await Promise.all(
+    [
+      supabase
+        .from('updates')
+        .select('id', { count: 'exact', head: true })
+        .eq('duplicate', false)
+        .not('admin_reviewed', 'is', true),
+      supabase
+        .from('updates')
+        .select('id', { count: 'exact', head: true })
+        .eq('duplicate', false)
+        .not('verified', 'is', true),
+      supabase
+        .from('projects')
+        .select('id', { count: 'exact', head: true })
+        .ilike('project_status', 'Active%')
+        .or(`last_updated.is.null,last_updated.lt.${staleThresholdIso}`),
+    ],
+  );
 
   if (pendingReviewRes.error) {
     throw new Error(

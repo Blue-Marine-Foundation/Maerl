@@ -1,10 +1,11 @@
 'use client';
 
-import { OutputMeasurable } from '@/utils/types';
+import { OutcomeMeasurable, OutputMeasurable } from '@/utils/types';
 import { Badge } from '@/components/ui/badge';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCard from '@/components/ui/feature-card';
 import Link from 'next/link';
+import UpdateStatus from '../updates/update-status';
 import * as d3 from 'd3';
 import {
   Dialog,
@@ -16,19 +17,17 @@ import {
 import UpdateForm from '../updates/update-form';
 import { useUser } from '@/components/user/user-provider';
 
-export default function OutputIndicatorUpdates({
+export default function IndicatorUpdates({
   measurable,
+  level = 'Output',
 }: Readonly<{
-  measurable: OutputMeasurable;
+  measurable: OutputMeasurable | OutcomeMeasurable;
+  level?: 'Outcome' | 'Output';
 }>) {
   const { authUserId, isAdmin } = useUser();
-  const measurableUpdates = measurable.updates
-    ?.filter((update) => !update.duplicate && update.valid)
-    .sort((a, b) => {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    });
+  const measurableUpdates = measurable.updates?.slice().sort((a, b) => {
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   return (
     <div className='mb-8 mt-4 pl-12'>
@@ -55,8 +54,20 @@ export default function OutputIndicatorUpdates({
                               <DialogTitle>Edit update</DialogTitle>
                             </DialogHeader>
                             <UpdateForm
-                              outputMeasurable={measurable}
-                              impactIndicator={measurable.impact_indicators!}
+                              outputMeasurable={
+                                level === 'Output'
+                                  ? (measurable as OutputMeasurable)
+                                  : undefined
+                              }
+                              outcomeMeasurable={
+                                level === 'Outcome'
+                                  ? (measurable as OutcomeMeasurable)
+                                  : undefined
+                              }
+                              impactIndicator={
+                                update.impact_indicators ??
+                                measurable.impact_indicators
+                              }
                               projectId={measurable.project_id}
                               update={update}
                               isAdmin={isAdmin}
@@ -66,6 +77,7 @@ export default function OutputIndicatorUpdates({
                       )}
                     </div>
                     <div>
+                      <UpdateStatus update={update} />
                       <p className='max-w-prose text-sm'>
                         {update.description}
                       </p>
@@ -90,7 +102,7 @@ export default function OutputIndicatorUpdates({
                               |
                             </span>
                             <span className='text-xs text-muted-foreground'>
-                              {`${update.value} ${measurable.impact_indicators?.indicator_unit ?? ''}`}
+                              {`${update.value} ${update.impact_indicators?.indicator_unit ?? ''}`}
                             </span>
                           </>
                         ) : null}

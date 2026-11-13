@@ -1,3 +1,4 @@
+import UpdateStatus from '@/components/updates/update-status';
 import { Update } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
@@ -188,21 +189,37 @@ export const columns: ColumnDef<Update>[] = [
     ),
   },
   {
-    header: 'Output',
+    header: 'Indicator',
     accessorKey: 'output_measurable_id',
     meta: { widthClass: 'w-20' },
     cell: ({ row }) => {
       const project = row.original.projects?.slug;
       const projectType = row.original.projects?.project_type?.toLowerCase();
       const outputId = row.original.output_measurables?.output_id;
-      const link = `/${projectType}s/${project}/logframe#output-${outputId}`;
+      const anchor = row.original.outcome_measurables
+        ? `outcome-${row.original.outcome_measurables.outcome_id}`
+        : `output-${outputId}`;
+      const link = `/${projectType}s/${project}/logframe#${anchor}`;
       return (
         <HoverCard>
           <HoverCardTrigger>
-            {row.original.output_measurables?.code}
+            <UpdateStatus update={row.original} />
+            {
+              (
+                row.original.outcome_measurables ??
+                row.original.output_measurables
+              )?.code
+            }
           </HoverCardTrigger>
           <HoverCardContent className='flex flex-col gap-2'>
-            <p>{row.original.output_measurables?.description}</p>
+            <p>
+              {
+                (
+                  row.original.outcome_measurables ??
+                  row.original.output_measurables
+                )?.description
+              }
+            </p>
             <Link
               href={link}
               className='text-right text-xs text-primary hover:underline'

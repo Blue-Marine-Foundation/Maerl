@@ -21,10 +21,13 @@ export async function fetchImpactIndicatorSummaries(
   toDate: string,
 ) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('get_impact_indicator_summaries', {
-    from_date: fromDate,
-    to_date: toDate,
-  });
+  const { data, error } = await supabase.rpc(
+    'get_reviewed_impact_indicator_summaries',
+    {
+      from_date: fromDate,
+      to_date: toDate,
+    },
+  );
 
   if (error) {
     throw new Error(error.message);
@@ -38,10 +41,13 @@ export async function fetchImpactIndicatorSeries(
   toDate: string,
 ) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('get_impact_indicator_series', {
-    from_date: fromDate,
-    to_date: toDate,
-  });
+  const { data, error } = await supabase.rpc(
+    'get_reviewed_impact_indicator_series',
+    {
+      from_date: fromDate,
+      to_date: toDate,
+    },
+  );
 
   if (error) {
     throw new Error(error.message);

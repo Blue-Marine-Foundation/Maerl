@@ -20,7 +20,7 @@ export default function ProjectUpdatesDataTable({
   const dateRange = useUrlDateState();
 
   const { data, error } = useQuery({
-    queryKey: ['updates', dateRange],
+    queryKey: ['updates', projectId, dateRange],
     queryFn: () => fetchUpdates(dateRange, projectId),
   });
 

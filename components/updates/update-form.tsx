@@ -2,14 +2,20 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ImpactIndicator, OutputMeasurable, Update } from '@/utils/types';
+import {
+  ImpactIndicator,
+  OutcomeMeasurable,
+  OutputMeasurable,
+  Update,
+} from '@/utils/types';
 import { upsertUpdate } from '@/api/upsert-updates';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 interface UpdateFormProps {
-  outputMeasurable: OutputMeasurable;
-  impactIndicator: ImpactIndicator;
+  outputMeasurable?: OutputMeasurable;
+  outcomeMeasurable?: OutcomeMeasurable;
+  impactIndicator?: ImpactIndicator | null;
   projectId: number;
   update?: Update;
   isAdmin?: boolean;
@@ -18,14 +24,18 @@ interface UpdateFormProps {
 
 export default function UpdateForm({
   outputMeasurable,
+  outcomeMeasurable,
   impactIndicator,
   projectId,
   update,
   isAdmin = false,
   onSuccess,
 }: UpdateFormProps) {
+  const indicator =
+    outcomeMeasurable ?? update?.outcome_measurables ?? outputMeasurable;
+  const isOutcome = Boolean(outcomeMeasurable ?? update?.outcome_measurable_id);
   const [description, setDescription] = useState(update?.description || '');
-  const [value, setValue] = useState<number | null>(update?.value || null);
+  const [value, setValue] = useState<number | null>(update?.value ?? null);
   const [type, setType] = useState(update?.type || 'Impact');
   const [link, setLink] = useState(update?.link || '');
   const [source, setSource] = useState(update?.source || '');
@@ -45,7 +55,12 @@ export default function UpdateForm({
 
   const mutation = useMutation({
     mutationFn: (newUpdate: Partial<Update>) => upsertUpdate(newUpdate),
-    onSuccess: () => {
+    onSuccess: ({ update: saved }) => {
+      setAdminReviewed(saved.admin_reviewed ?? false);
+      setVerified(saved.verified ?? false);
+      setValid(saved.valid ?? false);
+      setDuplicate(saved.duplicate ?? false);
+      setReviewNote(saved.review_note ?? '');
       queryClient.invalidateQueries();
       toast.success(
         update ? 'Update saved successfully' : 'Update submitted successfully',
@@ -73,21 +88,54 @@ export default function UpdateForm({
     e.preventDefault();
     setError(null);
 
-    mutation.mutate({
-      id: update?.id, // Include the id if we're editing
-      project_id: projectId,
-      ...(outputMeasurable?.id !== undefined
-        ? { output_measurable_id: outputMeasurable.id }
-        : {}),
-      ...(impactIndicator?.id !== undefined
-        ? { impact_indicator_id: impactIndicator.id }
-        : {}),
+    if (!description.trim()) {
+      setError('Describe the update before submitting.');
+      return;
+    }
+
+    if (type === 'Impact' && (value === null || !Number.isFinite(value))) {
+      setError('Enter a numeric impact value.');
+      return;
+    }
+
+    const content = {
       description,
-      value: Number(value),
+      value: type === 'Impact' ? value! : undefined,
       type,
       link,
       source,
       date,
+    };
+    const previous = update && {
+      description: update.description || '',
+      value: update.value ?? undefined,
+      type: update.type,
+      link: update.link || '',
+      source: update.source || '',
+      date: update.date,
+    };
+    const changes = previous
+      ? Object.fromEntries(
+          Object.entries(content).filter(
+            ([key, fieldValue]) =>
+              fieldValue !== previous[key as keyof typeof previous],
+          ),
+        )
+      : content;
+    mutation.mutate({
+      ...(update
+        ? { id: update.id }
+        : {
+            project_id: projectId,
+            output_measurable_id: isOutcome
+              ? null
+              : (outputMeasurable?.id ?? null),
+            outcome_measurable_id: isOutcome
+              ? (outcomeMeasurable?.id ?? null)
+              : null,
+            impact_indicator_id: impactIndicator?.id,
+          }),
+      ...changes,
       ...(isAdmin && {
         admin_reviewed: adminReviewed,
         review_note: reviewNote,
@@ -101,9 +149,11 @@ export default function UpdateForm({
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-4 text-sm'>
       <div className='grid grid-cols-[200px_1fr] items-baseline gap-4'>
-        <p className='text-sm font-medium'>Output Indicator</p>
+        <p className='text-sm font-medium'>
+          {isOutcome ? 'Outcome Indicator' : 'Output Indicator'}
+        </p>
         <p className='text-sm text-muted-foreground'>
-          {outputMeasurable?.description}
+          {indicator?.description}
         </p>
         {impactIndicator && (
           <>
@@ -159,7 +209,7 @@ export default function UpdateForm({
             </label>
             <div className='flex items-center justify-between gap-2'>
               <span className='text-sm text-muted-foreground'>
-                {outputMeasurable.impact_indicators?.indicator_unit}
+                {impactIndicator?.indicator_unit}
               </span>
               <input
                 type='number'
@@ -259,7 +309,9 @@ export default function UpdateForm({
       <div className='flex items-center justify-end gap-6'>
         {error && (
           <div className='rounded-md border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm'>
-            <p className='text-red-700 dark:text-red-400'>{error}</p>
+            <p role='alert' className='text-red-700 dark:text-red-400'>
+              {error}
+            </p>
           </div>
         )}
         <button

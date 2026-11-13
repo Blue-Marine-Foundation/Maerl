@@ -1,3 +1,4 @@
+import UpdateStatus from '@/components/updates/update-status';
 import Link from 'next/link';
 import * as d3 from 'd3';
 import { ArrowUpRightIcon } from 'lucide-react';
@@ -95,6 +96,7 @@ export default function PortfolioImpactCard({
 
       {update.description ? (
         <p className='flex-1 whitespace-pre-line text-sm leading-relaxed text-foreground'>
+          <UpdateStatus update={update} />
           {update.description}
         </p>
       ) : null}
