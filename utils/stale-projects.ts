@@ -7,7 +7,7 @@ export const STALE_PROJECTS_FILTER = 'stale';
 
 export function staleThresholdDate(now: Date = new Date()): Date {
   const threshold = new Date(now);
-  threshold.setDate(threshold.getDate() - STALE_THRESHOLD_DAYS);
+  threshold.setUTCDate(threshold.getUTCDate() - STALE_THRESHOLD_DAYS);
   return threshold;
 }
 
