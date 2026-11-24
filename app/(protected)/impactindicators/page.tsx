@@ -19,8 +19,8 @@ export default function ImpactPage() {
         <div>
           <h2 className='text-lg font-semibold'>Impact by Strategic Goal</h2>
           <p className='mt-1 text-sm text-muted-foreground'>
-            All-time impact totals from valid indicator updates across active
-            projects.
+            All-time impact totals across active projects, counting only Impact
+            Updates approved by an admin as valid and not duplicate.
           </p>
         </div>
         <PillarStories />
@@ -33,8 +33,9 @@ export default function ImpactPage() {
           <h2 className='text-lg font-semibold'>Indicator catalogue</h2>
           <p className='mt-1 text-sm text-muted-foreground'>
             All impact indicators with summarised values. Filter, sort, and
-            export. Summarised values are collated from updates that are{' '}
-            <strong>valid</strong>. Duplicates and invalid updates are excluded.
+            export. Totals include only numeric Impact Updates approved by an
+            admin as valid and not duplicate. Updates pending review, invalid
+            updates, duplicates, and Progress Updates are excluded.
           </p>
         </div>
         <FeatureCard>

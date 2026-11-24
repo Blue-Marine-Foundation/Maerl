@@ -1,6 +1,7 @@
+import { isApprovedImpact } from '@/utils/update-review';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { OutputMeasurable } from '@/utils/types';
-import { ColumnDef } from '@tanstack/react-table';
+import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import {
   Dialog,
@@ -13,12 +14,60 @@ import ActionButton from '../ui/action-button';
 import UpdateForm from '@/components/updates/update-form';
 import ArchiveToggle from '../archive-toggle/archive-toggle';
 
+export type OutputUpdatesMeta = {
+  projectId: number;
+  expandedRows: Record<string, boolean>;
+  toggleRow: (rowId: string) => void;
+};
+
+function UpdatesCell({ row, table }: CellContext<OutputMeasurable, unknown>) {
+  const meta = table.options.meta as OutputUpdatesMeta;
+
+  const measurable = row.original;
+  return (
+    <div className='flex flex-col justify-center gap-2'>
+      <Dialog>
+        <DialogTrigger asChild>
+          <ActionButton
+            action='add'
+            label='Add update'
+            className='flex w-full items-center justify-center bg-brand-urchin/15 hover:bg-brand-urchin/30'
+          />
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add update</DialogTitle>
+          </DialogHeader>
+          <UpdateForm
+            outputMeasurable={measurable}
+            impactIndicator={measurable.impact_indicators!}
+            projectId={meta.projectId}
+          />
+        </DialogContent>
+      </Dialog>
+      <button
+        onClick={() => meta.toggleRow(row.id)}
+        className='flex w-full min-w-[145px] items-center justify-center gap-1 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground'
+      >
+        {meta.expandedRows[row.id] ? (
+          <>
+            <ChevronDown className='h-4 w-4' />
+            Hide updates
+          </>
+        ) : (
+          <>
+            <ChevronRight className='h-4 w-4' />
+            Show updates
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export const createColumns = (
-  toggleRow: (rowId: string) => void,
-  expandedRows: Record<string, boolean>,
   handleEditMeasurable: (measurable: OutputMeasurable) => void,
   canEditStructure: boolean,
-  projectId: string,
 ): ColumnDef<OutputMeasurable, any>[] => [
   {
     accessorKey: 'description',
@@ -44,7 +93,13 @@ export const createColumns = (
   {
     accessorKey: 'value',
     header: 'Actual Value',
-    cell: ({ row }) => <p>{row.original.value ?? 0}</p>,
+    cell: ({ row }) => (
+      <p>
+        {(row.original.updates ?? [])
+          .filter(isApprovedImpact)
+          .reduce((sum, update) => sum + update.value, 0)}
+      </p>
+    ),
     size: 70,
   },
   {
@@ -63,54 +118,13 @@ export const createColumns = (
   {
     id: 'updates',
     header: '',
-    cell: ({ row }) => {
-      const measurable = row.original;
-      return (
-        <div className='flex flex-col justify-center gap-2'>
-          <Dialog>
-            <DialogTrigger asChild>
-              <ActionButton
-                action='add'
-                label='Add update'
-                className='flex w-full items-center justify-center bg-brand-urchin/15 hover:bg-brand-urchin/30'
-              />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add update</DialogTitle>
-              </DialogHeader>
-              <UpdateForm
-                outputMeasurable={measurable}
-                impactIndicator={measurable.impact_indicators!}
-                projectId={Number(projectId)}
-              />
-            </DialogContent>
-          </Dialog>
-          <button
-            onClick={() => toggleRow(row.id)}
-            className='flex w-full min-w-[145px] items-center justify-center gap-1 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground'
-          >
-            {expandedRows[row.id] ? (
-              <>
-                <ChevronDown className='h-4 w-4' />
-                Hide updates
-              </>
-            ) : (
-              <>
-                <ChevronRight className='h-4 w-4' />
-                Show updates
-              </>
-            )}
-          </button>
-        </div>
-      );
-    },
+    cell: UpdatesCell,
   },
   {
     accessorKey: 'actions',
     header: '',
     size: 70,
-    cell: ({ row }: { row: any }) => (
+    cell: ({ row }: { row: any }) =>
       canEditStructure ? (
         <div className='flex items-center gap-2 pt-0.5'>
           <ActionButton
@@ -120,7 +134,6 @@ export const createColumns = (
           />
           <ArchiveToggle outputType='output_indicator' data={row.original} />
         </div>
-      ) : null
-    ),
+      ) : null,
   },
 ];

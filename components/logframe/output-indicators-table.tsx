@@ -19,8 +19,11 @@ import {
 } from '@/components/ui/table';
 import OutputMeasurableForm from './output-measurable-form';
 import { cn } from '@/utils/cn';
-import { createColumns } from './output-indicators-table-columns';
-import OutputIndicatorUpdates from './output-indicator-updates';
+import {
+  createColumns,
+  type OutputUpdatesMeta,
+} from './output-indicators-table-columns';
+import IndicatorUpdates from './indicator-updates';
 
 export default function OutputIndicatorsDetailsTable({
   measurables,
@@ -59,18 +62,14 @@ export default function OutputIndicatorsDetailsTable({
     }));
   };
 
-  const columns = createColumns(
-    toggleRow,
-    expandedRows,
-    handleEditMeasurable,
-    canEditStructure,
-    projectId.toString(),
-  );
+  const columns = createColumns(handleEditMeasurable, canEditStructure);
 
   const table = useReactTable({
     data: measurables,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (measurable) => String(measurable.id),
+    meta: { projectId, expandedRows, toggleRow } satisfies OutputUpdatesMeta,
     columnResizeMode: 'onChange',
   });
 
@@ -150,7 +149,7 @@ export default function OutputIndicatorsDetailsTable({
                     {expandedRows[row.id] && (
                       <TableRow className='duration-300 ease-in-out animate-in fade-in hover:bg-transparent'>
                         <TableCell colSpan={columns.length} className='p-0'>
-                          <OutputIndicatorUpdates measurable={row.original} />
+                          <IndicatorUpdates measurable={row.original} />
                         </TableCell>
                       </TableRow>
                     )}

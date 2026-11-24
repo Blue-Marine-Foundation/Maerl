@@ -19,28 +19,51 @@ export const updateUpdateFields = async (updates: UpdateField[]) => {
     throw new Error('Unauthorized');
   }
 
-  const results = [];
-
+  const { data: profile, error: profileError } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError) throw profileError;
+  if (!['Admin', 'Super Admin'].includes(profile.role))
+    throw new Error('Only admins may review updates');
+  const allowedFields = [
+    'duplicate',
+    'verified',
+    'valid',
+    'admin_reviewed',
+    'review_note',
+  ];
   for (const update of updates) {
+    if (
+      !allowedFields.includes(update.field) ||
+      (update.field === 'review_note'
+        ? typeof update.value !== 'string'
+        : typeof update.value !== 'boolean')
+    ) {
+      throw new Error('Invalid review field or value');
+    }
+  }
+
+  const results = [];
+  const grouped = new Map<number, UpdateField[]>();
+  for (const change of updates) {
+    const group = grouped.get(change.updateId) ?? [];
+    group.push(change);
+    grouped.set(change.updateId, group);
+  }
+
+  for (const [updateId, changes] of Array.from(grouped)) {
     try {
-      const { updateId, field, value } = update;
-
-      // Prepare the update data
-      const updateData: any = {
-        [field]: value,
-      };
-
-      // Apply business logic
-      if (field === 'duplicate' && value === true) {
-        updateData.valid = false; // If marked as duplicate, set valid to false
+      // Save the row's checks together, so a refresh cannot see half a review.
+      const updateData: Record<string, any> = {};
+      for (const { field, value } of changes) {
+        updateData[field] = value;
+        if (field === 'duplicate' && value === true) updateData.valid = false;
       }
+      if (updateData.duplicate === true) updateData.valid = false;
 
-      // Only set admin_reviewed to true when other fields are changed
-      // (not when admin_reviewed itself is being updated)
-      if (field !== 'admin_reviewed') {
-        updateData.admin_reviewed = true;
-      }
-
+      // Completing the review remains an explicit admin_reviewed change.
       const { data, error } = await supabase
         .from('updates')
         .update(updateData)
@@ -48,30 +71,19 @@ export const updateUpdateFields = async (updates: UpdateField[]) => {
         .select()
         .single();
 
-      if (error) {
-        console.error('Update error:', error);
+      if (error) throw error;
+      for (const { field } of changes)
+        results.push({ updateId, field, success: true, data });
+    } catch (error) {
+      console.error('Update error:', error);
+      for (const { field } of changes)
         results.push({
           updateId,
           field,
           success: false,
-          error: error.message,
+          error:
+            error instanceof Error ? error.message : 'Unable to save review',
         });
-      } else {
-        results.push({
-          updateId,
-          field,
-          success: true,
-          data,
-        });
-      }
-    } catch (error) {
-      console.error('Update error:', error);
-      results.push({
-        updateId: update.updateId,
-        field: update.field,
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
     }
   }
 

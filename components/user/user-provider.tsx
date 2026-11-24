@@ -1,6 +1,10 @@
 'use client';
 
-import { fetchCurrentUserProfile, type AppUserRole } from '@/api/fetch-current-user-profile';
+import {
+  fetchCurrentUserProfile,
+  type AppUserRole,
+  type CurrentUserProfileResponse,
+} from '@/api/fetch-current-user-profile';
 import { createClient as createSupabaseClient } from '@/utils/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
@@ -27,8 +31,29 @@ export function UserSessionSync() {
     const supabase = createSupabaseClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      void queryClient.resetQueries({ queryKey: CURRENT_USER_PROFILE_QUERY_KEY });
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      const cached = queryClient.getQueryData<CurrentUserProfileResponse>(
+        CURRENT_USER_PROFILE_QUERY_KEY,
+      );
+      if (event === 'SIGNED_OUT') {
+        void queryClient.cancelQueries({
+          queryKey: CURRENT_USER_PROFILE_QUERY_KEY,
+        });
+        queryClient.setQueryData(CURRENT_USER_PROFILE_QUERY_KEY, {
+          authUser: null,
+          profile: null,
+        });
+      } else if (cached && cached.authUser?.id !== session?.user.id) {
+        // Clear permissions immediately when the account actually changes.
+        void queryClient.resetQueries({
+          queryKey: CURRENT_USER_PROFILE_QUERY_KEY,
+        });
+      } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        // Refresh in the background without briefly hiding same-user controls.
+        void queryClient.invalidateQueries({
+          queryKey: CURRENT_USER_PROFILE_QUERY_KEY,
+        });
+      }
     });
 
     return () => {

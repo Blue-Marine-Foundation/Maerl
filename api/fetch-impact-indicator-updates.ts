@@ -13,9 +13,9 @@ export async function fetchImpactIndicatorUpdates(
   const { data, error } = await supabase
     .from('updates')
     .select(
-      '*, projects(slug, name), output_measurables(*), impact_indicators(id, indicator_unit), users(*)',
+      '*, projects(slug, name), output_measurables(*), outcome_measurables(*), impact_indicators(*), users(*)',
     )
-    .match({ impact_indicator_id: id, duplicate: false, valid: true })
+    .eq('impact_indicator_id', id)
     .gte('date::date', toServerDateString(fromDate))
     .lte('date::date', toServerDateString(toDate))
     .order('date', { ascending: false });

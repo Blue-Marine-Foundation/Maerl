@@ -61,15 +61,16 @@ export const fetchUpdates = async (
   let query = supabase
     .from('updates')
     .select(
-      '*, projects(name, slug), output_measurables(*), impact_indicators(*), users(*)',
+      '*, projects(name, slug), output_measurables(*), outcome_measurables(*), impact_indicators(*), users(*)',
     )
     .gte('date::date', dates.from)
     .lte('date::date', dates.to)
     .match({
       ...(projectId ? { project_id: projectId } : {}),
-      valid: true,
-      duplicate: false,
     })
+    .or(
+      'outcome_measurable_id.not.is.null,output_measurable_id.not.is.null,and(valid.eq.true,duplicate.eq.false)',
+    )
     .order('date', { ascending: false });
 
   if (shouldFilterToAssignedProjects) {

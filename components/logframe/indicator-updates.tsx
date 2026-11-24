@@ -1,10 +1,11 @@
 'use client';
 
-import { OutputMeasurable } from '@/utils/types';
+import { OutcomeMeasurable, OutputMeasurable } from '@/utils/types';
 import { Badge } from '@/components/ui/badge';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCard from '@/components/ui/feature-card';
 import Link from 'next/link';
+import UpdateStatus from '../updates/update-status';
 import * as d3 from 'd3';
 import {
   Dialog,
@@ -16,47 +17,61 @@ import {
 import UpdateForm from '../updates/update-form';
 import { useUser } from '@/components/user/user-provider';
 
-export default function OutputIndicatorUpdates({
+export default function IndicatorUpdates({
   measurable,
+  level = 'Output',
 }: Readonly<{
-  measurable: OutputMeasurable;
+  measurable: OutputMeasurable | OutcomeMeasurable;
+  level?: 'Outcome' | 'Output';
 }>) {
   const { authUserId, isAdmin } = useUser();
-  const measurableUpdates = measurable.updates
-    ?.filter((update) => !update.duplicate && update.valid)
-    .sort((a, b) => {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    });
+  const measurableUpdates = measurable.updates?.slice().sort((a, b) => {
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   return (
-    <div className='mb-8 mt-4 pl-12'>
-      <div className='mr-8 rounded-lg border border-border'>
+    <div className='m-4'>
+      <div className='rounded-lg border border-border'>
         <div className='p-4'>
           <p className='mb-4 font-medium text-muted-foreground'>Updates</p>
           {measurableUpdates?.length ? (
             <div className='flex flex-col gap-3'>
               {measurableUpdates.map((update) => (
                 <div
-                  className='group flex flex-col gap-2 px-2 py-3.5'
+                  className='group flex flex-col gap-2 py-3.5'
                   key={update.id}
                 >
-                  <div className='flex flex-row gap-4'>
-                    <div>
+                  <div className='flex items-start gap-4'>
+                    <div className='order-2 shrink-0'>
                       {(isAdmin ||
                         (authUserId && update.posted_by === authUserId)) && (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <ActionButton action='edit' variant='icon' />
+                            <ActionButton
+                              action='edit'
+                              variant='icon'
+                              aria-label='Edit update'
+                            />
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
                               <DialogTitle>Edit update</DialogTitle>
                             </DialogHeader>
                             <UpdateForm
-                              outputMeasurable={measurable}
-                              impactIndicator={measurable.impact_indicators!}
+                              outputMeasurable={
+                                level === 'Output'
+                                  ? (measurable as OutputMeasurable)
+                                  : undefined
+                              }
+                              outcomeMeasurable={
+                                level === 'Outcome'
+                                  ? (measurable as OutcomeMeasurable)
+                                  : undefined
+                              }
+                              impactIndicator={
+                                update.impact_indicators ??
+                                measurable.impact_indicators
+                              }
                               projectId={measurable.project_id}
                               update={update}
                               isAdmin={isAdmin}
@@ -65,7 +80,11 @@ export default function OutputIndicatorUpdates({
                         </Dialog>
                       )}
                     </div>
-                    <div>
+                    <div className='order-1 min-w-0 flex-1'>
+                      <UpdateStatus
+                        update={update}
+                        className='text-left [&>span:first-child]:pl-0'
+                      />
                       <p className='max-w-prose text-sm'>
                         {update.description}
                       </p>
@@ -90,7 +109,7 @@ export default function OutputIndicatorUpdates({
                               |
                             </span>
                             <span className='text-xs text-muted-foreground'>
-                              {`${update.value} ${measurable.impact_indicators?.indicator_unit ?? ''}`}
+                              {`${update.value} ${update.impact_indicators?.indicator_unit ?? ''}`}
                             </span>
                           </>
                         ) : null}

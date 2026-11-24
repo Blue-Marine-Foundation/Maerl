@@ -31,7 +31,7 @@ export default function OutcomeCardLogframe({
     ) || [];
 
   return (
-    <div className='relative flex flex-col gap-8'>
+    <div id={`outcome-${outcome?.id}`} className='relative flex flex-col gap-8'>
       {!outcome && canEdit && (
         <FeatureCardLogframe title='Outcome' minHeight='100%' variant='outcome'>
           <div className='flex grow flex-col items-center justify-center gap-4'>
@@ -91,7 +91,7 @@ export default function OutcomeCardLogframe({
                 )}
               </button>
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isTableExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isTableExpanded ? 'opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 <OutcomeIndicatorsTable
                   measurables={outcomeMeasurables}

@@ -20,8 +20,12 @@ const scrollToElement = (selector: string) => {
   return false;
 };
 
-export const useLogframeDeeplinking = () => {
+export const useLogframeDeeplinking = (isReady = true) => {
   useEffect(() => {
+    if (!isReady) return;
+
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+
     const handleDeepLink = (attempts = 0) => {
       const hash = window.location.hash;
 
@@ -35,10 +39,19 @@ export const useLogframeDeeplinking = () => {
 
       // Retry with a maximum of 3 attempts
       if (!scrollSuccessful && attempts < 3) {
-        setTimeout(() => handleDeepLink(attempts + 1), 200 * (attempts + 1));
+        timerId = setTimeout(
+          () => handleDeepLink(attempts + 1),
+          200 * (attempts + 1),
+        );
       }
     };
 
-    setTimeout(() => handleDeepLink(), 100);
-  }, []);
+    timerId = setTimeout(() => handleDeepLink(), 100);
+
+    return () => {
+      if (timerId !== undefined) {
+        clearTimeout(timerId);
+      }
+    };
+  }, [isReady]);
 };
