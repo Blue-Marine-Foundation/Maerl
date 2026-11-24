@@ -55,7 +55,6 @@ const InteractiveVerifiedCell = ({ row }: { row: any }) => {
   const verified = getOptimisticValue(updateId, 'verified', serverValue);
 
   const handleClick = () => {
-    if (isUpdating) return;
     updateField(updateId, 'verified', !verified);
   };
 
@@ -63,7 +62,7 @@ const InteractiveVerifiedCell = ({ row }: { row: any }) => {
     <div className='text-center'>
       <button
         onClick={handleClick}
-        disabled={isUpdating}
+        aria-busy={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           verified
             ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
@@ -83,7 +82,6 @@ const InteractiveDuplicateCell = ({ row }: { row: any }) => {
   const duplicate = getOptimisticValue(updateId, 'duplicate', serverValue);
 
   const handleClick = () => {
-    if (isUpdating) return;
     updateField(updateId, 'duplicate', !duplicate);
   };
 
@@ -91,7 +89,7 @@ const InteractiveDuplicateCell = ({ row }: { row: any }) => {
     <div className='text-center'>
       <button
         onClick={handleClick}
-        disabled={isUpdating}
+        aria-busy={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           duplicate
             ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400'
@@ -111,7 +109,6 @@ const InteractiveValidCell = ({ row }: { row: any }) => {
   const valid = getOptimisticValue(updateId, 'valid', serverValue);
 
   const handleClick = () => {
-    if (isUpdating) return;
     updateField(updateId, 'valid', !valid);
   };
 
@@ -119,7 +116,7 @@ const InteractiveValidCell = ({ row }: { row: any }) => {
     <div className='text-center'>
       <button
         onClick={handleClick}
-        disabled={isUpdating}
+        aria-busy={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           valid
             ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
@@ -143,7 +140,6 @@ const InteractiveAdminReviewedCell = ({ row }: { row: any }) => {
   );
 
   const handleClick = () => {
-    if (isUpdating) return;
     updateField(updateId, 'admin_reviewed', !adminReviewed);
   };
 
@@ -151,7 +147,7 @@ const InteractiveAdminReviewedCell = ({ row }: { row: any }) => {
     <div className='text-center'>
       <button
         onClick={handleClick}
-        disabled={isUpdating}
+        aria-busy={isUpdating}
         className={`rounded border px-2 py-1 transition-all hover:opacity-80 disabled:opacity-50 ${
           adminReviewed
             ? 'border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400'
@@ -191,7 +187,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Indicator',
     accessorKey: 'output_measurable_id',
-    meta: { widthClass: 'w-20' },
+    meta: { widthClass: 'w-40 shrink-0 text-left' },
     cell: ({ row }) => {
       const project = row.original.projects?.slug;
       const projectType = row.original.projects?.project_type?.toLowerCase();
@@ -202,14 +198,19 @@ export const columns: ColumnDef<Update>[] = [
       const link = `/${projectType}s/${project}/logframe#${anchor}`;
       return (
         <HoverCard>
-          <HoverCardTrigger>
-            <UpdateStatus update={row.original} />
-            {
-              (
-                row.original.outcome_measurables ??
-                row.original.output_measurables
-              )?.code
-            }
+          <HoverCardTrigger className='flex min-w-0 flex-col items-start gap-1 text-left'>
+            <span className='max-w-full break-words'>
+              {
+                (
+                  row.original.outcome_measurables ??
+                  row.original.output_measurables
+                )?.code
+              }
+            </span>
+            <UpdateStatus
+              update={row.original}
+              className='max-w-full flex-col items-start [&>span]:max-w-full [&>span]:break-words [&>span]:px-0 [&>span]:text-xs'
+            />
           </HoverCardTrigger>
           <HoverCardContent className='flex flex-col gap-2'>
             <p>

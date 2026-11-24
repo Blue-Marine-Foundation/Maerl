@@ -4,7 +4,6 @@ export const approvedImpactFilters = {
   type: 'Impact',
   admin_reviewed: true,
   valid: true,
-  verified: true,
   duplicate: false,
 } as const;
 
@@ -13,7 +12,6 @@ export function isApprovedImpact(update: Update): boolean {
     update.type === 'Impact' &&
     update.admin_reviewed === true &&
     update.valid === true &&
-    update.verified === true &&
     update.duplicate === false &&
     update.value !== null
   );
@@ -32,6 +30,5 @@ export function updateReviewStatus(update: Update): string {
   if (!update.admin_reviewed) return 'Pending Review';
   if (update.duplicate) return 'Duplicate';
   if (!update.valid) return 'Invalid';
-  if (!update.verified) return 'Unverified';
   return 'Approved';
 }

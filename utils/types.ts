@@ -96,6 +96,7 @@ export type Outcome = {
 };
 
 export interface OutcomeMeasurable {
+  progress_only?: boolean;
   updates?: Update[];
   id?: number;
   assumptions: string;

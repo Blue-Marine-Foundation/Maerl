@@ -17,7 +17,7 @@ import { useUser } from '@/components/user/user-provider';
 
 export default function LogframePage() {
   const { slug } = useParams();
-  const { canEditLogframe } = useUser();
+  const { canEditLogframe, isLoading: isUserLoading } = useUser();
 
   const logframeQuery = useQuery({
     queryKey: ['logframe', slug],
@@ -29,8 +29,6 @@ export default function LogframePage() {
     queryFn: () => fetchUnassignedOutputs(slug as string),
   });
 
-  useLogframeDeeplinking();
-
   const { data } = logframeQuery;
   const { data: unassignedOutputs } = unassignedQuery;
   const failed =
@@ -38,6 +36,11 @@ export default function LogframePage() {
     data?.error ||
     unassignedQuery.error ||
     unassignedOutputs?.error;
+  const isLoading =
+    logframeQuery.isLoading || unassignedQuery.isLoading || isUserLoading;
+  const isReady = !failed && !isLoading && Boolean(data?.data);
+
+  useLogframeDeeplinking(isReady);
 
   if (failed || (logframeQuery.isSuccess && !data?.data)) {
     return (
@@ -65,7 +68,7 @@ export default function LogframePage() {
     );
   }
 
-  if (logframeQuery.isLoading || unassignedQuery.isLoading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 

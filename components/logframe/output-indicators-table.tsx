@@ -19,7 +19,10 @@ import {
 } from '@/components/ui/table';
 import OutputMeasurableForm from './output-measurable-form';
 import { cn } from '@/utils/cn';
-import { createColumns } from './output-indicators-table-columns';
+import {
+  createColumns,
+  type OutputUpdatesMeta,
+} from './output-indicators-table-columns';
 import IndicatorUpdates from './indicator-updates';
 
 export default function OutputIndicatorsDetailsTable({
@@ -59,18 +62,14 @@ export default function OutputIndicatorsDetailsTable({
     }));
   };
 
-  const columns = createColumns(
-    toggleRow,
-    expandedRows,
-    handleEditMeasurable,
-    canEditStructure,
-    projectId.toString(),
-  );
+  const columns = createColumns(handleEditMeasurable, canEditStructure);
 
   const table = useReactTable({
     data: measurables,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (measurable) => String(measurable.id),
+    meta: { projectId, expandedRows, toggleRow } satisfies OutputUpdatesMeta,
     columnResizeMode: 'onChange',
   });
 

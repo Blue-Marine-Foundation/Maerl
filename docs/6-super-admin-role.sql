@@ -11,7 +11,8 @@
 -- the 1-2 people who actually own data review on the platform. Code-side:
 --
 --   - api/fetch-current-user-profile.ts extends AppUserRole.
---   - components/user/user-provider.tsx exposes isSuperAdmin.
+--   - components/user/user-provider.tsx exposes isSuperAdmin; isAdmin includes
+--     Super Admin so review owners retain full Admin edit powers in logframe.
 --   - utils/auth/guards.ts adds requireSuperAdmin.
 --   - app/(protected)/admin/layout.tsx now uses requireSuperAdmin (was
 --     requireNonPartner).
@@ -50,3 +51,14 @@ WHERE id = '<auth-uid-here>';
 --    UPDATE public.users
 --    SET role = 'Admin'
 --    WHERE id = '<auth-uid-here>';
+--
+-- 4) RLS: Super Admin must be included in staff policies
+--
+--    The app role was added in code before RLS was updated. Without this,
+--    Super Admins could open /admin but saw zero updates because
+--    updates_admin_pm_all only allowed Admin / Project Manager.
+--
+--    Applied in production via migration `super_admin_rls_policies`:
+--    - public.is_staff_user() helper (Admin, Project Manager, Super Admin)
+--    - Recreated staff policies on updates, projects, logframe tables, etc.
+--    - users select policy now allows Super Admin to read all user rows

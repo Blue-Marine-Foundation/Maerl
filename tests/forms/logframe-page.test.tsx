@@ -1,5 +1,11 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import LogframePage from '@/app/(protected)/projects/[slug]/logframe/page';
 import {
@@ -8,12 +14,17 @@ import {
 } from '@/components/logframe/server-actions';
 
 vi.mock('next/navigation', () => ({ useParams: () => ({ slug: 'example' }) }));
+const user = vi.hoisted(() => ({ isLoading: false }));
 vi.mock('@/components/user/user-provider', () => ({
-  useUser: () => ({ canEditLogframe: true }),
+  useUser: () => ({
+    canEditLogframe: !user.isLoading,
+    isLoading: user.isLoading,
+  }),
 }));
+const deeplinkSpy = vi.hoisted(() => vi.fn());
 vi.mock(
   '@/app/(protected)/projects/[slug]/logframe/useLogframeDeeplinking',
-  () => ({ useLogframeDeeplinking: () => {} }),
+  () => ({ useLogframeDeeplinking: (isReady?: boolean) => deeplinkSpy(isReady) }),
 );
 vi.mock('@/components/logframe/server-actions', () => ({
   fetchLogframe: vi.fn(),
@@ -40,6 +51,7 @@ vi.mock('@/components/logframe/feature-card-logframe', () => ({
 afterEach(() => {
   cleanup();
   vi.resetAllMocks();
+  user.isLoading = false;
 });
 const project = {
   data: { id: 1, impacts: [], outcomes: [], outputs: [] },
@@ -54,6 +66,7 @@ function show() {
       <LogframePage />
     </QueryClientProvider>,
   );
+  return client;
 }
 test('a returned database error shows an alert instead of an empty editable logframe, and can be retried', async () => {
   vi.mocked(fetchLogframe)
@@ -71,8 +84,10 @@ test('a returned database error shows an alert instead of an empty editable logf
     'Unable to load the logframe',
   );
   expect(screen.queryByRole('button', { name: 'Add output' })).toBeNull();
+  expect(deeplinkSpy).not.toHaveBeenCalledWith(true);
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
   await screen.findByRole('button', { name: 'Add output' });
+  expect(deeplinkSpy).toHaveBeenLastCalledWith(true);
 });
 test('a rejected request is visible', async () => {
   vi.mocked(fetchLogframe).mockRejectedValue(new Error('Network failure'));
@@ -103,4 +118,21 @@ test('a genuinely empty project with no unassigned outputs remains editable', as
   show();
   await screen.findByRole('button', { name: 'Add output' });
   expect(screen.queryByRole('alert')).toBeNull();
+});
+
+test('the initial logframe waits for permissions instead of showing incomplete controls', async () => {
+  user.isLoading = true;
+  vi.mocked(fetchLogframe).mockResolvedValue(project as any);
+  vi.mocked(fetchUnassignedOutputs).mockResolvedValue({
+    data: null,
+    error: null,
+  } as any);
+  const client = show();
+  await waitFor(() =>
+    expect(client.getQueryState(['logframe', 'example'])?.status).toBe(
+      'success',
+    ),
+  );
+  await screen.findByText('Loading...');
+  expect(screen.queryByRole('button', { name: 'Add outcome' })).toBeNull();
 });

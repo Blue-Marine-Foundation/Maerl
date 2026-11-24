@@ -68,3 +68,16 @@ test('an admin can remap an existing outcome indicator but cannot clear the mapp
   expect(select.disabled).toBe(false);
   expect(select.required).toBe(true);
 });
+
+test('editing a confirmed Progress-only indicator does not require an Impact mapping', () => {
+  showForm('Admin', {
+    id: 10,
+    impact_indicator_id: null,
+    progress_only: true,
+    code: 'OC.0.3',
+  } as OutcomeMeasurable);
+  expect(screen.queryByLabelText('Impact Indicator')).toBeNull();
+  expect(
+    screen.getByText(/Progress only — this indicator accepts written updates/),
+  ).not.toBeNull();
+});

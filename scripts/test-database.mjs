@@ -37,6 +37,8 @@ try {
     ]);
   sql('tests/database/fixture.sql');
   sql('supabase/migrations/20260907090000_outcome_indicator_updates.sql');
+  sql('supabase/migrations/20261013090000_progress_only_outcome_indicators.sql');
+  sql('supabase/migrations/20261030090000_reviewed_impact_does_not_require_verification.sql');
   const files = process.argv.slice(2).length
     ? process.argv.slice(2)
     : readdirSync('tests/database')

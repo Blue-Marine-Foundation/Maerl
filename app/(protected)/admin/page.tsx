@@ -145,6 +145,14 @@ export default function AdminPage() {
         </div>
       </div>
 
+      <p className='text-sm text-muted-foreground'>
+        Set Valid, Verified and Duplicate first, then set Reviewed to Yes when
+        you have finished. Reviewed entries leave the default list. Impact
+        totals include valid, non-duplicate entries marked as reviewed. Verified
+        records whether supporting evidence is attached; it is not required for
+        an accepted update to count.
+      </p>
+
       {isLoading ? (
         <LoadingStateCard
           title='Loading updates'
@@ -157,7 +165,10 @@ export default function AdminPage() {
           description='Sometimes refreshing the page can resolve the error.'
         />
       ) : (
-        <AdminUpdatesDataTable updates={filteredUpdates} />
+        <AdminUpdatesDataTable
+          updates={filteredUpdates}
+          reviewUpdates={updates}
+        />
       )}
     </div>
   );

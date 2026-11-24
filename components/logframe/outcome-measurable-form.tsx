@@ -178,15 +178,22 @@ export default function OutcomeMeasurableForm({
               placeholder='Enter target'
             />
           </div>
-          <ImpactIndicatorSelect
-            required
-            disabled={Boolean(measurable?.id) && !isAdmin}
-            value={impactIndicatorId}
-            onChange={(indicator) => {
-              setImpactIndicatorId(indicator?.id || null);
-              setSelectedIndicator(indicator);
-            }}
-          />
+          {measurable?.progress_only ? (
+            <p className='text-sm text-muted-foreground'>
+              Progress only — this indicator accepts written updates without an
+              Impact Indicator mapping.
+            </p>
+          ) : (
+            <ImpactIndicatorSelect
+              required
+              disabled={Boolean(measurable?.id) && !isAdmin}
+              value={impactIndicatorId}
+              onChange={(indicator) => {
+                setImpactIndicatorId(indicator?.id || null);
+                setSelectedIndicator(indicator);
+              }}
+            />
+          )}
           {mutation.error && (
             <p role='alert' className='text-red-600'>
               {mutation.error.message}

@@ -32,6 +32,9 @@ import {
 
 type TableMeta = {
   onEditMeasurable?: (measurable: OutcomeMeasurable) => void;
+  projectId: number;
+  expanded: Record<string, boolean>;
+  toggleUpdates: (rowId: string) => void;
 };
 
 type OutcomeCellContext = CellContext<OutcomeMeasurable, unknown>;
@@ -48,7 +51,9 @@ function ImpactIndicatorCell(props: Readonly<OutcomeCellContext>) {
       title={row.original.impact_indicators?.indicator_title}
       className='hover:cursor-help'
     >
-      {row.original.impact_indicators?.indicator_code}
+      {row.original.progress_only
+        ? 'Progress only'
+        : row.original.impact_indicators?.indicator_code}
     </p>
   );
 }
@@ -69,6 +74,43 @@ function ActionsCell(props: Readonly<OutcomeCellContext>) {
       className='-mt-1'
       onClick={() => onEditMeasurable(row.original)}
     />
+  );
+}
+
+function UpdatesCell({ row, table }: Readonly<OutcomeCellContext>) {
+  const meta = table.options.meta as TableMeta;
+  return (
+    <div className='flex flex-col gap-2'>
+      <Dialog>
+        <DialogTrigger asChild>
+          <ActionButton
+            action='add'
+            label='Add update'
+            className='w-full min-w-[145px] justify-center whitespace-nowrap bg-brand-urchin/15 hover:bg-brand-urchin/30 [&>svg]:shrink-0'
+          />
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add outcome update</DialogTitle>
+          </DialogHeader>
+          {row.original.impact_indicator_id || row.original.progress_only ? (
+            <UpdateForm
+              outcomeMeasurable={row.original}
+              impactIndicator={row.original.impact_indicators}
+              projectId={meta.projectId}
+            />
+          ) : (
+            <p>
+              An admin must map this Outcome Indicator to an Impact Indicator
+              before updates can be added.
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
+      <button onClick={() => meta.toggleUpdates(row.id)}>
+        {meta.expanded[row.id] ? 'Hide updates' : 'Show updates'}
+      </button>
+    </div>
   );
 }
 
@@ -143,42 +185,7 @@ export default function OutcomeIndicatorsTable({
     {
       id: 'updates',
       header: 'Updates',
-      cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <Dialog>
-            <DialogTrigger asChild>
-              <ActionButton action='add' label='Add update' />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add outcome update</DialogTitle>
-              </DialogHeader>
-              {row.original.impact_indicator_id ? (
-                <UpdateForm
-                  outcomeMeasurable={row.original}
-                  impactIndicator={row.original.impact_indicators}
-                  projectId={projectId}
-                />
-              ) : (
-                <p>
-                  An admin must map this Outcome Indicator to an Impact
-                  Indicator before updates can be added.
-                </p>
-              )}
-            </DialogContent>
-          </Dialog>
-          <button
-            onClick={() =>
-              setExpanded((previous) => ({
-                ...previous,
-                [row.id]: !previous[row.id],
-              }))
-            }
-          >
-            {expanded[row.id] ? 'Hide updates' : 'Show updates'}
-          </button>
-        </div>
-      ),
+      cell: UpdatesCell,
     },
     ...(canEdit
       ? ([
@@ -196,9 +203,14 @@ export default function OutcomeIndicatorsTable({
     data: measurables,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (measurable) => String(measurable.id),
     columnResizeMode: 'onChange',
     meta: {
       onEditMeasurable: handleEditMeasurable,
+      projectId,
+      expanded,
+      toggleUpdates: (rowId) =>
+        setExpanded((previous) => ({ ...previous, [rowId]: !previous[rowId] })),
     } satisfies TableMeta,
   });
 
@@ -266,7 +278,7 @@ export default function OutcomeIndicatorsTable({
                     </TableRow>
                     {expanded[row.id] && (
                       <TableRow>
-                        <TableCell colSpan={columns.length}>
+                        <TableCell colSpan={columns.length} className='p-0'>
                           <IndicatorUpdates
                             measurable={row.original}
                             level='Outcome'

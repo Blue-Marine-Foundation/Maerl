@@ -4,7 +4,7 @@ Outcome and Output Indicators share the update form, evidence fields, editing co
 
 New Outcome Indicators require an Impact Indicator. Only Admin and Super Admin users may change an existing mapping; mappings cannot be removed. Legacy unmapped indicators can still have their wording edited, but must be mapped before they accept updates. Existing-indicator cleanup and mapping are deferred at the user's request, pending collaborator decisions.
 
-Indicator Impact Updates start Pending Review. Reporting requires all of `type = Impact`, `admin_reviewed = true`, `valid = true`, `verified = true`, `duplicate = false`, and a numeric value. Mark repeated results duplicate during review. Content changes reset review; review-only saves leave content untouched. Progress Updates have no numeric value and appear immediately.
+Indicator Impact Updates start Pending Review. Reporting requires all of `type = Impact`, `admin_reviewed = true`, `valid = true`, `duplicate = false`, and a numeric value. Verified records attached evidence and is not a counting requirement; admins may accept verbally confirmed results. Mark repeated results duplicate during review. Content changes reset review; review-only saves leave content untouched. Progress Updates have no numeric value and appear immediately.
 
 Outcome actual values are grouped by each update's captured Impact Indicator, with the corresponding code and unit, so remapping never adds incompatible measurements together. Unit Updates retains the contribution view's scope and loads canonical update relationships and historical impact mappings.
 
@@ -22,7 +22,13 @@ Replace the example IDs with the reviewed selection. Changed Impact Updates retu
 
 ## Migration and deployment
 
-Apply `supabase/migrations/20260907090000_outcome_indicator_updates.sql` before deploying the application. It adds the outcome relationship, mapping and review triggers, an explicit migration function, and reviewed-only reporting functions. It retains existing RLS policies. The validation trigger uses definer rights with an empty search path to lock indicators without requiring Partners to edit indicators; writes to `updates` still pass the caller's existing RLS checks. Reporting functions and the reporting view use invoker security.
+Apply the three migrations in order before deploying the application:
+
+1. `supabase/migrations/20260907090000_outcome_indicator_updates.sql`
+2. `supabase/migrations/20261013090000_progress_only_outcome_indicators.sql`
+3. `supabase/migrations/20261030090000_reviewed_impact_does_not_require_verification.sql`
+
+Together they add the outcome relationship, progress-only outcome indicators, mapping and review triggers, an explicit migration function, and reviewed-only reporting functions (requiring `admin_reviewed = true`, `valid = true`, `duplicate = false`, without requiring `verified = true`). They retain existing RLS policies. The validation trigger uses definer rights with an empty search path to lock indicators without requiring Partners to edit indicators; writes to `updates` still pass the caller's existing RLS checks. Reporting functions and the reporting view use invoker security.
 
 This change has not been applied to production. The local checkout has no linked Supabase project/access token, so production trigger definitions could not be inspected. Before rollout, validate the migration against a staging copy of the actual schema, particularly existing update triggers and aggregation views. The included database fixture models the relevant legacy columns and Partner policy restrictions, not the complete production schema. Existing stored output aggregates and older reporting RPCs are not rewritten; application reporting uses the new reviewed functions or explicitly filters approved updates.
 

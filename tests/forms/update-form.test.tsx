@@ -185,3 +185,46 @@ test('output updates use the same form and evidence fields without an outcome at
     ),
   );
 });
+
+test('a Progress-only outcome allows written submissions and stays Progress-only after saving', async () => {
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <UpdateForm
+        outcomeMeasurable={{
+          ...outcome,
+          progress_only: true,
+          impact_indicator_id: null,
+          impact_indicators: null,
+        }}
+        projectId={1}
+      />
+    </QueryClientProvider>,
+  );
+  expect(
+    (screen.getByLabelText('Update type') as HTMLSelectElement).value,
+  ).toBe('Progress');
+  expect(screen.queryByRole('option', { name: 'Impact' })).toBeNull();
+  expect(screen.queryByLabelText('Value')).toBeNull();
+  fireEvent.change(screen.getByLabelText('Description'), {
+    target: { value: 'Written-only progress' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+  await waitFor(() =>
+    expect(upsertUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome_measurable_id: 10,
+        type: 'Progress',
+        value: undefined,
+      }),
+    ),
+  );
+  await waitFor(() =>
+    expect(
+      (screen.getByLabelText('Description') as HTMLTextAreaElement).value,
+    ).toBe(''),
+  );
+  expect(
+    (screen.getByLabelText('Update type') as HTMLSelectElement).value,
+  ).toBe('Progress');
+  expect(screen.queryByLabelText('Value')).toBeNull();
+});

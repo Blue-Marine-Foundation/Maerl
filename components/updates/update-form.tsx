@@ -34,9 +34,13 @@ export default function UpdateForm({
   const indicator =
     outcomeMeasurable ?? update?.outcome_measurables ?? outputMeasurable;
   const isOutcome = Boolean(outcomeMeasurable ?? update?.outcome_measurable_id);
+  const progressOnly = Boolean(
+    (outcomeMeasurable ?? update?.outcome_measurables)?.progress_only,
+  );
+  const defaultType = progressOnly ? 'Progress' : 'Impact';
   const [description, setDescription] = useState(update?.description || '');
   const [value, setValue] = useState<number | null>(update?.value ?? null);
-  const [type, setType] = useState(update?.type || 'Impact');
+  const [type, setType] = useState(update?.type || defaultType);
   const [link, setLink] = useState(update?.link || '');
   const [source, setSource] = useState(update?.source || '');
   const [date, setDate] = useState(
@@ -72,7 +76,7 @@ export default function UpdateForm({
         // Only reset form if this is a new update
         setDescription('');
         setValue(null);
-        setType('Impact');
+        setType(defaultType);
         setLink('');
         setSource('');
         setDate(new Date().toISOString().split('T')[0]);
@@ -90,6 +94,11 @@ export default function UpdateForm({
 
     if (!description.trim()) {
       setError('Describe the update before submitting.');
+      return;
+    }
+
+    if (progressOnly && type !== 'Progress') {
+      setError('This indicator only accepts written Progress updates.');
       return;
     }
 
@@ -148,6 +157,12 @@ export default function UpdateForm({
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-4 text-sm'>
+      {progressOnly && (
+        <p className='text-muted-foreground'>
+          This indicator accepts written Progress updates only. These updates do
+          not contribute to numeric Impact totals.
+        </p>
+      )}
       <div className='grid grid-cols-[200px_1fr] items-baseline gap-4'>
         <p className='text-sm font-medium'>
           {isOutcome ? 'Outcome Indicator' : 'Output Indicator'}
@@ -187,7 +202,7 @@ export default function UpdateForm({
           value={type}
           onChange={(e) => setType(e.target.value)}
         >
-          <option value='Impact'>Impact</option>
+          {!progressOnly && <option value='Impact'>Impact</option>}
           <option value='Progress'>Progress</option>
         </select>
 
