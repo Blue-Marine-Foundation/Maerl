@@ -10,6 +10,10 @@ import {
   fetchNeedsAttentionCounts,
   type NeedsAttentionCounts,
 } from './needs-attention-server-actions';
+import {
+  STALE_PROJECTS_FILTER,
+  STALE_THRESHOLD_DAYS,
+} from '@/utils/stale-projects';
 
 type Row = {
   key: string;
@@ -37,8 +41,8 @@ const ROWS: readonly Row[] = [
   {
     key: 'stale-projects',
     label: 'Stale active projects',
-    description: 'Active projects with no update in 180+ days',
-    href: '/projects',
+    description: `Active projects with no update in ${STALE_THRESHOLD_DAYS}+ days`,
+    href: `/projects?filter=${STALE_PROJECTS_FILTER}`,
     getValue: (c) => c.staleActiveProjects,
   },
 ];
