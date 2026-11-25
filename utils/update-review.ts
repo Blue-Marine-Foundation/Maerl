@@ -17,6 +17,18 @@ export function isApprovedImpact(update: Update): boolean {
   );
 }
 
+export function isEligibleProgressUpdate(update: Update): boolean {
+  return (
+    update.type === 'Progress' &&
+    update.valid === true &&
+    update.duplicate === false
+  );
+}
+
+export function isEligibleImpactIndicatorUpdate(update: Update): boolean {
+  return isEligibleProgressUpdate(update) || isApprovedImpact(update);
+}
+
 export function updateLevel(update: Update): string {
   return update.outcome_measurable_id != null
     ? 'Outcome'

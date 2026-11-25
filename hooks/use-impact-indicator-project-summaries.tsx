@@ -1,6 +1,9 @@
 'use client';
 
-import { isApprovedImpact } from '@/utils/update-review';
+import {
+  isApprovedImpact,
+  isEligibleImpactIndicatorUpdate,
+} from '@/utils/update-review';
 import * as d3 from 'd3';
 import { useImpactIndicatorUpdates } from './use-impact-indicator-updates';
 
@@ -9,9 +12,7 @@ export const useImpactIndicatorProjectSummaries = (id: string) => {
 
   const projectSummaries = Array.from(
     d3.rollup(
-      (data || []).filter(
-        (update) => update.type === 'Progress' || isApprovedImpact(update),
-      ),
+      (data || []).filter(isEligibleImpactIndicatorUpdate),
       (v) => ({
         slug: v[0].projects?.slug,
         progressUpdatesCount: v.filter((d) => d.type === 'Progress').length,

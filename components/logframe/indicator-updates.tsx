@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import ActionButton from '@/components/ui/action-button';
 import FeatureCard from '@/components/ui/feature-card';
 import Link from 'next/link';
-import UpdateStatus from '../updates/update-status';
+import { UpdateReviewBadge } from '../updates/update-status';
 import * as d3 from 'd3';
 import {
   Dialog,
@@ -81,28 +81,27 @@ export default function IndicatorUpdates({
                       )}
                     </div>
                     <div className='order-1 min-w-0 flex-1'>
-                      <UpdateStatus
-                        update={update}
-                        className='text-left [&>span:first-child]:pl-0'
-                      />
                       <p className='max-w-prose text-sm'>
                         {update.description}
                       </p>
-                      <div className='mt-2 flex items-center gap-3'>
+                      <div className='mt-2 flex flex-wrap items-center gap-3'>
                         <span className='text-xs text-muted-foreground'>
                           {d3.timeFormat('%d %b %Y')(new Date(update.date))}
                         </span>
                         <span className='text-xs text-muted-foreground'>|</span>
-                        <Badge
-                          variant={
-                            update.type === 'Progress'
-                              ? 'in_progress'
-                              : 'success'
-                          }
-                          className='px-1.5 py-0 text-xs'
-                        >
-                          {update.type}
-                        </Badge>
+                        <span className='inline-flex items-center gap-1.5'>
+                          <Badge
+                            variant={
+                              update.type === 'Progress'
+                                ? 'in_progress'
+                                : 'success'
+                            }
+                            className='px-1.5 py-0 text-xs'
+                          >
+                            {update.type}
+                          </Badge>
+                          <UpdateReviewBadge update={update} className='py-0' />
+                        </span>
                         {update.value !== null && update.value !== undefined ? (
                           <>
                             <span className='text-xs text-muted-foreground'>

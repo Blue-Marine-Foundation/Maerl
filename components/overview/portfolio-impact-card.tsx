@@ -95,10 +95,12 @@ export default function PortfolioImpactCard({
       )}
 
       {update.description ? (
-        <p className='flex-1 whitespace-pre-line text-sm leading-relaxed text-foreground'>
+        <div className='flex flex-1 flex-col items-start gap-2'>
           <UpdateStatus update={update} />
-          {update.description}
-        </p>
+          <p className='whitespace-pre-line text-sm leading-relaxed text-foreground'>
+            {update.description}
+          </p>
+        </div>
       ) : null}
 
       {update.link ? (

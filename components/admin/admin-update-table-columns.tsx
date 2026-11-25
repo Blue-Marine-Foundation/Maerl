@@ -1,4 +1,5 @@
-import UpdateStatus from '@/components/updates/update-status';
+import UpdateTypeCell from '@/components/updates/update-type-cell';
+import { updateLevel } from '@/utils/update-review';
 import { Update } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
@@ -196,31 +197,22 @@ export const columns: ColumnDef<Update>[] = [
         ? `outcome-${row.original.outcome_measurables.outcome_id}`
         : `output-${outputId}`;
       const link = `/${projectType}s/${project}/logframe#${anchor}`;
+      const indicator =
+        row.original.outcome_measurables ?? row.original.output_measurables;
       return (
         <HoverCard>
-          <HoverCardTrigger className='flex min-w-0 flex-col items-start gap-1 text-left'>
-            <span className='max-w-full break-words'>
-              {
-                (
-                  row.original.outcome_measurables ??
-                  row.original.output_measurables
-                )?.code
-              }
+          <HoverCardTrigger className='flex min-w-0 flex-col items-start gap-0.5 text-left'>
+            {indicator?.code && (
+              <span className='max-w-full break-words font-medium'>
+                {indicator.code}
+              </span>
+            )}
+            <span className='text-xs text-muted-foreground'>
+              {updateLevel(row.original)}
             </span>
-            <UpdateStatus
-              update={row.original}
-              className='max-w-full flex-col items-start [&>span]:max-w-full [&>span]:break-words [&>span]:px-0 [&>span]:text-xs'
-            />
           </HoverCardTrigger>
           <HoverCardContent className='flex flex-col gap-2'>
-            <p>
-              {
-                (
-                  row.original.outcome_measurables ??
-                  row.original.output_measurables
-                )?.description
-              }
-            </p>
+            <p>{indicator?.description}</p>
             <Link
               href={link}
               className='text-right text-xs text-primary hover:underline'
@@ -235,7 +227,8 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Update Type',
     accessorKey: 'type',
-    meta: { widthClass: 'w-24' },
+    meta: { widthClass: 'w-28' },
+    cell: ({ row }) => <UpdateTypeCell update={row.original} />,
   },
   {
     header: 'II Code',

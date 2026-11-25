@@ -19,6 +19,10 @@ export default function ImpactIndicatorSummary({ id }: { id: string }) {
   const filteredProjectSummaries = projectSummaries?.filter((summary) =>
     projectFilter.includes(summary.name),
   );
+  const totalImpactUpdates = d3.sum(
+    filteredProjectSummaries,
+    (d) => d.impactUpdatesCount || 0,
+  );
 
   return (
     <div className='space-y-4'>
@@ -31,9 +35,8 @@ export default function ImpactIndicatorSummary({ id }: { id: string }) {
             {filteredProjectSummaries[0]?.unit}
           </h3>
           <p className='text-muted-foreground'>
-            Data from{' '}
-            {d3.sum(filteredProjectSummaries, (d) => d.impactUpdatesCount || 0)}{' '}
-            impact update{filteredProjectSummaries.length === 1 ? '' : 's'} on{' '}
+            Data from {totalImpactUpdates} impact update
+            {totalImpactUpdates === 1 ? '' : 's'} on{' '}
             {filteredProjectSummaries.length} project
             {filteredProjectSummaries.length === 1 ? '' : 's'}
           </p>
