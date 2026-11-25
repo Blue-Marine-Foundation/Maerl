@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -13,8 +14,14 @@ import type { Update } from '@/utils/types';
 import UpdateForm from './update-form';
 
 export default function EditUpdateDialog({ update }: { update: Update }) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [latestUpdate, setLatestUpdate] = useState(update);
   const { isAdmin } = useUser();
+
+  useEffect(() => {
+    setLatestUpdate(update);
+  }, [update]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -28,13 +35,17 @@ export default function EditUpdateDialog({ update }: { update: Update }) {
           <DialogTitle>Edit update</DialogTitle>
         </DialogHeader>
         <UpdateForm
-          outputMeasurable={update.output_measurables ?? undefined}
-          outcomeMeasurable={update.outcome_measurables ?? undefined}
-          impactIndicator={update.impact_indicators ?? undefined}
-          projectId={update.project_id}
-          update={update}
+          outputMeasurable={latestUpdate.output_measurables ?? undefined}
+          outcomeMeasurable={latestUpdate.outcome_measurables ?? undefined}
+          impactIndicator={latestUpdate.impact_indicators ?? undefined}
+          projectId={latestUpdate.project_id}
+          update={latestUpdate}
           isAdmin={isAdmin}
-          onSuccess={() => setIsOpen(false)}
+          onSuccess={(saved) => {
+            setLatestUpdate((prev) => ({ ...prev, ...saved }));
+            setIsOpen(false);
+            router.refresh();
+          }}
         />
       </DialogContent>
     </Dialog>

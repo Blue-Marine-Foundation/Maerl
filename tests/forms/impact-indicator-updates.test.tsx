@@ -10,6 +10,7 @@ import type { Update } from '@/utils/types';
 
 vi.mock('next/navigation', () => ({
   useParams: () => ({ id: '551' }),
+  useRouter: () => ({ refresh: vi.fn() }),
 }));
 vi.mock('@/hooks/use-impact-indicator-updates', () => ({
   useImpactIndicatorUpdates: vi.fn(),

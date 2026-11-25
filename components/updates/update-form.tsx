@@ -19,7 +19,7 @@ interface UpdateFormProps {
   projectId: number;
   update?: Update;
   isAdmin?: boolean;
-  onSuccess?: () => void;
+  onSuccess?: (saved: Update) => void;
 }
 
 export default function UpdateForm({
@@ -70,7 +70,7 @@ export default function UpdateForm({
         update ? 'Update saved successfully' : 'Update submitted successfully',
       );
       if (onSuccess) {
-        onSuccess();
+        onSuccess(saved);
       }
       if (!update) {
         // Only reset form if this is a new update

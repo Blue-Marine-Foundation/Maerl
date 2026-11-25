@@ -1,14 +1,24 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EditUpdateDialog from '@/components/updates/edit-update-dialog';
 import SetDateRange from '@/components/date-filtering/set-date-range';
+import { upsertUpdate } from '@/api/upsert-updates';
 import { useUser } from '@/components/user/user-provider';
 import { useSearchParams } from 'next/navigation';
 import type { Update } from '@/utils/types';
 
+const mockReplace = vi.fn();
+const mockRefresh = vi.fn();
+
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace: vi.fn() }),
+  useRouter: () => ({ replace: mockReplace, refresh: mockRefresh }),
   usePathname: () => '/impactindicators/551',
   useSearchParams: vi.fn(),
 }));
@@ -82,6 +92,40 @@ test('EditUpdateDialog shows admin review controls for admins and hides them for
   fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
   expect(screen.queryByLabelText('Duplicate')).toBeNull();
   expect(screen.queryByLabelText('Admin Reviewed')).toBeNull();
+});
+
+test('EditUpdateDialog refreshes server data and preserves saved review flags on reopen', async () => {
+  vi.mocked(useUser).mockReturnValue({
+    isAdmin: true,
+  } as ReturnType<typeof useUser>);
+
+  const savedRow = {
+    ...sampleUpdate,
+    duplicate: true,
+    valid: false,
+    admin_reviewed: true,
+  };
+  vi.mocked(upsertUpdate).mockResolvedValue({ update: savedRow });
+
+  renderWithQueryClient(<EditUpdateDialog update={sampleUpdate} />);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+  fireEvent.click(screen.getByLabelText('Duplicate'));
+  fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
+
+  await waitFor(() => {
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText('Duplicate')).toBeNull();
+  });
+
+  // Reopen before parent server props refresh: saved flags must still be reflected
+  fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+  expect((screen.getByLabelText('Duplicate') as HTMLInputElement).checked).toBe(
+    true,
+  );
+  expect((screen.getByLabelText('Valid') as HTMLInputElement).checked).toBe(
+    false,
+  );
 });
 
 test('SetDateRange stays in sync when URL from/to params change', () => {
