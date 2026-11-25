@@ -18,6 +18,9 @@ vi.mock('@/hooks/use-url-projects', () => ({
   useUrlProjects: (projects: string[]) => projects,
 }));
 vi.mock('@/components/updates/update-form', () => ({ default: () => null }));
+vi.mock('@/components/user/user-provider', () => ({
+  useUser: () => ({ isAdmin: true }),
+}));
 vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
 }));

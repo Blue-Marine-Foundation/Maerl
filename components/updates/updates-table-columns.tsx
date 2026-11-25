@@ -1,3 +1,4 @@
+import EditUpdateDialog from '@/components/updates/edit-update-dialog';
 import UpdateIndicatorCell from '@/components/updates/update-indicator-cell';
 import UpdateTypeCell from '@/components/updates/update-type-cell';
 import { Update } from '@/utils/types';
@@ -10,15 +11,7 @@ import {
 import Link from 'next/link';
 import * as d3 from 'd3';
 import { ArrowUpRight } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { format } from 'date-fns';
-import UpdateForm from './update-form';
 
 export const columns: ColumnDef<Update>[] = [
   {
@@ -172,28 +165,6 @@ export const columns: ColumnDef<Update>[] = [
   },
   {
     id: 'edit',
-    cell: ({ row }) => {
-      return (
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className='rounded-md border px-2 py-1 text-muted-foreground'>
-              Edit
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit update</DialogTitle>
-            </DialogHeader>
-            <UpdateForm
-              outputMeasurable={row.original.output_measurables ?? undefined}
-              outcomeMeasurable={row.original.outcome_measurables ?? undefined}
-              impactIndicator={row.original.impact_indicators ?? undefined}
-              projectId={row.original.project_id}
-              update={row.original}
-            />
-          </DialogContent>
-        </Dialog>
-      );
-    },
+    cell: ({ row }) => <EditUpdateDialog update={row.original} />,
   },
 ];
