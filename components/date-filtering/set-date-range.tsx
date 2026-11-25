@@ -9,6 +9,14 @@ import { cn } from '@/utils/cn';
 import DateRangePicker from './date-range-picker';
 import useUrlDateState from './use-url-date-state';
 
+function parseDateParam(value: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  return new Date(value);
+}
+
 export default function SetDateRange({
   className,
 }: {
@@ -19,26 +27,28 @@ export default function SetDateRange({
   const searchParams = useSearchParams();
   const { from: initialFrom, to: initialTo } = useUrlDateState();
 
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(initialFrom),
-    to: new Date(initialTo),
-  });
+  const [date, setDate] = useState<DateRange | undefined>(() => ({
+    from: parseDateParam(initialFrom),
+    to: parseDateParam(initialTo),
+  }));
 
-  const [datesAreEdited, setDatesAreEdited] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   useEffect(() => {
+    setDate({
+      from: parseDateParam(initialFrom),
+      to: parseDateParam(initialTo),
+    });
     setIsUpdating(false);
+  }, [initialFrom, initialTo]);
 
-    const newFrom = date?.from ? format(date.from, 'yyyy-MM-dd') : null;
-    const newTo = date?.to ? format(date.to, 'yyyy-MM-dd') : null;
-
-    if (newFrom && newTo && (initialFrom !== newFrom || initialTo !== newTo)) {
-      setDatesAreEdited(true);
-    } else {
-      setDatesAreEdited(false);
-    }
-  }, [initialFrom, initialTo, date]);
+  const selectedFrom = date?.from ? format(date.from, 'yyyy-MM-dd') : null;
+  const selectedTo = date?.to ? format(date.to, 'yyyy-MM-dd') : null;
+  const datesAreEdited = Boolean(
+    selectedFrom &&
+    selectedTo &&
+    (initialFrom !== selectedFrom || initialTo !== selectedTo),
+  );
 
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();

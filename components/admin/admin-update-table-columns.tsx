@@ -36,8 +36,9 @@ const EditUpdateDialog = ({ update }: { update: Update }) => {
           <DialogTitle>Edit update</DialogTitle>
         </DialogHeader>
         <UpdateForm
-          outputMeasurable={update.output_measurables!}
-          impactIndicator={update.impact_indicators!}
+          outputMeasurable={update.output_measurables ?? undefined}
+          outcomeMeasurable={update.outcome_measurables ?? undefined}
+          impactIndicator={update.impact_indicators ?? undefined}
           projectId={update.project_id}
           update={update}
           isAdmin={true}
@@ -227,7 +228,7 @@ export const columns: ColumnDef<Update>[] = [
   {
     header: 'Update Type',
     accessorKey: 'type',
-    meta: { widthClass: 'w-28' },
+    meta: { widthClass: 'w-32' },
     cell: ({ row }) => <UpdateTypeCell update={row.original} />,
   },
   {
