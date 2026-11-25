@@ -6,13 +6,16 @@ import { Update } from '@/utils/types';
 import { useParams } from 'next/navigation';
 import { useImpactIndicatorUpdates } from '@/hooks/use-impact-indicator-updates';
 import { useUrlProjects } from '@/hooks/use-url-projects';
+import { isEligibleImpactIndicatorUpdate } from '@/utils/update-review';
 
 export default function IndicatorUpdates() {
   const { id } = useParams();
 
   const { data, error, isLoading } = useImpactIndicatorUpdates(id as string);
 
-  const projects = data?.map((d) => d.projects.name) || [];
+  const eligibleUpdates = (data || []).filter(isEligibleImpactIndicatorUpdate);
+
+  const projects = eligibleUpdates.map((d) => d.projects.name);
 
   const projectFilter = useUrlProjects(projects);
 
@@ -26,8 +29,9 @@ export default function IndicatorUpdates() {
     );
   }
 
-  const filteredData =
-    data?.filter((d) => projectFilter.includes(d.projects.name)) || [];
+  const filteredData = eligibleUpdates.filter((d) =>
+    projectFilter.includes(d.projects.name),
+  );
 
   const filterableColumns = [{ id: 'type', label: 'Update Type' }];
 

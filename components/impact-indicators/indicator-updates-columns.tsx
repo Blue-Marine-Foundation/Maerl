@@ -1,4 +1,5 @@
 import UpdateIndicatorCell from '@/components/updates/update-indicator-cell';
+import UpdateTypeCell from '@/components/updates/update-type-cell';
 import { Update } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -62,13 +63,14 @@ export const columns: ColumnDef<Update>[] = [
     cell: ({ row }) => <UpdateIndicatorCell update={row.original} />,
   },
   {
-    header: 'Type',
+    header: 'Update',
     accessorKey: 'type',
     accessorFn: (row) => row.type,
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length === 0) return true;
       return filterValue.includes(row.getValue(columnId));
     },
+    cell: ({ row }) => <UpdateTypeCell update={row.original} />,
   },
   {
     header: 'Description',
@@ -153,9 +155,10 @@ export const columns: ColumnDef<Update>[] = [
               <DialogTitle>Edit update</DialogTitle>
             </DialogHeader>
             <UpdateForm
-              outputMeasurable={row.original.output_measurables!}
-              impactIndicator={row.original.impact_indicators!}
-              projectId={row.original.projects?.id!}
+              outputMeasurable={row.original.output_measurables ?? undefined}
+              outcomeMeasurable={row.original.outcome_measurables ?? undefined}
+              impactIndicator={row.original.impact_indicators ?? undefined}
+              projectId={row.original.project_id}
               update={row.original}
             />
           </DialogContent>
