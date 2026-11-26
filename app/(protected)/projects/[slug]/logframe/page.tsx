@@ -75,8 +75,8 @@ export default function LogframePage() {
   const impact = data?.data?.impacts?.at(-1) || null;
   const outcomes = data?.data?.outcomes || [];
   const mergedOutputs = [
-    ...(data?.data?.outputs || []),
     ...(unassignedOutputs?.data?.outputs || []),
+    ...(data?.data?.outputs || []),
   ];
   const uniqueOutputs = Array.from(
     new Map(mergedOutputs.map((output) => [output.id, output])).values(),

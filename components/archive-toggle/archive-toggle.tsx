@@ -35,20 +35,15 @@ export default function ArchiveToggle({
   const queryClient = useQueryClient();
 
   const invalidateRelevantQueries = () => {
-    if (outputType === 'output') {
-      queryClient.invalidateQueries({
-        queryKey: ['logframe', slug],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['unassigned-outputs', slug],
-        exact: false,
-      });
-    } else {
-      queryClient.invalidateQueries({
-        queryKey: ['logframe', slug],
-        exact: false,
-      });
+    queryClient.invalidateQueries({
+      queryKey: ['logframe', slug],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['unassigned-outputs', slug],
+      exact: false,
+    });
+    if (outputType === 'output_indicator') {
       queryClient.invalidateQueries({
         queryKey: ['archived-output-indicators'],
         exact: false,
@@ -56,15 +51,23 @@ export default function ArchiveToggle({
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      setError(null);
+    }
+  };
+
   const archiveMutation = useMutation({
     mutationFn: async () => {
+      setError(null);
       if (outputType === 'output') {
         return archiveOutput(data.id!, data.project_id);
       } else {
         return archiveOutputMeasurable(data.id!, data.project_id);
       }
     },
-    onSettled: (response) => {
+    onSuccess: (response) => {
       if (response?.success) {
         invalidateRelevantQueries();
         setIsDialogOpen(false);
@@ -72,10 +75,14 @@ export default function ArchiveToggle({
         setError(response?.error || 'An error occurred');
       }
     },
+    onError: (err: Error) => {
+      setError(err.message || 'Failed to archive');
+    },
   });
 
   const unarchiveMutation = useMutation({
     mutationFn: async () => {
+      setError(null);
       if (outputType === 'output') {
         return unarchiveOutput(data.id!, data.project_id);
       } else {
@@ -99,7 +106,10 @@ export default function ArchiveToggle({
     <div className='flex items-center gap-2'>
       <ActionButton
         action={data.archived ? 'unarchive' : 'archive'}
-        onClick={() => setIsDialogOpen(true)}
+        onClick={() => {
+          setError(null);
+          setIsDialogOpen(true);
+        }}
         className={cn(
           'border text-sm hover:bg-foreground/10',
           outputType === 'output' && 'border-foreground/80',
@@ -107,7 +117,7 @@ export default function ArchiveToggle({
         variant={outputType === 'output' ? 'default' : 'icon'}
       />
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle>

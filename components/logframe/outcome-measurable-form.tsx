@@ -43,8 +43,36 @@ export default function OutcomeMeasurableForm({
   const [selectedIndicator, setSelectedIndicator] =
     useState<ImpactIndicator | null>(null);
 
-  // Reset form when measurable prop changes
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (newMeasurable: Partial<OutcomeMeasurable>) => {
+      const result = await upsertOutcomeMeasurable({
+        ...newMeasurable,
+        outcome_id: outcomeId,
+      });
+      if (result && 'success' in result && !result.success) {
+        throw new Error(
+          result.error || 'Failed to save indicator. Please try again.',
+        );
+      }
+      return result?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['logframe'] });
+      onClose();
+    },
+  });
+  const resetMutation = mutation.reset;
+
+  // Reset form only when opening the dialog or switching which indicator is edited,
+  // not when parent queries refetch with a new existingCodes array reference.
   useEffect(() => {
+    if (!isOpen) {
+      resetMutation();
+      return;
+    }
+    resetMutation();
     setDescription(measurable?.description || '');
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
@@ -75,21 +103,8 @@ export default function OutcomeMeasurableForm({
     } else {
       setCode(measurable.code || '');
     }
-  }, [measurable, existingCodes, outcomeId]);
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (newMeasurable: Partial<OutcomeMeasurable>) =>
-      upsertOutcomeMeasurable({
-        ...newMeasurable,
-        outcome_id: outcomeId,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['logframe'] });
-      onClose();
-    },
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, measurable?.id, outcomeId, resetMutation]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

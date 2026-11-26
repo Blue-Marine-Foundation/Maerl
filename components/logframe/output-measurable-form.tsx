@@ -42,10 +42,39 @@ export default function OutputMeasurableForm({
   const [selectedIndicator, setSelectedIndicator] =
     useState<ImpactIndicator | null>(null);
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (newMeasurable: Partial<OutputMeasurable>) => {
+      const result = await upsertOutputMeasurable({
+        ...newMeasurable,
+        output_id: outputId,
+      });
+      if (result && 'success' in result && !result.success) {
+        throw new Error(
+          result.error || 'Failed to save indicator. Please try again.',
+        );
+      }
+      return result?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      onClose();
+    },
+  });
+  const resetMutation = mutation.reset;
+
+  // Reset form only when opening the dialog or switching which indicator is edited,
+  // not when parent queries refetch with a new existingCodes array reference.
   useEffect(() => {
+    if (!isOpen) {
+      resetMutation();
+      return;
+    }
+    resetMutation();
     setDescription(measurable?.description || '');
     setImpactIndicatorId(measurable?.impact_indicator_id || null);
-    setTarget(measurable?.target || null);
+    setTarget(measurable?.target ?? null);
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
     // Auto-assign code for new measurable
@@ -75,21 +104,8 @@ export default function OutputMeasurableForm({
     } else {
       setCode(measurable.code || '');
     }
-  }, [measurable, existingCodes, outputCode, outputId]);
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (newMeasurable: Partial<OutputMeasurable>) =>
-      upsertOutputMeasurable({
-        ...newMeasurable,
-        output_id: outputId,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-      onClose();
-    },
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, measurable?.id, outputCode, outputId, resetMutation]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +124,10 @@ export default function OutputMeasurableForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
+      <DialogContent
+        aria-describedby={undefined}
+        className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'
+      >
         <DialogHeader>
           <DialogTitle>
             {measurable ? 'Edit Indicator' : 'Add Indicator'}
@@ -152,8 +171,10 @@ export default function OutputMeasurableForm({
               id='target'
               type='number'
               className='w-full rounded-md border bg-background px-4 py-2'
-              value={target || ''}
-              onChange={(e) => setTarget(Number(e.target.value))}
+              value={target ?? ''}
+              onChange={(e) =>
+                setTarget(e.target.value === '' ? null : Number(e.target.value))
+              }
               placeholder='Enter target value'
             />
           </div>
@@ -188,6 +209,11 @@ export default function OutputMeasurableForm({
               placeholder='Enter assumptions'
             />
           </div>
+          {mutation.error && (
+            <p role='alert' className='text-sm text-red-600'>
+              {mutation.error.message}
+            </p>
+          )}
           <div className='flex justify-end'>
             <button
               className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'
