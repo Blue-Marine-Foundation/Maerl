@@ -141,18 +141,27 @@ export const upsertOutcome = async (outcome: Partial<Outcome>) => {
   return data;
 };
 
+type UpsertMeasurableResponse<T> = {
+  success: boolean;
+  data?: T;
+  error?: string;
+};
+
 export const upsertOutcomeMeasurable = async (
   measurable: Partial<OutcomeMeasurable>,
-) => {
+): Promise<UpsertMeasurableResponse<OutcomeMeasurable>> => {
   const supabase = await createClient();
 
   // Ensure we have required fields
   if (!measurable.outcome_id || !measurable.description || !measurable.code) {
-    throw new Error('Missing required fields');
+    return { success: false, error: 'Missing required fields' };
   }
 
   if (!measurable.id && !measurable.impact_indicator_id) {
-    throw new Error('Select an organisational Impact Indicator.');
+    return {
+      success: false,
+      error: 'Select an organisational Impact Indicator.',
+    };
   }
   const fields = {
     project_id: measurable.project_id,
@@ -172,16 +181,21 @@ export const upsertOutcomeMeasurable = async (
     : supabase.from('outcome_measurables').insert(fields);
   const { data, error } = await query.select().single();
 
-  if (error) throw error;
+  if (error) {
+    return {
+      success: false,
+      error: error.message || 'Failed to save indicator. Please try again.',
+    };
+  }
 
-  const { data: updatedProject } = await supabase
+  await supabase
     .from('projects')
     .update({ last_updated: new Date().toISOString() })
     .eq('id', measurable.project_id)
     .select()
     .single();
 
-  return data;
+  return { success: true, data };
 };
 
 type UpsertOutputResponse = {
@@ -260,46 +274,55 @@ export const upsertOutput = async (
 
 export const upsertOutputMeasurable = async (
   measurable: Partial<OutputMeasurable>,
-) => {
+): Promise<UpsertMeasurableResponse<OutputMeasurable>> => {
   const supabase = await createClient();
 
   if (!measurable.output_id || !measurable.description) {
-    throw new Error('Missing required fields');
+    return { success: false, error: 'Missing required fields' };
   }
 
-  const { data, error } = await supabase
-    .from('output_measurables')
-    .upsert({
-      id: measurable.id,
-      project_id: measurable.project_id,
-      output_id: measurable.output_id,
-      code: measurable.code,
-      description: measurable.description,
-      impact_indicator_id: measurable.impact_indicator_id,
-      target: measurable.target,
-      verification: measurable.verification || '',
-      assumptions: measurable.assumptions || '',
-    })
-    .select()
-    .single();
+  const fields = {
+    project_id: measurable.project_id,
+    output_id: measurable.output_id,
+    code: measurable.code,
+    description: measurable.description,
+    impact_indicator_id: measurable.impact_indicator_id,
+    target: measurable.target,
+    verification: measurable.verification || '',
+    assumptions: measurable.assumptions || '',
+  };
 
-  if (error) throw error;
+  const query = measurable.id
+    ? supabase
+        .from('output_measurables')
+        .update(fields)
+        .eq('id', measurable.id)
+    : supabase.from('output_measurables').insert(fields);
 
-  const { data: updatedProject } = await supabase
+  const { data, error } = await query.select().single();
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message || 'Failed to save indicator. Please try again.',
+    };
+  }
+
+  await supabase
     .from('projects')
     .update({ last_updated: new Date().toISOString() })
     .eq('id', measurable.project_id)
     .select()
     .single();
 
-  const { data: updatedOutput } = await supabase
+  await supabase
     .from('outputs')
     .update({ last_updated: new Date().toISOString() })
     .eq('id', measurable.output_id)
     .select()
     .single();
 
-  return data;
+  return { success: true, data };
 };
 
 export async function fetchOutcomeMeasurables(projectId: number) {

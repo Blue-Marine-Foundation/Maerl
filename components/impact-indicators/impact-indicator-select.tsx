@@ -26,7 +26,11 @@ export default function ImpactIndicatorSelect({
     useState<ImpactIndicator | null>(null);
 
   useEffect(() => {
-    if (indicators && value) {
+    if (!value) {
+      setSelectedIndicator(null);
+      return;
+    }
+    if (indicators) {
       const found = indicators.find((ind) => ind.id === value);
       setSelectedIndicator(found || null);
     }

@@ -1,7 +1,14 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import OutcomeMeasurableForm from '@/components/logframe/outcome-measurable-form';
+import { upsertOutcomeMeasurable } from '@/components/logframe/server-actions';
 import type { OutcomeMeasurable } from '@/utils/types';
 
 vi.mock('@/api/fetch-current-user-profile', () => ({
@@ -13,14 +20,27 @@ vi.mock('@/components/logframe/server-actions', () => ({
 vi.mock('@/components/impact-indicators/server-actions', () => ({
   fetchImpactIndicators: vi.fn(),
 }));
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.resetAllMocks();
+});
 const indicator = {
   id: 1,
   indicator_code: '1.1.1',
   indicator_title: 'MPAs',
   indicator_unit: 'MPAs',
 };
-function showForm(role: string, measurable: OutcomeMeasurable | null) {
+const secondIndicator = {
+  id: 2,
+  indicator_code: '2.2.1',
+  indicator_title: 'Habitats restored',
+  indicator_unit: 'ha',
+};
+function showForm(
+  role: string,
+  measurable: OutcomeMeasurable | null,
+  onClose = () => {},
+) {
   const client = new QueryClient({
     defaultOptions: { queries: { staleTime: Infinity } },
   });
@@ -28,19 +48,20 @@ function showForm(role: string, measurable: OutcomeMeasurable | null) {
     authUser: { id: 'user' },
     profile: { role },
   });
-  client.setQueryData(['impactIndicators'], [indicator]);
-  render(
+  client.setQueryData(['impactIndicators'], [indicator, secondIndicator]);
+  const view = render(
     <QueryClientProvider client={client}>
       <OutcomeMeasurableForm
         isOpen
-        onClose={() => {}}
+        onClose={onClose}
         measurable={measurable}
         outcomeId={2}
         projectId={1}
-        existingCodes={[]}
+        existingCodes={['OC0.1']}
       />
     </QueryClientProvider>,
   );
+  return { ...view, client };
 }
 test('a new outcome indicator requires an organisational mapping', () => {
   showForm('Project Manager', null);
@@ -80,4 +101,105 @@ test('editing a confirmed Progress-only indicator does not require an Impact map
   expect(
     screen.getByText(/Progress only — this indicator accepts written updates/),
   ).not.toBeNull();
+});
+
+test('a remapped outcome indicator survives parent re-renders and submits the new mapping', async () => {
+  const onClose = vi.fn();
+  vi.mocked(upsertOutcomeMeasurable).mockResolvedValue({
+    success: true,
+    data: { id: 10, impact_indicator_id: 2 } as OutcomeMeasurable,
+  });
+  const measurable = {
+    id: 10,
+    impact_indicator_id: 1,
+    code: 'OC.0.1',
+    description: 'Habitat recovery',
+    verification: '',
+    assumptions: '',
+    target: null,
+    outcome_id: 2,
+    project_id: 1,
+  } as OutcomeMeasurable;
+  const { rerender, client } = showForm('Super Admin', measurable, onClose);
+  const select = screen.getByLabelText('Impact Indicator') as HTMLSelectElement;
+  fireEvent.change(select, { target: { value: '2' } });
+  expect(select.value).toBe('2');
+
+  // Parent re-renders with a fresh existingCodes array (e.g. on window-focus refetch)
+  rerender(
+    <QueryClientProvider client={client}>
+      <OutcomeMeasurableForm
+        isOpen
+        onClose={onClose}
+        measurable={{ ...measurable }}
+        outcomeId={2}
+        projectId={1}
+        existingCodes={['OC.0.1']}
+      />
+    </QueryClientProvider>,
+  );
+  expect((screen.getByLabelText('Impact Indicator') as HTMLSelectElement).value).toBe('2');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+  await waitFor(() =>
+    expect(upsertOutcomeMeasurable).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 10, impact_indicator_id: 2 }),
+    ),
+  );
+  await waitFor(() => expect(onClose).toHaveBeenCalled());
+});
+
+test('a returned server error is shown to the user without closing the outcome dialog', async () => {
+  const onClose = vi.fn();
+  vi.mocked(upsertOutcomeMeasurable).mockResolvedValue({
+    success: false,
+    error: 'Only admins may change the Impact Indicator mapping',
+  });
+  showForm(
+    'Admin',
+    {
+      id: 10,
+      impact_indicator_id: 1,
+      code: 'OC.0.1',
+      description: 'Habitat recovery',
+    } as OutcomeMeasurable,
+    onClose,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+  expect((await screen.findByRole('alert')).textContent).toContain(
+    'Only admins may change the Impact Indicator mapping',
+  );
+  expect(onClose).not.toHaveBeenCalled();
+});
+
+test('a new outcome indicator updates its generated code if existingCodes change without wiping user input', () => {
+  const { rerender, client } = showForm('Admin', null);
+  expect(screen.getByText('OC0.2')).not.toBeNull();
+  fireEvent.change(screen.getByLabelText('Measurable Indicator'), {
+    target: { value: 'Unsaved outcome draft' },
+  });
+  fireEvent.change(screen.getByLabelText('Impact Indicator'), {
+    target: { value: '2' },
+  });
+
+  rerender(
+    <QueryClientProvider client={client}>
+      <OutcomeMeasurableForm
+        isOpen
+        onClose={() => {}}
+        measurable={null}
+        outcomeId={2}
+        projectId={1}
+        existingCodes={['OC0.1', 'OC0.2']}
+      />
+    </QueryClientProvider>,
+  );
+
+  expect(screen.getByText('OC0.3')).not.toBeNull();
+  expect(
+    (screen.getByLabelText('Measurable Indicator') as HTMLInputElement).value,
+  ).toBe('Unsaved outcome draft');
+  expect(
+    (screen.getByLabelText('Impact Indicator') as HTMLSelectElement).value,
+  ).toBe('2');
 });

@@ -33,8 +33,12 @@ vi.mock('@/components/logframe/server-actions', () => ({
 vi.mock('@/components/logframe/add-output-button', () => ({
   default: () => <button>Add output</button>,
 }));
+const outputCardSpy = vi.hoisted(() => vi.fn());
 vi.mock('@/components/logframe/output-card-logframe', () => ({
-  default: () => <div>Output</div>,
+  default: (props: { output: unknown }) => {
+    outputCardSpy(props.output);
+    return <div>Output</div>;
+  },
 }));
 vi.mock('@/components/logframe/outcome-card-logframe', () => ({
   default: () => <button>Add outcome</button>,
@@ -135,4 +139,46 @@ test('the initial logframe waits for permissions instead of showing incomplete c
   );
   await screen.findByText('Loading...');
   expect(screen.queryByRole('button', { name: 'Add outcome' })).toBeNull();
+});
+
+test('logframe outputs take precedence over stale unassigned-outputs entries with the same id', async () => {
+  vi.mocked(fetchLogframe).mockResolvedValue({
+    data: {
+      id: 1,
+      impacts: [],
+      outcomes: [],
+      outputs: [
+        {
+          id: 35000000,
+          code: 'U.0',
+          archived: false,
+          output_measurables: [{ id: 1, code: 'U.1', archived: true }],
+        },
+      ],
+    },
+    error: null,
+  } as any);
+  vi.mocked(fetchUnassignedOutputs).mockResolvedValue({
+    data: {
+      id: 1,
+      outputs: [
+        {
+          id: 35000000,
+          code: 'U.0',
+          archived: false,
+          output_measurables: [{ id: 1, code: 'U.1', archived: false }],
+        },
+      ],
+    },
+    error: null,
+  } as any);
+
+  show();
+  await screen.findByText('Output');
+  expect(outputCardSpy).toHaveBeenCalledWith(
+    expect.objectContaining({
+      id: 35000000,
+      output_measurables: [expect.objectContaining({ id: 1, archived: true })],
+    }),
+  );
 });

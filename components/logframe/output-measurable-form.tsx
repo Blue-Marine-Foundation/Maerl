@@ -42,54 +42,75 @@ export default function OutputMeasurableForm({
   const [selectedIndicator, setSelectedIndicator] =
     useState<ImpactIndicator | null>(null);
 
-  useEffect(() => {
-    setDescription(measurable?.description || '');
-    setImpactIndicatorId(measurable?.impact_indicator_id || null);
-    setTarget(measurable?.target || null);
-    setVerification(measurable?.verification || '');
-    setAssumptions(measurable?.assumptions || '');
-    // Auto-assign code for new measurable
-    if (!measurable) {
-      // Try to get the output code prefix (O.x)
-      let prefix = '';
-      if (outputCode && outputCode.startsWith('O.')) {
-        prefix = outputCode;
-      } else if (existingCodes.length > 0) {
-        const match = existingCodes[0]?.match(/^(O\.\d+)\./);
-        if (match) prefix = match[1];
-      }
-      // fallback: try to extract from outputId (not robust, but fallback)
-      if (!prefix) prefix = `O.${outputId}`;
-      // Find all y's for this output
-      const yNumbers = existingCodes
-        .filter((c) => typeof c === 'string' && c.startsWith(`${prefix}.`))
-        .map((c) => {
-          const parts = c.split('.');
-          const n = parseInt(parts[2]);
-          return isNaN(n) ? null : n;
-        })
-        .filter((n): n is number => n !== null);
-      let nextY = 1;
-      while (yNumbers.includes(nextY)) nextY++;
-      setCode(`${prefix}.${nextY}`);
-    } else {
-      setCode(measurable.code || '');
-    }
-  }, [measurable, existingCodes, outputCode, outputId]);
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (newMeasurable: Partial<OutputMeasurable>) =>
-      upsertOutputMeasurable({
+    mutationFn: async (newMeasurable: Partial<OutputMeasurable>) => {
+      const result = await upsertOutputMeasurable({
         ...newMeasurable,
         output_id: outputId,
-      }),
+      });
+      if (result && 'success' in result && !result.success) {
+        throw new Error(
+          result.error || 'Failed to save indicator. Please try again.',
+        );
+      }
+      return result?.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries();
       onClose();
     },
   });
+  const resetMutation = mutation.reset;
+  const existingCodesKey = existingCodes.join('\0');
+
+  // Reset form fields only when opening the dialog or switching which indicator is edited,
+  // not when parent queries refetch with a new existingCodes array reference.
+  useEffect(() => {
+    if (!isOpen) {
+      resetMutation();
+      return;
+    }
+    resetMutation();
+    setDescription(measurable?.description || '');
+    setImpactIndicatorId(measurable?.impact_indicator_id || null);
+    setTarget(measurable?.target ?? null);
+    setVerification(measurable?.verification || '');
+    setAssumptions(measurable?.assumptions || '');
+    if (measurable) {
+      setCode(measurable.code || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, measurable?.id, outputId, resetMutation]);
+
+  // Keep auto-generated code fresh for new indicators if used codes change while open,
+  // without resetting any user-entered fields.
+  useEffect(() => {
+    if (!isOpen || measurable) {
+      return;
+    }
+    const codes = existingCodesKey ? existingCodesKey.split('\0') : [];
+    let prefix = '';
+    if (outputCode && outputCode.startsWith('O.')) {
+      prefix = outputCode;
+    } else if (codes.length > 0) {
+      const match = codes[0]?.match(/^(O\.\d+)\./);
+      if (match) prefix = match[1];
+    }
+    if (!prefix) prefix = `O.${outputId}`;
+    const yNumbers = codes
+      .filter((c) => typeof c === 'string' && c.startsWith(`${prefix}.`))
+      .map((c) => {
+        const parts = c.split('.');
+        const n = parseInt(parts[2]);
+        return isNaN(n) ? null : n;
+      })
+      .filter((n): n is number => n !== null);
+    let nextY = 1;
+    while (yNumbers.includes(nextY)) nextY++;
+    setCode(`${prefix}.${nextY}`);
+  }, [isOpen, measurable, existingCodesKey, outputCode, outputId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +129,10 @@ export default function OutputMeasurableForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'>
+      <DialogContent
+        aria-describedby={undefined}
+        className='flex max-h-[90vh] flex-col gap-4 overflow-y-auto'
+      >
         <DialogHeader>
           <DialogTitle>
             {measurable ? 'Edit Indicator' : 'Add Indicator'}
@@ -152,8 +176,10 @@ export default function OutputMeasurableForm({
               id='target'
               type='number'
               className='w-full rounded-md border bg-background px-4 py-2'
-              value={target || ''}
-              onChange={(e) => setTarget(Number(e.target.value))}
+              value={target ?? ''}
+              onChange={(e) =>
+                setTarget(e.target.value === '' ? null : Number(e.target.value))
+              }
               placeholder='Enter target value'
             />
           </div>
@@ -188,6 +214,11 @@ export default function OutputMeasurableForm({
               placeholder='Enter assumptions'
             />
           </div>
+          {mutation.error && (
+            <p role='alert' className='text-sm text-red-600'>
+              {mutation.error.message}
+            </p>
+          )}
           <div className='flex justify-end'>
             <button
               className='flex items-center gap-2 rounded-md bg-primary px-3 py-1 text-primary-foreground transition-all hover:bg-primary/90'

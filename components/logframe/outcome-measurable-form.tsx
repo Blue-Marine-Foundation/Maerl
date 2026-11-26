@@ -43,53 +43,81 @@ export default function OutcomeMeasurableForm({
   const [selectedIndicator, setSelectedIndicator] =
     useState<ImpactIndicator | null>(null);
 
-  // Reset form when measurable prop changes
-  useEffect(() => {
-    setDescription(measurable?.description || '');
-    setVerification(measurable?.verification || '');
-    setAssumptions(measurable?.assumptions || '');
-    setTarget(measurable?.target?.toString() || '');
-    setImpactIndicatorId(measurable?.impact_indicator_id || null);
-    // Auto-assign code for new measurable
-    if (!measurable) {
-      // Try to get the outcome code prefix (OC.x)
-      let outcomeCode = '';
-      if (existingCodes.length > 0) {
-        // Use the first code as a template
-        const match = existingCodes[0]?.match(/^(OC\.\d+)\./);
-        if (match) outcomeCode = match[1];
-      }
-      if (!outcomeCode) outcomeCode = `OC.${outcomeId}`;
-      // Find all y's for this outcome
-      const yNumbers = existingCodes
-        .filter((c) => typeof c === 'string' && c.startsWith(`${outcomeCode}.`))
-        .map((c) => {
-          const parts = c.split('.');
-          const n = parseInt(parts[2]);
-          return isNaN(n) ? null : n;
-        })
-        .filter((n): n is number => n !== null);
-      let nextY = 1;
-      while (yNumbers.includes(nextY)) nextY++;
-      setCode(`${outcomeCode}.${nextY}`);
-    } else {
-      setCode(measurable.code || '');
-    }
-  }, [measurable, existingCodes, outcomeId]);
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (newMeasurable: Partial<OutcomeMeasurable>) =>
-      upsertOutcomeMeasurable({
+    mutationFn: async (newMeasurable: Partial<OutcomeMeasurable>) => {
+      const result = await upsertOutcomeMeasurable({
         ...newMeasurable,
         outcome_id: outcomeId,
-      }),
+      });
+      if (result && 'success' in result && !result.success) {
+        throw new Error(
+          result.error || 'Failed to save indicator. Please try again.',
+        );
+      }
+      return result?.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['logframe'] });
       onClose();
     },
   });
+  const resetMutation = mutation.reset;
+  const existingCodesKey = existingCodes.join('\0');
+
+  // Reset form fields only when opening the dialog or switching which indicator is edited,
+  // not when parent queries refetch with a new existingCodes array reference.
+  useEffect(() => {
+    if (!isOpen) {
+      resetMutation();
+      return;
+    }
+    resetMutation();
+    setDescription(measurable?.description || '');
+    setVerification(measurable?.verification || '');
+    setAssumptions(measurable?.assumptions || '');
+    setTarget(measurable?.target?.toString() || '');
+    setImpactIndicatorId(measurable?.impact_indicator_id || null);
+    if (measurable?.id) {
+      setCode(measurable.code || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, measurable?.id, outcomeId, resetMutation]);
+
+  // Keep auto-generated code fresh for new indicators if used codes change while open,
+  // without resetting any user-entered fields.
+  useEffect(() => {
+    if (!isOpen || measurable?.id) {
+      return;
+    }
+    const codes = existingCodesKey ? existingCodesKey.split('\0') : [];
+    const proposedCode = measurable?.code || '';
+    if (proposedCode && !codes.includes(proposedCode)) {
+      setCode(proposedCode);
+      return;
+    }
+    let outcomeCode = '';
+    const proposedPrefix = proposedCode.match(/^(OC\.?\d+)\./);
+    if (proposedPrefix) {
+      outcomeCode = proposedPrefix[1];
+    } else if (codes.length > 0) {
+      const match = codes[0]?.match(/^(OC\.?\d+)\./);
+      if (match) outcomeCode = match[1];
+    }
+    if (!outcomeCode) outcomeCode = `OC.${outcomeId}`;
+    const yNumbers = codes
+      .filter((c) => typeof c === 'string' && c.startsWith(`${outcomeCode}.`))
+      .map((c) => {
+        const suffix = c.slice(outcomeCode.length + 1);
+        const n = parseInt(suffix, 10);
+        return isNaN(n) ? null : n;
+      })
+      .filter((n): n is number => n !== null);
+    let nextY = 1;
+    while (yNumbers.includes(nextY)) nextY++;
+    setCode(`${outcomeCode}.${nextY}`);
+  }, [isOpen, measurable?.id, measurable?.code, existingCodesKey, outcomeId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
