@@ -88,5 +88,14 @@ BEGIN
     VALUES (1, 1, 'Impact', 'New null impact', NULL);
     RAISE EXCEPTION 'Expected new null-value Impact insert to be rejected';
   EXCEPTION WHEN check_violation THEN NULL; END;
+
+  -- Explicit outcome update migration must also succeed with the legacy unqualified trigger active
+  INSERT INTO public.updates(project_id, outcome_measurable_id, type, description, value, date)
+  VALUES (1, 1, 'Impact', 'Outcome update to migrate', 5, '2025-04-01') RETURNING * INTO u901;
+  UPDATE public.outcome_measurables SET impact_indicator_id = 2 WHERE id = 1;
+  PERFORM public.migrate_outcome_updates(1, ARRAY[u901.id], 2);
+  SELECT * INTO u901 FROM public.updates WHERE id = u901.id;
+  ASSERT u901.impact_indicator_id = 2 AND NOT u901.admin_reviewed AND NOT u901.valid,
+    'Outcome update migration must succeed with legacy unqualified trigger active';
 END $$;
 ROLLBACK;
