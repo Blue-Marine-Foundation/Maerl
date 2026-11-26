@@ -40,6 +40,7 @@ try {
   sql('supabase/migrations/20261013090000_progress_only_outcome_indicators.sql');
   sql('supabase/migrations/20261030090000_reviewed_impact_does_not_require_verification.sql');
   sql('supabase/migrations/20261126130000_allow_output_indicator_remap_sync.sql');
+  sql('supabase/migrations/20261126141000_set_public_search_path_on_update_sync_functions.sql');
   const files = process.argv.slice(2).length
     ? process.argv.slice(2)
     : readdirSync('tests/database')

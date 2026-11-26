@@ -1,4 +1,18 @@
 BEGIN;
+-- Simulate a legacy production trigger on public.updates that references
+-- unqualified "updates" without its own SET search_path.
+CREATE FUNCTION public.legacy_unqualified_updates_trigger() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE total bigint;
+BEGIN
+  SELECT count(*) INTO total FROM updates WHERE output_measurable_id = NEW.output_measurable_id;
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER legacy_unqualified_updates_after_update
+  AFTER UPDATE ON public.updates
+  FOR EACH ROW EXECUTE FUNCTION public.legacy_unqualified_updates_trigger();
+
 -- Insert legacy pre-validation rows while triggers are bypassed (as postgres)
 ALTER TABLE public.updates DISABLE TRIGGER zz_enforce_indicator_update;
 INSERT INTO public.updates(id, project_id, output_measurable_id, impact_indicator_id, posted_by, type, description, value, date, valid, verified, duplicate, admin_reviewed)
