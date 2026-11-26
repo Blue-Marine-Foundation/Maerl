@@ -228,3 +228,96 @@ test('a Progress-only outcome allows written submissions and stays Progress-only
   ).toBe('Progress');
   expect(screen.queryByLabelText('Value')).toBeNull();
 });
+
+test('an admin can invalidate a legacy Impact update with a null value without entering a number', async () => {
+  const legacyNullImpact = {
+    id: 3780,
+    project_id: 43,
+    outcome_measurable_id: null,
+    output_measurable_id: 4300010202,
+    impact_indicator_id: 221,
+    type: 'Impact',
+    description: 'Test update with no numeric value',
+    value: null,
+    date: '2025-01-01',
+    source: '',
+    link: '',
+    verified: false,
+    valid: true,
+    duplicate: false,
+    admin_reviewed: false,
+    review_note: '',
+  } as unknown as import('@/utils/types').Update;
+
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <UpdateForm
+        update={legacyNullImpact}
+        impactIndicator={impact}
+        projectId={43}
+        isAdmin
+      />
+    </QueryClientProvider>,
+  );
+
+  fireEvent.click(screen.getByLabelText('Valid'));
+  fireEvent.change(screen.getByLabelText('Review Note'), {
+    target: { value: 'Test update — no impact data' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
+
+  await waitFor(() => expect(upsertUpdate).toHaveBeenCalled());
+  const submitted = vi.mocked(upsertUpdate).mock.calls[0][0];
+  expect(submitted).toEqual(
+    expect.objectContaining({
+      id: 3780,
+      valid: false,
+      admin_reviewed: true,
+      review_note: 'Test update — no impact data',
+    }),
+  );
+  expect(submitted).not.toHaveProperty('value');
+  expect(submitted).not.toHaveProperty('description');
+});
+
+test('an admin still cannot approve a legacy Impact update with a null value', async () => {
+  const legacyNullImpact = {
+    id: 3780,
+    project_id: 43,
+    outcome_measurable_id: null,
+    output_measurable_id: 4300010202,
+    impact_indicator_id: 221,
+    type: 'Impact',
+    description: 'Test update with no numeric value',
+    value: null,
+    date: '2025-01-01',
+    source: '',
+    link: '',
+    verified: false,
+    valid: true,
+    duplicate: false,
+    admin_reviewed: false,
+    review_note: '',
+  } as unknown as import('@/utils/types').Update;
+
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <UpdateForm
+        update={legacyNullImpact}
+        impactIndicator={impact}
+        projectId={43}
+        isAdmin
+      />
+    </QueryClientProvider>,
+  );
+
+  fireEvent.click(screen.getByLabelText('Admin Reviewed'));
+  fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
+
+  await waitFor(() =>
+    expect(screen.getByRole('alert').textContent).toContain(
+      'Enter a numeric impact value.',
+    ),
+  );
+  expect(upsertUpdate).not.toHaveBeenCalled();
+});
