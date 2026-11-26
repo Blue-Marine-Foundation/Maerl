@@ -1,4 +1,18 @@
 BEGIN;
+-- Simulate a legacy production trigger on public.updates that references
+-- unqualified "updates" without its own SET search_path.
+CREATE FUNCTION public.legacy_unqualified_updates_trigger() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE total bigint;
+BEGIN
+  SELECT count(*) INTO total FROM updates WHERE output_measurable_id = NEW.output_measurable_id;
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER legacy_unqualified_updates_after_update
+  AFTER UPDATE ON public.updates
+  FOR EACH ROW EXECUTE FUNCTION public.legacy_unqualified_updates_trigger();
+
 -- Insert legacy pre-validation rows while triggers are bypassed (as postgres)
 ALTER TABLE public.updates DISABLE TRIGGER zz_enforce_indicator_update;
 INSERT INTO public.updates(id, project_id, output_measurable_id, impact_indicator_id, posted_by, type, description, value, date, valid, verified, duplicate, admin_reviewed)
@@ -74,5 +88,14 @@ BEGIN
     VALUES (1, 1, 'Impact', 'New null impact', NULL);
     RAISE EXCEPTION 'Expected new null-value Impact insert to be rejected';
   EXCEPTION WHEN check_violation THEN NULL; END;
+
+  -- Explicit outcome update migration must also succeed with the legacy unqualified trigger active
+  INSERT INTO public.updates(project_id, outcome_measurable_id, type, description, value, date)
+  VALUES (1, 1, 'Impact', 'Outcome update to migrate', 5, '2025-04-01') RETURNING * INTO u901;
+  UPDATE public.outcome_measurables SET impact_indicator_id = 2 WHERE id = 1;
+  PERFORM public.migrate_outcome_updates(1, ARRAY[u901.id], 2);
+  SELECT * INTO u901 FROM public.updates WHERE id = u901.id;
+  ASSERT u901.impact_indicator_id = 2 AND NOT u901.admin_reviewed AND NOT u901.valid,
+    'Outcome update migration must succeed with legacy unqualified trigger active';
 END $$;
 ROLLBACK;

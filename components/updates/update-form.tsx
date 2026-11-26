@@ -102,14 +102,9 @@ export default function UpdateForm({
       return;
     }
 
-    if (type === 'Impact' && (value === null || !Number.isFinite(value))) {
-      setError('Enter a numeric impact value.');
-      return;
-    }
-
     const content = {
       description,
-      value: type === 'Impact' ? value! : undefined,
+      value: type === 'Impact' ? (value ?? undefined) : undefined,
       type,
       link,
       source,
@@ -131,6 +126,20 @@ export default function UpdateForm({
           ),
         )
       : content;
+    const isReviewOnlyNonApproval =
+      Boolean(update) &&
+      isAdmin &&
+      Object.keys(changes).length === 0 &&
+      !(adminReviewed && valid && !duplicate);
+
+    if (
+      type === 'Impact' &&
+      !isReviewOnlyNonApproval &&
+      (value === null || !Number.isFinite(value) || value < 0)
+    ) {
+      setError('Enter a numeric impact value.');
+      return;
+    }
     mutation.mutate({
       ...(update
         ? { id: update.id }
