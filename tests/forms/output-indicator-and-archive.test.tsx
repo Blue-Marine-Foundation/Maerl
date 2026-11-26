@@ -205,3 +205,51 @@ test('archiving an output indicator invalidates unassigned-outputs as well as lo
     expect(keys).toContainEqual(['archived-output-indicators']);
   });
 });
+
+test('a new output indicator recalculates its generated code when existingCodes change without wiping user input', () => {
+  const client = createClient();
+  const { rerender } = render(
+    <QueryClientProvider client={client}>
+      <OutputMeasurableForm
+        isOpen
+        onClose={() => {}}
+        measurable={null}
+        outputId={43000202}
+        projectId={43}
+        existingCodes={['O.2.1']}
+        outputCode='O.2'
+      />
+    </QueryClientProvider>,
+  );
+
+  expect(screen.getByText('O.2.2')).not.toBeNull();
+  fireEvent.change(screen.getByLabelText('Description'), {
+    target: { value: 'Draft indicator text' },
+  });
+  fireEvent.change(screen.getByLabelText('Impact Indicator'), {
+    target: { value: '224' },
+  });
+
+  // Another user creates O.2.2 and the parent refetches
+  rerender(
+    <QueryClientProvider client={client}>
+      <OutputMeasurableForm
+        isOpen
+        onClose={() => {}}
+        measurable={null}
+        outputId={43000202}
+        projectId={43}
+        existingCodes={['O.2.1', 'O.2.2']}
+        outputCode='O.2'
+      />
+    </QueryClientProvider>,
+  );
+
+  expect(screen.getByText('O.2.3')).not.toBeNull();
+  expect(
+    (screen.getByLabelText('Description') as HTMLTextAreaElement).value,
+  ).toBe('Draft indicator text');
+  expect(
+    (screen.getByLabelText('Impact Indicator') as HTMLSelectElement).value,
+  ).toBe('224');
+});

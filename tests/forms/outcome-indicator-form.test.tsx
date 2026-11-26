@@ -171,3 +171,35 @@ test('a returned server error is shown to the user without closing the outcome d
   );
   expect(onClose).not.toHaveBeenCalled();
 });
+
+test('a new outcome indicator updates its generated code if existingCodes change without wiping user input', () => {
+  const { rerender, client } = showForm('Admin', null);
+  expect(screen.getByText('OC0.2')).not.toBeNull();
+  fireEvent.change(screen.getByLabelText('Measurable Indicator'), {
+    target: { value: 'Unsaved outcome draft' },
+  });
+  fireEvent.change(screen.getByLabelText('Impact Indicator'), {
+    target: { value: '2' },
+  });
+
+  rerender(
+    <QueryClientProvider client={client}>
+      <OutcomeMeasurableForm
+        isOpen
+        onClose={() => {}}
+        measurable={null}
+        outcomeId={2}
+        projectId={1}
+        existingCodes={['OC0.1', 'OC0.2']}
+      />
+    </QueryClientProvider>,
+  );
+
+  expect(screen.getByText('OC0.3')).not.toBeNull();
+  expect(
+    (screen.getByLabelText('Measurable Indicator') as HTMLInputElement).value,
+  ).toBe('Unsaved outcome draft');
+  expect(
+    (screen.getByLabelText('Impact Indicator') as HTMLSelectElement).value,
+  ).toBe('2');
+});

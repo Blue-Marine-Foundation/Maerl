@@ -8,6 +8,7 @@ DECLARE
   progress_only boolean := false;
   content_changed boolean := false;
   mapping_or_review_only boolean := false;
+  approving_impact boolean := false;
   is_admin boolean;
 BEGIN
   -- General Updates retain their existing rules.
@@ -55,10 +56,16 @@ BEGIN
       IS DISTINCT FROM
       (to_jsonb(OLD) - ARRAY['admin_reviewed', 'valid', 'verified', 'duplicate', 'review_note', 'edited_at', 'impact_indicator_id'])
     );
+    approving_impact := NOT content_changed
+      AND NEW.type = 'Impact'
+      AND NEW.admin_reviewed IS TRUE
+      AND NEW.valid IS TRUE
+      AND NEW.duplicate IS NOT TRUE;
   END IF;
-  -- Allow mapping syncs (e.g. remapping an output indicator) and review-only
-  -- edits to touch legacy rows whose type/value predates validation, while
-  -- keeping full validation on all inserts and content edits.
+  -- Allow mapping syncs (e.g. remapping an output indicator) and non-approving
+  -- review edits (e.g. rejecting/annotating) to touch legacy rows whose
+  -- type/value predates validation, while still requiring valid type/value on
+  -- inserts, content edits, and Impact approvals.
   IF TG_OP = 'INSERT' OR NOT mapping_or_review_only THEN
     IF NEW.type NOT IN ('Impact', 'Progress') OR NEW.type IS NULL THEN
       RAISE EXCEPTION 'Choose Impact or Progress' USING ERRCODE = '23514';
@@ -66,6 +73,8 @@ BEGIN
     IF NEW.type = 'Impact' AND (NEW.value IS NULL OR NEW.value < 0 OR NEW.value::text IN ('NaN', 'Infinity', '-Infinity')) THEN
       RAISE EXCEPTION 'Enter a finite nonnegative impact value' USING ERRCODE = '23514';
     END IF;
+  ELSIF approving_impact AND (NEW.value IS NULL OR NEW.value < 0 OR NEW.value::text IN ('NaN', 'Infinity', '-Infinity')) THEN
+    RAISE EXCEPTION 'Enter a finite nonnegative impact value' USING ERRCODE = '23514';
   END IF;
   IF TG_OP = 'INSERT' OR content_changed THEN
     NEW.admin_reviewed := false;

@@ -63,8 +63,9 @@ export default function OutputMeasurableForm({
     },
   });
   const resetMutation = mutation.reset;
+  const existingCodesKey = existingCodes.join('\0');
 
-  // Reset form only when opening the dialog or switching which indicator is edited,
+  // Reset form fields only when opening the dialog or switching which indicator is edited,
   // not when parent queries refetch with a new existingCodes array reference.
   useEffect(() => {
     if (!isOpen) {
@@ -77,35 +78,39 @@ export default function OutputMeasurableForm({
     setTarget(measurable?.target ?? null);
     setVerification(measurable?.verification || '');
     setAssumptions(measurable?.assumptions || '');
-    // Auto-assign code for new measurable
-    if (!measurable) {
-      // Try to get the output code prefix (O.x)
-      let prefix = '';
-      if (outputCode && outputCode.startsWith('O.')) {
-        prefix = outputCode;
-      } else if (existingCodes.length > 0) {
-        const match = existingCodes[0]?.match(/^(O\.\d+)\./);
-        if (match) prefix = match[1];
-      }
-      // fallback: try to extract from outputId (not robust, but fallback)
-      if (!prefix) prefix = `O.${outputId}`;
-      // Find all y's for this output
-      const yNumbers = existingCodes
-        .filter((c) => typeof c === 'string' && c.startsWith(`${prefix}.`))
-        .map((c) => {
-          const parts = c.split('.');
-          const n = parseInt(parts[2]);
-          return isNaN(n) ? null : n;
-        })
-        .filter((n): n is number => n !== null);
-      let nextY = 1;
-      while (yNumbers.includes(nextY)) nextY++;
-      setCode(`${prefix}.${nextY}`);
-    } else {
+    if (measurable) {
       setCode(measurable.code || '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, measurable?.id, outputCode, outputId, resetMutation]);
+  }, [isOpen, measurable?.id, outputId, resetMutation]);
+
+  // Keep auto-generated code fresh for new indicators if used codes change while open,
+  // without resetting any user-entered fields.
+  useEffect(() => {
+    if (!isOpen || measurable) {
+      return;
+    }
+    const codes = existingCodesKey ? existingCodesKey.split('\0') : [];
+    let prefix = '';
+    if (outputCode && outputCode.startsWith('O.')) {
+      prefix = outputCode;
+    } else if (codes.length > 0) {
+      const match = codes[0]?.match(/^(O\.\d+)\./);
+      if (match) prefix = match[1];
+    }
+    if (!prefix) prefix = `O.${outputId}`;
+    const yNumbers = codes
+      .filter((c) => typeof c === 'string' && c.startsWith(`${prefix}.`))
+      .map((c) => {
+        const parts = c.split('.');
+        const n = parseInt(parts[2]);
+        return isNaN(n) ? null : n;
+      })
+      .filter((n): n is number => n !== null);
+    let nextY = 1;
+    while (yNumbers.includes(nextY)) nextY++;
+    setCode(`${prefix}.${nextY}`);
+  }, [isOpen, measurable, existingCodesKey, outputCode, outputId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
